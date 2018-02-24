@@ -1,0 +1,10 @@
+# Java
+*.class
+*.log
+
+# Package Files
+*.jar
+!compass*
+
+# Maven
+target/
