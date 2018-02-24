@@ -1,0 +1,14 @@
+Gemfile.lock
+reports
+log
+
+# Java
+*.class
+*.log
+
+# Package Files
+*.jar
+!compass*
+
+# Maven
+target/
