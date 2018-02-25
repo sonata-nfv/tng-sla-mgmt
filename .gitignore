@@ -10,6 +10,6 @@
 
 # Maven
 target/
-settings/
+.settings/
 
 
