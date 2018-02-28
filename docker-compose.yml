@@ -1,0 +1,17 @@
+version: "2"
+services:
+  tng-sla-management:
+    container_name: sla-generator
+    restart: always
+    build: ./sla-template-generator
+    ports:
+      - "8080:8080"
+    links:
+      - mongo
+  mongo:
+    container_name: sla-repo
+    image: mongo
+    volumes:
+      - ./data:/data/db
+    ports:
+      - "27017:27017"
