@@ -15,8 +15,9 @@ The mechanisms included in the tng-sla-mgmt include:
 ## Installation
 ToDo
 
-## Documentation
+## API Documentation
 ToDo
+
 
 ## Development
 
@@ -24,7 +25,7 @@ To contribute to the development of the 5GTANGO SLA Manager, you may use the ver
 
 ### Contributing
 
-You may contribute to the SLA Manager similar to other 5GTANGO (sub-) projects, i.e. by creating pull requests. However, since changes in the SLA files may affect several other tools and projects, the pull requests might be discussed on the mailing list before it is merged to the master branch.
+You may contribute to the SLA Manager similar to other 5GTANGO (sub-) projects, i.e. by creating pull requests.
 
 ### CI Integration
 
