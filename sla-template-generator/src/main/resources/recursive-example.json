@@ -11,12 +11,6 @@
       "vnf_vendor": "eu.sonata-nfv",
       "vnf_name": "vtc-vnf",
       "vnf_version": "0.1"
-    },
-    {
-      "vnf_id": "vnf_vtc2",
-      "vnf_vendor": "eu.sonata-nfv",
-      "vnf_name": "vtc-vnf",
-      "vnf_version": "0.1"
     }
   ],
   "network_services": [
