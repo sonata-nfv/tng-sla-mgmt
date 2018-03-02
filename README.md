@@ -12,6 +12,25 @@ The mechanisms included in the tng-sla-mgmt include:
 *  SLA Mapping Repository: store the correlations between the high-level and the low-level requirements (mapping mechanism output)
 *  SLA Monitor Analyzer: Compare the QoS parameters from the Mapping Repository, with the computed monitoring measurements and check if there is any violation
 
+## Installation
+ToDo
+
+## API Documentation
+ToDo
+
+
+## Development
+
+To contribute to the development of the 5GTANGO SLA Manager, you may use the very same development workflow as for any other 5GTANGO Github project. That is, you have to fork the repository and create pull requests. Moreover, all discussions regarding the 5GTANGO SLAs take place on GitHub, and NOT on the wiki.
+
+### Contributing
+
+You may contribute to the SLA Manager similar to other 5GTANGO (sub-) projects, i.e. by creating pull requests.
+
+### CI Integration
+
+All pull requests are automatically tested by Jenkins and will only be accepted if no test is broken.
+
 # License
 All tng-sla-mgmt components are published under Apache 2.0 license. Please see the LICENSE file for more details.
 
