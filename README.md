@@ -13,10 +13,10 @@ The mechanisms included in the tng-sla-mgmt include:
 *  SLA Monitor Analyzer: Compare the QoS parameters from the Mapping Repository, with the computed monitoring measurements and check if there is any violation
 
 ## Installation
-todo
+ToDo
 
 ## Documentation
-todo
+ToDo
 
 ## Development
 
