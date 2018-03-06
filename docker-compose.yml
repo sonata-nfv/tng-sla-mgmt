@@ -11,7 +11,7 @@ services:
   mongo_db:
     container_name: tng-sla-repository
     restart: always
-    build: ./sla-repository
+    image: aashreys/mongo-auth:latest
     environment:
       - AUTH=yes
       - MONGODB_ADMIN_USER=admin
