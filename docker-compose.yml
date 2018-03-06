@@ -21,3 +21,8 @@ services:
       - MONGODB_APPLICATION_PASS=admin
     ports:
       - "27017:27017"
+  python_app:
+    container_name: python_test_app
+    restart: always
+    build: ./sla-repository
+   

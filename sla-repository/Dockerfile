@@ -1,29 +1,20 @@
-# Use the Trusty (14.04) Ubuntu base image
-FROM ubuntu:14.04
+# Use an official Python runtime as a parent image
+FROM python:2.7-slim
 
-# Import the MongoDB public GPG key
-RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 7F0CEB10
+# Set the working directory to /app
+WORKDIR /app
 
-# Create a list file for MongoDB
-RUN echo 'deb http://downloads-distro.mongodb.org/repo/ubuntu-upstart dist 10gen' | sudo tee /etc/apt/sources.list.d/mongodb.list
+# Copy the current directory contents into the container at /app
+ADD . /app
 
-# Update the local package database
-RUN apt-get update
+# Install any needed packages specified in requirements.txt
+RUN pip install --trusted-host pypi.python.org -r requirements.txt
 
-# Install the latest stable version of MongoDB (note -y flag for non-interactive)
-RUN apt-get install -y mongodb-org
+# Make port 80 available to the world outside this container
+EXPOSE 80
 
-# Create MongoDB's default data directory (-p creates parent directories - in this case, /data)
-RUN mkdir -p /data/db
+# Define environment variable
+ENV NAME World
 
-# Because this database will run in a Docker container, 
-# we must configure it to accept connctions from foreign hosts
-RUN echo "bind_ip = 0.0.0.0" >> /etc/mongodb.conf
-
-# Expose the MongoDB port
-EXPOSE 27017
-
-
-# Set the default command for this image
-CMD ["mongod"]
-
+# Run app.py when the container launches
+CMD ["python", "sla-repo-test-connection.py"]
