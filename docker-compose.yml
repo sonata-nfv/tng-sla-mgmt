@@ -7,11 +7,17 @@ services:
     ports:
       - "8080:8080"
     links:
-      - mongo
-  mongo:
-    container_name: sla-repo
-    image: mongo
-    volumes:
-      - ./data:/data/db
+      - mongo_db
+  mongo_db:
+    container_name: tng-sla-repository
+    restart: always
+    build: ./sla-repository
+    environment:
+      - AUTH=yes
+      - MONGODB_ADMIN_USER=admin
+      - MONGODB_ADMIN_PASS=admin
+      - MONGODB_APPLICATION_DATABASE=Slas
+      - MONGODB_APPLICATION_USER=admin
+      - MONGODB_APPLICATION_PASS=admin
     ports:
       - "27017:27017"
