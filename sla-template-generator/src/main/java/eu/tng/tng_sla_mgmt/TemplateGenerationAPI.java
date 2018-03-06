@@ -9,7 +9,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 @Path("/templategeneration")
-public class TemplateGeneration {
+public class TemplateGenerationAPI {
 	
 	// api call in order to generate a sla template
 	//mendatory input parameters from the user: nsId, providerId, templateName, expireDate
