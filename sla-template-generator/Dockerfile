@@ -1,5 +1,5 @@
 # Use an official Maven image
-FROM maven:3.5-jdk-7-slim
+FROM maven:3.5-jdk-7-alpine
 
 # Set the working directory to /app
 WORKDIR /app

@@ -1,0 +1,28 @@
+version: "2"
+services:
+  tng-sla-management:
+    container_name: sla-generator
+    restart: always
+    build: ./sla-template-generator
+    ports:
+      - "8080:8080"
+    links:
+      - mongo_db
+  mongo_db:
+    container_name: tng-sla-repository
+    restart: always
+    image: aashreys/mongo-auth:latest
+    environment:
+      - AUTH=yes
+      - MONGODB_ADMIN_USER=admin
+      - MONGODB_ADMIN_PASS=admin
+      - MONGODB_APPLICATION_DATABASE=Slas
+      - MONGODB_APPLICATION_USER=admin
+      - MONGODB_APPLICATION_PASS=admin
+    ports:
+      - "27017:27017"
+  python_app:
+    container_name: python_test_app
+    restart: always
+    build: ./sla-repository
+   
