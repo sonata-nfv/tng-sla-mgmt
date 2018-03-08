@@ -5,8 +5,11 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
+
+import org.json.simple.JSONObject;
 
 @Path("/templategeneration")
 public class TemplateGenerationAPI {
@@ -17,7 +20,7 @@ public class TemplateGenerationAPI {
 	// e.g.
 	// http://localhost:8080/tng-sla-mgmt/slas/templategeneration?nsId=10&providerId=20&templateName=lala&expireDate=20/02/2018
 	@GET
-	@Produces("text/plain")
+	@Produces(MediaType.APPLICATION_JSON)
 	public Response getIt(@Context UriInfo info) {
 
 		String nsId = info.getQueryParameters().getFirst("nsId");
@@ -27,9 +30,7 @@ public class TemplateGenerationAPI {
 
 		// call CreateTemplate method
 		CreateTemplate ct = new CreateTemplate();
-		ct.createTemplate(nsId, providerId, templateName, expireDate);
-
-		return Response.status(200).entity("NS ID : " + nsId + ", from Service Provider : " + providerId
-				+ ", Template Name: " + templateName + ", Expiration Date:" + expireDate).build();
+		JSONObject lala = ct.createTemplate(nsId, providerId, templateName, expireDate);		
+		return Response.status(200).entity(lala).build();
 	}
 }
