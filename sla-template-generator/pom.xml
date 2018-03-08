@@ -12,6 +12,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
+                <version>2.3.2</version>
                 <inherited>true</inherited>
                 <configuration>
                     <source>1.6</source>
@@ -24,26 +25,13 @@
                 <artifactId>maven-embedded-glassfish-plugin</artifactId>
                 <version>${glassfish.version}</version>
                 <configuration>
-                    <goalPrefix>embedded-glassfish</goalPrefix>
-                    <app>C:/Users/Marios/eclipse-workspace/target/${project.build.finalName}.war</app>
+                    <goalPrefix>embedded-glassfish</goalPrefix>                    
                     <autoDelete>true</autoDelete>
                     <port>8080</port>
                 </configuration>
-                <dependencies>
-                    <dependency>
-                        <groupId>com.sun.jersey</groupId>
-                        <artifactId>jersey-servlet</artifactId>
-                        <version>${project.version}</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>javax.servlet</groupId>
-                        <artifactId>javax.servlet-api</artifactId>
-                        <version>3.0.1</version>
-                    </dependency>
-                </dependencies>
             </plugin>
         </plugins>
-    </build>
+    </build>   
     <dependencies>
         <dependency>
             <groupId>com.sun.jersey</groupId>
@@ -73,7 +61,15 @@
             <version>${glassfish.version}</version>
             <scope>test</scope>
         </dependency>
+  		<dependency>
+    		<groupId>com.googlecode.json-simple</groupId>
+   			<artifactId>json-simple</artifactId>
+    		<version>1.1.1</version>
+		</dependency>
+
     </dependencies>
+    
+    
     <properties>
         <jersey.version>1.20-SNAPSHOT</jersey.version>
         <glassfish.version>3.1.1</glassfish.version>
