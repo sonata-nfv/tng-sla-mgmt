@@ -51,7 +51,7 @@ public class PolicyRule {
 
 	// public method to get the policy rule value
 	public ArrayList<String> getValue() {
-		return type;
+		return value;
 	}
 
 	// public method to set the ns value

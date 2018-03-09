@@ -68,15 +68,6 @@ public class GetNsd {
 							setNsdFields.SetMonUnit(mon_unit_list);
 
 						}
-						// get soft_constrains
-						if (nsd.containsKey("soft_constraints")) {
-							JSONArray soft_constraints = (JSONArray) nsd.get("soft_constraints");
-							for (int i = 0; i < soft_constraints.size(); i++) {
-								String soft_constraint = (String) soft_constraints.get(i);
-								soft_con_list.add(soft_constraint);
-							}
-							setNsdFields.SetSoftCon(soft_con_list);
-						}
 					}
 
 				} catch (ParseException e) {

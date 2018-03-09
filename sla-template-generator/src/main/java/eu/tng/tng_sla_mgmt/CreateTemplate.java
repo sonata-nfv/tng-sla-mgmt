@@ -15,10 +15,10 @@ public class CreateTemplate {
 
 	@SuppressWarnings("unchecked")
 	public JSONObject createTemplate(String nsId, String providerId, String templateName, String expireDate) {
-		//System.out.println(nsId);
-		//System.out.println(providerId);
-		//System.out.println(templateName);
-		//System.out.println(expireDate);
+		// System.out.println(nsId);
+		// System.out.println(providerId);
+		// System.out.println(templateName);
+		// System.out.println(expireDate);
 
 		// get network service descriptor for the given nsId
 		GetNsd nsd = new GetNsd();
@@ -29,7 +29,6 @@ public class CreateTemplate {
 		System.out.println("Monitoring Descriptions" + getNsd.GetMonDesc().toString());
 		System.out.println("Monitoring Metrics" + getNsd.GetMonMetric().toString());
 		System.out.println("Monitoring Units" + getNsd.GetMonUnit().toString());
-		System.out.println("Soft Constraints" + getNsd.GetSoftCon().toString());
 
 		// get policy descriptor for the given nsId
 		GetPolicyRules getPolicyRules = new GetPolicyRules();
@@ -72,19 +71,21 @@ public class CreateTemplate {
 		ns.put("description", getNsd.getDescription());
 		sla_template.put("ns", ns);
 		// objectives array
-		JSONArray objectives = new JSONArray(); 
-		objectives.add("msg 1"); 
+		JSONArray objectives = new JSONArray();
+		objectives.add("msg 1");
 		objectives.add("msg 2");
 		ns.put("objectives", objectives);
-		/*
 
+		/*
+		 * 
 		 * try (FileWriter file = new FileWriter("c:\\test.json")) {
 		 * 
 		 * file.write(obj.toJSONString()); file.flush();
 		 * 
 		 * } catch (IOException e) { e.printStackTrace(); }
 		 */
-		//System.out.print(root);
+		// System.out.print(root);
+
 		return root;
 
 	}

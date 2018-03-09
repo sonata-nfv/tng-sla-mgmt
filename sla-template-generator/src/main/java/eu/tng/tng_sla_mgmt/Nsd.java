@@ -9,7 +9,6 @@ public class Nsd {
 	private static ArrayList<String> mon_desc = new ArrayList();
 	private static ArrayList<String> mon_metric = new ArrayList();
 	private static ArrayList<String> mon_unit = new ArrayList();
-	private static ArrayList<String> soft_con = new ArrayList();
 
 	// public method to get the ns name
 	public String getName() {
@@ -61,14 +60,5 @@ public class Nsd {
 		this.mon_unit = mon_unit;
 	}
 
-	// public method to get the ns mon_unit
-	public ArrayList<String> GetSoftCon() {
-		return soft_con;
-	}
-
-	// public method to set the ns mon_unit
-	public void SetSoftCon(ArrayList<String> soft_con) {
-		this.soft_con = soft_con;
-	}
 
 }
