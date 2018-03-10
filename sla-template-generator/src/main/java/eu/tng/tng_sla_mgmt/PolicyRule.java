@@ -3,11 +3,11 @@ package eu.tng.tng_sla_mgmt;
 import java.util.ArrayList;
 
 public class PolicyRule {
-	private static ArrayList<String> name = new ArrayList();
-	private static ArrayList<String> field = new ArrayList();
-	private static ArrayList<String> operator = new ArrayList();
-	private static ArrayList<String> type = new ArrayList();
-	private static ArrayList<String> value = new ArrayList();
+	private static ArrayList<String> name = new ArrayList<String>();
+	private static ArrayList<String> field = new ArrayList<String>();
+	private static ArrayList<String> operator = new ArrayList<String>();
+	private static ArrayList<String> type = new ArrayList<String>();
+	private static ArrayList<String> value = new ArrayList<String>();
 
 	// public method to get the ns mon_desc
 	public ArrayList<String> getName() {

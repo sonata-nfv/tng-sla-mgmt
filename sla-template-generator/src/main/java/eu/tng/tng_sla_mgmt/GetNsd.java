@@ -17,14 +17,13 @@ public class GetNsd {
 
 	public void getNSD(String nsId) {
 		Nsd setNsdFields = new Nsd();
-		ArrayList<String> mon_desc_list = new ArrayList();
-		ArrayList<String> mon_metric_list = new ArrayList();
-		ArrayList<String> mon_unit_list = new ArrayList();
-		ArrayList<String> soft_con_list = new ArrayList();
+		ArrayList<String> mon_desc_list = new ArrayList<String>();
+		ArrayList<String> mon_metric_list = new ArrayList<String>();
+		ArrayList<String> mon_unit_list = new ArrayList<String>();
 
 		try {
 			// api call to catalogue in order to get the nsd with specific id =
-			// c490d183-0abc-4927-bf40-072233e12497
+			// cc4d091a-9a91-4810-827d-82bd77781cd9
 
 			String url_string = "http://pre-int-sp-ath.5gtango.eu:4002/catalogues/api/v2/network-services/" + nsId;
 			URL url = new URL(url_string);

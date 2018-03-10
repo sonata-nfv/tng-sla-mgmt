@@ -14,13 +14,14 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 public class GetPolicyRules {
+	@SuppressWarnings("unused")
 	public void getPolicyRules() {
 		PolicyRule setPolicyRuleFields = new PolicyRule();
-		ArrayList<String> name_list = new ArrayList();
-		ArrayList<String> field_list = new ArrayList();
-		ArrayList<String> operator_list = new ArrayList();
-		ArrayList<String> type_list = new ArrayList();
-		ArrayList<String> value_list = new ArrayList();
+		ArrayList<String> name_list = new ArrayList<String>();
+		ArrayList<String> field_list = new ArrayList<String>();
+		ArrayList<String> operator_list = new ArrayList<String>();
+		ArrayList<String> type_list = new ArrayList<String>();
+		ArrayList<String> value_list = new ArrayList<String>();
 
 		try {
 			// test url to call the policy descriptor - when ready call the Policy Manager

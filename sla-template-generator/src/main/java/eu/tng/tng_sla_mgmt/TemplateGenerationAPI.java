@@ -18,7 +18,7 @@ public class TemplateGenerationAPI {
 	// mendatory input parameters from the user: nsId, providerId, templateName,
 	// expireDate
 	// e.g.
-	// http://localhost:8080/tng-sla-mgmt/slas/templategeneration?nsId=c490d183-0abc-4927-bf40-072233e12497&providerId=20&templateName=lala&expireDate=20/02/2018
+	// http://localhost:8080/tng-sla-mgmt/slas/templategeneration?nsId=8effe1db-edd3-404f-8a68-92e2ebb2b176&providerId=20&templateName=lala&expireDate=20/02/2018
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getIt(@Context UriInfo info) {

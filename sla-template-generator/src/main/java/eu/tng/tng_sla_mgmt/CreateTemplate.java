@@ -1,9 +1,5 @@
 package eu.tng.tng_sla_mgmt;
 
-import java.io.FileWriter;
-import java.io.IOException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.json.simple.JSONArray;
@@ -44,7 +40,6 @@ public class CreateTemplate {
 		/* useful variables */
 
 		// current date
-		final DateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 		Date offered_date = new Date();
 		// System.out.println(sdf.format(offered_date));
 
@@ -72,8 +67,26 @@ public class CreateTemplate {
 		sla_template.put("ns", ns);
 		// objectives array
 		JSONArray objectives = new JSONArray();
-		objectives.add("msg 1");
-		objectives.add("msg 2");
+		// for each monitoring_parameter create a slo_obj
+		for (int i = 0; i < getNsd.GetMonMetric().size(); i++) {
+			JSONObject slo_obj = new JSONObject();
+			slo_obj.put("slo_id", "slo" + (i + 1));
+			slo_obj.put("slo_name", getNsd.GetMonMetric().get(i));
+			slo_obj.put("slo_definition", getNsd.GetMonDesc().get(i));
+			slo_obj.put("slo_unit", getNsd.GetMonUnit().get(i));
+
+			JSONArray metric = new JSONArray();
+			for (int j = 0; j < getNsd.GetMonMetric().size(); j++) {
+				JSONObject metric_obj = new JSONObject();
+				metric_obj.put("metric_id", "mtr" + (j + 1));
+				metric_obj.put("metric_definition", "");
+				metric.add(metric_obj);
+			}
+			slo_obj.put("metric",(Object)metric);			
+		
+			objectives.add(slo_obj);
+		}
+
 		ns.put("objectives", objectives);
 
 		/*

@@ -6,9 +6,9 @@ import java.util.List;
 public class Nsd {
 	private static String name;
 	private static String description;
-	private static ArrayList<String> mon_desc = new ArrayList();
-	private static ArrayList<String> mon_metric = new ArrayList();
-	private static ArrayList<String> mon_unit = new ArrayList();
+	private static ArrayList<String> mon_desc = new ArrayList<String>();
+	private static ArrayList<String> mon_metric = new ArrayList<String>();
+	private static ArrayList<String> mon_unit = new ArrayList<String>();
 
 	// public method to get the ns name
 	public String getName() {
