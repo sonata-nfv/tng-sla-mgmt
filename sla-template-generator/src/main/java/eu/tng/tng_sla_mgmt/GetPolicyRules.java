@@ -22,6 +22,8 @@ public class GetPolicyRules {
 		ArrayList<String> operator_list = new ArrayList<String>();
 		ArrayList<String> type_list = new ArrayList<String>();
 		ArrayList<String> value_list = new ArrayList<String>();
+		ArrayList<String> duration_list = new ArrayList<String>();
+
 
 		try {
 			// test url to call the policy descriptor - when ready call the Policy Manager
@@ -48,14 +50,23 @@ public class GetPolicyRules {
 							JSONObject policyRule = (JSONObject) policyRules.get(i);
 							// get policy rule name
 							if (policyRule.containsKey("actions")) {
-								JSONArray actions = (JSONArray) policyRule.get("actions");
-								for (int j = 0; j < actions.size(); j++) {
-									JSONObject action = (JSONObject) actions.get(j);
-									name_list.add((String) action.get("name"));
-								}
+								name_list.add((String) policyRule.get("name"));
 								setPolicyRuleFields.setName(name_list);
 
 							}
+							
+							if (policyRule.containsKey("duration")) {
+								JSONObject duration = (JSONObject) policyRule.get("duration");
+								
+								
+								if (duration.containsKey("value")) {
+									String value = duration.get("value").toString();
+									String dur_unit = duration.get("duration_unit").toString();
+									duration_list.add(value + " " + dur_unit);
+									setPolicyRuleFields.setDuration(duration_list);
+								}
+							}
+							
 							// get actual policy rules
 							if (policyRule.containsKey("conditions")) {
 								JSONObject conditions = (JSONObject) policyRule.get("conditions");
@@ -67,16 +78,16 @@ public class GetPolicyRules {
 											JSONArray rules2 = (JSONArray) rule.get("rules");
 											for (int l = 0; l < rules2.size(); l++) {
 												JSONObject rule2 = (JSONObject) rules2.get(l);
-												field_list.add((String) rule2.get("field"));
+												field_list.add((String) rule2.get("field")+ "-obj-"+i);
 												operator_list.add((String) rule2.get("operator"));
 												type_list.add((String) rule2.get("type"));
 												value_list.add((String) rule2.get("value"));
 											}
 										} else {
-											String field = (String) rule.get("field");
-											String operator = (String) rule.get("operator");
-											String type = (String) rule.get("type");
-											String value = (String) rule.get("value");
+											field_list.add((String) rule.get("field") + "-obj-"+i);
+											operator_list.add((String) rule.get("operator"));
+											type_list.add((String) rule.get("type"));
+											value_list.add((String) rule.get("value"));
 										}
 										setPolicyRuleFields.setField(field_list);
 										setPolicyRuleFields.setOperator(operator_list);

@@ -8,7 +8,9 @@ public class PolicyRule {
 	private static ArrayList<String> operator = new ArrayList<String>();
 	private static ArrayList<String> type = new ArrayList<String>();
 	private static ArrayList<String> value = new ArrayList<String>();
+	private static ArrayList<String> duration = new ArrayList<String>();
 
+	
 	// public method to get the ns mon_desc
 	public ArrayList<String> getName() {
 		return name;
@@ -58,5 +60,15 @@ public class PolicyRule {
 	public void setValue(ArrayList<String> value) {
 		this.value = value;
 	}
+	
+	// public method to get the policy rule value
+		public ArrayList<String> getDuration() {
+			return duration;
+		}
+
+		// public method to set the ns value
+		public void setDuration(ArrayList<String> duration) {
+			this.duration = duration;
+		}
 
 }

@@ -1,7 +1,10 @@
 package eu.tng.tng_sla_mgmt;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Date;
 
+import org.codehaus.jackson.map.ObjectMapper;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
@@ -11,11 +14,6 @@ public class CreateTemplate {
 
 	@SuppressWarnings("unchecked")
 	public JSONObject createTemplate(String nsId, String providerId, String templateName, String expireDate) {
-		// System.out.println(nsId);
-		// System.out.println(providerId);
-		// System.out.println(templateName);
-		// System.out.println(expireDate);
-
 		// get network service descriptor for the given nsId
 		GetNsd nsd = new GetNsd();
 		nsd.getNSD(nsId);
@@ -33,7 +31,8 @@ public class CreateTemplate {
 		System.out.println("Policy Rule Field: " + getPolicyRule.getField().toString());
 		System.out.println("Policy Rule Operator: " + getPolicyRule.getOperator().toString());
 		System.out.println("Policy Rule Type: " + getPolicyRule.getType().toString());
-		System.out.println("Policy Rule Name: " + getPolicyRule.getValue().toString());
+		System.out.println("Policy Rule Value: " + getPolicyRule.getValue().toString());
+		System.out.println("Policy Rule Duration: " + getPolicyRule.getDuration().toString());
 
 		/* generate the template */
 
@@ -74,31 +73,63 @@ public class CreateTemplate {
 			slo_obj.put("slo_name", getNsd.GetMonMetric().get(i));
 			slo_obj.put("slo_definition", getNsd.GetMonDesc().get(i));
 			slo_obj.put("slo_unit", getNsd.GetMonUnit().get(i));
+			slo_obj.put("slo_value", "");
 
 			JSONArray metric = new JSONArray();
-			for (int j = 0; j < getNsd.GetMonMetric().size(); j++) {
-				JSONObject metric_obj = new JSONObject();
-				metric_obj.put("metric_id", "mtr" + (j + 1));
-				metric_obj.put("metric_definition", "");
-				metric.add(metric_obj);
+			JSONObject metric_obj = new JSONObject();
+			metric_obj.put("metric_id", "mtr" + (i + 1));
+			metric_obj.put("metric_definition", getPolicyRule.getName().get(i));
+
+			JSONObject rate = new JSONObject();
+			rate.put("parameterWindow", getPolicyRule.getDuration().get(i));
+			rate.put("sampleInterval", "");
+
+			JSONObject expression = new JSONObject();
+			expression.put("expression_statement", "");
+			expression.put("expression_language", "ISO80000");
+			expression.put("expression_unit", "");
+
+			JSONArray parameters = new JSONArray();
+			for (int k = 0; k < getPolicyRule.getField().size(); k++) {
+				if (getPolicyRule.getField().get(k).contains("-obj-" + i)) {
+					JSONObject parameters_obj = new JSONObject();
+					parameters_obj.put("parameter_id", "prmtr" + (k + 1));
+
+					StringBuilder sb = new StringBuilder(getPolicyRule.getField().get(k));
+
+					sb.delete(sb.length() - 6, sb.length());
+					String result = sb.toString();
+
+					parameters_obj.put("parameter_name", result);
+					parameters_obj.put("parameter_definition", "");
+					parameters_obj.put("parameter_unit", "");
+					parameters_obj.put("parameter_value", getPolicyRule.getValue().get(k));
+
+					parameters.add(parameters_obj);
+				}
 			}
-			slo_obj.put("metric",(Object)metric);			
-		
+
+			expression.put("parameters", (Object) parameters);
+			metric_obj.put("rate", (Object) rate);
+			metric_obj.put("expression", (Object) expression);
+			metric.add(metric_obj);
+
+			slo_obj.put("metric", (Object) metric);
 			objectives.add(slo_obj);
 		}
 
 		ns.put("objectives", objectives);
-
+		
 		/*
-		 * 
-		 * try (FileWriter file = new FileWriter("c:\\test.json")) {
-		 * 
-		 * file.write(obj.toJSONString()); file.flush();
-		 * 
-		 * } catch (IOException e) { e.printStackTrace(); }
-		 */
-		// System.out.print(root);
+		ObjectMapper mapper = new ObjectMapper();
 
+	    try {  
+	        // Writing to a file   
+	        mapper.writeValue(new File("test.txt"), root );
+	    } catch (IOException e) {  
+	        e.printStackTrace();  
+	    }  
+	    */
 		return root;
 
 	}
