@@ -6,8 +6,8 @@ services:
     build: ./sla-template-generator
     ports:
       - "8080:8080"
-    links:
-      - mongo_db
+#    links:
+#      - mongo_db
 #  mongo_db:
 #   container_name: tng-sla-repository
 #   restart: always
