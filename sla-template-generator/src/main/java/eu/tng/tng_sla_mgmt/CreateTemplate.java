@@ -1,47 +1,77 @@
+/*
+ * Copyright (c) 2017 5GTANGO, UPRC ALL RIGHTS RESERVED.
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
+ * in compliance with the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the License
+ * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the License for the specific language governing permissions and limitations under
+ * the License.
+ * 
+ * Neither the name of the 5GTANGO, UPRC nor the names of its contributors
+ * may be used to endorse or promote products derived from this software without specific prior
+ * written permission.
+ * 
+ * This work has been performed in the framework of the 5GTANGO project, funded by the European
+ * Commission under Grant number 761493 through the Horizon 2020 and 5G-PPP programmes. The authors
+ * would like to acknowledge the contributions of their colleagues of the 5GTANGO partner consortium
+ * (www.5gtango.eu).
+ *
+ * @author Evgenia Kapassa (MSc), UPRC
+ * 
+ * @author Marios Touloupou (MSc), UPRC
+ * 
+ */
 package eu.tng.tng_sla_mgmt;
 
-import java.io.File;
-import java.io.IOException;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import org.codehaus.jackson.map.ObjectMapper;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+
 
 public class CreateTemplate {
 	Nsd getNsd = new Nsd();
 	PolicyRule getPolicyRule = new PolicyRule();
 
 	@SuppressWarnings("unchecked")
-	public JSONObject createTemplate(String nsId, String providerId, String templateName, String expireDate) {
+	public JSONObject createTemplate(String nsd_uuid, String templateName, String expireDate) {
+
 		// get network service descriptor for the given nsId
 		GetNsd nsd = new GetNsd();
-		nsd.getNSD(nsId);
-
-		System.out.println("NS Name: " + getNsd.getName());
-		System.out.println("NS Description: " + getNsd.getDescription());
-		System.out.println("Monitoring Descriptions" + getNsd.GetMonDesc().toString());
-		System.out.println("Monitoring Metrics" + getNsd.GetMonMetric().toString());
-		System.out.println("Monitoring Units" + getNsd.GetMonUnit().toString());
-
-		// get policy descriptor for the given nsId
+		nsd.getNSD(nsd_uuid);
+		// get policy descriptor for the given uuid
 		GetPolicyRules getPolicyRules = new GetPolicyRules();
 		getPolicyRules.getPolicyRules();
-		System.out.println("Policy Rule Name: " + getPolicyRule.getName().toString());
-		System.out.println("Policy Rule Field: " + getPolicyRule.getField().toString());
-		System.out.println("Policy Rule Operator: " + getPolicyRule.getOperator().toString());
-		System.out.println("Policy Rule Type: " + getPolicyRule.getType().toString());
-		System.out.println("Policy Rule Value: " + getPolicyRule.getValue().toString());
-		System.out.println("Policy Rule Duration: " + getPolicyRule.getDuration().toString());
+		// get the expression that need to be expressed into the template
+		getPolicyRules.createExpression();
 
 		/* generate the template */
 
 		/* useful variables */
-
 		// current date
-		Date offered_date = new Date();
-		// System.out.println(sdf.format(offered_date));
+		DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyy");
+		Date date = new Date();
+		String offered_date = dateFormat.format(date); // 2016/11/16 12:08:43
+		// valid until date
+		SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+		String dateInString = expireDate;
+		Date date2 = null;
+		try {
+			date2 = formatter.parse(dateInString);
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		String validUntil = formatter.format(date2);
 
+		/* generate the template */
 		// root element
 		JSONObject root = new JSONObject();
 		root.put("descriptor_schema",
@@ -54,13 +84,13 @@ public class CreateTemplate {
 		// sla_template object
 		JSONObject sla_template = new JSONObject();
 		sla_template.put("offered_date", offered_date);
-		sla_template.put("valid_until", expireDate);
+		sla_template.put("valid_until", validUntil);
 		sla_template.put("sla_template_version", "0.1");
 		sla_template.put("service_provider_id", "sp001");
 		root.put("sla_template", sla_template);
 		// ns object
 		JSONObject ns = new JSONObject();
-		ns.put("ns_id", nsId);
+		ns.put("nsd_uuid", nsd_uuid);
 		ns.put("ns_name", getNsd.getName());
 		ns.put("description", getNsd.getDescription());
 		sla_template.put("ns", ns);
@@ -85,7 +115,7 @@ public class CreateTemplate {
 			rate.put("sampleInterval", "");
 
 			JSONObject expression = new JSONObject();
-			expression.put("expression_statement", "");
+			expression.put("expression_statement", getPolicyRule.getExpression().get(i));
 			expression.put("expression_language", "ISO80000");
 			expression.put("expression_unit", "");
 
@@ -119,17 +149,7 @@ public class CreateTemplate {
 		}
 
 		ns.put("objectives", objectives);
-		
-		/*
-		ObjectMapper mapper = new ObjectMapper();
 
-	    try {  
-	        // Writing to a file   
-	        mapper.writeValue(new File("test.txt"), root );
-	    } catch (IOException e) {  
-	        e.printStackTrace();  
-	    }  
-	    */
 		return root;
 
 	}

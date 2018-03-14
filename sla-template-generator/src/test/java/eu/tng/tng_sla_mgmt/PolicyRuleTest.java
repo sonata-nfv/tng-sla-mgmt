@@ -25,7 +25,6 @@
  * @author Marios Touloupou (MSc), UPRC
  * 
  */
-
 package eu.tng.tng_sla_mgmt;
 
 import static org.junit.Assert.*;
