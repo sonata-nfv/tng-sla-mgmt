@@ -11,16 +11,16 @@ ADD . /app
 RUN mvn clean install
 
 #Download Tomcat zip
-RUN curl -O http://mirrors.myaegean.gr/apache/tomcat/tomcat-8/v8.5.28/bin/apache-tomcat-8.5.28.tar.gz
+RUN curl -O http://apache.forthnet.gr/tomcat/tomcat-8/v8.5.29/bin/apache-tomcat-8.5.29.tar.gz
 
 #Unzip Tomcat
-RUN tar xzf apache-tomcat-8.5.28.tar.gz
+RUN tar xzf apache-tomcat-8.5.29.tar.gz
 
 #Copy war file to Tomcat directory
-RUN cp target/tng-sla-mgmt.war apache-tomcat-8.5.28/webapps/
+RUN cp target/tng-sla-mgmt.war apache-tomcat-8.5.29/webapps/
 
 #Start Tomcat Webserver
-CMD apache-tomcat-8.5.28/bin/startup.sh && tail -f apache-tomcat-8.5.28/logs/catalina.out
+CMD apache-tomcat-8.5.29/bin/startup.sh && tail -f apache-tomcat-8.5.29/logs/catalina.out
 
 # Make port 8080 available outside this container
 EXPOSE 8080

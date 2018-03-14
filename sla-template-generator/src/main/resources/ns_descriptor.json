@@ -140,11 +140,6 @@
 			"desc": "CPU Testing",
 			"metric": "cpu_perc_usage",
 			"unit": "Ghz"
-		},
-		{
-			"desc": "RAM Testing",
-			"metric": "ram_usage",
-			"unit": "Mbps"
 		}
 	]
 }

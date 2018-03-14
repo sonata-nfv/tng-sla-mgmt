@@ -1,0 +1,104 @@
+{
+  "vendor": "tango-sla-template",
+  "author": "Evgenia Kapassa, Marios Touloupou",
+  "name": "Sla Template 1",
+  "description": "",
+  "descriptor_schema": "https://raw.githubusercontent.com/sonata-nfv/tng-schema/master/service-descriptor/nsd-schema.yml",
+  "version": "0.1",
+  "sla_template": {
+    "offered_date": "14/03/2018",
+    "valid_until": "20/02/2018",
+    "service_provider_id": "sp001",
+    "ns": {
+      "description": "Example recursive network service reusing the sonata-demo NS and adding a vTC at the beginning.",
+      "objectives": [
+        {
+          "slo_value": "",
+          "slo_name": "Bandwidth",
+          "metric": [
+            {
+              "metric_id": "mtr1",
+              "expression": {
+                "expression_language": "ISO80000",
+                "expression_statement": "vnf1.CPULoad<70ANDvnf2.RAM<8",
+                "expression_unit": "",
+                "parameters": [
+                  {
+                    "parameter_unit": "",
+                    "parameter_definition": "",
+                    "parameter_value": "70",
+                    "parameter_name": "vnf1.CPULoad",
+                    "parameter_id": "prmtr1"
+                  },
+                  {
+                    "parameter_unit": "",
+                    "parameter_definition": "",
+                    "parameter_value": "8",
+                    "parameter_name": "vnf2.RAM",
+                    "parameter_id": "prmtr2"
+                  }
+                ]
+              },
+              "rate": {
+                "sampleInterval": "",
+                "parameterWindow": "10 m"
+              },
+              "metric_definition": "highTranscodingRateRule"
+            }
+          ],
+          "slo_id": "slo1",
+          "slo_definition": "Bandwidth Testing",
+          "slo_unit": "Mbps"
+        },
+        {
+          "slo_value": "",
+          "slo_name": "cpu_perc_usage",
+          "metric": [
+            {
+              "metric_id": "mtr2",
+              "expression": {
+                "expression_language": "ISO80000",
+                "expression_statement": "price<3000ANDvnf1.CPULoad<60ORvnf2.RAM<8",
+                "expression_unit": "",
+                "parameters": [
+                  {
+                    "parameter_unit": "",
+                    "parameter_definition": "",
+                    "parameter_value": "3000",
+                    "parameter_name": "price",
+                    "parameter_id": "prmtr3"
+                  },
+                  {
+                    "parameter_unit": "",
+                    "parameter_definition": "",
+                    "parameter_value": "60",
+                    "parameter_name": "vnf1.CPULoad",
+                    "parameter_id": "prmtr4"
+                  },
+                  {
+                    "parameter_unit": "",
+                    "parameter_definition": "",
+                    "parameter_value": "8",
+                    "parameter_name": "vnf2.RAM",
+                    "parameter_id": "prmtr5"
+                  }
+                ]
+              },
+              "rate": {
+                "sampleInterval": "",
+                "parameterWindow": "10 m"
+              },
+              "metric_definition": "lowTranscodingRateRule"
+            }
+          ],
+          "slo_id": "slo2",
+          "slo_definition": "CPU Testing",
+          "slo_unit": "Ghz"
+        }
+      ],
+      "ns_name": "recursive-sonata",
+      "nsd_uuid": null
+    },
+    "sla_template_version": "0.1"
+  }
+}

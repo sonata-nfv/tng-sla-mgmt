@@ -25,49 +25,30 @@
  * @author Marios Touloupou (MSc), UPRC
  * 
  */
-
 package eu.tng.tng_sla_mgmt;
 
-/** imports for RestAPI **/
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
+import static org.junit.Assert.*;
 
 import org.json.simple.JSONObject;
+import org.junit.Test;
 
+public class TemplateGenerationAPITest {
 
-/**
-*
-* @author Evgenia Kapassa <ekapassa@unipi.gr>
-* @author Marios Touloupou <mtouloup@unipi.gr>
-*/
+	@Test
+	public void testGetIt() {
+		try {
+			String nsId = "0a8b7a22-23a2-11e8-b467-0ed5f89f718b";
+			String providerId = "0a8b7ef0-23a2-11e8-b467-0ed5f89f718b";
+			String templateName = "This is a test template";
+			String expireDate = "8, March 2022";
 
-@Path("/templategeneration")
-public class TemplateGenerationAPI {
+			// call CreateTemplate method
+			CreateTemplate ct = new CreateTemplate();
+			JSONObject sla_template_test = ct.createTemplate(nsId, providerId, templateName, expireDate);
+		} catch (Exception e) {
+			assertTrue(e.getMessage().contains("404"));
+		}
 
-	 /** api call in order to generate a sla template
-	 * mendatory input parameters from the user: nsId, providerId, templateName,
-	 * expireDate
-	 * e.g.
-	 * http://localhost:8080/tng-sla-mgmt/slas/templategeneration?uuid=8effe1db-edd3-404f-8a68-92e2ebb2b176&providerId=20&templateName=lala&expireDate=20/02/2018
-	 * 
-	 * */
-	
-	@GET
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response getIt(@Context UriInfo info) {
-
-		String nsd_uuid = info.getQueryParameters().getFirst("nsd_uuid");
-		String templateName = info.getQueryParameters().getFirst("templateName");
-		String expireDate = info.getQueryParameters().getFirst("expireDate");
-
-		// call CreateTemplate method
-		CreateTemplate ct = new CreateTemplate();
-		JSONObject template = ct.createTemplate(nsd_uuid, templateName, expireDate);		
-		return Response.status(200).entity(template).build();
 	}
+
 }

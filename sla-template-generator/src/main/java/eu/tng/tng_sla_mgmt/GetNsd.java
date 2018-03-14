@@ -1,3 +1,30 @@
+/*
+ * Copyright (c) 2017 5GTANGO, UPRC ALL RIGHTS RESERVED.
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
+ * in compliance with the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the License
+ * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the License for the specific language governing permissions and limitations under
+ * the License.
+ * 
+ * Neither the name of the 5GTANGO, UPRC nor the names of its contributors
+ * may be used to endorse or promote products derived from this software without specific prior
+ * written permission.
+ * 
+ * This work has been performed in the framework of the 5GTANGO project, funded by the European
+ * Commission under Grant number 761493 through the Horizon 2020 and 5G-PPP programmes. The authors
+ * would like to acknowledge the contributions of their colleagues of the 5GTANGO partner consortium
+ * (www.5gtango.eu).
+ *
+ * @author Evgenia Kapassa (MSc), UPRC
+ * 
+ * @author Marios Touloupou (MSc), UPRC
+ * 
+ */
 package eu.tng.tng_sla_mgmt;
 
 import java.io.BufferedReader;
@@ -13,21 +40,21 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
+
 public class GetNsd {
 
 	public void getNSD(String nsId) {
 		Nsd setNsdFields = new Nsd();
-		ArrayList<String> mon_desc_list = new ArrayList();
-		ArrayList<String> mon_metric_list = new ArrayList();
-		ArrayList<String> mon_unit_list = new ArrayList();
-		ArrayList<String> soft_con_list = new ArrayList();
+		ArrayList<String> mon_desc_list = new ArrayList<String>();
+		ArrayList<String> mon_metric_list = new ArrayList<String>();
+		ArrayList<String> mon_unit_list = new ArrayList<String>();
 
 		try {
 			// api call to catalogue in order to get the nsd with specific id =
-			// c490d183-0abc-4927-bf40-072233e12497
+			// cc4d091a-9a91-4810-827d-82bd77781cd9
 
-			String url_string = "http://pre-int-sp-ath.5gtango.eu:4002/catalogues/api/v2/network-services/" + nsId;
-			URL url = new URL(url_string);
+			//String url_string = "http://pre-int-sp-ath.5gtango.eu:4002/catalogues/api/v2/network-services/" + nsId;
+			URL url = new URL("https://api.myjson.com/bins/13dxid");
 			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 			conn.setRequestProperty("Content-Type", "application/json");
 			if (conn.getResponseCode() != 200) {
@@ -42,10 +69,10 @@ public class GetNsd {
 				try {
 
 					Object obj = parser.parse(output);
-					JSONObject jsonObject = (JSONObject) obj;
-					if (jsonObject.containsKey("nsd")) {
-						JSONObject nsd = (JSONObject) jsonObject.get("nsd");
-
+					//JSONObject jsonObject = (JSONObject) obj; 
+					//if (jsonObject.containsKey("nsd")) {
+						//JSONObject nsd = (JSONObject) jsonObject.get("nsd");
+					    JSONObject nsd = (JSONObject) obj;
 						// get nsd name
 						String name = (String) nsd.get("name");
 						setNsdFields.setName(name);
@@ -68,16 +95,7 @@ public class GetNsd {
 							setNsdFields.SetMonUnit(mon_unit_list);
 
 						}
-						// get soft_constrains
-						if (nsd.containsKey("soft_constraints")) {
-							JSONArray soft_constraints = (JSONArray) nsd.get("soft_constraints");
-							for (int i = 0; i < soft_constraints.size(); i++) {
-								String soft_constraint = (String) soft_constraints.get(i);
-								soft_con_list.add(soft_constraint);
-							}
-							setNsdFields.SetSoftCon(soft_con_list);
-						}
-					}
+					//}
 
 				} catch (ParseException e) {
 					e.printStackTrace();
