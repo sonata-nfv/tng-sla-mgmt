@@ -25,4 +25,3 @@ services:
 #    container_name: python_test_app
 #    restart: always
 #    build: ./sla-repository
-  
