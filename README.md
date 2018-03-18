@@ -10,7 +10,9 @@ The mechanisms included in the tng-sla-mgmt include:
 *  SLA Mapping Mechanism:  mapping between the high-level requirements described by the end-user and the low-level requirements described by the service provider
 *  SLA Parameter Analyzer: decide whether the process of the mapping mechanism should be done or not
 *  SLA Mapping Repository: store the correlations between the high-level and the low-level requirements (mapping mechanism output)
-*  SLA Monitor Analyzer: Compare the QoS parameters from the Mapping Repository, with the computed monitoring measurements and check if there is any violation
+*  SLA Monitor Analyzer: Compare the QoS parameters from the Mapping Repository, with the computed monitoring measurements and check if there is any violation  
+
+More details can be found on the [5GTANGO SLA Manager Wiki Page](https://github.com/sonata-nfv/tng-sla-mgmt/wiki)
 
 ## Installation
 ToDo
