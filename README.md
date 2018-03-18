@@ -16,7 +16,17 @@ The mechanisms included in the tng-sla-mgmt include:
 ToDo
 
 ## API Documentation
-ToDo
+`wip`
+
+### SLA Templates Management 
+The REST interface to the SLA Templates Management supports the following :
+* Create a new template [POST]  
+	* Allows to create a new sla template. It takes as input the applicable NS uuid, a template name, and an expiration date. It might include a TemplateId or not.
+    * `curl "http://tng-sla-manager:8080/tng-sla-mgmt/slas/templategeneration?nsd_uuid=<nsd-uuid>&templateName=<template-name>&expireDate=<date-of-expiration>"`
+	
+* Modify an existing template [PUT]
+    * Updates the template identified by the sla template id (uuid).
+	* `curl "http://tng-sla-manager:8080/tng-sla-mgmt/slas/templates?uuid=<sla-template-uuid>"`
 
 
 ## Development
