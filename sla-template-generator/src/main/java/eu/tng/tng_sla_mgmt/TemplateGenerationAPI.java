@@ -28,7 +28,11 @@
 
 package eu.tng.tng_sla_mgmt;
 
-/** imports for RestAPI **/
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -67,7 +71,40 @@ public class TemplateGenerationAPI {
 
 		// call CreateTemplate method
 		CreateTemplate ct = new CreateTemplate();
-		JSONObject template = ct.createTemplate(nsd_uuid, templateName, expireDate);		
-		return Response.status(200).entity(template).build();
+		JSONObject template = ct.createTemplate(nsd_uuid, templateName, expireDate);
+			
+        try {
+            String url = "http://83.212.238.144:4011/catalogues/api/v2/sla/template-descriptors";
+            URL object = new URL(url);
+
+            HttpURLConnection con = (HttpURLConnection) object.openConnection();
+            con.setDoOutput(true);
+            con.setDoInput(true);
+            con.setRequestProperty("Content-Type", "application/json");
+            con.setRequestProperty("Accept", "application/json");
+            con.setRequestMethod("POST");
+            
+            OutputStreamWriter wr = new OutputStreamWriter(con.getOutputStream());
+            wr.write(template.toString());
+            wr.flush();
+            
+            StringBuilder sb = new StringBuilder();
+			int HttpResult = con.getResponseCode();
+			if (HttpResult == HttpURLConnection.HTTP_OK) {
+				BufferedReader br = new BufferedReader(new InputStreamReader(con.getInputStream(), "utf-8"));
+				String line = null;
+				while ((line = br.readLine()) != null) {
+					sb.append(line + "\n");
+				}
+				br.close();
+				System.out.println("" + sb.toString());
+			} else {
+				System.out.println(con.getResponseMessage());
+			}
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        
+        return Response.status(200).entity(template).build();				
 	}
 }
