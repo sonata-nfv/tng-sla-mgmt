@@ -50,14 +50,14 @@ public class GetNsd {
 		ArrayList<String> mon_unit_list = new ArrayList<String>();
 
 		try {
-
-			URL url = new URL("http://83.212.238.144:4011/catalogues/api/v2/network-services/" + nsId);
+			URL url = new URL("http://pre-int-sp-ath.5gtango.eu:4011/catalogues/api/v2/network-services/" + nsId);
 			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 			conn.setRequestProperty("Content-Type", "application/json");
+			
 			if (conn.getResponseCode() != 200) {
 				throw new RuntimeException("Failed : HTTP error code : " + conn.getResponseCode());
 			}
-
+			
 			BufferedReader br = new BufferedReader(new InputStreamReader((conn.getInputStream())));
 			String output;
 

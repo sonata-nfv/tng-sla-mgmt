@@ -13,9 +13,28 @@
 		</init-param>
 		<load-on-startup>1</load-on-startup>
 	</servlet>
+	
+	
+	<servlet>
+		<servlet-name>Modify Template Service</servlet-name>
+		<servlet-class>com.sun.jersey.spi.container.servlet.ServletContainer</servlet-class>
+		<init-param>
+			<param-name>com.sun.jersey.config.property.packages</param-name>
+			<param-value>eu.tng.modify_sla_template</param-value>
+		</init-param>
+		<load-on-startup>2</load-on-startup>
+	</servlet>
+	
+	
 	<servlet-mapping>
 		<servlet-name>Jersey Web Application</servlet-name>
 		<url-pattern>/slas/*</url-pattern>
 	</servlet-mapping>
 
+	
+	<servlet-mapping>
+		<servlet-name>Modify Template Service</servlet-name>
+		<url-pattern>/modify/*</url-pattern>
+	</servlet-mapping>
+	
 </web-app>
