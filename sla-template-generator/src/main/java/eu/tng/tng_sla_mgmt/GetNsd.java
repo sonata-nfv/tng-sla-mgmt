@@ -50,17 +50,14 @@ public class GetNsd {
 		ArrayList<String> mon_unit_list = new ArrayList<String>();
 
 		try {
-			// api call to catalogue in order to get the nsd with specific id =
-			// cc4d091a-9a91-4810-827d-82bd77781cd9
-
-			//String url_string = "http://pre-int-sp-ath.5gtango.eu:4002/catalogues/api/v2/network-services/" + nsId;
-			URL url = new URL("https://api.myjson.com/bins/13dxid");
+			URL url = new URL("http://pre-int-sp-ath.5gtango.eu:4011/catalogues/api/v2/network-services/" + nsId);
 			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 			conn.setRequestProperty("Content-Type", "application/json");
+			
 			if (conn.getResponseCode() != 200) {
 				throw new RuntimeException("Failed : HTTP error code : " + conn.getResponseCode());
 			}
-
+			
 			BufferedReader br = new BufferedReader(new InputStreamReader((conn.getInputStream())));
 			String output;
 
@@ -69,10 +66,10 @@ public class GetNsd {
 				try {
 
 					Object obj = parser.parse(output);
-					//JSONObject jsonObject = (JSONObject) obj; 
-					//if (jsonObject.containsKey("nsd")) {
-						//JSONObject nsd = (JSONObject) jsonObject.get("nsd");
-					    JSONObject nsd = (JSONObject) obj;
+					JSONObject jsonObject = (JSONObject) obj; 
+					if (jsonObject.containsKey("nsd")) {
+						JSONObject nsd = (JSONObject) jsonObject.get("nsd");
+						
 						// get nsd name
 						String name = (String) nsd.get("name");
 						setNsdFields.setName(name);
@@ -95,7 +92,7 @@ public class GetNsd {
 							setNsdFields.SetMonUnit(mon_unit_list);
 
 						}
-					//}
+					}
 
 				} catch (ParseException e) {
 					e.printStackTrace();

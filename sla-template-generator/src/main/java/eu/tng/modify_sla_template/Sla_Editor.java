@@ -25,31 +25,33 @@
  * @author Marios Touloupou (MSc), UPRC
  * 
  */
+package eu.tng.modify_sla_template;
 
-package eu.tng.tng_sla_mgmt;
+import java.util.ArrayList;
 
-import static org.junit.Assert.*;
+import org.json.simple.JSONObject;
 
-import java.net.HttpURLConnection;
-import java.net.URL;
+public class Sla_Editor {
 
-import org.junit.Test;
+	public static String Edit_value(String sla_uuid, String field, String value) {
 
-public class GetPolicyRulesTest {
+		Modify_Sla modifier = new Modify_Sla();
+		Get_Sla_Template get_sla_template = new Get_Sla_Template();
 
-	@Test
-	public void testGetPolicyRules() {
-		try {
-			String url_string = "https://api.myjson.com/bins/virrd";
-			URL url = new URL(url_string);
-			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-			conn.setRequestProperty("Content-Type", "application/json");
+		JSONObject sla_template = get_sla_template.Get_Sla(sla_uuid);
+		String state = (String) sla_template.get("state");
 
-			assertTrue(conn.getResponseCode() == 200);
-
-		} catch (Exception e) {
-			e.printStackTrace();
+		
+		if (state.equals("published")) {
+			int response = modifier.switchState(sla_uuid);
+			if (response == 200) {
+				modifier.editField(get_sla_template.Get_Sla(sla_uuid), sla_uuid, field, value);
+			}
+		} else {
+			modifier.editField(sla_template, sla_uuid, field, value);
 		}
+		sla_template = null;
+		return "Edited";
 	}
 
 }

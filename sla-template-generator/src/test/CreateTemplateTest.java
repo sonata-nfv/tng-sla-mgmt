@@ -42,8 +42,7 @@ public class CreateTemplateTest {
 	public void testCreateTemplate() {
 		
 		Date offered_date = new Date();
-		String nsId = "054cc864-238d-11e8-b467-0ed5f89f718b";
-		String providerId = "238d";
+		String nsd_uuid = "054cc864-238d-11e8-b467-0ed5f89f718b";
 		String templateName = "test_template_1";
 		String expireDate = "Mar 8, 2018";
 		String ns_name = "test_name";
@@ -71,7 +70,7 @@ public class CreateTemplateTest {
 		
 		// ns object
 		JSONObject ns = new JSONObject();
-		ns.put("ns_id", nsId);
+		ns.put("nsd_uuid", nsd_uuid);
 		ns.put("ns_name", ns_name);
 		ns.put("description", ns_description);
 		sla_template.put("ns", ns);

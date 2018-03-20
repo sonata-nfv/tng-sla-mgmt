@@ -29,26 +29,26 @@ package eu.tng.tng_sla_mgmt;
 
 import static org.junit.Assert.*;
 
-import org.json.simple.JSONObject;
+import java.net.HttpURLConnection;
+import java.net.URL;
+
 import org.junit.Test;
 
-public class TemplateGenerationAPITest {
+public class GetPolicyRulesTest {
 
 	@Test
-	public void testGetIt() {
+	public void testGetPolicyRules() {
 		try {
-			String nsId = "0a8b7a22-23a2-11e8-b467-0ed5f89f718b";
-			String providerId = "0a8b7ef0-23a2-11e8-b467-0ed5f89f718b";
-			String templateName = "This is a test template";
-			String expireDate = "8, March 2022";
+			String url_string = "https://api.myjson.com/bins/virrd";
+			URL url = new URL(url_string);
+			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+			conn.setRequestProperty("Content-Type", "application/json");
 
-			// call CreateTemplate method
-			CreateTemplate ct = new CreateTemplate();
-			JSONObject sla_template_test = ct.createTemplate(nsId, providerId, templateName, expireDate);
+			assertTrue(conn.getResponseCode() == 200);
+
 		} catch (Exception e) {
-			assertTrue(e.getMessage().contains("404"));
+			e.printStackTrace();
 		}
-
 	}
 
 }
