@@ -19,18 +19,6 @@
 					<target>1.7</target>
 				</configuration>
 			</plugin>
-			<!-- Run the application using "mvn embedded-glassfish:run" -->
-			<plugin>
-				<groupId>org.glassfish</groupId>
-				<artifactId>maven-embedded-glassfish-plugin</artifactId>
-				<version>${glassfish.version}</version>
-				<configuration>
-					<goalPrefix>embedded-glassfish</goalPrefix>
-					<autoDelete>true</autoDelete>
-					<port>8080</port>
-				</configuration>
-			</plugin>
-
 		</plugins>
 	</build>
 	<dependencies>
@@ -72,7 +60,6 @@
 			<artifactId>json-simple</artifactId>
 			<version>1.1.1</version>
 		</dependency>
-		<!-- https://mvnrepository.com/artifact/org.apache.httpcomponents/httpclient -->
 		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>
 			<artifactId>httpclient</artifactId>

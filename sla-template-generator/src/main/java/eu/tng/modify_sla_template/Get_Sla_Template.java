@@ -41,7 +41,7 @@ public class Get_Sla_Template {
     public JSONObject Get_Sla(String uuid) {
         JSONObject sla_obj = null;
         try {
-            URL url = new URL("http://pre-int-sp-ath.5gtango.eu:4011/catalogues/sla/template-descriptors/" + uuid);
+            URL url = new URL("http://pre-int-sp-ath.5gtango.eu:4011/catalogues/slas/template-descriptors/" + uuid);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestProperty("Content-Type", "application/json");
             if (conn.getResponseCode() != 200) {

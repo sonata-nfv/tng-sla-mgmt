@@ -32,25 +32,18 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
-
 import com.google.gson.Gson;
-import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
-import com.jayway.jsonpath.Option;
 
 public class Modify_Sla {
 
     public int switchState(String uuid) {
         int HttpResult = 0;
         try {
-            URL url = new URL("http://http://pre-int-sp-ath.5gtango.eu:4011/catalogues/api/v2/sla/template-descriptors/"
+            URL url = new URL("http://http://pre-int-sp-ath.5gtango.eu:4011/catalogues/api/v2/slas/template-descriptors/"
                     + uuid + "?state=unpublished");
             HttpURLConnection httpCon = (HttpURLConnection) url.openConnection();
             httpCon.setDoOutput(true);
@@ -72,7 +65,7 @@ public class Modify_Sla {
     public int switchStatus(String uuid) {
         int HttpResult = 0;
         try {
-            URL url = new URL("http://pre-int-sp-ath.5gtango.eu:4011/catalogues/api/v2/sla/template-descriptors/" + uuid
+            URL url = new URL("http://pre-int-sp-ath.5gtango.eu:4011/catalogues/api/v2/slas/template-descriptors/" + uuid
                     + "?status=inactive");
             HttpURLConnection httpCon = (HttpURLConnection) url.openConnection();
             httpCon.setDoOutput(true);
@@ -91,7 +84,8 @@ public class Modify_Sla {
         return HttpResult;
     }
 
-    public void editField(JSONObject sla_template, String sla_uuid, String field, String value) {
+    @SuppressWarnings("unchecked")
+    public String editField(JSONObject sla_template, String sla_uuid, String field, String value) {
 
         String FieldPath = "";
         // Remove root element inserted by the Catalogue
@@ -154,15 +148,17 @@ public class Modify_Sla {
         DocumentContext doc = JsonPath.parse(jsonObject).set(FieldPath, value);
         String newJson = new Gson().toJson(doc.read("$"));
 
-        PUTsla(newJson, sla_uuid);
+        String new_uuid = PUTsla(newJson, sla_uuid);
+        return new_uuid;
     }
 
-    public void PUTsla(String jsonObj, String sla_uuid) {
-
+    public String PUTsla(String jsonObj, String sla_uuid) {
+        String new_uuid = "";
         JSONParser parser = new JSONParser();
         try {
-            JSONObject edited_sla = (JSONObject) parser.parse(jsonObj);
-            String url = "http://pre-int-sp-ath.5gtango.eu:4011/catalogues/api/v2/sla/template-descriptors/" + sla_uuid;
+            JSONObject edited_sla = (JSONObject) parser.parse(jsonObj);         
+            
+            String url = "http://pre-int-sp-ath.5gtango.eu:4011/catalogues/api/v2/slas/template-descriptors/" + sla_uuid;
             URL object = new URL(url);
 
             HttpURLConnection con = (HttpURLConnection) object.openConnection();
@@ -185,14 +181,17 @@ public class Modify_Sla {
                     sb.append(line + "\n");
                 }
                 br.close();
-                System.out.println("" + sb.toString());
+                //System.out.println("" + sb.toString());
+                JSONObject json_to_return = (JSONObject) parser.parse(sb.toString());
+                new_uuid = (String) json_to_return.get("uuid");
             } else {
                 System.out.println(con.getResponseMessage());
             }
 
         } catch (Exception e) {
             e.printStackTrace();
-        }
+        }       
+        return new_uuid;
     }
 
 }

@@ -25,30 +25,41 @@
  * @author Marios Touloupou (MSc), UPRC
  * 
  */
+
 package eu.tng.tng_sla_mgmt;
 
 import static org.junit.Assert.*;
-
-import java.net.HttpURLConnection;
-import java.net.URL;
-
+import java.io.FileReader;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 import org.junit.Test;
+import com.jayway.jsonpath.Configuration;
+import com.jayway.jsonpath.JsonPath;
 
-public class GetPolicyRulesTest {
+public class GetNsdTest {
 
-	@Test
-	public void testGetPolicyRules() {
-		try {
-			String url_string = "https://api.myjson.com/bins/virrd";
-			URL url = new URL(url_string);
-			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-			conn.setRequestProperty("Content-Type", "application/json");
+    @Test
+    public void testGetNSD() {
+        String nsfield1 = "eu.tango-nfv.service-descriptor";
+        String nsfield2 = "Stefan Schneider, Paderborn University";
+        String nsfield3 = "recursive-sonata";
 
-			assertTrue(conn.getResponseCode() == 200);
+        JSONObject slaD = null;
+        Configuration conf = Configuration.defaultConfiguration();
 
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+        JSONParser parser = new JSONParser();
+        try {
+            slaD = (JSONObject) parser.parse(new FileReader("src/main/resources/ns_descriptor.json"));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        String nsvendor = JsonPath.using(conf).parse(slaD).read("vendor");
+        String nsauthor = JsonPath.using(conf).parse(slaD).read("author");
+        String nsname = JsonPath.using(conf).parse(slaD).read("name");
+
+        assertTrue(nsfield1.equals(nsvendor) && nsfield2.equals(nsauthor) && nsfield3.equals(nsname));
+
+    }
 
 }

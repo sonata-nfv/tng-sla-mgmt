@@ -31,83 +31,90 @@ package eu.tng.tng_sla_mgmt;
 import java.util.ArrayList;
 
 public class PolicyRule {
-	private static ArrayList<String> name = new ArrayList<String>();
-	private static ArrayList<String> field = new ArrayList<String>();
-	private static ArrayList<String> operator = new ArrayList<String>();
-	private static ArrayList<String> type = new ArrayList<String>();
-	private static ArrayList<String> value = new ArrayList<String>();
-	private static ArrayList<String> duration = new ArrayList<String>();
+    private static ArrayList<String> name = new ArrayList<String>();
+    private static ArrayList<String> field = new ArrayList<String>();
+    private static ArrayList<String> operator = new ArrayList<String>();
+    private static ArrayList<String> type = new ArrayList<String>();
+    private static ArrayList<String> value = new ArrayList<String>();
+    private static ArrayList<String> duration = new ArrayList<String>();
 
-	private static ArrayList<String> expression = new ArrayList<String>();
+    private static ArrayList<String> expression = new ArrayList<String>();
 
-	// public method to get the ns mon_desc
-	public ArrayList<String> getName() {
-		return name;
-	}
+    // public method to get the ns mon_desc
+    public ArrayList<String> getName() {
+        return name;
+    }
 
-	// public method to set the ns mon_desc
-	public void setName(ArrayList<String> mon_desc) {
-		this.name = mon_desc;
-	}
+    // public method to set the ns mon_desc
+    @SuppressWarnings("static-access")
+    public void setName(ArrayList<String> mon_desc) {
+        this.name = mon_desc;
+    }
 
-	// public method to get the policy rule field
-	public ArrayList<String> getField() {
-		return field;
-	}
+    // public method to get the policy rule field
+    public ArrayList<String> getField() {
+        return field;
+    }
 
-	// public method to set the ns field
-	public void setField(ArrayList<String> field) {
-		this.field = field;
-	}
+    // public method to set the ns field
+    @SuppressWarnings("static-access")
+    public void setField(ArrayList<String> field) {
+        this.field = field;
+    }
 
-	// public method to get the policy rule operator
-	public ArrayList<String> getOperator() {
-		return operator;
-	}
+    // public method to get the policy rule operator
+    public ArrayList<String> getOperator() {
+        return operator;
+    }
 
-	// public method to set the ns operator
-	public void setOperator(ArrayList<String> operator) {
-		this.operator = operator;
-	}
+    // public method to set the ns operator
+    @SuppressWarnings("static-access")
+    public void setOperator(ArrayList<String> operator) {
+        this.operator = operator;
+    }
 
-	// public method to get the policy rule type
-	public ArrayList<String> getType() {
-		return type;
-	}
+    // public method to get the policy rule type
+    public ArrayList<String> getType() {
+        return type;
+    }
 
-	// public method to set the ns type
-	public void setType(ArrayList<String> type) {
-		this.type = type;
-	}
+    // public method to set the ns type
+    @SuppressWarnings("static-access")
+    public void setType(ArrayList<String> type) {
+        this.type = type;
+    }
 
-	// public method to get the policy rule value
-	public ArrayList<String> getValue() {
-		return value;
-	}
+    // public method to get the policy rule value
+    public ArrayList<String> getValue() {
+        return value;
+    }
 
-	// public method to set the ns value
-	public void setValue(ArrayList<String> value) {
-		this.value = value;
-	}
+    // public method to set the ns value
+    @SuppressWarnings("static-access")
+    public void setValue(ArrayList<String> value) {
+        this.value = value;
+    }
 
-	// public method to get the policy rule value
-	public ArrayList<String> getDuration() {
-		return duration;
-	}
+    // public method to get the policy rule value
+    public ArrayList<String> getDuration() {
+        return duration;
+    }
 
-	// public method to set the ns value
-	public void setDuration(ArrayList<String> duration) {
-		this.duration = duration;
-	}
+    // public method to set the ns value
+    @SuppressWarnings("static-access")
+    public void setDuration(ArrayList<String> duration) {
+        this.duration = duration;
+    }
 
-	// public method to get the expression
-	public ArrayList<String> getExpression() {
-		return expression;
-	}
+    // public method to get the expression
+    public ArrayList<String> getExpression() {
+        return expression;
+    }
 
-	// public method to set the expression
-	public void setExpression(ArrayList<String> expression) {
-		this.expression = expression;
-	}
+    // public method to set the expression
+    @SuppressWarnings("static-access")
+    public void setExpression(ArrayList<String> expression) {
+        this.expression = expression;
+    }
 
 }

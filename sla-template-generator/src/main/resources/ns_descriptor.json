@@ -50,7 +50,7 @@
 		},
 		{
 			"id": "input-2-vtc",
-			"connectivity_type": "E-Line",
+			"connectivity_type": "E-Line",			
 			"connection_points_reference": [
 				"input",
 				"vnf_vtc:input"
