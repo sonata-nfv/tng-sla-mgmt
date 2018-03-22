@@ -33,6 +33,8 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.List;
+
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -43,6 +45,9 @@ import javax.ws.rs.core.UriInfo;
 
 import org.json.simple.JSONObject;
 
+import com.jayway.jsonpath.Configuration;
+import com.jayway.jsonpath.JsonPath;
+
 /**
  *
  * @author Evgenia Kapassa <ekapassa@unipi.gr>
@@ -52,57 +57,64 @@ import org.json.simple.JSONObject;
 @Path("/templategeneration")
 public class TemplateGenerationAPI {
 
-	/**
-	 * api call in order to generate a sla template mendatory input parameters from
-	 * the user: nsId, providerId, templateName, expireDate e.g.
-	 * http://localhost:8080/tng-sla-mgmt/slas/templategeneration?uuid=8effe1db-edd3-404f-8a68-92e2ebb2b176&providerId=20&templateName=lala&expireDate=20/02/2018
-	 * 
-	 */
+    /**
+     * api call in order to generate a sla template mendatory input parameters from
+     * the user: nsId, providerId, templateName, expireDate e.g.
+     * http://localhost:8080/tng-sla-mgmt/slas/templategeneration?uuid=8effe1db-edd3-404f-8a68-92e2ebb2b176&providerId=20&templateName=lala&expireDate=20/02/2018
+     * 
+     */
 
-	@GET
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response getIt(@Context UriInfo info) {
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getIt(@Context UriInfo info) {
 
-		String nsd_uuid = info.getQueryParameters().getFirst("nsd_uuid");
-		String templateName = info.getQueryParameters().getFirst("templateName");
-		String expireDate = info.getQueryParameters().getFirst("expireDate");
+        String nsd_uuid = info.getQueryParameters().getFirst("nsd_uuid");
+        String templateName = info.getQueryParameters().getFirst("templateName");
+        String expireDate = info.getQueryParameters().getFirst("expireDate");
 
-		// call CreateTemplate method
-		CreateTemplate ct = new CreateTemplate();
-		JSONObject template = ct.createTemplate(nsd_uuid, templateName, expireDate);
-		
-		try {
-			String url = "http://pre-int-sp-ath.5gtango.eu:4011/catalogues/api/v2/sla/template-descriptors";
-			URL object = new URL(url);
+        Configuration conf = Configuration.defaultConfiguration();
 
-			HttpURLConnection con = (HttpURLConnection) object.openConnection();
-			con.setDoOutput(true);
-			con.setDoInput(true);
-			con.setRequestProperty("Content-Type", "application/json");
-			con.setRequestProperty("Accept", "application/json");
-			con.setRequestMethod("POST");
+        // call CreateTemplate method
+        CreateTemplate ct = new CreateTemplate();
+        JSONObject template = ct.createTemplate(nsd_uuid, templateName, expireDate);
 
-			OutputStreamWriter wr = new OutputStreamWriter(con.getOutputStream());
-			wr.write(template.toString());
-			wr.flush();
+        List<String> metrics = JsonPath.using(conf).parse(template).read("sla_template.ns.objectives[0].metric[*]");
 
-			StringBuilder sb = new StringBuilder();
-			int HttpResult = con.getResponseCode();
-			if (HttpResult == HttpURLConnection.HTTP_OK) {
-				BufferedReader br = new BufferedReader(new InputStreamReader(con.getInputStream(), "utf-8"));
-				String line = null;
-				while ((line = br.readLine()) != null) {
-					sb.append(line + "\n");
-				}
-				br.close();
-				System.out.println("" + sb.toString());
-			} else {
-				System.out.println(con.getResponseMessage());
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+        if (metrics.size() > 0) {
+            try {
+                String url = "http://pre-int-sp-ath.5gtango.eu:4011/catalogues/api/v2/slas/template-descriptors";
+                URL object = new URL(url);
 
-		return Response.status(200).entity(template).build();
-	}
+                HttpURLConnection con = (HttpURLConnection) object.openConnection();
+                con.setDoOutput(true);
+                con.setDoInput(true);
+                con.setRequestProperty("Content-Type", "application/json");
+                con.setRequestProperty("Accept", "application/json");
+                con.setRequestMethod("POST");
+
+                OutputStreamWriter wr = new OutputStreamWriter(con.getOutputStream());
+                wr.write(template.toString());
+                wr.flush();
+
+                StringBuilder sb = new StringBuilder();
+                int HttpResult = con.getResponseCode();
+                if (HttpResult == HttpURLConnection.HTTP_OK) {
+                    BufferedReader br = new BufferedReader(new InputStreamReader(con.getInputStream(), "utf-8"));
+                    String line = null;
+                    while ((line = br.readLine()) != null) {
+                        sb.append(line + "\n");
+                    }
+                    br.close();
+                    System.out.println("" + sb.toString());
+                } else {
+                    System.out.println(con.getResponseMessage());
+                }
+            } catch (Exception e) {
+            }
+            return Response.status(200).entity(template).build();
+
+        } else {
+            return Response.status(Response.Status.NOT_FOUND).entity("NSD and/or policyD NOT FOUND").build();
+        }
+    }
 }
