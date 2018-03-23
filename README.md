@@ -18,17 +18,20 @@ More details can be found on the [5GTANGO SLA Manager Wiki Page](https://github.
 ToDo
 
 ## API Documentation
-`wip`
 
 ### SLA Templates Management 
 The REST interface to the SLA Templates Management supports the following :
 * Create a new template [POST]  
 	* Allows to create a new sla template. It takes as input the applicable NS uuid, a template name, and an expiration date. It might include a TemplateId or not.
-    * `curl "http://tng-sla-manager:8080/tng-sla-mgmt/slas/templategeneration?nsd_uuid=<nsd-uuid>&templateName=<template-name>&expireDate=<date-of-expiration>"`
+    * `curl "http://localhost:8080/tng-sla-mgmt/api/v3/slas/templategeneration?nsd_uuid=<>&templateName=<>&expireDate=<>"`
+	
+* Edit an existing template [PUT]
+    * Updates the template identified by the sla template id (uuid) by *editing specific fields in the template*
+	* `curl "http://localhost:8080/tng-sla-mgmt/api/v3/slas/modify/templates?uuid=<>&field=<>&old_value=<>&value=<>"`
 	
 * Modify an existing template [PUT]
-    * Updates the template identified by the sla template id (uuid).
-	* `curl "http://tng-sla-manager:8080/tng-sla-mgmt/slas/templates?uuid=<sla-template-uuid>"`
+    * Updates the template identified by the sla template id (uuid) by *adding new objectives in the template*
+	* `curl "http://localhost:8080/tng-sla-mgmt/api/v3/slas/modify/templates/customize?uuid=<>&objectives=[]&slo_value=[]&slo_definition=[]&slo_unit=[]&metric=[]&expression=[]&expression_unit=[]&rate=[]&parameter_name=[]&parameter_value=[]&parameter_definition=[]&parameter_unit=[]"`
 
 
 ## Development
