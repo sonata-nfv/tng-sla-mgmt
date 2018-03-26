@@ -109,8 +109,13 @@ public class CreateTemplate {
             metric_obj.put("metric_definition", getPolicyRule.getName().get(i));
 
             JSONObject rate = new JSONObject();
-            rate.put("parameterWindow", getPolicyRule.getDuration().get(i));
-            rate.put("sampleInterval", "");
+
+            try {
+                getPolicyRule.getDuration().get(i);
+                rate.put("parameterWindow", getPolicyRule.getDuration().get(i));
+            } catch (IndexOutOfBoundsException e) {
+                rate.put("parameterWindow", "");
+            }
 
             JSONObject expression = new JSONObject();
             expression.put("expression_statement", getPolicyRule.getExpression().get(i));
