@@ -1,0 +1,15 @@
+# Java
+*.class
+*.log
+*.project
+*.classpath
+
+# Package Files
+*.jar
+!compass*
+
+# Maven
+target/
+.settings/
+
+

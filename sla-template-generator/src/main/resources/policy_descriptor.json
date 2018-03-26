@@ -1,113 +1,84 @@
 {
-	"descriptor_schema": "https://raw.githubusercontent.com/sonata-nfv/tng-schema/master/policy-descriptor/policy-schema.yml",
-	"name": "samplepolicyv1",
-	"policyRules": [
-		{
-			"actions": [
-				{
-					"action_type": "Infrastracture",
-					"name": "ApplyFlavour",
-					"target": "vnf1",
-					"value": "3"
-				}
-			],
-			"aggregation": "avg",
-			"conditions": {
-				"condition": "AND",
-				"rules": [
-					{
-						"field": "vnf1.CPULoad",
-						"id": "vnf1.CPULoad",
-						"input": "number",
-						"operator": "greater",
-						"type": "double",
-						"value": "70"
-					},
-					{
-						"field": "vnf2.RAM",
-						"id": "vnf2.RAM",
-						"input": "select",
-						"operator": "less",
-						"type": "integer",
-						"value": "8"
-					}
-				]
-			},
-			"duration": {
-				"duration_unit": "m",
-				"value": 10
-			},
-			"inertia": {
-				"duration_unit": "m",
-				"value": 30
-			},
-			"name": "highTranscodingRateRule",
-			"salience": 1
-		},
-		{
-			"actions": [
-				{
-					"action_type": "NetworkMechanism",
-					"name": "ProvideDedicatedBandwidth",
-					"target": "VirtualLinkA",
-					"value": "200"
-				},
-				{
-					"action_type": "LifecycleManagement",
-					"name": "restart",
-					"stability_period": {
-						"duration_unit": "m",
-						"value": 30
-					},
-					"target": "vnf1"
-				},
-				{
-					"action_type": "Profile",
-					"name": "setProfile",
-					"profile_tag": "Green",
-					"target": "vnf1"
-				}
-			],
-			"aggregation": "avg",
-			"conditions": {
-				"condition": "AND",
-				"rules": [
-					{
-						"field": "price",
-						"id": "VirtualLinkA.EndToEndDelay",
-						"input": "number",
-						"operator": "less",
-						"type": "double",
-						"value": "3000"
-					},
-					{
-						"condition": "OR",
-						"rules": [
-							{
-								"field": "vnf1.CPULoad",
-								"id": "vnf1.CPULoad",
-								"input": "select",
-								"operator": "greater",
-								"type": "integer",
-								"value": "60"
-							},
-							{
-								"field": "vnf2.RAM",
-								"id": "vnf2.RAM",
-								"input": "select",
-								"operator": "equal",
-								"type": "integer",
-								"value": "8"
-							}
-						]
-					}
-				]
-			},
-			"duration": {
-				"duration_unit": "m",
-				"value": 10
-			},
-			"name": "lowTranscodingRateRule"
-		}
-	]
+  "descriptor_schema": "https://raw.githubusercontent.com/sonata-nfv/tng-schema/master/policy-descriptor/policy-schema.yml",
+  "name": "samplepolicydemo",
+  "network_service": {
+    "vendor": "tango",
+    "name": "default-nsd",
+    "version": "0.9"
+  },
+  "policyRules": [
+    {
+      "name": "actionUponAlert",
+      "salience": "1",
+      "inertia": {
+        "value": "30",
+        "duration_unit": "m"
+      },
+      "conditions": {
+        "condition": "AND",
+        "rules": [
+          {
+            "id": "vnf1.LogMetric",
+            "field": "vnf1.LogMetric",
+            "type": "string",
+            "input": "text",
+            "operator": "equal",
+            "value": "mon_rule_vm_cpu_perc"
+          }
+        ]
+      },
+      "actions": [
+        {
+          "action_object": "ComponentResourceAllocationAction",
+          "action_type": "InfrastructureType",
+          "name": "ApplyFlavour",
+          "value": "3",
+          "target": "vnf1"
+        }
+      ]
+    },
+    {
+      "name": "highTranscodingRateRule",
+      "salience": "1",
+      "inertia": {
+        "value": "30",
+        "duration_unit": "m"
+      },
+      "duration": {
+        "value": "10",
+        "duration_unit": "m"
+      },
+      "aggregation": "avg",
+      "conditions": {
+        "condition": "AND",
+        "rules": [
+          {
+            "id": "vnf1.CPULoad",
+            "field": "vnf1.CPULoad",
+            "type": "double",
+            "input": "number",
+            "operator": "greater",
+            "value": "70"
+          },
+          {
+            "id": "vnf2.RAM",
+            "field": "vnf2.RAM",
+            "type": "integer",
+            "input": "select",
+            "operator": "less",
+            "value": "8"
+          }
+        ]
+      },
+      "actions": [
+        {
+          "action_object": "ComponentResourceAllocationAction",
+          "action_type": "InfrastructureType",
+          "name": "ApplyFlavour",
+          "value": "3"
+        }
+      ]
+    }
+  ],
+  "target": "vnf1"
 }

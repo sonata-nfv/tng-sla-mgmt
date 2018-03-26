@@ -55,7 +55,7 @@ public class GetPolicyRules {
         try {
             // test url to call the policy descriptor - when ready call the Policy Manager
             // to access the policy descriptors
-            URL url = new URL("https://api.myjson.com/bins/virrd");
+            URL url = new URL("https://api.myjson.com/bins/p92zz");
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestProperty("Content-Type", "application/json");
             if (conn.getResponseCode() != 200) {
@@ -80,13 +80,15 @@ public class GetPolicyRules {
                             setPolicyRuleFields.setName(name_list);
 
                         }
+                        if (policyRule.containsKey("duration")) {
+                            JSONObject duration = (JSONObject) policyRule.get("duration");
 
-                        JSONObject duration = (JSONObject) policyRule.get("duration");
+                            String value = duration.get("value").toString();
+                            String dur_unit = duration.get("duration_unit").toString();
+                            duration_list.add(value + " " + dur_unit);
+                            setPolicyRuleFields.setDuration(duration_list);
 
-                        String value = duration.get("value").toString();
-                        String dur_unit = duration.get("duration_unit").toString();
-                        duration_list.add(value + " " + dur_unit);
-                        setPolicyRuleFields.setDuration(duration_list);
+                        }
 
                         // get actual policy rules
 

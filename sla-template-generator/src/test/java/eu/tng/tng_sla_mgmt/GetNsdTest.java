@@ -44,19 +44,19 @@ public class GetNsdTest {
         String nsfield2 = "Stefan Schneider, Paderborn University";
         String nsfield3 = "recursive-sonata";
 
-        JSONObject slaD = null;
+        JSONObject nsD = null;
         Configuration conf = Configuration.defaultConfiguration();
 
         JSONParser parser = new JSONParser();
         try {
-            slaD = (JSONObject) parser.parse(new FileReader("src/main/resources/ns_descriptor.json"));
+            nsD = (JSONObject) parser.parse(new FileReader("src/main/resources/ns_descriptor.json"));
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        String nsvendor = JsonPath.using(conf).parse(slaD).read("vendor");
-        String nsauthor = JsonPath.using(conf).parse(slaD).read("author");
-        String nsname = JsonPath.using(conf).parse(slaD).read("name");
+        String nsvendor = JsonPath.using(conf).parse(nsD).read("vendor");
+        String nsauthor = JsonPath.using(conf).parse(nsD).read("author");
+        String nsname = JsonPath.using(conf).parse(nsD).read("name");
 
         assertTrue(nsfield1.equals(nsvendor) && nsfield2.equals(nsauthor) && nsfield3.equals(nsname));
 
