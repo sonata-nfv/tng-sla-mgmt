@@ -8,11 +8,11 @@ pipeline {
             echo 'Building..'
           }
         }
-        stage('Build tng-sla-mgmt') {
+		stage('Building tng-sla-mgmt') {
           steps {
-            echo 'not implemented yet'
+            sh 'docker build -t registry.sonata-nfv.eu:5000/tng-sla-mgmt .'
           }
-        }
+		}
       }
     }
     stage('Unit Tests') {
@@ -24,7 +24,7 @@ pipeline {
         }
         stage('Unit tests for tng-sla-mgmt') {
           steps {
-            echo 'not implemented yet'
+            sh 'test'
           }
         }
       }
@@ -50,11 +50,11 @@ pipeline {
             echo 'Publication of containers in local registry....'
           }
         }
-        stage('Publishing tng-sla-mgmt') {
+		stage('Publishing tng-sla-mgmt') {
           steps {
-            echo 'not implemented yet'
+            sh 'docker push registry.sonata-nfv.eu:5000/tng-sla-mgmt'
           }
-        }
+		}
       }
     }
     stage('Publish Results') {
@@ -70,6 +70,12 @@ pipeline {
           }
         }
       }
-    }
+    }	
   }
+  post {
+    always {
+      junit(allowEmptyResults: true, testResults: '/target/surefire-reports/*.xml')
+      
+    }  
+	}
 }
