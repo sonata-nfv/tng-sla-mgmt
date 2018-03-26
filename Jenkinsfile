@@ -10,7 +10,7 @@ pipeline {
         }
 		stage('Building tng-sla-mgmt') {
           steps {
-            sh 'docker build -t registry.sonata-nfv.eu:5000/tng-sla-mgmt .'
+            sh 'docker-compose up --build -t registry.sonata-nfv.eu:5000/tng-sla-mgmt .'
           }
 		}
       }
