@@ -18,13 +18,14 @@ pipeline {
     stage('Unit Tests') {
       parallel {
         stage('Unit Tests') {
-          steps {
+          steps {			
             echo 'Unit Testing..'
           }
         }
         stage('Unit tests for tng-sla-mgmt') {
           steps {
-            sh 'mvn test'
+            sh 'cd../../'
+			sh 'mvn test'
           }
         }
       }
@@ -55,20 +56,6 @@ pipeline {
             sh 'docker push registry.sonata-nfv.eu:5000/tng-sla-mgmt'
           }
 		}
-      }
-    }
-    stage('Publish Results') {
-      parallel {
-        stage('Publish Results') {
-          steps {
-            echo 'Publish Results...'
-          }
-        }
-        stage('Publication') {
-          steps {
-            echo 'not implemented yet'
-          }
-        }
       }
     }	
   }
