@@ -1,8 +1,9 @@
 version: "2"
 services:
   tng-sla-management:
-    container_name: sla-generator
-    restart: always
     build: ./sla-template-generator
+    image: tng-sla-mgmt
     ports:
       - "8080:8080"
+    container_name: sla-generator
+    restart: always   
