@@ -24,7 +24,7 @@ pipeline {
         }
         stage('Unit tests for tng-sla-mgmt') {
           steps {
-            sh 'test'
+            sh 'mvn test'
           }
         }
       }
