@@ -39,11 +39,11 @@ public class GetPolicyRulesTest {
 
     @Test
     public void testGetPolicyRules() {
-        String rule1field1 = "vnf1.CPULoad";
-        String rule1id1 = "vnf1.CPULoad";
-        String rule1input1 = "number";
-        String rule1operator1 = "greater";
-        String rule1type1 = "double";
+        String rule1field1 = "vnf1.LogMetric";
+        String rule1id1 = "vnf1.LogMetric";
+        String rule1input1 = "text";
+        String rule1operator1 = "equal";
+        String rule1type1 = "string";
         JSONObject policyD = null;
         Configuration conf = Configuration.defaultConfiguration();
 
@@ -60,7 +60,10 @@ public class GetPolicyRulesTest {
         String policyperator1 = JsonPath.using(conf).parse(policyD).read("policyRules[0].conditions.rules[0].operator");
         String policytype1 = JsonPath.using(conf).parse(policyD).read("policyRules[0].conditions.rules[0].type");
 
+       
         assertTrue(rule1field1.equals(policyfield1) && rule1id1.equals(policyid1) && rule1input1.equals(policyinput1)
                 && rule1operator1.equals(policyperator1) && rule1type1.equals(policytype1));
+                
+
     }
 }
