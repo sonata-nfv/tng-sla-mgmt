@@ -24,8 +24,7 @@ pipeline {
         }
         stage('Unit tests for tng-sla-mgmt') {
           steps {
-            sh 'cd../../'
-			sh 'mvn test'
+            sh 'docker build tng-sla-mgmt-testing -f sla-template-generator/DockerfileTest .'
           }
         }
       }
@@ -61,8 +60,7 @@ pipeline {
   }
   post {
     always {
-      junit(allowEmptyResults: true, testResults: '/target/surefire-reports/*.xml')
-      
+      junit(allowEmptyResults: true, testResults: '/target/surefire-reports/*.xml')      
     }  
 	}
 }
