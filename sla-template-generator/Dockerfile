@@ -1,11 +1,11 @@
 # Use an official Maven image
 FROM maven:3.5-jdk-8-alpine
 
-# Set the working directory to /app
-WORKDIR /app
+# Copy the sla-template-generator directory contents into the container at /sla-template-generator
+ADD sla-template-generator /sla-template-generator
 
-# Copy the current directory contents into the container at /app
-ADD . /app
+# Set the working directory to /sla-template-generator
+WORKDIR /sla-template-generator
 
 # Run maven install project
 RUN mvn clean install
