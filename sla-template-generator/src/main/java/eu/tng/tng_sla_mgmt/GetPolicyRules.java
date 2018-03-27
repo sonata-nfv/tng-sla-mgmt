@@ -55,7 +55,7 @@ public class GetPolicyRules {
         try {
             // test url to call the policy descriptor - when ready call the Policy Manager
             // to access the policy descriptors
-            URL url = new URL("https://api.myjson.com/bins/p92zz");
+            URL url = new URL("https://api.myjson.com/bins/19fxtj");
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestProperty("Content-Type", "application/json");
             if (conn.getResponseCode() != 200) {

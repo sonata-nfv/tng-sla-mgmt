@@ -36,125 +36,128 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 public class CreateTemplate {
-    Nsd getNsd = new Nsd();
-    PolicyRule getPolicyRule = new PolicyRule();
+	Nsd getNsd = new Nsd();
+	PolicyRule getPolicyRule = new PolicyRule();
 
-    @SuppressWarnings("unchecked")
-    public JSONObject createTemplate(String nsd_uuid, String templateName, String expireDate) {
+	@SuppressWarnings("unchecked")
+	public JSONObject createTemplate(String nsd_uuid, String templateName, String expireDate) {
 
-        // get network service descriptor for the given nsId
-        GetNsd nsd = new GetNsd();
-        nsd.getNSD(nsd_uuid);
-        // get policy descriptor for the given uuid
-        GetPolicyRules getPolicyRules = new GetPolicyRules();
-        getPolicyRules.getPolicyRules();
-        // get the expression that need to be expressed into the template
-        getPolicyRules.createExpression();
+		/** get network service descriptor for the given nsId */
+		GetNsd nsd = new GetNsd();
+		nsd.getNSD(nsd_uuid);
+		/** get policy descriptor for the given uuid **/
+		GetPolicyRules getPolicyRules = new GetPolicyRules();
+		getPolicyRules.getPolicyRules();
+		/** get the expression that need to be expressed into the template **/
+		getPolicyRules.createExpression();
 
-        /* generate the template */
+		/**
+		 * generate the template
+		 */
 
-        /* useful variables */
-        // current date
-        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyy");
-        Date date = new Date();
-        String offered_date = dateFormat.format(date); // 2016/11/16 12:08:43
-        // valid until date
-        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-        String dateInString = expireDate;
-        Date date2 = null;
-        try {
-            date2 = formatter.parse(dateInString);
-        } catch (ParseException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        String validUntil = formatter.format(date2);
+		/** useful variables **/
 
-        /* generate the template */
-        // root element
-        JSONObject root = new JSONObject();
-        root.put("descriptor_schema",
-                "https://raw.githubusercontent.com/sonata-nfv/tng-schema/master/service-descriptor/nsd-schema.yml");
-        root.put("vendor", "tango-sla-template");
-        root.put("name", templateName);
-        root.put("version", "0.1");
-        root.put("author", "Evgenia Kapassa, Marios Touloupou");
-        root.put("description", "");
-        // sla_template object
-        JSONObject sla_template = new JSONObject();
-        sla_template.put("offered_date", offered_date);
-        sla_template.put("valid_until", validUntil);
-        sla_template.put("service_provider_id", "sp001");
-        root.put("sla_template", sla_template);
-        // ns object
-        JSONObject ns = new JSONObject();
-        ns.put("nsd_uuid", nsd_uuid);
-        ns.put("ns_name", getNsd.getName());
-        ns.put("description", getNsd.getDescription());
-        sla_template.put("ns", ns);
-        // objectives array
-        JSONArray objectives = new JSONArray();
-        // for each monitoring_parameter create a slo_obj
-        for (int i = 0; i < getNsd.GetMonMetric().size(); i++) {
-            JSONObject slo_obj = new JSONObject();
-            slo_obj.put("slo_id", "slo" + (i + 1));
-            slo_obj.put("slo_name", getNsd.GetMonMetric().get(i));
-            slo_obj.put("slo_definition", getNsd.GetMonDesc().get(i));
-            slo_obj.put("slo_unit", getNsd.GetMonUnit().get(i));
-            slo_obj.put("slo_value", "");
+		/** current date */
+		DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyy");
+		Date date = new Date();
+		String offered_date = dateFormat.format(date); // 2016/11/16 12:08:43
+		/** valid until date */
+		SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+		String dateInString = expireDate;
+		Date date2 = null;
+		try {
+			date2 = formatter.parse(dateInString);
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		String validUntil = formatter.format(date2);
 
-            JSONArray metric = new JSONArray();
-            JSONObject metric_obj = new JSONObject();
-            metric_obj.put("metric_id", "mtr" + (i + 1));
-            metric_obj.put("metric_definition", getPolicyRule.getName().get(i));
+		/** generate the template */
+		//** root element **/
+		JSONObject root = new JSONObject();
+		root.put("descriptor_schema",
+				"https://raw.githubusercontent.com/sonata-nfv/tng-schema/master/service-descriptor/nsd-schema.yml");
+		root.put("vendor", "tango-sla-mgmt");
+		root.put("name", templateName);
+		root.put("version", "0.1");
+		root.put("author", "Evgenia Kapassa, Marios Touloupou");
+		root.put("description", "");
+		/** sla_template object **/
+		JSONObject sla_template = new JSONObject();
+		sla_template.put("offered_date", offered_date);
+		sla_template.put("valid_until", validUntil);
+		sla_template.put("service_provider_id", "sp001");
+		root.put("sla_template", sla_template);
+		/** ns object **/
+		JSONObject ns = new JSONObject();
+		ns.put("nsd_uuid", nsd_uuid);
+		ns.put("ns_name", getNsd.getName());
+		ns.put("description", getNsd.getDescription());
+		sla_template.put("ns", ns);
+		/** objectives array **/
+		JSONArray objectives = new JSONArray();
+		/** for each monitoring_parameter create a slo_obj **/
+		for (int i = 0; i < getNsd.GetMonMetric().size(); i++) {
+			JSONObject slo_obj = new JSONObject();
+			slo_obj.put("slo_id", "slo" + (i + 1));
+			slo_obj.put("slo_name", getNsd.GetMonMetric().get(i));
+			slo_obj.put("slo_definition", getNsd.GetMonDesc().get(i));
+			slo_obj.put("slo_unit", getNsd.GetMonUnit().get(i));
+			slo_obj.put("slo_value", "");
 
-            JSONObject rate = new JSONObject();
+			JSONArray metric = new JSONArray();
+			JSONObject metric_obj = new JSONObject();
+			metric_obj.put("metric_id", "mtr" + (i + 1));
+			metric_obj.put("metric_definition", getPolicyRule.getName().get(i));
 
-            try {
-                getPolicyRule.getDuration().get(i);
-                rate.put("parameterWindow", getPolicyRule.getDuration().get(i));
-            } catch (IndexOutOfBoundsException e) {
-                rate.put("parameterWindow", "");
-            }
+			JSONObject rate = new JSONObject();
 
-            JSONObject expression = new JSONObject();
-            expression.put("expression_statement", getPolicyRule.getExpression().get(i));
-            expression.put("expression_language", "ISO80000");
-            expression.put("expression_unit", "");
+			try {
+				getPolicyRule.getDuration().get(i);
+				rate.put("parameterWindow", getPolicyRule.getDuration().get(i));
+			} catch (IndexOutOfBoundsException e) {
+				rate.put("parameterWindow", "");
+			}
 
-            JSONArray parameters = new JSONArray();
-            for (int k = 0; k < getPolicyRule.getField().size(); k++) {
-                if (getPolicyRule.getField().get(k).contains("-obj-" + i)) {
-                    JSONObject parameters_obj = new JSONObject();
-                    parameters_obj.put("parameter_id", "prmtr" + (k + 1));
+			JSONObject expression = new JSONObject();
+			expression.put("expression_statement", getPolicyRule.getExpression().get(i));
+			expression.put("expression_language", "ISO80000");
+			expression.put("expression_unit", "");
 
-                    StringBuilder sb = new StringBuilder(getPolicyRule.getField().get(k));
+			JSONArray parameters = new JSONArray();
+			for (int k = 0; k < getPolicyRule.getField().size(); k++) {
+				if (getPolicyRule.getField().get(k).contains("-obj-" + i)) {
+					JSONObject parameters_obj = new JSONObject();
+					parameters_obj.put("parameter_id", "prmtr" + (k + 1));
 
-                    sb.delete(sb.length() - 6, sb.length());
-                    String result = sb.toString();
+					StringBuilder sb = new StringBuilder(getPolicyRule.getField().get(k));
 
-                    parameters_obj.put("parameter_name", result);
-                    parameters_obj.put("parameter_definition", "");
-                    parameters_obj.put("parameter_unit", "");
-                    parameters_obj.put("parameter_value", getPolicyRule.getValue().get(k));
+					sb.delete(sb.length() - 6, sb.length());
+					String result = sb.toString();
 
-                    parameters.add(parameters_obj);
-                }
-            }
+					parameters_obj.put("parameter_name", result);
+					parameters_obj.put("parameter_definition", "");
+					parameters_obj.put("parameter_unit", "");
+					parameters_obj.put("parameter_value", getPolicyRule.getValue().get(k));
 
-            expression.put("parameters", (Object) parameters);
-            metric_obj.put("rate", (Object) rate);
-            metric_obj.put("expression", (Object) expression);
-            metric.add(metric_obj);
+					parameters.add(parameters_obj);
+				}
+			}
 
-            slo_obj.put("metric", (Object) metric);
-            objectives.add(slo_obj);
-        }
+			expression.put("parameters", (Object) parameters);
+			metric_obj.put("rate", (Object) rate);
+			metric_obj.put("expression", (Object) expression);
+			metric.add(metric_obj);
 
-        ns.put("objectives", objectives);
+			slo_obj.put("metric", (Object) metric);
+			objectives.add(slo_obj);
+		}
 
-        return root;
+		ns.put("objectives", objectives);
 
-    }
+		return root;
+
+	}
 
 }
