@@ -36,45 +36,40 @@ import java.net.URL;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
-/**
- * 
- * the Get_Sla_Template method is used in order to get from the 5gtango
- * catalogue a sla-template-descriptor in json format, defin ed by its uuid
- *
- */
-
 public class Get_Sla_Template {
 
-	public JSONObject Get_Sla(String uuid) {
-		JSONObject sla_obj = null;
-		try {
-			URL url = new URL("http://pre-int-sp-ath.5gtango.eu:4011/catalogues/slas/template-descriptors/" + uuid);
-			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-			conn.setRequestProperty("Content-Type", "application/json");
-			if (conn.getResponseCode() != 200) {
-				throw new RuntimeException("Failed : HTTP error code :" + conn.getResponseCode());
-			}
+    public JSONObject Get_Sla(String uuid) {
+        JSONObject sla_obj = null;
+        try {
+            URL url = new URL("http://pre-int-sp-ath.5gtango.eu:4011/catalogues/slas/template-descriptors/" + uuid);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestProperty("Content-Type", "application/json");
+            if (conn.getResponseCode() != 200) {
+                throw new RuntimeException("Failed : HTTP error code : " + conn.getResponseCode());
+            }
 
-			BufferedReader br = new BufferedReader(new InputStreamReader((conn.getInputStream())));
-			String output;
+            BufferedReader br = new BufferedReader(new InputStreamReader((conn.getInputStream())));
+            String output;
 
-			while ((output = br.readLine()) != null) {
-				JSONParser parser = new JSONParser();
+            while ((output = br.readLine()) != null) {
+                JSONParser parser = new JSONParser();
 
-				try {
-					Object obj = parser.parse(output);
-					sla_obj = (JSONObject) obj;
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
+                try {
+                    Object obj = parser.parse(output);
+                    sla_obj = (JSONObject) obj;
+                    // System.out.print(sla_obj);
 
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
 
-		return sla_obj;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
-	}
+        return sla_obj;
+
+    }
 
 }

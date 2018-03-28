@@ -19,8 +19,37 @@
 					<target>1.7</target>
 				</configuration>
 			</plugin>
+			<plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <version>2.13</version>
+                <dependencies>
+                <dependency>
+                    <groupId>com.puppycrawl.tools</groupId>
+                    <artifactId>checkstyle</artifactId>
+                    <version>6.1.1</version>
+                </dependency>
+                </dependencies>
+                <configuration>
+                    <configLocation>${checkstyle.file.path}</configLocation>
+                    <failOnViolation>false</failOnViolation>
+                </configuration>
+            </plugin>
 		</plugins>
 	</build>
+	<reporting>
+    <plugins>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-checkstyle-plugin</artifactId>
+            <version>2.13</version>
+            <configuration>
+                <configLocation>${checkstyle.file.path}</configLocation>
+                <failOnViolation>false</failOnViolation>
+            </configuration>
+        </plugin>
+    </plugins>
+    </reporting>
 	<dependencies>
 		<dependency>
 			<groupId>com.sun.jersey</groupId>
@@ -80,5 +109,8 @@
 		<jersey.version>1.20-SNAPSHOT</jersey.version>
 		<glassfish.version>3.1.1</glassfish.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<checkstyle.file.path>src/main/resources/Checkstyle/checkstyle.xml</checkstyle.file.path>
+		<checkstyle.latest.version>3.0.0</checkstyle.latest.version>
+		<dependency.locations.enabled>false</dependency.locations.enabled>
 	</properties>
 </project>
