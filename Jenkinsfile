@@ -60,8 +60,8 @@ pipeline {
   }
   post {
     always {
-	  junit(allowEmptyResults: true, testResults: 'target/surefire-reports/*.xml')
-	  check(allowEmptyResults: true, testResults: 'target/checkstyle-result.xml')
+	  junit(allowEmptyResults: true, testResults: 'sla-template-generator/target/surefire-reports/*.xml')
+	  junit(allowEmptyResults: true, testResults: 'sla-template-generator/target/checkstyle-result.xml')
     }  
 	}
 }
