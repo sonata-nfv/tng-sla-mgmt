@@ -24,8 +24,7 @@ pipeline {
         }
         stage('Unit tests for tng-sla-mgmt') {
           steps {
-			sh 'cd sla-template-generator'
-            sh 'mvn test'
+            sh 'docker build -t tng-sla-mgmt-UnitTest -f sla-template-generator/DockerfileUnitTest .'
           }
         }
       }
@@ -39,8 +38,7 @@ pipeline {
         }
         stage('Code check for tng-sla-mgmt') {
           steps {
-			 sh 'cd sla-template-generator'
-             sh 'mvn site'
+             sh 'docker build -t tng-sla-mgmt-Styletest -f sla-template-generator/DockerfileStyleCheck .'
           }
         }
       }
