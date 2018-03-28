@@ -24,7 +24,7 @@ pipeline {
         }
         stage('Unit tests for tng-sla-mgmt') {
           steps {
-            sh 'docker build -t tng-sla-mgmt-testing -f sla-template-generator/DockerfileTest .'
+            sh 'mvn test -f /sla-template-generator'
           }
         }
       }
@@ -38,7 +38,7 @@ pipeline {
         }
         stage('Code check for tng-sla-mgmt') {
           steps {
-            echo 'not implemented yet'
+             sh 'mvn site -f /sla-template-generator'
           }
         }
       }
@@ -60,7 +60,8 @@ pipeline {
   }
   post {
     always {
-      junit(allowEmptyResults: true, testResults: '/target/surefire-reports/*.xml')      
+	  junit(allowEmptyResults: true, testResults: 'target/surefire-reports/*.xml')
+	  check(allowEmptyResults: true, testResults: 'target/checkstyle-result.xml')
     }  
 	}
 }
