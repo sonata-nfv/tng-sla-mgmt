@@ -61,7 +61,7 @@ pipeline {
   post {
     always {
       junit 'target/surefire-reports/*.xml'
-	  checkstyle 'target/checkstyle-result.xml'
+	  check 'target/checkstyle-result.xml'
     }  
 	}
 }
