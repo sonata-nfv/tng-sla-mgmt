@@ -24,7 +24,7 @@ pipeline {
         }
         stage('Unit tests for tng-sla-mgmt') {
           steps {
-            sh 'docker build -t tng-sla-mgmt-unitTest -f sla-template-generator/DockerfileUnitTest .'
+            sh 'docker build -t tng-sla-mgmt-unittest -f sla-template-generator/DockerfileUnitTest .'
           }
         }
       }
