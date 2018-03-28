@@ -40,174 +40,176 @@ import com.jayway.jsonpath.JsonPath;
 
 public class Modify_Sla {
 
-	/**
-	 * Switch the state {published/unpublished} of a specific sla template when
-	 * necessary
-	 */
-	public int switchState(String uuid) {
-		int HttpResult = 0;
-		try {
-			URL url = new URL(
-					"http://http://pre-int-sp-ath.5gtango.eu:4011/catalogues/api/v2/slas/template-descriptors/" + uuid
-							+ "?state=unpublished");
-			HttpURLConnection httpCon = (HttpURLConnection) url.openConnection();
-			httpCon.setDoOutput(true);
-			httpCon.setRequestProperty("Content-Type", "application/json");
-			httpCon.setRequestMethod("PUT");
-			HttpResult = httpCon.getResponseCode();
+    /*
+     * Method to switch state of the sla descriptorbefore editing :
+     * published->unpublished
+     */
+    public int switchState(String uuid) {
+        int HttpResult = 0;
+        try {
+            URL url = new URL(
+                    "http://http://pre-int-sp-ath.5gtango.eu:4011/catalogues/api/v2/slas/template-descriptors/" + uuid
+                            + "?state=unpublished");
+            HttpURLConnection httpCon = (HttpURLConnection) url.openConnection();
+            httpCon.setDoOutput(true);
+            httpCon.setRequestProperty("Content-Type", "application/json");
+            httpCon.setRequestMethod("PUT");
+            HttpResult = httpCon.getResponseCode();
 
-			OutputStreamWriter out = new OutputStreamWriter(httpCon.getOutputStream());
-			out.write("Resource content");
-			out.close();
-			httpCon.getInputStream();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+            OutputStreamWriter out = new OutputStreamWriter(httpCon.getOutputStream());
+            out.write("Resource content");
+            out.close();
+            httpCon.getInputStream();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
-		return HttpResult;
-	}
+        return HttpResult;
+    }
 
-	/** Switch the status {active/inactive} of a sla template when necessary */
-	public int switchStatus(String uuid) {
-		int HttpResult = 0;
-		try {
-			URL url = new URL("http://pre-int-sp-ath.5gtango.eu:4011/catalogues/api/v2/slas/template-descriptors/"
-					+ uuid + "?status=inactive");
-			HttpURLConnection httpCon = (HttpURLConnection) url.openConnection();
-			httpCon.setDoOutput(true);
-			httpCon.setRequestProperty("Content-Type", "application/json");
-			httpCon.setRequestMethod("PUT");
-			HttpResult = httpCon.getResponseCode();
+     /*
+     * Method to switch state of the sla descriptorbefore editing : 
+     * active->inactive
+     * 
+     */
+ 
+    public int switchStatus(String uuid) {
+        int HttpResult = 0;
+        try {
+            URL url = new URL("http://pre-int-sp-ath.5gtango.eu:4011/catalogues/api/v2/slas/template-descriptors/"
+                    + uuid + "?status=inactive");
+            HttpURLConnection httpCon = (HttpURLConnection) url.openConnection();
+            httpCon.setDoOutput(true);
+            httpCon.setRequestProperty("Content-Type", "application/json");
+            httpCon.setRequestMethod("PUT");
+            HttpResult = httpCon.getResponseCode();
 
-			OutputStreamWriter out = new OutputStreamWriter(httpCon.getOutputStream());
-			out.write("Resource content");
-			out.close();
-			httpCon.getInputStream();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+            OutputStreamWriter out = new OutputStreamWriter(httpCon.getOutputStream());
+            out.write("Resource content");
+            out.close();
+            httpCon.getInputStream();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
-		return HttpResult;
-	}
+        return HttpResult;
+    }
 
-	/**
-	 * editField method is used to edit a specific field of a specific sla template
-	 * defined by its uuid
-	 */
+     /*
+     * Method for editing a field in the sla template descriptor
+     */
+    @SuppressWarnings("unchecked")
+    public String editField(JSONObject sla_template, String sla_uuid, String field, String value) {
 
-	@SuppressWarnings("unchecked")
-	public String editField(JSONObject sla_template, String sla_uuid, String field, String value) {
+        String FieldPath = "";
+        // Remove root element inserted by the Catalogue
+        Object slad = sla_template.get("slad");
+        JSONObject jsonObject = (JSONObject) slad;
 
-		String FieldPath = "";
-		/** Remove root element inserted by the Catalogue **/
-		Object slad = sla_template.get("slad");
-		JSONObject jsonObject = (JSONObject) slad;
+        // Increase versioning
+        double version = Double.parseDouble((String) jsonObject.get("version"));
+        version += 0.1;
 
-		/** Increase the template version **/
-		double version = Double.parseDouble((String) jsonObject.get("version"));
-		version += 0.1;
-		String new_version = String.valueOf(version);
-		jsonObject.put("version", String.valueOf(new_version));
+        String new_version = String.valueOf(version);
 
-		String[] field_to_edit = field.split("=");
-		String old_field = field_to_edit[0];
-		String old_value = field_to_edit[1];
+        jsonObject.put("version", String.valueOf(new_version));
 
-		switch (old_field) {
-		case "name":
-			FieldPath = ".name";
-			break;
-		case "description":
-			FieldPath = ".description";
-			break;
-		case "valid_until":
-			FieldPath = ".sla_template.valid_until";
-			break;
-		case "slo_name":
-			FieldPath = ".sla_template.ns.objectives[*].[?(@.slo_name == " + old_value + ")].slo_name";
-			break;
-		case "slo_definition":
-			FieldPath = ".sla_template.ns.objectives[*].[?(@.slo_definition == " + old_value + ")].slo_definition";
-			break;
-		case "slo_value":
-			FieldPath = ".sla_template.ns.objectives[*].[?(@.slo_value == " + old_value + ")].slo_value";
-			break;
-		case "metric_definition":
-			FieldPath = ".sla_template.ns.objectives[*].metric[*][?(@.metric_definition == " + old_value
-					+ ")].metric_definition";
-			break;
-		case "parameter_name":
-			FieldPath = ".sla_template.ns.objectives[*].metric[*].expression.parameters[*].[?(@.parameter_name == "
-					+ old_value + ")].parameter_name";
-			break;
-		case "parameter_unit":
-			FieldPath = ".sla_template.ns.objectives[*].metric[*].expression.parameters[*].[?(@.parameter_unit == "
-					+ old_value + ")].parameter_unit";
-			break;
-		case "parameter_definition":
-			FieldPath = ".sla_template.ns.objectives[*].metric[*].expression.parameters[*].[?(@.parameter_definition == "
-					+ old_value + ")].parameter_definition";
-			break;
-		case "parameter_value":
-			FieldPath = ".sla_template.ns.objectives[*].metric[*].expression.parameters[*].[?(@.parameter_value == "
-					+ old_value + ")].parameter_value";
-			break;
-		}
+        String[] field_to_edit = field.split("=");
+        String old_field = field_to_edit[0];
+        String old_value = field_to_edit[1];
 
-		DocumentContext doc = JsonPath.parse(jsonObject).set(FieldPath, value);
-		String newJson = new Gson().toJson(doc.read("$"));
+        switch (old_field) {
+        case "name":
+            FieldPath = ".name";
+            break;
+        case "description":
+            FieldPath = ".description";
+            break;
+        case "valid_until":
+            FieldPath = ".sla_template.valid_until";
+            break;
+        case "slo_name":
+            FieldPath = ".sla_template.ns.objectives[*].[?(@.slo_name == " + old_value + ")].slo_name";
+            break;
+        case "slo_definition":
+            FieldPath = ".sla_template.ns.objectives[*].[?(@.slo_definition == " + old_value + ")].slo_definition";
+            break;
+        case "slo_value":
+            FieldPath = ".sla_template.ns.objectives[*].[?(@.slo_value == " + old_value + ")].slo_value";
+            break;
+        case "metric_definition":
+            FieldPath = ".sla_template.ns.objectives[*].metric[*][?(@.metric_definition == " + old_value
+                    + ")].metric_definition";
+            break;
+        case "parameter_name":
+            FieldPath = ".sla_template.ns.objectives[*].metric[*].expression.parameters[*].[?(@.parameter_name == "
+                    + old_value + ")].parameter_name";
+            break;
+        case "parameter_unit":
+            FieldPath = ".sla_template.ns.objectives[*].metric[*].expression.parameters[*].[?(@.parameter_unit == "
+                    + old_value + ")].parameter_unit";
+            break;
+        case "parameter_definition":
+            FieldPath = ".sla_template.ns.objectives[*].metric[*].expression.parameters[*].[?(@.parameter_definition == "
+                    + old_value + ")].parameter_definition";
+            break;
+        case "parameter_value":
+            FieldPath = ".sla_template.ns.objectives[*].metric[*].expression.parameters[*].[?(@.parameter_value == "
+                    + old_value + ")].parameter_value";
+            break;
+        }
 
-		String new_uuid = PUTsla(newJson, sla_uuid);
-		return new_uuid;
-	}
+        DocumentContext doc = JsonPath.parse(jsonObject).set(FieldPath, value);
+        String newJson = new Gson().toJson(doc.read("$"));
 
-	/**
-	 * PUTsla method is calld in order to PUT a new sla template to the 5GTANGO
-	 * Catalogue
-	 */
+        String new_uuid = PUTsla(newJson, sla_uuid);
+        return new_uuid;
+    }
 
-	public String PUTsla(String jsonObj, String sla_uuid) {
-		String new_uuid = "";
-		JSONParser parser = new JSONParser();
-		try {
-			JSONObject edited_sla = (JSONObject) parser.parse(jsonObj);
+     /*
+     * Method for modyfying a sla template descriptor (e.x Add a complete objective
+     */
+    public String PUTsla(String jsonObj, String sla_uuid) {
+        String new_uuid = "";
+        JSONParser parser = new JSONParser();
+        try {
+            JSONObject edited_sla = (JSONObject) parser.parse(jsonObj);
 
-			String url = "http://pre-int-sp-ath.5gtango.eu:4011/catalogues/api/v2/slas/template-descriptors/"
-					+ sla_uuid;
-			URL object = new URL(url);
+            String url = "http://pre-int-sp-ath.5gtango.eu:4011/catalogues/api/v2/slas/template-descriptors/"
+                    + sla_uuid;
+            URL object = new URL(url);
 
-			HttpURLConnection con = (HttpURLConnection) object.openConnection();
-			con.setDoOutput(true);
-			con.setDoInput(true);
-			con.setRequestProperty("Content-Type", "application/json");
-			con.setRequestProperty("Accept", "application/json");
-			con.setRequestMethod("PUT");
+            HttpURLConnection con = (HttpURLConnection) object.openConnection();
+            con.setDoOutput(true);
+            con.setDoInput(true);
+            con.setRequestProperty("Content-Type", "application/json");
+            con.setRequestProperty("Accept", "application/json");
+            con.setRequestMethod("PUT");
 
-			OutputStreamWriter wr = new OutputStreamWriter(con.getOutputStream());
-			wr.write(edited_sla.toString());
-			wr.flush();
+            OutputStreamWriter wr = new OutputStreamWriter(con.getOutputStream());
+            wr.write(edited_sla.toString());
+            wr.flush();
 
-			StringBuilder sb = new StringBuilder();
-			int HttpResult = con.getResponseCode();
-			if (HttpResult == HttpURLConnection.HTTP_OK) {
-				BufferedReader br = new BufferedReader(new InputStreamReader(con.getInputStream(), "utf-8"));
-				String line = null;
-				while ((line = br.readLine()) != null) {
-					sb.append(line + "\n");
-				}
-				br.close();
-				JSONObject json_to_return = (JSONObject) parser.parse(sb.toString());
-				new_uuid = (String) json_to_return.get("uuid");
+            StringBuilder sb = new StringBuilder();
+            int HttpResult = con.getResponseCode();
+            if (HttpResult == HttpURLConnection.HTTP_OK) {
+                BufferedReader br = new BufferedReader(new InputStreamReader(con.getInputStream(), "utf-8"));
+                String line = null;
+                while ((line = br.readLine()) != null) {
+                    sb.append(line + "\n");
+                }
+                br.close();
+                // System.out.println("" + sb.toString());
+                JSONObject json_to_return = (JSONObject) parser.parse(sb.toString());
+                new_uuid = (String) json_to_return.get("uuid");
+            } else {
+                System.out.println(con.getResponseMessage());
+            }
 
-			} else {
-				System.out.println(con.getResponseMessage());
-			}
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-		return new_uuid;
-	}
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return new_uuid;
+    }
 
 }

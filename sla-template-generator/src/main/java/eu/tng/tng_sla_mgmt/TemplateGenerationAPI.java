@@ -50,8 +50,8 @@ import com.jayway.jsonpath.JsonPath;
 
 /**
  *
- * @author Evgenia Kapassa <ekapassa@unipi.gr>
- * @author Marios Touloupou <mtouloup@unipi.gr>
+ * Authors: Evgenia Kapassa <ekapassa@unipi.gr>
+ *          Marios Touloupou <mtouloup@unipi.gr>
  */
 
 @Path("/templategeneration")
@@ -60,7 +60,7 @@ public class TemplateGenerationAPI {
     /**
      * api call in order to generate a sla template mendatory input parameters from
      * the user: nsId, providerId, templateName, expireDate e.g.
-     * http://localhost:8080/tng-sla-mgmt/slas/templategeneration?uuid=<>&templateName=<>&expireDate=<>
+     * http://localhost:8080/tng-sla-mgmt/slas/templategeneration?uuid=8effe1db-edd3-404f-8a68-92e2ebb2b176&providerId=20&templateName=lala&expireDate=20/02/2018
      * 
      */
 
@@ -91,7 +91,7 @@ public class TemplateGenerationAPI {
                 con.setRequestProperty("Content-Type", "application/json");
                 con.setRequestProperty("Accept", "application/json");
                 con.setRequestMethod("POST");
-
+                System.out.println(template.toString());
                 OutputStreamWriter wr = new OutputStreamWriter(con.getOutputStream());
                 wr.write(template.toString());
                 wr.flush();
