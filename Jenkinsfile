@@ -24,7 +24,7 @@ pipeline {
         }
         stage('Unit tests for tng-sla-mgmt') {
           steps {
-            sh 'mvn test -f /sla-template-generator'
+            sh 'mvn test -f sla-template-generator'
           }
         }
       }
@@ -38,7 +38,7 @@ pipeline {
         }
         stage('Code check for tng-sla-mgmt') {
           steps {
-             sh 'mvn site -f /sla-template-generator'
+             sh 'mvn site -f sla-template-generator'
           }
         }
       }
