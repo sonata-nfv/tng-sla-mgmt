@@ -61,7 +61,6 @@ public class Sla_EditorTest {
         }
 
         DocumentContext doc = JsonPath.parse(slaD).set(".name", new_sla_name);
-        @SuppressWarnings("unused")
         String newJson = new Gson().toJson(doc.read("$"));
 
         String new_test_sla_name = JsonPath.using(conf).parse(newJson).read("slad.name");
