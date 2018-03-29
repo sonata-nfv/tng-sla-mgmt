@@ -9,9 +9,9 @@
   "policyRules": [
     {
       "name": "actionUponAlert",
-      "salience": "1",
+      "salience": 1,
       "inertia": {
-        "value": "30",
+        "value": 30,
         "duration_unit": "m"
       },
       "conditions": {
@@ -39,13 +39,13 @@
     },
     {
       "name": "highTranscodingRateRule",
-      "salience": "1",
+      "salience": 1,
       "inertia": {
-        "value": "30",
+        "value": 30,
         "duration_unit": "m"
       },
       "duration": {
-        "value": "10",
+        "value": 10,
         "duration_unit": "m"
       },
       "aggregation": "avg",

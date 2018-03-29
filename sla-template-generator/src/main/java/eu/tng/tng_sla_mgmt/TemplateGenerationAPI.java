@@ -37,6 +37,7 @@ import java.util.List;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
@@ -54,21 +55,20 @@ import com.jayway.jsonpath.JsonPath;
  *          Marios Touloupou <mtouloup@unipi.gr>
  */
 
-@Path("/templategeneration")
+@Path("/templategeneration/{nsd_uuid}")
 public class TemplateGenerationAPI {
 
     /**
      * api call in order to generate a sla template mendatory input parameters from
      * the user: nsId, providerId, templateName, expireDate e.g.
-     * http://localhost:8080/tng-sla-mgmt/slas/templategeneration?uuid=8effe1db-edd3-404f-8a68-92e2ebb2b176&providerId=20&templateName=lala&expireDate=20/02/2018
+     * * http://localhost:8080/tng-sla-mgmt/api/v1/slas/templategeneration?uuid=<>&templateName=<>&expireDate=<>
      * 
      */
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getIt(@Context UriInfo info) {
+    public Response getIt(@PathParam("nsd_uuid") String nsd_uuid, @Context UriInfo info) {
 
-        String nsd_uuid = info.getQueryParameters().getFirst("nsd_uuid");
         String templateName = info.getQueryParameters().getFirst("templateName");
         String expireDate = info.getQueryParameters().getFirst("expireDate");
 
@@ -91,7 +91,6 @@ public class TemplateGenerationAPI {
                 con.setRequestProperty("Content-Type", "application/json");
                 con.setRequestProperty("Accept", "application/json");
                 con.setRequestMethod("POST");
-                System.out.println(template.toString());
                 OutputStreamWriter wr = new OutputStreamWriter(con.getOutputStream());
                 wr.write(template.toString());
                 wr.flush();

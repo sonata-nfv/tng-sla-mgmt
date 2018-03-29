@@ -34,7 +34,7 @@
 	
 	<servlet-mapping>
 		<servlet-name>Modify Template Service</servlet-name>
-		<url-pattern>/api/v1/slas/modify/*</url-pattern>
+		<url-pattern>/api/v1/slas/edit/*</url-pattern>
 	</servlet-mapping>
 	
 </web-app>
