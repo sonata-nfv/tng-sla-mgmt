@@ -72,9 +72,8 @@ or
   
 Note that if old_value and/or value parameters in the above link are in a String format, '<>' must be applied to each one of them.   
 
-**Modify a SLA Template**
-* Modify an existing template [GET]
-    * Updates the template identified by the sla template id (uuid) by *adding new objectives in the template*
+**Modify a SLA Template [GET]** 
+* Allows to update the template identified by the sla template id (uuid) by *adding new objectives in the template*
 ```sh
   curl "http://localhost:8080/tng-sla-mgmt/api/v1/slas/edit/templates/modify?sla_uuid=<>&objectives=<>&objectives=<>&slo_value=<>&slo_value=<>&slo_definition=<>&slo_definition=<>&slo_unit=%&<>&slo_unit=<>&metric=<>&expression=<>&expression_unit=<>&rate=<>&metric=<>&expression=<>&expression_unit=<>&rate=<>&parameter_unit=<>&parameter_definition=<>&parameter_name=<>&parameter_value=<>&parameter_unit=<>&parameter_definition=<>&parameter_name=<>&parameter_value=<>&parameter_unit=<>"
 ```   
