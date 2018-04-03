@@ -61,7 +61,7 @@ public class TemplateGenerationAPI {
     /**
      * api call in order to generate a sla template mendatory input parameters from
      * the user: nsId, providerId, templateName, expireDate e.g.
-     * * http://localhost:8080/tng-sla-mgmt/api/v1/slas/templategeneration?uuid=<>&templateName=<>&expireDate=<>
+     * * http://localhost:8080/tng-sla-mgmt/api/slas/v1/templategeneration?uuid=<>&templateName=<>&expireDate=<>
      * 
      */
 
