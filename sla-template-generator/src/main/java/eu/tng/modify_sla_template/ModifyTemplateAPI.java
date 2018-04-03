@@ -47,7 +47,7 @@ public class ModifyTemplateAPI {
 	/**
 	 * api call in order to edit an already existing sla template mendatory input
 	 * parameters from the user: uuid, field, old_value, value.
-	 * http://localhost:8080/tng-sla-mgmt/api/v3/slas/edit/stemplates/{sla_uuid}?field=<>&old_value=<>&value=<>
+	 * http://localhost:8080/tng-sla-mgmt/api/slas/v1/edit/stemplates/{sla_uuid}?field=<>&old_value=<>&value=<>
 	 * 
 	 */
 
@@ -76,7 +76,7 @@ public class ModifyTemplateAPI {
 	/**
 	 * api call in order to modify an already existing sla template by adding new
 	 * slo mendatory input parameters from the user: uuid, field, old_value, value.
-	 * http://localhost:8080/tng-sla-mgmt/api/v3/slas/edit/stemplates/modify/{uuid}?objectives=[]&slo_value=[]&slo_definition=[]&slo_unit=[]&metric=[]&expression=[]&expression_unit=[]&rate=[]&parameter_name=[]&parameter_value=[]&parameter_definition=[]&parameter_unit=[]
+	 * http://localhost:8080/tng-sla-mgmt/api/slas/v1/edit/stemplates/modify/{uuid}?objectives=[]&slo_value=[]&slo_definition=[]&slo_unit=[]&metric=[]&expression=[]&expression_unit=[]&rate=[]&parameter_name=[]&parameter_value=[]&parameter_definition=[]&parameter_unit=[]
 	 * 
 	 */
 
