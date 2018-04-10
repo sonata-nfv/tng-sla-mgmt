@@ -35,7 +35,9 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.List;
 
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -56,17 +58,18 @@ import com.jayway.jsonpath.JsonPath;
  */
 
 @Path("/templates/{nsd_uuid}")
+@Consumes(MediaType.APPLICATION_JSON)
 public class TemplateGenerationAPI {
 
     /**
      * api call in order to generate a sla template mendatory input parameters from
      * the user: nsId, providerId, templateName, expireDate e.g.
-     * * http://localhost:8080/tng-sla-mgmt/api/slas/v1/templategeneration?uuid=<>&templateName=<>&expireDate=<>
+     * * http://localhost:8080/tng-sla-mgmt/api/slas/v1/templates/{ns_uuid}?templateName=<>&expireDate=<>
      * 
      */
 
-    @GET
     @Produces(MediaType.APPLICATION_JSON)
+    @POST
     public Response getIt(@PathParam("nsd_uuid") String nsd_uuid, @Context UriInfo info) {
 
         String templateName = info.getQueryParameters().getFirst("templateName");
