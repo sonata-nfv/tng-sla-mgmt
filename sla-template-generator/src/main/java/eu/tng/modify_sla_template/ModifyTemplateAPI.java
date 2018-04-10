@@ -29,7 +29,8 @@ package eu.tng.modify_sla_template;
 
 import java.util.List;
 
-import javax.ws.rs.GET;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -42,17 +43,18 @@ import javax.ws.rs.core.UriInfo;
 import org.json.simple.JSONObject;
 
 @Path("/templates")
+@Consumes(MediaType.APPLICATION_JSON)
 public class ModifyTemplateAPI {
 
 	/**
 	 * api call in order to edit an already existing sla template mendatory input
 	 * parameters from the user: uuid, field, old_value, value.
-	 * http://localhost:8080/tng-sla-mgmt/api/slas/v1/edit/stemplates/{sla_uuid}?field=<>&old_value=<>&value=<>
+	 * http://localhost:8080/tng-sla-mgmt/api/slas/v1/edit/templates/{sla_uuid}?field=<>&old_value=<>&value=<>
 	 * 
 	 */
 
 	@SuppressWarnings("static-access")
-	@GET
+	@PUT
 	@Path("/{sla_uuid}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response ModifyTemplate(@PathParam("sla_uuid") String sla_uuid, @Context UriInfo info) {
@@ -80,7 +82,7 @@ public class ModifyTemplateAPI {
 	 * 
 	 */
 
-	@GET
+	@PUT
 	@Path("/modify/{sla_uuid}")
 	public Response CustomizeTemplate(@PathParam("sla_uuid") String sla_uuid,
 			@QueryParam("objectives") List<String> objectives, @QueryParam("slo_value") List<String> slo_value,

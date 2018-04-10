@@ -9,7 +9,7 @@
 
 ---
 - uri: "/api/slas/v1/templates" 
-  method: GET
+  method: POST
   purpose: Generate a new sla template
 <p>
 - uri: "api/slas/v1/edit/templates" 
