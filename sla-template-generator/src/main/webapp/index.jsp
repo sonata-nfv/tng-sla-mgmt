@@ -2,13 +2,13 @@
 <body>
 <!--
 	<h2>SLA Management Framework</h2>
-	<p>	<a href="api/slas/v1/templategeneration">Template Generation!</a>
+	<p>	<a href="api/slas/v1/templates">Template Generation!</a>
 	<p>	<a href="api/slas/v1/edit/templates">Edit Template!</a>
     <p>	<a href="api/slas/v1/edit/templates/modify">Customize Template!</a>
 -->
 
 ---
-- uri: "/api/slas/v1/templategeneration" 
+- uri: "/api/slas/v1/templates" 
   method: GET
   purpose: Generate a new sla template
 <p>

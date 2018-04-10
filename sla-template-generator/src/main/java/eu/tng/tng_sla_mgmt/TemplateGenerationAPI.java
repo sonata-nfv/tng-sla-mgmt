@@ -55,7 +55,7 @@ import com.jayway.jsonpath.JsonPath;
  *          Marios Touloupou <mtouloup@unipi.gr>
  */
 
-@Path("/templategeneration/{nsd_uuid}")
+@Path("/templates/{nsd_uuid}")
 public class TemplateGenerationAPI {
 
     /**
