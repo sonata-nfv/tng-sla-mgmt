@@ -58,9 +58,6 @@ import com.jayway.jsonpath.JsonPath;
 @Consumes(MediaType.APPLICATION_JSON)
 public class templatesAPIs {
 	
-
-		
-	
 	 /**
     * api call in order to generate a sla template mendatory input parameters from
     * the user: nsId, providerId, templateName, expireDate e.g.

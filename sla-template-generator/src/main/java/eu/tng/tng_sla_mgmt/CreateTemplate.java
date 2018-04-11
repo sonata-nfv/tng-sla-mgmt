@@ -31,6 +31,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.TimeZone;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -58,21 +59,26 @@ public class CreateTemplate {
 
 		/** useful variables **/
 
-		/** current date */
-		DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyy");
+		TimeZone tz = TimeZone.getTimeZone("UTC");
+		DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'"); // iso date format yyyy-MM-dd'T'HH:mm'Z'
+		df.setTimeZone(tz);
+
+		/** current date */		
 		Date date = new Date();
-		String offered_date = dateFormat.format(date); // 2016/11/16 12:08:43
+		String offered_date = df.format(date);
+				
 		/** valid until date */
 		SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 		String dateInString = expireDate;
 		Date date2 = null;
 		try {
 			date2 = formatter.parse(dateInString);
+			
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		String validUntil = formatter.format(date2);
+		String validUntil = df.format(date2);
 
 		/** generate the template */
 		// ** root element **/
