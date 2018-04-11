@@ -32,6 +32,12 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.TimeZone;
+
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import com.google.gson.Gson;
@@ -116,7 +122,26 @@ public class Modify_Sla {
 		String[] field_to_edit = field.split("=");
 		String old_field = field_to_edit[0];
 		String old_value = field_to_edit[1];
-
+		
+		//check if date is changing and make it iso farmatted
+		if (old_field == "valid_until") {
+			TimeZone tz = TimeZone.getTimeZone("UTC");
+			DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'"); // iso date format yyyy-MM-dd'T'HH:mm'Z'
+			df.setTimeZone(tz);
+			SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+			String dateInString = value;
+			Date date2 = null;
+			try {
+				date2 = formatter.parse(dateInString);
+				
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			value = df.format(date2);
+		}
+		
+		
 		switch (old_field) {
 		case "name":
 			FieldPath = ".name";
