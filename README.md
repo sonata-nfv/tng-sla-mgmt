@@ -54,28 +54,28 @@ The following shows how to run SLA management framework:
 ### SLA Templates Management 
 The REST interface to the SLA Templates Management supports the following :
 
-**Generate a new template [GET]** 
+**Generate a new template [POST]** 
 * Allows to create a new sla template. It takes as input the applicable NS uuid, a template name, and an expiration date. It might include a TemplateId or not.
 ```sh
-  curl "http://localhost:8080/tng-sla-mgmt/api/slas/v1/templategeneration/{nsd_uuid}?templateName=<>&expireDate=<>"
+  curl "http://localhost:8080/tng-sla-mgmt/api/slas/v1/templates/{nsd_uuid}?templateName=<>&expireDate=<>"
 ```
   or
   Use the above link direct in a browser (Mozilla Firefox is the prefered one)   
   
-**Edit a SLA Template [GET]**
+**Edit a SLA Template [PUT]**
 * Allows to update the template identified by the sla template id (uuid) by *editing specific fields in the template*
 ```sh
-  curl "http://localhost:8080/tng-sla-mgmt/api/slas/v1/edit/templates/{sla_uuid}?field=<>&old_value=<>&value=<>"
+  curl "http://localhost:8080/tng-sla-mgmt/api/slas/v1/templates/{sla_uuid}?field=<>&old_value=<>&value=<>"
 ```  
 or
   Use the above link direct in a browser (Mozilla Firefox is the prefered one)
   
 Note that if old_value and/or value parameters in the above link are in a String format, '<>' must be applied to each one of them.   
 
-**Modify a SLA Template [GET]** 
+**Customize a SLA Template [PUT]** 
 * Allows to update the template identified by the sla template id (uuid) by *adding new objectives in the template*
 ```sh
-  curl "http://localhost:8080/tng-sla-mgmt/api/slas/v1/edit/templates/modify/{sla_uuid}?objectives=<>&objectives=<>&slo_value=<>&slo_value=<>&slo_definition=<>&slo_definition=<>&slo_unit=%&<>&slo_unit=<>&metric=<>&expression=<>&expression_unit=<>&rate=<>&metric=<>&expression=<>&expression_unit=<>&rate=<>&parameter_unit=<>&parameter_definition=<>&parameter_name=<>&parameter_value=<>&parameter_unit=<>&parameter_definition=<>&parameter_name=<>&parameter_value=<>&parameter_unit=<>"
+  curl "http://localhost:8080/tng-sla-mgmt/api/slas/v1/templates/customize/{sla_uuid}?objectives=<>&objectives=<>&slo_value=<>&slo_value=<>&slo_definition=<>&slo_definition=<>&slo_unit=%&<>&slo_unit=<>&metric=<>&expression=<>&expression_unit=<>&rate=<>&metric=<>&expression=<>&expression_unit=<>&rate=<>&parameter_unit=<>&parameter_definition=<>&parameter_name=<>&parameter_value=<>&parameter_unit=<>&parameter_definition=<>&parameter_name=<>&parameter_value=<>&parameter_unit=<>"
 ```   
   or
   Use the above link direct in a browser (Mozilla Firefox is the prefered one)   
