@@ -5,36 +5,19 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
     <servlet>
-        <servlet-name>Jersey Web Application</servlet-name>
+        <servlet-name>SLA Templates APIs</servlet-name>
         <servlet-class>com.sun.jersey.spi.container.servlet.ServletContainer</servlet-class>
         <init-param>
             <param-name>com.sun.jersey.config.property.packages</param-name>
-            <param-value>eu.tng.tng_sla_mgmt</param-value>
+            <param-value>eu.tng.service_api</param-value>
         </init-param>
         <load-on-startup>1</load-on-startup>
-    </servlet>
-    
-    
-    <servlet>
-        <servlet-name>Modify Template Service</servlet-name>
-        <servlet-class>com.sun.jersey.spi.container.servlet.ServletContainer</servlet-class>
-        <init-param>
-            <param-name>com.sun.jersey.config.property.packages</param-name>
-            <param-value>eu.tng.modify_sla_template</param-value>
-        </init-param>
-        <load-on-startup>2</load-on-startup>
-    </servlet>
-    
+    </servlet>   
     
     <servlet-mapping>
-        <servlet-name>Jersey Web Application</servlet-name>
+        <servlet-name>SLA Templates APIs</servlet-name>
         <url-pattern>/api/slas/v1/*</url-pattern>
     </servlet-mapping>
 
-    
-    <servlet-mapping>
-        <servlet-name>Modify Template Service</servlet-name>
-        <url-pattern>/api/slas/v1/edit/*</url-pattern>
-    </servlet-mapping>
     
 </web-app>
