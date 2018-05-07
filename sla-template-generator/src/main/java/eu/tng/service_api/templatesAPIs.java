@@ -204,7 +204,7 @@ public class templatesAPIs {
 		JSONParser parser = new JSONParser();
 		JSONObject jsonObject = null;
         try {
-        	File testf = new File( this.getClass().getResource( "/slos_list.json" ).toURI() );
+        	File testf = new File( this.getClass().getResource( "/slos_list_release1.json" ).toURI() );
         	jsonObject = (JSONObject) parser.parse(new FileReader(testf));
             		            System.out.println(jsonObject);
  
