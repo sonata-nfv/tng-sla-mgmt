@@ -30,13 +30,20 @@ package eu.tng.service_api;
 import eu.tng.modify_sla_template.*;
 import eu.tng.tng_sla_mgmt.*;
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.List;
+import java.util.Scanner;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -49,6 +56,9 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+
 import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.JsonPath;
 
@@ -181,5 +191,35 @@ public class templatesAPIs {
 		return Response.status(200).entity(modified_template).build();
 	}
 	
+	/**
+	 * api call in order to get a predifined list with 	Service Guarantees
+	 * http://localhost:8080/tng-sla-mgmt/api/slas/v1/templates/guaranteesList
+	 * 
+	 */
+	
+	@GET
+	@Path("/guaranteesList")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getGuarantees() {
+		JSONParser parser = new JSONParser();
+		JSONObject jsonObject = null;
+        try {
+        	File testf = new File( this.getClass().getResource( "/slos_list.json" ).toURI() );
+        	jsonObject = (JSONObject) parser.parse(new FileReader(testf));
+            		            System.out.println(jsonObject);
+ 
 
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (URISyntaxException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return Response.status(200).entity(jsonObject).build();      
+	}
 }
