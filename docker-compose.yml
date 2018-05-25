@@ -4,7 +4,7 @@ services:
     container_name: sla-generator
     restart: always
     build:
-      context: ./sla-template-generator
+      context: ./
       dockerfile: Dockerfile
     image: tng-sla-mgmt
     ports:
