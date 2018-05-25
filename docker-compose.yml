@@ -21,4 +21,4 @@ services:
       - MONGODB_APPLICATION_USER=admin
       - MONGODB_APPLICATION_PASS=admin
     ports:
-      - "27017:27017"
+      - "27017:27020"
