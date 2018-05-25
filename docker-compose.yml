@@ -9,8 +9,8 @@ services:
     image: tng-sla-mgmt
     ports:
       - "8080:8080"    
-  tng-sla-repository:
-    container_name: sla-db
+  tng-sla-repo:
+    container_name: sla-mongo-db
     restart: always
     image: aashreys/mongo-auth:latest
     environment:
