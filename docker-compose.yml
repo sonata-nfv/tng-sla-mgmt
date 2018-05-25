@@ -1,11 +1,13 @@
 version: "2"
 services:
   tng-sla-management:
-    build: ./sla-template-generator
+    build:
+      context: ./sla-template-generator
+      dockerfile: Dockerfile
     image: tng-sla-mgmt
     ports:
       - "8080:8080"
-    container_name: sla-generator
+    container_name: registry.sonata-nfv.eu:5000/tng-sla-mgmt
     restart: always   
   mongo_db:
     container_name: sla-db
