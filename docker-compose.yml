@@ -1,9 +1,24 @@
 version: "2"
 services:
   tng-sla-management:
-    build: ./sla-template-generator
+    container_name: sla-generator
+    restart: always
+    build:
+      context: ./
+      dockerfile: Dockerfile
     image: tng-sla-mgmt
     ports:
-      - "8080:8080"
-    container_name: sla-generator
-    restart: always   
+      - "8080:8080"    
+  tng-sla-repo:
+    container_name: sla-mongo-db
+    restart: always
+    image: aashreys/mongo-auth:latest
+    environment:
+      - AUTH=yes
+      - MONGODB_ADMIN_USER=admin
+      - MONGODB_ADMIN_PASS=admin
+      - MONGODB_APPLICATION_DATABASE=Slas
+      - MONGODB_APPLICATION_USER=admin
+      - MONGODB_APPLICATION_PASS=admin
+    ports:
+      - "27017:27020"
