@@ -10,7 +10,6 @@ pipeline {
         }
 		stage('Building tng-sla-mgmt') {
           steps {
-			sh 'ls'
             sh 'docker-compose up'
           }
 		}

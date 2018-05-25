@@ -2,11 +2,11 @@
 FROM maven:3.5-jdk-8-alpine
 
 # Copy the sla-template-generator directory contents into the container at /sla-template-generator
-COPY . /sla-template-generator
+ADD . /sla-template-generator
 
 # Set the working directory to /sla-template-generator
-WORKDIR ./sla-template-generator
-
+WORKDIR /sla-template-generator
+RUN ls
 # Run maven install project
 RUN mvn clean install
 
