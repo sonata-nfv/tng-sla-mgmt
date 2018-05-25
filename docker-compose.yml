@@ -7,7 +7,7 @@ services:
     image: tng-sla-mgmt
     ports:
       - "8080:8080"
-    container_name: registry.sonata-nfv.eu:5000/tng-sla-mgmt
+    container_name: sla-generator
     restart: always   
   mongo_db:
     container_name: sla-db
