@@ -10,7 +10,14 @@ pipeline {
         }
 		stage('Building tng-sla-mgmt') {
           steps {
+			echo 'Building SLA Template Generator Container'
             sh 'docker build -t registry.sonata-nfv.eu:5000/tng-sla-mgmt .'
+          }
+		}
+		stage('Building tng-sla-db') {
+          steps {
+            echo 'Building SLA Mongo Database Container'
+            sh 'docker build -t registry.sonata-nfv.eu:5000/tng-sla-db -f sla-db/Dockerfile .'
           }
 		}
       }
@@ -53,6 +60,11 @@ pipeline {
 		stage('Publishing tng-sla-mgmt') {
           steps {
             sh 'docker push registry.sonata-nfv.eu:5000/tng-sla-mgmt'
+          }
+		}
+		stage('Publishing tng-sla-db') {
+          steps {
+            sh 'docker push registry.sonata-nfv.eu:5000/tng-sla-db'
           }
 		}
       }
