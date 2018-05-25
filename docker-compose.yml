@@ -7,3 +7,16 @@ services:
       - "8080:8080"
     container_name: sla-generator
     restart: always   
+  mongo_db:
+    container_name: sla-db
+    restart: always
+    image: aashreys/mongo-auth:latest
+    environment:
+      - AUTH=yes
+      - MONGODB_ADMIN_USER=admin
+      - MONGODB_ADMIN_PASS=admin
+      - MONGODB_APPLICATION_DATABASE=Slas
+      - MONGODB_APPLICATION_USER=admin
+      - MONGODB_APPLICATION_PASS=admin
+    ports:
+      - "27017:27017"
