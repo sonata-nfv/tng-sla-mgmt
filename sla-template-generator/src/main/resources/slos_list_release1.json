@@ -1,7 +1,59 @@
 {
 	"guaranteeTerms": [
-        {
+		{
 			"guaranteeID": "g1",
+			"name": "Resilience",
+			"definition": "Resilience is the persistence of dependability when facing changes",
+			"value": "1",
+			"unit": "mins",
+			"operator": "greater",
+			"serviceLevelObjetive": {
+				"parameter": "Resilience",
+				"period": "Daily",
+				"serviceLevel": "1min/24h",				
+				"serviceLevelDetail" : [
+					{
+						"value": "1",
+						"unit": "mins",
+						"operator": "greater"
+					},
+					{
+						"value": "24",
+						"unit": "hours",
+						"operator": "equal"
+					}
+				]
+				
+			}
+        },
+		{
+			"guaranteeID": "g2",
+			"name": "Resilience",
+			"definition": "Resilience is the persistence of dependability when facing changes",
+			"value": "1",
+			"unit": "mins",
+			"operator": "greater",
+			"serviceLevelObjetive": {
+				"parameter": "Resilience",
+				"period": "Hours",
+				"serviceLevel": "1min/24h",				
+				"serviceLevelDetail" : [
+					{
+						"value": "1",
+						"unit": "mins",
+						"operator": "greater"
+					},
+					{
+						"value": "6",
+						"unit": "hours",
+						"operator": "equal"
+					}
+				]
+				
+			}
+        },
+        {
+			"guaranteeID": "g3",
 			"name": "NS Uptime",
 			"definition": "Uptime shows the percentage the service is up and operational",
 			"value": "99",
@@ -37,7 +89,7 @@
 			}
         },
 		{
-			"guaranteeID": "g2",
+			"guaranteeID": "g4",
 			"name": "NS Uptime",
 			"definition": "Uptime shows the percentage the service is up and operational",
 			"value": "95",
@@ -72,7 +124,7 @@
 			}
         },
 		{
-			"guaranteeID": "g3",
+			"guaranteeID": "g5",
 			"name": "NS Uptime",
 			"definition": "Uptime shows the percentage the service is up and operational",
 			"value": "90",
@@ -107,7 +159,7 @@
 			}
         },
 		{
-			"guaranteeID": "g4",
+			"guaranteeID": "g6",
 			"name": "Network Availability",
 			"definition": "Network Availability shows the percentage the network is up and operational.",
 			"value": "99",
@@ -142,7 +194,7 @@
 			}
         },
 		{
-			"guaranteeID": "g5",
+			"guaranteeID": "g7",
 			"name": "Network Availability",
 			"definition": "Network Availability shows the percentage the network is up and operational.",
 			"value": "99.9",
@@ -175,6 +227,55 @@
 					}
 				]
 			}
-        }
+        },
+		{
+			"guaranteeID": "g8",
+			"name": "Reliability",
+			"definition": "The ability of a NS to carry out succesfuly a desired operation",
+			"value": "99",
+			"unit": "%",
+			"operator": "greater",
+			"serviceLevelObjetive": {
+				"parameter": "Latency",
+				"value": "1",
+				"unit": "ms",
+				"operator": "less",
+				"period": "Monthly"
+			}
+        },
+		{
+			"guaranteeID": "g9",
+			"name": "Reliability",
+			"definition": "The ability of a NS to carry out succesfuly a desired operation",
+			"value": "95",
+			"unit": "%",
+			"operator": "greater",
+			"serviceLevelObjetive": {
+				"parameter": "Latency",
+				"value": "10",
+				"unit": "ms",
+				"operator": "less",
+				"period": "Monthly"
+			}
+        },
+		{
+			"guaranteeID": "g10",
+			"name": "Throughput",
+			"definition": "Throughput is a measure of how many units of information the network can process in a given amount of time (monthly). ",
+			"value": "100",
+			"unit": "Mbp/s",
+			"operator": "greater",
+			"period": "Monthly"
+        },
+		{
+			"guaranteeID": "g11",
+			"name": "Throughput",
+			"definition": "Throughput is a measure of how many units of information the network can process in a given amount of time (monthly). ",
+			"value": "1",
+			"unit": "Gbp/s",
+			"operator": "greater",
+			"period": "Monthly"
+        }	
+		
     ]
 }

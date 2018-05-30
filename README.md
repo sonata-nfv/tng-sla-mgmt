@@ -8,9 +8,6 @@ The schema files are written in JSON-Schema
 The mechanisms included in the tng-sla-mgmt include:
 *  SLA Template Generator : creates initial and tailored SLA templates for the service provider, and the ﬁnal SLA itself
 *  SLA Mapping Mechanism:  mapping between the high-level requirements described by the end-user and the low-level requirements described by the service provider
-*  SLA Parameter Analyzer: decide whether the process of the mapping mechanism should be done or not
-*  SLA Mapping Repository: store the correlations between the high-level and the low-level requirements (mapping mechanism output)
-*  SLA Monitor Analyzer: Compare the QoS parameters from the Mapping Repository, with the computed monitoring measurements and check if there is any violation  
 
 More details can be found on the [5GTANGO SLA Manager Wiki Page](https://github.com/sonata-nfv/tng-sla-mgmt/wiki)
 
@@ -53,41 +50,14 @@ The following shows how to run SLA management framework:
 
 The REST interface to the SLA Templates Management supports the following :
 
-**Access a predefined list of Service Guarantees (SLOs) [GET]** 
-```sh
-  curl "http://localhost:8080/tng-sla-mgmt/api/slas/v1/templates/guaranteesList
-```
-  or
-  Use the above link direct in a browser (Mozilla Firefox is the preferred one)   
-  
-  
-**Generate a new template [POST]** 
-* Allows to create a new sla template. It takes as input the applicable NS uuid, a template name, and an expiration date. It might include a TemplateId or not.
-```sh
-  curl "http://localhost:8080/tng-sla-mgmt/api/slas/v1/templates/{nsd_uuid}?templateName=<>&expireDate=<>"
-```
-  or
-  Use the above link direct in a browser (Mozilla Firefox is the preferred one)   
-  
-**Edit a SLA Template [PUT]**
-* Allows to update the template identified by the sla template id (uuid) by *editing specific fields in the template*
-```sh
-  curl "http://localhost:8080/tng-sla-mgmt/api/slas/v1/templates/{sla_uuid}?field=<>&old_value=<>&value=<>"
-```  
-or
-  Use the above link direct in a browser (Mozilla Firefox is the preferred one)
-  
-Note that if old_value and/or value parameters in the above link are in a String format, '<>' must be applied to each one of them.   
 
-**Customize a SLA Template [PUT]** 
-* Allows to update the template identified by the sla template id (uuid) by *adding new objectives in the template*
-```sh
-  curl "http://localhost:8080/tng-sla-mgmt/api/slas/v1/templates/customize/{sla_uuid}?objectives=<>&objectives=<>&slo_value=<>&slo_value=<>&slo_definition=<>&slo_definition=<>&slo_unit=%&<>&slo_unit=<>&metric=<>&expression=<>&expression_unit=<>&rate=<>&metric=<>&expression=<>&expression_unit=<>&rate=<>&parameter_unit=<>&parameter_definition=<>&parameter_name=<>&parameter_value=<>&parameter_unit=<>&parameter_definition=<>&parameter_name=<>&parameter_value=<>&parameter_unit=<>"
-```   
-  or
-  Use the above link direct in a browser (Mozilla Firefox is the preferred one)   
-  
-
+|           Action          | HTTP Method |                  Endpoint            |  
+| --------------------------| ----------- | --------------------------------------- |  
+| Create a new SLA Template |    `POST`   | `curl -X POST -H <Content-Type> http://localhost:8080/tng-sla-mgmt/api/slas/v1/templates/{nsd_uuid}?templateName=<>&expireDate=<>&guaranteeID` |  
+| Delete a SLA Template     |    `DELETE` | `curl -X DELETE -H <Content-Type> http://localhost:8080/tng-sla-mgmt/api/slas/v1/templates/{sla_uuid}` |  
+| Access a predefined list of Service Guarantees (SLOs)| `GET` | `curl -H <Content-Type> http://localhost:8080/tng-sla-mgmt/api/slas/v1/templates/guaranteesList` |  
+ 
+ 
 ## Development
 
 To contribute to the development of the 5GTANGO SLA Manager, you may use the very same development workflow as for any other 5GTANGO Github project. That is, you have to fork the repository and create pull requests. Moreover, all discussions regarding the 5GTANGO SLAs take place on GitHub, and NOT on the wiki.

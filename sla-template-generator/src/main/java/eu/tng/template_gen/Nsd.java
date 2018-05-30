@@ -25,12 +25,14 @@
  * @author Marios Touloupou (MSc), UPRC
  * 
  */
-package eu.tng.tng_sla_mgmt;
+package eu.tng.template_gen;
 
 import java.util.ArrayList;
 
 public class Nsd {
     private static String name;
+    private static String vendor;
+    private static String version;
     private static String description;
     private static ArrayList<String> mon_desc = new ArrayList<String>();
     private static ArrayList<String> mon_metric = new ArrayList<String>();
@@ -45,6 +47,28 @@ public class Nsd {
     @SuppressWarnings("static-access")
     public void setName(String name) {
         this.name = name;
+    }
+    
+    // public method to get the ns name
+    public String getVendor() {
+        return vendor;
+    }
+
+    // public method to set the ns name
+    @SuppressWarnings("static-access")
+    public void setVendor(String vendor) {
+        this.vendor = vendor;
+    }
+    
+    // public method to get the ns name
+    public String getVersion() {
+        return version;
+    }
+
+    // public method to set the ns name
+    @SuppressWarnings("static-access")
+    public void setVersion(String version) {
+        this.version = version;
     }
 
     // public method to get the ns description
