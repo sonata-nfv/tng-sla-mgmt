@@ -74,11 +74,11 @@ public class Modify_Sla {
 	}
 
 	/*
-	 * Method to switch state of the sla descriptorbefore editing : active->inactive
+	 * Method to switch STATUS of the sla descriptorbefore editing : active->inactive
 	 * 
 	 */
 
-	public int switchStatus(String uuid) {
+	public static int switchStatus(String uuid) {
 		int HttpResult = 0;
 		try {
 			URL url = new URL("http://pre-int-sp-ath.5gtango.eu:4011/catalogues/api/v2/slas/template-descriptors/"

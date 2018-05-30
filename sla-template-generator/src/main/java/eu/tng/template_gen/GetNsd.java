@@ -25,7 +25,7 @@
  * @author Marios Touloupou (MSc), UPRC
  * 
  */
-package eu.tng.tng_sla_mgmt;
+package eu.tng.template_gen;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -72,6 +72,15 @@ public class GetNsd {
                         // get nsd name
                         String name = (String) nsd.get("name");
                         setNsdFields.setName(name);
+                        
+                        // get nsd vendor
+                        String vendor = (String) nsd.get("vendor");
+                        setNsdFields.setVendor(vendor);
+                        
+                        // get nsd version
+                        String version = (String) nsd.get("version");
+                        setNsdFields.setVersion(version);
+
 
                         // get nsd description
                         String description = (String) nsd.get("description");
