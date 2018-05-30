@@ -18,3 +18,4 @@ COPY --from=0 /sla-template-generator/target/tng-sla-mgmt.war /usr/local/tomcat/
 
 # Make port 8080 available outside this container
 EXPOSE 8080
+
