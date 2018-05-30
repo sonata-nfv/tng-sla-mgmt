@@ -10,7 +10,7 @@ pipeline {
         }
 		stage('Building tng-sla-mgmt') {
           steps {
-            sh 'docker build -t registry.sonata-nfv.eu:5000/tng-sla-mgmt .'
+            sh 'docker build -t registry.sonata-nfv.eu:5000/tng-sla-mgmt -f sla-template-generator/Dockerfile .'
           }
 		}
       }
@@ -76,6 +76,7 @@ pipeline {
           }
 	}
   }
+  
   post {
     always {
 	  junit(allowEmptyResults: true, testResults: 'sla-template-generator/target/surefire-reports/*.xml')
