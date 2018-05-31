@@ -6,7 +6,8 @@
 <h2>Create SLA Template</h2>
 <p> URI: /api/slas/v1/templates/{ns_uuid} </p>
 <p> Method: POST</p>
-<p> Parameters: templateName, expireDate, guaranteeID</p>
+<p> Parameters: templateName, expireDate </p>
+<p> Body parameters: Key: guaranteeId, Value: selected guarantee id from the list of gurantees (e.g. g1, g3 ..) </p>
 <p> Purpose: Generate a new sla template</p>
 
 <h2>Delete SLA Template</h2>

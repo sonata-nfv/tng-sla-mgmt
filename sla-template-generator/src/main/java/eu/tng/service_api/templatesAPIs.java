@@ -39,6 +39,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -51,6 +52,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
@@ -63,66 +65,68 @@ import com.jayway.jsonpath.JsonPath;
 import eu.tng.template_gen.*;
 import eu.tng.modify_sla_template.*;
 
-
 @Path("/templates")
 @Consumes(MediaType.APPLICATION_JSON)
 public class templatesAPIs {
-	
-	 /**
-    * api call in order to generate a sla template mendatory input parameters from
-    * the user: nsId, providerId, templateName, expireDate e.g.
-    * * http://localhost:8080/tng-sla-mgmt/api/slas/v1/templates/{ns_uuid}?templateName=<>&expireDate=<>?guaranteeID<>
-    * 
-    */
-   @Produces(MediaType.APPLICATION_JSON)
-   @POST
-   @Path("/{nsd_uuid}")
-   public Response createTemplate(@PathParam("nsd_uuid") String nsd_uuid, @Context UriInfo info) {
 
-       String templateName = info.getQueryParameters().getFirst("templateName");
-       String expireDate = info.getQueryParameters().getFirst("expireDate");
-       String guaranteeID = info.getQueryParameters().getFirst("guaranteeID");
+	/**
+	 * api call in order to generate a sla template mendatory input parameters from
+	 * the user: nsId, providerId, templateName, expireDate e.g. *
+	 * http://localhost:8080/tng-sla-mgmt/api/slas/v1/templates/{ns_uuid}?templateName=<>&expireDate=<>?guaranteeID<>
+	 * 
+	 */
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes("application/x-www-form-urlencoded")
+	@POST
+	@Path("/{nsd_uuid}")
+	public Response createTemplate(@PathParam("nsd_uuid") String nsd_uuid, @Context UriInfo info,
+			final MultivaluedMap<String, String> formParams) {
 
-       // call CreateTemplate method
-       CreateTemplate ct = new CreateTemplate();
-       JSONObject template = ct.createTemplate(nsd_uuid, templateName, expireDate,guaranteeID);
-       System.out.println("FINAL"+template);
+		String templateName = info.getQueryParameters().getFirst("templateName");
+		String expireDate = info.getQueryParameters().getFirst("expireDate");
 
-       
-       try {
-           String url = "http://pre-int-sp-ath.5gtango.eu:4011/catalogues/api/v2/slas/template-descriptors";
-           URL object = new URL(url);
+		ArrayList<String> guarantees = new ArrayList<String>();
+		guarantees.addAll(formParams.get("guaranteeId"));
 
-           HttpURLConnection con = (HttpURLConnection) object.openConnection();
-           con.setDoOutput(true);
-           con.setDoInput(true);
-           con.setRequestProperty("Content-Type", "application/json");
-           con.setRequestProperty("Accept", "application/json");
-           con.setRequestMethod("POST");
-           OutputStreamWriter wr = new OutputStreamWriter(con.getOutputStream());
-           wr.write(template.toString());
-           wr.flush();
+		// call CreateTemplate method
+		CreateTemplate ct = new CreateTemplate();
+		JSONObject template = ct.createTemplate(nsd_uuid, templateName, expireDate, guarantees);
+		System.out.println("FINAL" + template);
 
-           StringBuilder sb = new StringBuilder();
-           int HttpResult = con.getResponseCode();
-           if (HttpResult == HttpURLConnection.HTTP_OK) {
-               BufferedReader br = new BufferedReader(new InputStreamReader(con.getInputStream(), "utf-8"));
-               String line = null;
-               while ((line = br.readLine()) != null) {
-                   sb.append(line + "\n");
-               }
-               br.close();
-               System.out.println("" + sb.toString());
-           } else {
-               System.out.println(con.getResponseMessage());
-           }
-       } catch (Exception e) {
-       }
-       return Response.status(200).entity(template).build();
-       
-   }
-   
-   /**
+		try {
+			String url = "http://pre-int-sp-ath.5gtango.eu:4011/catalogues/api/v2/slas/template-descriptors";
+			URL object = new URL(url);
+
+			HttpURLConnection con = (HttpURLConnection) object.openConnection();
+			con.setDoOutput(true);
+			con.setDoInput(true);
+			con.setRequestProperty("Content-Type", "application/json");
+			con.setRequestProperty("Accept", "application/json");
+			con.setRequestMethod("POST");
+			OutputStreamWriter wr = new OutputStreamWriter(con.getOutputStream());
+			wr.write(template.toString());
+			wr.flush();
+
+			StringBuilder sb = new StringBuilder();
+			int HttpResult = con.getResponseCode();
+			if (HttpResult == HttpURLConnection.HTTP_OK) {
+				BufferedReader br = new BufferedReader(new InputStreamReader(con.getInputStream(), "utf-8"));
+				String line = null;
+				while ((line = br.readLine()) != null) {
+					sb.append(line + "\n");
+				}
+				br.close();
+				System.out.println("" + sb.toString());
+			} else {
+				System.out.println(con.getResponseMessage());
+			}
+		} catch (Exception e) {
+		}
+		return Response.status(200).entity(template).build();
+
+	}
+
+	/**
 	 * api call in order to edit an already existing sla template mendatory input
 	 * parameters from the user: uuid, field, old_value, value.
 	 * http://localhost:8080/tng-sla-mgmt/api/slas/v1/edit/templates/{sla_uuid}?field=<>&old_value=<>&value=<>
@@ -134,39 +138,38 @@ public class templatesAPIs {
 	@Path("/{sla_uuid}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response deleteTemplate(@PathParam("sla_uuid") String sla_uuid) {
-		//Modify_Sla ms = new Modify_Sla();
-		//Modify_Sla.switchStatus(sla_uuid);
-	    
-		//String request = "http://pre-int-sp-ath.5gtango.eu:4011/api/catalogues/v2/slas/template-descriptors/"+sla_uuid;
-		//System.out.println(request);
-		
+		// Modify_Sla ms = new Modify_Sla();
+		// Modify_Sla.switchStatus(sla_uuid);
+
+		// String request =
+		// "http://pre-int-sp-ath.5gtango.eu:4011/api/catalogues/v2/slas/template-descriptors/"+sla_uuid;
+		// System.out.println(request);
+
 		URL url = null;
 		try {
-		    url = new URL("http://pre-int-sp-ath.5gtango.eu:4011/api/catalogues/v2/slas/template-descriptors/"+sla_uuid);
+			url = new URL(
+					"http://pre-int-sp-ath.5gtango.eu:4011/api/catalogues/v2/slas/template-descriptors/" + sla_uuid);
 		} catch (MalformedURLException exception) {
-		    exception.printStackTrace();
+			exception.printStackTrace();
 		}
 		HttpURLConnection httpURLConnection = null;
 		try {
-		    httpURLConnection = (HttpURLConnection) url.openConnection();
-		    httpURLConnection.setRequestProperty("Content-Type",
-		                "application/x-www-form-urlencoded");
-		    httpURLConnection.setRequestMethod("DELETE");
-		    System.out.println(httpURLConnection.getResponseCode());
+			httpURLConnection = (HttpURLConnection) url.openConnection();
+			httpURLConnection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+			httpURLConnection.setRequestMethod("DELETE");
+			System.out.println(httpURLConnection.getResponseCode());
 		} catch (IOException exception) {
-		    exception.printStackTrace();
-		} finally {         
-		    if (httpURLConnection != null) {
-		        httpURLConnection.disconnect();
-		    }
-		}		
+			exception.printStackTrace();
+		} finally {
+			if (httpURLConnection != null) {
+				httpURLConnection.disconnect();
+			}
+		}
 		return null;
-		
+
 	}
-   
-   
-	
-   /**
+
+	/**
 	 * api call in order to edit an already existing sla template mendatory input
 	 * parameters from the user: uuid, field, old_value, value.
 	 * http://localhost:8080/tng-sla-mgmt/api/slas/v1/edit/templates/{sla_uuid}?field=<>&old_value=<>&value=<>
@@ -194,8 +197,7 @@ public class templatesAPIs {
 
 		return Response.status(200).entity(edited_template).build();
 	}
-	
-	
+
 	/**
 	 * api call in order to modify an already existing sla template by adding new
 	 * slo mendatory input parameters from the user: uuid, field, old_value, value.
@@ -226,10 +228,9 @@ public class templatesAPIs {
 
 		return Response.status(200).entity(modified_template).build();
 	}
-	
-	
+
 	/**
-	 * api call in order to get a predifined list with 	Service Guarantees
+	 * api call in order to get a predifined list with Service Guarantees
 	 * http://localhost:8080/tng-sla-mgmt/api/slas/v1/templates/guaranteesList
 	 * 
 	 */
@@ -239,21 +240,21 @@ public class templatesAPIs {
 	public Response getGuarantees() {
 		JSONParser parser = new JSONParser();
 		JSONObject jsonObject = null;
-        try {
-        	File testf = new File( this.getClass().getResource( "/slos_list_release1.json" ).toURI() );
-        	jsonObject = (JSONObject) parser.parse(new FileReader(testf));
-            		            System.out.println(jsonObject);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (ParseException e) {
+		try {
+			File testf = new File(this.getClass().getResource("/slos_list_release1.json").toURI());
+			jsonObject = (JSONObject) parser.parse(new FileReader(testf));
+			System.out.println(jsonObject);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (URISyntaxException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return Response.status(200).entity(jsonObject).build();      
+		return Response.status(200).entity(jsonObject).build();
 	}
 }

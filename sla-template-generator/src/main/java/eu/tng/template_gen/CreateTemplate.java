@@ -3,6 +3,7 @@ package eu.tng.template_gen;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.TimeZone;
 
@@ -10,19 +11,20 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 public class CreateTemplate {
-	
+
 	Nsd getNsd = new Nsd();
 
 	@SuppressWarnings("unchecked")
-	public JSONObject createTemplate(String nsd_uuid, String templateName, String expireDate, String guaranteeID) {
+	public JSONObject createTemplate(String nsd_uuid, String templateName, String expireDate,
+			ArrayList<String> guarantees) {
 
-		/** get network service descriptor for the given nsId */
 		GetGuarantee guarantee = new GetGuarantee();
-		guarantee.getGuarantee(guaranteeID);
+		ArrayList<JSONObject> guaranteeArr = guarantee.getGuarantee(guarantees);
+
 		/** get network service descriptor for the given nsId */
 		GetNsd nsd = new GetNsd();
 		nsd.getNSD(nsd_uuid);
-		
+
 		/** GENERATE THE TEMPLATE **/
 		/**************************/
 
@@ -31,10 +33,10 @@ public class CreateTemplate {
 		DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'"); // iso date format yyyy-MM-dd'T'HH:mm'Z'
 		df.setTimeZone(tz);
 
-		/** current date */		
+		/** current date */
 		Date date = new Date();
 		String offered_date = df.format(date);
-				
+
 		/** valid until date */
 		SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 		String dateInString = expireDate;
@@ -46,8 +48,7 @@ public class CreateTemplate {
 			e.printStackTrace();
 		}
 		String validUntil = df.format(date2);
-		
-		
+
 		/** generate the template */
 		// ** root element **/
 		JSONObject root = new JSONObject();
@@ -74,15 +75,13 @@ public class CreateTemplate {
 		sla_template.put("ns", ns);
 		/** guaranteeTerms array **/
 		JSONArray guaranteeTerms = new JSONArray();
-		JSONObject guaranteeTerms_obj = new JSONObject();
-		guaranteeTerms_obj = guarantee.getGuarantee(guaranteeID);
-		guaranteeTerms.add(guaranteeTerms_obj);
-
+		for (int counter = 0; counter < guaranteeArr.size(); counter++) {
+			guaranteeTerms.add(guaranteeArr.get(counter));
+		}
 		ns.put("guaranteeTerms", guaranteeTerms);
-	
+
 		return root;
 
 	}
-
 
 }
