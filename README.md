@@ -53,7 +53,8 @@ The REST interface to the SLA Templates Management supports the following :
 
 |           Action          | HTTP Method |                  Endpoint            |  
 | --------------------------| ----------- | --------------------------------------- |  
-| Create a new SLA Template |    `POST`   | `curl -X POST -H <Content-Type> http://localhost:8080/tng-sla-mgmt/api/slas/v1/templates/{nsd_uuid}?templateName=<>&expireDate=<>&guaranteeID` |  
+| Create a new SLA Template |    `POST`   | `curl -X POST -H <Content-Type> http://localhost:8080/tng-sla-mgmt/api/slas/v1/templates/{nsd_uuid}?templateName=<>&expireDate=<>` |  
+| Get existing SLA Template |    `GET`    | `curl -H <Content-Type> http://localhost:8080/tng-sla-mgmt/api/slas/v1/templates/` |  
 | Delete a SLA Template     |    `DELETE` | `curl -X DELETE -H <Content-Type> http://localhost:8080/tng-sla-mgmt/api/slas/v1/templates/{sla_uuid}` |  
 | Access a predefined list of Service Guarantees (SLOs)| `GET` | `curl -H <Content-Type> http://localhost:8080/tng-sla-mgmt/api/slas/v1/templates/guaranteesList` |  
  
