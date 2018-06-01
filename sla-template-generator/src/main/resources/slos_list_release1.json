@@ -36,7 +36,7 @@
 			"serviceLevelObjetive": {
 				"parameter": "Resilience",
 				"period": "Hours",
-				"serviceLevel": "1min/6h",				
+				"serviceLevel": "1min/24h",				
 				"serviceLevelDetail" : [
 					{
 						"value": "1",
