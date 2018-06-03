@@ -56,10 +56,13 @@ import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
+import org.codehaus.jettison.json.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.JsonPath;
 import eu.tng.template_gen.*;
@@ -70,11 +73,52 @@ import eu.tng.modify_sla_template.*;
 public class templatesAPIs {
 
 	/**
-	 * api call in order to generate a sla template mendatory input parameters from
-	 * the user: nsId, providerId, templateName, expireDate e.g. *
-	 * http://localhost:8080/tng-sla-mgmt/api/slas/v1/templates/{ns_uuid}?templateName=<>&expireDate=<>?guaranteeID<>
+	 * api call in order to get a list twith all the existing sla templates
+	 * http://localhost:8080/tng-sla-mgmt/api/slas/v1/templates
 	 * 
 	 */
+	@Produces(MediaType.APPLICATION_JSON)
+	@GET
+	public Response getTemplates() {
+
+		try {
+			String url = "http://pre-int-sp-ath.5gtango.eu:4011/catalogues/api/v2/slas/template-descriptors";
+			URL object = new URL(url);
+
+			HttpURLConnection con = (HttpURLConnection) object.openConnection();
+			con.setDoOutput(true);
+			con.setDoInput(true);
+			con.setRequestProperty("Content-Type", "application/json");
+			con.setRequestProperty("Accept", "application/json");
+			con.setRequestMethod("GET");
+
+			int responseCode = con.getResponseCode();
+			BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
+			String inputLine;
+			StringBuffer response = new StringBuffer();
+			while ((inputLine = in.readLine()) != null) {
+				response.append(inputLine);
+			}
+			in.close();
+			JSONParser parser = new JSONParser();
+			Object existingTemplates = parser.parse(response.toString());
+
+			return Response.status(200).entity(existingTemplates).build();
+
+		} catch (Exception e) {
+
+			return Response.status(400).build();
+		}
+
+	}
+
+	/**
+	 * api call in order to generate a sla template mendatory input parameters from
+	 * the user: nsId, providerId, templateName, expireDate e.g. *
+	 * http://localhost:8080/tng-sla-mgmt/api/slas/v1/templates/{ns_uuid}?templateName=<>&expireDate=<>
+	 * 
+	 */
+
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes("application/x-www-form-urlencoded")
 	@POST
