@@ -34,7 +34,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.ResultSet;
 
-public class database {
+public class db_operations {
 
 	static Connection c = null;
 	static Statement stmt = null;
@@ -42,7 +42,7 @@ public class database {
 	/**
 	 * Connect to PostgreSQL
 	 */
-	public static void connectPostgreSQL() {
+	public void connectPostgreSQL() {
 		try {
 			Class.forName("org.postgresql.Driver");
 			c = DriverManager.getConnection("jdbc:postgresql://localhost:5432/sla-manager", "postgres", "admin");
@@ -57,46 +57,42 @@ public class database {
 	/**
 	 * Create table if not exist
 	 */
-	public static void createTableNSTemplate() {
+	public void createTableNSTemplate() {
 		try {
 			stmt = c.createStatement();
-			String sql = "CREATE TABLE ns_template" + "(ID  SERIAL PRIMARY KEY," + " NS_UUID CHAR(50) NOT NULL, "
-					+ "SLA_UUID  CHAR(50)  NOT NULL )";
+			String sql = "CREATE TABLE IF NOT EXISTS ns_template" + "(ID  SERIAL PRIMARY KEY," + " NS_UUID TEXT NOT NULL, "
+					+ "SLA_UUID  TEXT NOT NULL )";
 			stmt.executeUpdate(sql);
 			stmt.close();
-			c.close();
 		} catch (Exception e) {
-			// table already exists
 			System.err.println(e.getClass().getName() + ": " + e.getMessage());
-			System.exit(0);
 		}
 		System.out.println("Table ns_template created successfully");
 	}
 
 	/**
-	 * Insert operation
+	 * Insert Record
 	 */
-	public static void insertRecord(String tablename, String ns_uuid, String sla_uuid) {
+	public void insertRecord(String tablename, String ns_uuid, String sla_uuid) {
+	
 		try {
 			c.setAutoCommit(false);
 			Statement stmt = c.createStatement();
-			String sql = "INSERT INTO " + tablename + " (NS_UUID,SLA_UUID) " + "VALUES (" + ns_uuid + "," + sla_uuid
-					+ ");";
+			String sql = "INSERT INTO " + tablename + " (ns_uuid,sla_uuid) " + "VALUES ('" + ns_uuid + "','" + sla_uuid + "');";
 			stmt.executeUpdate(sql);
 			stmt.close();
 			c.commit();
-			c.close();
+			System.out.println("Records created successfully");
 		} catch (Exception e) {
-			System.err.println(e.getClass().getName() + ": " + e.getMessage());
-			System.exit(0);
+			e.printStackTrace();
 		}
-		System.out.println("Records created successfully");
+		
 	}
 
 	/**
 	 * Delete Record
 	 */
-	public static void deleteRecord(String tablename, String sla_uuid) {
+	public void deleteRecord(String tablename, String sla_uuid) {
 		Statement stmt = null;
 		try {
 			c.setAutoCommit(false);
@@ -105,7 +101,6 @@ public class database {
 			stmt.executeUpdate(sql);
 			c.commit();
 			stmt.close();
-			c.close();
 		} catch (Exception e) {
 			System.err.println(e.getClass().getName() + ": " + e.getMessage());
 			System.exit(0);
@@ -132,7 +127,6 @@ public class database {
 			}
 			rs.close();
 			stmt.close();
-			c.close();
 		} catch (Exception e) {
 			System.err.println(e.getClass().getName() + ": " + e.getMessage());
 			System.exit(0);
@@ -143,11 +137,10 @@ public class database {
 	/**
 	 * Close connection with PostgreSQL
 	 */
-	public static void closePostgreSQL() {
+	public void closePostgreSQL() {
 		try {
 			c.close();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

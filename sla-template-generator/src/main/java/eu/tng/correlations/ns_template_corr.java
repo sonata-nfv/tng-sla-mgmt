@@ -30,18 +30,26 @@ package eu.tng.correlations;
 
 public class ns_template_corr {
 
-	/** Create a correlation between a network service and a sla template **/
-	public static void createNsTempCorr() {
-		// do stuff
+	/**
+	 * Create a correlation between a network service and a sla template
+	 */
+	public void createNsTempCorr(String ns_uuid, String sla_uuid) {
+
+		String tablename = "ns_template";
+
+		db_operations dbo = new db_operations();
+
+		dbo.connectPostgreSQL();
+		dbo.createTableNSTemplate();
+		dbo.insertRecord(tablename, ns_uuid, sla_uuid);
+		dbo.closePostgreSQL();
+
 	}
 
-	/** Delete a correlation between a network service and a sla template **/
-	public static void deleteNsTempCorr() {
-		// do stuff
+	/**
+	 * Delete a correlation between a network service and a sla template
+	 */
+	public static void deleteNsTempCorr(String sla_uuid) {
+		// to-do
 	}
-
-	public static void main(String[] args) {
-		// do stuff
-	}
-
 }

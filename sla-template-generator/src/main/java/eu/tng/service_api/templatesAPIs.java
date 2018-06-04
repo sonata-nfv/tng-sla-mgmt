@@ -56,16 +56,13 @@ import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
-import org.codehaus.jettison.json.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import com.jayway.jsonpath.Configuration;
-import com.jayway.jsonpath.JsonPath;
 import eu.tng.template_gen.*;
+import eu.tng.correlations.db_operations;
+import eu.tng.correlations.ns_template_corr;
 import eu.tng.modify_sla_template.*;
 
 @Path("/templates")
@@ -73,9 +70,7 @@ import eu.tng.modify_sla_template.*;
 public class templatesAPIs {
 
 	/**
-	 * api call in order to get a list twith all the existing sla templates
-	 * http://localhost:8080/tng-sla-mgmt/api/slas/v1/templates
-	 * 
+	 * api call in order to get a list with all the existing sla templates
 	 */
 	@Produces(MediaType.APPLICATION_JSON)
 	@GET
@@ -92,6 +87,7 @@ public class templatesAPIs {
 			con.setRequestProperty("Accept", "application/json");
 			con.setRequestMethod("GET");
 
+			@SuppressWarnings("unused")
 			int responseCode = con.getResponseCode();
 			BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
 			String inputLine;
@@ -113,12 +109,8 @@ public class templatesAPIs {
 	}
 
 	/**
-	 * api call in order to generate a sla template mendatory input parameters from
-	 * the user: nsId, providerId, templateName, expireDate e.g. *
-	 * http://localhost:8080/tng-sla-mgmt/api/slas/v1/templates/{ns_uuid}?templateName=<>&expireDate=<>
-	 * 
+	 * api call in order to generate a sla template 
 	 */
-
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes("application/x-www-form-urlencoded")
 	@POST
@@ -135,7 +127,7 @@ public class templatesAPIs {
 		// call CreateTemplate method
 		CreateTemplate ct = new CreateTemplate();
 		JSONObject template = ct.createTemplate(nsd_uuid, templateName, expireDate, guarantees);
-		System.out.println("FINAL" + template);
+		System.out.println("Created SLA Template: " + template);
 
 		try {
 			String url = "http://pre-int-sp-ath.5gtango.eu:4011/catalogues/api/v2/slas/template-descriptors";
@@ -153,14 +145,26 @@ public class templatesAPIs {
 
 			StringBuilder sb = new StringBuilder();
 			int HttpResult = con.getResponseCode();
-			if (HttpResult == HttpURLConnection.HTTP_OK) {
+	
+			if (HttpResult == HttpURLConnection.HTTP_CREATED) {
 				BufferedReader br = new BufferedReader(new InputStreamReader(con.getInputStream(), "utf-8"));
 				String line = null;
 				while ((line = br.readLine()) != null) {
 					sb.append(line + "\n");
+					
 				}
+				System.out.println("UPLOADED TO CAT:" + sb.toString());
+				
+				// create correlation between ns and sla template
+				JSONParser parser = new JSONParser();
+				Object createdTemplate = parser.parse(sb.toString());
+				JSONObject responseSLA = (JSONObject) createdTemplate;
+				String sla_uuid = (String) responseSLA.get("uuid");
+				ns_template_corr nstemplcorr = new ns_template_corr();
+				nstemplcorr.createNsTempCorr(nsd_uuid, sla_uuid);
+				
 				br.close();
-				System.out.println("" + sb.toString());
+			
 			} else {
 				System.out.println(con.getResponseMessage());
 			}
@@ -171,13 +175,9 @@ public class templatesAPIs {
 	}
 
 	/**
-	 * api call in order to edit an already existing sla template mendatory input
-	 * parameters from the user: uuid, field, old_value, value.
-	 * http://localhost:8080/tng-sla-mgmt/api/slas/v1/edit/templates/{sla_uuid}?field=<>&old_value=<>&value=<>
-	 * 
+	 * api call in order to edit an already existing sla template
 	 */
 
-	@SuppressWarnings("static-access")
 	@DELETE
 	@Path("/{sla_uuid}")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -214,9 +214,7 @@ public class templatesAPIs {
 	}
 
 	/**
-	 * api call in order to edit an already existing sla template mendatory input
-	 * parameters from the user: uuid, field, old_value, value.
-	 * http://localhost:8080/tng-sla-mgmt/api/slas/v1/edit/templates/{sla_uuid}?field=<>&old_value=<>&value=<>
+	 * api call in order to edit an already existing sla template
 	 * 
 	 */
 
@@ -243,10 +241,7 @@ public class templatesAPIs {
 	}
 
 	/**
-	 * api call in order to modify an already existing sla template by adding new
-	 * slo mendatory input parameters from the user: uuid, field, old_value, value.
-	 * http://localhost:8080/tng-sla-mgmt/api/slas/v1/edit/stemplates/modify/{uuid}?objectives=[]&slo_value=[]&slo_definition=[]&slo_unit=[]&metric=[]&expression=[]&expression_unit=[]&rate=[]&parameter_name=[]&parameter_value=[]&parameter_definition=[]&parameter_unit=[]
-	 * 
+	 * api call in order to modify an already existing sla template
 	 */
 
 	@PUT
@@ -275,8 +270,6 @@ public class templatesAPIs {
 
 	/**
 	 * api call in order to get a predifined list with Service Guarantees
-	 * http://localhost:8080/tng-sla-mgmt/api/slas/v1/templates/guaranteesList
-	 * 
 	 */
 	@GET
 	@Path("/guaranteesList")
