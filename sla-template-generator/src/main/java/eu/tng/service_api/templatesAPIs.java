@@ -182,12 +182,6 @@ public class templatesAPIs {
 	@Path("/{sla_uuid}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response deleteTemplate(@PathParam("sla_uuid") String sla_uuid) {
-		// Modify_Sla ms = new Modify_Sla();
-		// Modify_Sla.switchStatus(sla_uuid);
-
-		// String request =
-		// "http://pre-int-sp-ath.5gtango.eu:4011/api/catalogues/v2/slas/template-descriptors/"+sla_uuid;
-		// System.out.println(request);
 
 		URL url = null;
 		try {
@@ -202,6 +196,11 @@ public class templatesAPIs {
 			httpURLConnection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
 			httpURLConnection.setRequestMethod("DELETE");
 			System.out.println(httpURLConnection.getResponseCode());
+			
+			// delete all correlations with the deleted sla template from postgreSQL table
+			ns_template_corr nstemplcorr = new ns_template_corr();
+			nstemplcorr.deleteNsTempCorr(sla_uuid);
+			
 		} catch (IOException exception) {
 			exception.printStackTrace();
 		} finally {
@@ -209,7 +208,7 @@ public class templatesAPIs {
 				httpURLConnection.disconnect();
 			}
 		}
-		return null;
+		return Response.status(200).build();
 
 	}
 

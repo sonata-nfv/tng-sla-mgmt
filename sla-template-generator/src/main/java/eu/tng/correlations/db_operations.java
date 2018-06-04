@@ -97,7 +97,7 @@ public class db_operations {
 		try {
 			c.setAutoCommit(false);
 			stmt = c.createStatement();
-			String sql = "DELETE from " + tablename + " where SLA_UUID=" + sla_uuid + ";";
+			String sql = "DELETE from " + tablename + " where SLA_UUID='" + sla_uuid + "';";
 			stmt.executeUpdate(sql);
 			c.commit();
 			stmt.close();

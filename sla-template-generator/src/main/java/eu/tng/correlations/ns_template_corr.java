@@ -50,6 +50,10 @@ public class ns_template_corr {
 	 * Delete a correlation between a network service and a sla template
 	 */
 	public static void deleteNsTempCorr(String sla_uuid) {
-		// to-do
+		String tablename = "ns_template";
+		db_operations dbo = new db_operations();
+		dbo.connectPostgreSQL();
+		dbo.deleteRecord(tablename, sla_uuid);
+		dbo.closePostgreSQL();
 	}
 }
