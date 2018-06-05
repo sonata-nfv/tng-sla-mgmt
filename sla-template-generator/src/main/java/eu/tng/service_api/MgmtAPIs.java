@@ -28,6 +28,11 @@
 
 package eu.tng.service_api;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 
 import javax.ws.rs.Consumes;
@@ -39,6 +44,8 @@ import javax.ws.rs.core.Response;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 import eu.tng.correlations.db_operations;
 import eu.tng.correlations.ns_template_corr;
@@ -87,6 +94,34 @@ public class MgmtAPIs {
 		ns_template_corr nstemplcorr = new ns_template_corr();
 		ArrayList<String> correlatedNS = nstemplcorr.nsWithoutTemplate();
 		return Response.status(200).entity(correlatedNS).build();
+	}
+	
+	
+	/**
+	 * api call in order to get a predifined list with Service Guarantees
+	 */
+	@GET
+	@Path("/guaranteesList")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getGuarantees() {
+		JSONParser parser = new JSONParser();
+		JSONObject jsonObject = null;
+		try {
+			File testf = new File(this.getClass().getResource("/slos_list_release1.json").toURI());
+			jsonObject = (JSONObject) parser.parse(new FileReader(testf));
+			System.out.println(jsonObject);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (URISyntaxException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return Response.status(200).entity(jsonObject).build();
 	}
 
 }

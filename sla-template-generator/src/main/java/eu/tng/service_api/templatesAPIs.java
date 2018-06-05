@@ -266,31 +266,4 @@ public class templatesAPIs {
 
 		return Response.status(200).entity(modified_template).build();
 	}
-
-	/**
-	 * api call in order to get a predifined list with Service Guarantees
-	 */
-	@GET
-	@Path("/guaranteesList")
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response getGuarantees() {
-		JSONParser parser = new JSONParser();
-		JSONObject jsonObject = null;
-		try {
-			File testf = new File(this.getClass().getResource("/slos_list_release1.json").toURI());
-			jsonObject = (JSONObject) parser.parse(new FileReader(testf));
-			System.out.println(jsonObject);
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (URISyntaxException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return Response.status(200).entity(jsonObject).build();
-	}
 }
