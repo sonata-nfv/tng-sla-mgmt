@@ -28,6 +28,17 @@
 
 package eu.tng.correlations;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+
 public class ns_template_corr {
 
 	/**
@@ -56,4 +67,122 @@ public class ns_template_corr {
 		dbo.deleteRecord(tablename, sla_uuid);
 		dbo.closePostgreSQL();
 	}
+
+	/**
+	 * Get an array with the ns uuids that have already accosiated an sla template
+	 */
+	@SuppressWarnings("unchecked")
+	public JSONArray nsWithTemplate() {
+
+		ArrayList<String> correlatedNS = new ArrayList<String>();
+
+		db_operations dbo = new db_operations();
+
+		// get the stored correlations
+		dbo.connectPostgreSQL();
+		JSONObject correlations = dbo.selectAllRecords("ns_template");
+		JSONArray ns_template = (JSONArray) correlations.get("ns_template");
+		for (int i = 0; i < ns_template.size(); i++) {
+			JSONObject corr = (JSONObject) ns_template.get(i);
+			correlatedNS.add((String) corr.get("ns_uuid"));
+		}
+
+		// remove duplicates
+		Set<String> ns_uuids = new HashSet<String>();
+		JSONArray tempArray = new JSONArray();
+		for (int i = 0; i < correlatedNS.size(); i++) {
+
+			String ns_uuid_temp = correlatedNS.get(i);
+			if (ns_uuids.contains(ns_uuid_temp)) {
+				continue;
+			} else {
+				ns_uuids.add(ns_uuid_temp);
+				tempArray.add(correlatedNS.get(i));
+			}
+		}
+
+		correlatedNS = tempArray; // assign temp to original
+		System.out.println(correlatedNS);
+
+		return (JSONArray) correlatedNS;
+
+	}
+
+	/**
+	 * Get an array with the ns uuids that do not have accosiated an sla template
+	 */
+	public ArrayList<String> nsWithoutTemplate() {
+
+		JSONArray existingNSArray = null;
+		ArrayList<String> existingNSIDs = new ArrayList<String>();
+		ArrayList<String> nsWithoutTemplate = new ArrayList<String>();
+
+		// get the ns uuids that have correlated an sla template
+		ArrayList<String> correlatedNSArray = new ArrayList<String>();
+		correlatedNSArray = nsWithTemplate();
+
+		// get all the available ns from the catalogue
+		try {
+
+			System.out.println("mpi8ke try");
+
+			String url = "http://pre-int-sp-ath.5gtango.eu:4011/catalogues/api/v2/network-services\r\n";
+			URL object = new URL(url);
+
+			HttpURLConnection con = (HttpURLConnection) object.openConnection();
+			con.setDoOutput(true);
+			con.setDoInput(true);
+			con.setRequestProperty("Content-Type", "application/json");
+			con.setRequestProperty("Accept", "application/json");
+			con.setRequestMethod("GET");
+
+			@SuppressWarnings("unused")
+			int responseCode = con.getResponseCode();
+			BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
+			String inputLine;
+			StringBuffer response = new StringBuffer();
+			while ((inputLine = in.readLine()) != null) {
+				response.append(inputLine);
+			}
+			in.close();
+			JSONParser parser = new JSONParser();
+			existingNSArray = (JSONArray) parser.parse(response.toString());
+
+			for (int i = 0; i < existingNSArray.size(); i++) {
+				JSONObject ns_obj = (JSONObject) existingNSArray.get(i);
+				existingNSIDs.add((String) ns_obj.get("uuid"));
+			}
+		} catch (Exception e) {
+		}
+
+		// create array list with ns uuids that have not sla templates yet
+		for (int i = 0; i < existingNSIDs.size(); i++) {
+			for (int j = 0; j < correlatedNSArray.size(); j++) {
+				if (existingNSIDs.get(i) == correlatedNSArray.get(j)) {
+					continue;
+				} else {
+					nsWithoutTemplate.add(existingNSIDs.get(i));
+				}
+			}
+
+		}
+
+		// remove duplicates
+		Set<String> ns_uuids = new HashSet<String>();
+		JSONArray tempArray = new JSONArray();
+		for (int i = 0; i < nsWithoutTemplate.size(); i++) {
+			String ns_uuid_temp = nsWithoutTemplate.get(i);
+			if (ns_uuids.contains(ns_uuid_temp)) {
+				continue;
+			} else {
+				ns_uuids.add(ns_uuid_temp);
+				tempArray.add(nsWithoutTemplate.get(i));
+			}
+		}
+
+		nsWithoutTemplate = tempArray; // assign temp to original
+
+		return nsWithoutTemplate;
+	}
+
 }
