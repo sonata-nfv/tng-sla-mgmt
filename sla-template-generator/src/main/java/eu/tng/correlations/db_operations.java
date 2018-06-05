@@ -32,6 +32,11 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.HashMap;
+
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+
 import java.sql.ResultSet;
 
 public class db_operations {
@@ -110,9 +115,14 @@ public class db_operations {
 
 	/**
 	 * Select all records
+	 * @return 
 	 */
-	public static void selectAllRecords(String tablename) {
+	public JSONObject selectAllRecords(String tablename) {
 		Statement stmt = null;
+		
+		JSONObject root = new JSONObject();
+		JSONArray ns_template = new JSONArray();	
+		
 		try {
 			c.setAutoCommit(false);
 			stmt = c.createStatement();
@@ -124,14 +134,22 @@ public class db_operations {
 				System.out.println("ID = " + id);
 				System.out.println("NS_UUID = " + ns_uuid);
 				System.out.println("SLA_UUID = " + sla_uuid);
+				
+				JSONObject obj = new JSONObject();
+				obj.put("ns_uuid",ns_uuid);
+				obj.put("sla_uuid",sla_uuid);
+				ns_template.add(obj);				
 			}
+
+			root.put("ns_template", ns_template);
+
 			rs.close();
 			stmt.close();
 		} catch (Exception e) {
 			System.err.println(e.getClass().getName() + ": " + e.getMessage());
 			System.exit(0);
 		}
-		System.out.println("Operation done successfully");
+		return root;
 	}
 
 	/**

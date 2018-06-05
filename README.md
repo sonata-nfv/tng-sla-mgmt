@@ -56,9 +56,18 @@ The REST interface to the SLA Templates Management supports the following :
 | Create a new SLA Template |    `POST`   | `curl -X POST -H <Content-Type> http://localhost:8080/tng-sla-mgmt/api/slas/v1/templates/{nsd_uuid}?templateName=<>&expireDate=<>` |  
 | Get existing SLA Template |    `GET`    | `curl -H <Content-Type> http://localhost:8080/tng-sla-mgmt/api/slas/v1/templates/` |  
 | Delete a SLA Template     |    `DELETE` | `curl -X DELETE -H <Content-Type> http://localhost:8080/tng-sla-mgmt/api/slas/v1/templates/{sla_uuid}` |  
-| Access a predefined list of Service Guarantees (SLOs)| `GET` | `curl -H <Content-Type> http://localhost:8080/tng-sla-mgmt/api/slas/v1/templates/guaranteesList` |  
- 
- 
+
+
+The REST interface to the SLA Management supports the following :  
+
+
+|           Action          | HTTP Method |                  Endpoint              |  
+| --------------------------| ----------- | --------------------------------------- |  
+| Access a predefined list of Service Guarantees (SLOs)| `GET` | `curl -H <Content-Type> http://localhost:8080/tng-sla-mgmt/api/slas/v1/mgmt/guaranteesList` |  
+| Access a list with all the ns template correlations | `GET` | `curl -H <Content-Type> http://localhost:8080/tng-sla-mgmt/api/slas/v1/mgmt/services/templates/` |  
+| Access a list with NS that have associated templates | `GET` | `curl -H <Content-Type> http://localhost:8080/tng-sla-mgmt/api/slas/v1/mgmt/services/templates/true` |  
+| Access a list with NS that do not have associated templates yet| `GET` | `curl -H <Content-Type> http://localhost:8080/tng-sla-mgmt/api/slas/v1/mgmt/services/templates/false` |  
+
 ## Development
 
 To contribute to the development of the 5GTANGO SLA Manager, you may use the very same development workflow as for any other 5GTANGO Github project. That is, you have to fork the repository and create pull requests. Moreover, all discussions regarding the 5GTANGO SLAs take place on GitHub, and NOT on the wiki.
