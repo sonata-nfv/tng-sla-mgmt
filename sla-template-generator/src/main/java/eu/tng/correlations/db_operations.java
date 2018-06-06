@@ -65,8 +65,8 @@ public class db_operations {
 	public void createTableNSTemplate() {
 		try {
 			stmt = c.createStatement();
-			String sql = "CREATE TABLE IF NOT EXISTS ns_template" + "(ID  SERIAL PRIMARY KEY," + " NS_UUID TEXT NOT NULL, "
-					+ "SLA_UUID  TEXT NOT NULL )";
+			String sql = "CREATE TABLE IF NOT EXISTS ns_template" + "(ID  SERIAL PRIMARY KEY,"
+					+ " NS_UUID TEXT NOT NULL, " + "SLA_UUID  TEXT NOT NULL )";
 			stmt.executeUpdate(sql);
 			stmt.close();
 		} catch (Exception e) {
@@ -79,11 +79,12 @@ public class db_operations {
 	 * Insert Record
 	 */
 	public void insertRecord(String tablename, String ns_uuid, String sla_uuid) {
-	
+
 		try {
 			c.setAutoCommit(false);
 			Statement stmt = c.createStatement();
-			String sql = "INSERT INTO " + tablename + " (ns_uuid,sla_uuid) " + "VALUES ('" + ns_uuid + "','" + sla_uuid + "');";
+			String sql = "INSERT INTO " + tablename + " (ns_uuid,sla_uuid) " + "VALUES ('" + ns_uuid + "','" + sla_uuid
+					+ "');";
 			stmt.executeUpdate(sql);
 			stmt.close();
 			c.commit();
@@ -91,7 +92,7 @@ public class db_operations {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
+
 	}
 
 	/**
@@ -115,40 +116,48 @@ public class db_operations {
 
 	/**
 	 * Select all records
-	 * @return 
+	 * 
+	 * @return
 	 */
 	public JSONObject selectAllRecords(String tablename) {
 		Statement stmt = null;
-		
+
 		JSONObject root = new JSONObject();
-		JSONArray ns_template = new JSONArray();	
-		
-		try {
-			c.setAutoCommit(false);
-			stmt = c.createStatement();
-			ResultSet rs = stmt.executeQuery("SELECT * FROM " + tablename + ";");
-			while (rs.next()) {
-				int id = rs.getInt("id");
-				String ns_uuid = rs.getString("ns_uuid");
-				String sla_uuid = rs.getString("sla_uuid");
-				System.out.println("ID = " + id);
-				System.out.println("NS_UUID = " + ns_uuid);
-				System.out.println("SLA_UUID = " + sla_uuid);
-				
-				JSONObject obj = new JSONObject();
-				obj.put("ns_uuid",ns_uuid);
-				obj.put("sla_uuid",sla_uuid);
-				ns_template.add(obj);				
+		JSONArray ns_template = new JSONArray();
+
+		if (tablename == "ns_template") {
+
+			try {
+				c.setAutoCommit(false);
+				stmt = c.createStatement();
+				ResultSet rs = stmt.executeQuery("SELECT * FROM " + tablename + ";");
+				while (rs.next()) {
+					int id = rs.getInt("id");
+					String ns_uuid = rs.getString("ns_uuid");
+					String sla_uuid = rs.getString("sla_uuid");
+					System.out.println("ID = " + id);
+					System.out.println("NS_UUID = " + ns_uuid);
+					System.out.println("SLA_UUID = " + sla_uuid);
+
+					JSONObject obj = new JSONObject();
+					obj.put("ns_uuid", ns_uuid);
+					obj.put("sla_uuid", sla_uuid);
+					ns_template.add(obj);
+				}
+
+				root.put("ns_template", ns_template);
+
+				rs.close();
+				stmt.close();
+			} catch (Exception e) {
+				System.err.println(e.getClass().getName() + ": " + e.getMessage());
+				System.exit(0);
 			}
 
-			root.put("ns_template", ns_template);
+		} else {
 
-			rs.close();
-			stmt.close();
-		} catch (Exception e) {
-			System.err.println(e.getClass().getName() + ": " + e.getMessage());
-			System.exit(0);
 		}
+
 		return root;
 	}
 
