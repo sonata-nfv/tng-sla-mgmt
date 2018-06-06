@@ -32,8 +32,6 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.HashMap;
-
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
@@ -60,7 +58,7 @@ public class db_operations {
 	}
 
 	/**
-	 * Create table if not exist
+	 * Create table if not exist - ns-template correlation
 	 */
 	public void createTableNSTemplate() {
 		try {
@@ -76,7 +74,23 @@ public class db_operations {
 	}
 
 	/**
-	 * Insert Record
+	 * Create table if not exist - customer-sla correlation
+	 */
+	public void createTableCustSla() {
+		try {
+			stmt = c.createStatement();
+			String sql = "CREATE TABLE IF NOT EXISTS cust_sla" + "(ID  SERIAL PRIMARY KEY," + " NS_UUID TEXT NOT NULL, "
+					+ "SLA_UUID  TEXT NOT NULL," + "CUST_UUID  TEXT NOT NULL )";
+			stmt.executeUpdate(sql);
+			stmt.close();
+		} catch (Exception e) {
+			System.err.println(e.getClass().getName() + ": " + e.getMessage());
+		}
+		System.out.println("Table cust_sla created successfully");
+	}
+
+	/**
+	 * Insert Record ns-template correlation
 	 */
 	public void insertRecord(String tablename, String ns_uuid, String sla_uuid) {
 
@@ -85,6 +99,26 @@ public class db_operations {
 			Statement stmt = c.createStatement();
 			String sql = "INSERT INTO " + tablename + " (ns_uuid,sla_uuid) " + "VALUES ('" + ns_uuid + "','" + sla_uuid
 					+ "');";
+			stmt.executeUpdate(sql);
+			stmt.close();
+			c.commit();
+			System.out.println("Records created successfully");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+	}
+
+	/**
+	 * Insert Record cust-sla correlation
+	 */
+	public void insertRecordAgreement(String ns_uuid, String sla_uuid, String cust_uuid) {
+
+		try {
+			c.setAutoCommit(false);
+			Statement stmt = c.createStatement();
+			String sql = "INSERT INTO cust_sla " + " (ns_uuid,sla_uuid,cust_uuid) " + "VALUES ('" + ns_uuid + "','"
+					+ sla_uuid + "','" + cust_uuid + " ');";
 			stmt.executeUpdate(sql);
 			stmt.close();
 			c.commit();
@@ -135,10 +169,6 @@ public class db_operations {
 					int id = rs.getInt("id");
 					String ns_uuid = rs.getString("ns_uuid");
 					String sla_uuid = rs.getString("sla_uuid");
-					System.out.println("ID = " + id);
-					System.out.println("NS_UUID = " + ns_uuid);
-					System.out.println("SLA_UUID = " + sla_uuid);
-
 					JSONObject obj = new JSONObject();
 					obj.put("ns_uuid", ns_uuid);
 					obj.put("sla_uuid", sla_uuid);
