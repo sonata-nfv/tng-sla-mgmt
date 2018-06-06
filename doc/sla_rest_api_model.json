@@ -1,0 +1,189 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "An H2020 5GTANGO project",
+        "version": "0.0.1",
+        "title": "5GTANGO SLA Manager REST API",
+        "termsOfService": "https://5gtango.eu/",
+        "license": {
+            "name": "Apache License 2.0",
+            "url": "https://github.com/sonata-nfv/tng-sla-mgmt/blob/master/LICENSE"
+        }
+    },
+    "host": "tng-sla-mgmt:8080",
+    "basePath": "/sla-mgmt",
+    "tags": [
+    {
+      "name": "default",
+      "description": "Default namespace"
+    },
+    {
+      "name": "v1",
+      "description": "sla-mgmt API"
+    }
+    ],
+    "paths": {
+	  "/api/slas/v1/templates/{nsd_uuid}": {
+      "post": {
+        "responses": {
+          "404": {
+            "description": "Not Found: NS uuid not found."
+          },
+          "200": {
+            "description": "Success"       
+          }
+        },
+        "operationId": "create_template",
+        "parameters": [
+          {
+            "name": "nsd_uuid",
+            "in": "path",
+            "type": "String",
+            "required": true,
+            "description": "Network Service UUID"
+          },
+          {
+            "name": "templateName",
+            "in": "path",
+            "type": "string",
+			"required": true,
+            "description": "Name of the SLA template"
+          },
+          {
+            "name": "expireDate",
+            "in": "path",
+            "type": "string",
+			"required": true,
+            "description": "Expire date of the SLA"
+          },
+          {
+            "name": "guaranteeID",
+            "in": "formData",
+            "type": "string",
+			"required": true,
+            "description": "The ID of the SLO",
+            "default": "g1"
+          }
+        ],
+        "consumes": [
+          "multipart/form-data"
+        ],
+        "tags": [
+          "v1"
+        ]
+      }
+    },
+	"/api/slas/v1/templates/{sla_uuid}": {
+      "delete": {
+        "responses": {
+          "200": {
+            "description": "Success",          
+          },
+		  "400": {
+            "description": "Bad request: HTTP bad request"
+          }
+        },
+        "operationId": "delete_sla_template",
+        "parameters": [
+          {
+            "name": "sla_uuid",
+            "in": "path",
+            "type": "string",
+            "description": "SLA uuid to be deleted"
+          }
+        ],
+        "tags": [
+          "v1"
+        ]
+      }
+    },
+	"/api/slas/v1/templates/": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Success",          
+          },
+		  "400": {
+            "description": "Bad request: HTTP bad request"
+          }
+        },
+        "operationId": "get_all_sla_templates",
+        "tags": [
+          "v1"
+        ]
+      }
+    },
+	"/api/slas/v1/templates/guaranteesList": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Success",          
+          },
+		  "400": {
+            "description": "Bad request: HTTP bad request"
+          }
+        },
+        "operationId": "get_guarantee_list",
+        "parameters": [        
+        ],
+        "tags": [
+          "v1"
+        ]
+      }
+    },
+	"/api/slas/v1/mgmt/services/templates/": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Success",          
+          },
+		  "400": {
+            "description": "Bad request: HTTP bad request"
+          }
+        },
+        "operationId": "get_correlated_sla_ns",
+        "parameters": [        
+        ],
+        "tags": [
+          "v1"
+        ]
+      }
+    },
+	"/api/slas/v1/mgmt/services/templates/true": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Success",          
+          },
+		  "400": {
+            "description": "Bad request: HTTP bad request"
+          }
+        },
+        "operationId": "get_ns_assosiated_Slas",
+        "parameters": [        
+        ],
+        "tags": [
+          "v1"
+        ]
+      }
+    },
+	"/api/slas/v1/mgmt/services/templates/false": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Success",          
+          },
+		  "400": {
+            "description": "Bad request: HTTP bad request"
+          }
+        },
+        "operationId": "get_ns_withno_slas",
+        "parameters": [        
+        ],
+        "tags": [
+          "v1"
+        ]
+      }
+    }
+    }
+}
