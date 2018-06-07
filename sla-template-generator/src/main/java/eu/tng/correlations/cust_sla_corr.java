@@ -28,12 +28,25 @@
 
 package eu.tng.correlations;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
+
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+
 public class cust_sla_corr {
-	
+
 	/**
-	 * Create a correlation between an instatiated network service, a customer and a sla 
+	 * Create a correlation between an instatiated network service, a customer and a
+	 * sla
 	 */
-	public void createCustSlaCorr(String ns_uuid, String sla_uuid, String cust_uuid) {
+	public static void createCustSlaCorr(String ns_uuid, String sla_uuid, String cust_uuid) {
 
 		db_operations dbo = new db_operations();
 
@@ -47,12 +60,161 @@ public class cust_sla_corr {
 	/**
 	 * Delete a correlation between a network service and a sla template
 	 */
-	public static void deleteNsTempCorr(String sla_uuid) {
+	public static void deleteCorr(String sla_uuid) {
 		String tablename = "cust_sla";
 		db_operations dbo = new db_operations();
 		dbo.connectPostgreSQL();
 		dbo.deleteRecord(tablename, sla_uuid);
 		dbo.closePostgreSQL();
+	}
+
+	public static JSONArray getGuaranteeTerms(String sla_uuid) {
+
+		JSONArray guaranteeTerms = null;
+		try {
+			String url = "http://pre-int-sp-ath.5gtango.eu:4011/catalogues/api/v2/slas/template-descriptors/" + sla_uuid
+					+ "\r\n";
+			URL object = new URL(url);
+
+			HttpURLConnection con = (HttpURLConnection) object.openConnection();
+			con.setDoOutput(true);
+			con.setDoInput(true);
+			con.setRequestProperty("Content-Type", "application/json");
+			con.setRequestProperty("Accept", "application/json");
+			con.setRequestMethod("GET");
+
+			@SuppressWarnings("unused")
+			int responseCode = con.getResponseCode();
+			BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
+			String inputLine;
+			StringBuffer response = new StringBuffer();
+			while ((inputLine = in.readLine()) != null) {
+				response.append(inputLine);
+			}
+			in.close();
+			JSONParser parser = new JSONParser();
+			JSONObject slad_obj = (JSONObject) parser.parse(response.toString());
+			JSONObject slad = (JSONObject) slad_obj.get("slad");
+			JSONObject sla_template = (JSONObject) slad.get("sla_template");
+			JSONObject ns = (JSONObject) sla_template.get("ns");
+			guaranteeTerms = (JSONArray) ns.get("guaranteeTerms");
+			System.out.println(guaranteeTerms);
+
+		} catch (Exception e) {
+		}
+
+		return guaranteeTerms;
+	}
+
+	public static void main(String[] args) {
+
+		createCustSlaCorr("test_ns2", "test_sla2", "test_cust3");
+		// getGuaranteeTerms("830b1005-0886-456f-9d69-1565eb85b844");
+	}
+
+	public JSONArray nsWithAgreement() {
+		ArrayList<String> correlatedNS = new ArrayList<String>();
+
+		db_operations dbo = new db_operations();
+
+		// get the stored correlations
+		dbo.connectPostgreSQL();
+		JSONObject correlations = dbo.selectAllRecords("cust_sla");
+		JSONArray cust_sla = (JSONArray) correlations.get("cust_sla");
+		for (int i = 0; i < cust_sla.size(); i++) {
+			JSONObject corr = (JSONObject) cust_sla.get(i);
+			correlatedNS.add((String) corr.get("ns_uuid"));
+		}
+
+		// remove duplicates
+		Set<String> ns_uuids = new HashSet<String>();
+		JSONArray tempArray = new JSONArray();
+		for (int i = 0; i < correlatedNS.size(); i++) {
+
+			String ns_uuid_temp = correlatedNS.get(i);
+			if (ns_uuids.contains(ns_uuid_temp)) {
+				continue;
+			} else {
+				ns_uuids.add(ns_uuid_temp);
+				tempArray.add(correlatedNS.get(i));
+			}
+		}
+
+		correlatedNS = tempArray; // assign temp to original
+		System.out.println(correlatedNS);
+
+		return (JSONArray) correlatedNS;
+
+	}
+
+	public ArrayList<String>  nsWithoutAgreement() {
+		JSONArray existingNSArray = null;
+		ArrayList<String> existingNSIDs = new ArrayList<String>();
+		ArrayList<String> nsWithoutAgreement = new ArrayList<String>();
+
+		// get the ns uuids that have correlated an sla template
+		ArrayList<String> correlatedNSArray = new ArrayList<String>();
+		correlatedNSArray = nsWithAgreement();
+
+		// get all the available ns from the catalogue
+		try {
+			String url = "http://pre-int-sp-ath.5gtango.eu:4011/catalogues/api/v2/network-services\r\n";
+			URL object = new URL(url);
+
+			HttpURLConnection con = (HttpURLConnection) object.openConnection();
+			con.setDoOutput(true);
+			con.setDoInput(true);
+			con.setRequestProperty("Content-Type", "application/json");
+			con.setRequestProperty("Accept", "application/json");
+			con.setRequestMethod("GET");
+
+			@SuppressWarnings("unused")
+			int responseCode = con.getResponseCode();
+			BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
+			String inputLine;
+			StringBuffer response = new StringBuffer();
+			while ((inputLine = in.readLine()) != null) {
+				response.append(inputLine);
+			}
+			in.close();
+			JSONParser parser = new JSONParser();
+			existingNSArray = (JSONArray) parser.parse(response.toString());
+
+			for (int i = 0; i < existingNSArray.size(); i++) {
+				JSONObject ns_obj = (JSONObject) existingNSArray.get(i);
+				existingNSIDs.add((String) ns_obj.get("uuid"));
+			}
+		} catch (Exception e) {
+		}
+
+		// create array list with ns uuids that have not sla templates yet
+		for (int i = 0; i < existingNSIDs.size(); i++) {
+			for (int j = 0; j < correlatedNSArray.size(); j++) {
+				if (existingNSIDs.get(i) == correlatedNSArray.get(j)) {
+					continue;
+				} else {
+					nsWithoutAgreement.add(existingNSIDs.get(i));
+				}
+			}
+
+		}
+
+		// remove duplicates
+		Set<String> ns_uuids = new HashSet<String>();
+		JSONArray tempArray = new JSONArray();
+		for (int i = 0; i < nsWithoutAgreement.size(); i++) {
+			String ns_uuid_temp = nsWithoutAgreement.get(i);
+			if (ns_uuids.contains(ns_uuid_temp)) {
+				continue;
+			} else {
+				ns_uuids.add(ns_uuid_temp);
+				tempArray.add(nsWithoutAgreement.get(i));
+			}
+		}
+
+		nsWithoutAgreement = tempArray; // assign temp to original
+
+		return nsWithoutAgreement;
 	}
 
 }
