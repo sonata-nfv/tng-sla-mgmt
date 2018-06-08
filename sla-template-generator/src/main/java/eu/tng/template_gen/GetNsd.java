@@ -46,8 +46,6 @@ public class GetNsd {
 		Nsd setNsdFields = new Nsd();
 		ArrayList<String> mon_desc_list = new ArrayList<String>();
 		ArrayList<String> mon_metric_list = new ArrayList<String>();
-		ArrayList<String> mon_unit_list = new ArrayList<String>();
-
 		try {
 			URL url = new URL("http://pre-int-sp-ath.5gtango.eu:4011/catalogues/api/v2/network-services/" + nsId);
 			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -85,20 +83,6 @@ public class GetNsd {
 						String description = (String) nsd.get("description");
 						setNsdFields.setDescription(description);
 
-						// get monitoring_parameters-desc,metric,unit
-						if (nsd.containsKey("monitoring_parameters")) {
-							JSONArray monitoring_parameters = (JSONArray) nsd.get("monitoring_parameters");
-							for (int i = 0; i < monitoring_parameters.size(); i++) {
-								JSONObject monitoring_parameter = (JSONObject) monitoring_parameters.get(i);
-								mon_desc_list.add((String) monitoring_parameter.get("desc"));
-								mon_metric_list.add((String) monitoring_parameter.get("metric"));
-								mon_unit_list.add((String) monitoring_parameter.get("unit"));
-							}
-							setNsdFields.SetMonDesc(mon_desc_list);
-							setNsdFields.SetMonMetric(mon_metric_list);
-							setNsdFields.SetMonUnit(mon_unit_list);
-
-						}
 					}
 
 				} catch (ParseException e) {

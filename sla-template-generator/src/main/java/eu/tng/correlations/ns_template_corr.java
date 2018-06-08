@@ -181,5 +181,9 @@ public class ns_template_corr {
 
 		return nsWithoutTemplate;
 	}
+	
+	
+	
+	
 
 }
