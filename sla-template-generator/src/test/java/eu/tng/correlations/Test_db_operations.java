@@ -1,9 +1,12 @@
 package eu.tng.correlations;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import org.junit.Test;
 
-public class db_operations_Tests {
+public class Test_db_operations {
+
 	db_operations dbo = new db_operations();
 
 	@Test
@@ -34,5 +37,6 @@ public class db_operations_Tests {
 		assertTrue(dbo.deleteRecord("ns_template", "test") == true);
 		dbo.closePostgreSQL();
 	}
-
+	
+	
 }
