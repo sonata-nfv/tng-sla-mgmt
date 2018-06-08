@@ -49,8 +49,11 @@ public class db_operations {
 	 */
 	public void connectPostgreSQL() {
 		try {
+			
 			Class.forName("org.postgresql.Driver");
-			c = DriverManager.getConnection("jdbc:postgresql://localhost:5432/sla-manager", "postgres", "admin");
+			
+			c = DriverManager.getConnection("jdbc:postgresql://"+System.getenv("DATABASE_HOST")+":"+System.getenv("DATABASE_PORT")+"/"+
+											System.getenv("GTK_DB_NAME"),System.getenv("GTK_DB_USER"),System.getenv("GTK_DB_PASS"));
 		} catch (Exception e) {
 			e.printStackTrace();
 			System.err.println(e.getClass().getName() + ": " + e.getMessage());
@@ -62,17 +65,21 @@ public class db_operations {
 	/**
 	 * Create table if not exist - ns-template correlation
 	 */
-	public void createTableNSTemplate() {
+	public boolean createTableNSTemplate() {
+		boolean result = false;
 		try {
 			stmt = c.createStatement();
 			String sql = "CREATE TABLE IF NOT EXISTS ns_template" + "(ID  SERIAL PRIMARY KEY,"
 					+ " NS_UUID TEXT NOT NULL, " + "SLA_UUID  TEXT NOT NULL )";
 			stmt.executeUpdate(sql);
 			stmt.close();
+			result = true;
 		} catch (Exception e) {
 			System.err.println(e.getClass().getName() + ": " + e.getMessage());
 		}
-		System.out.println("Table ns_template created successfully");
+
+		System.out.println("Table Created? " + result);
+		return result;
 	}
 
 	/**
@@ -89,13 +96,14 @@ public class db_operations {
 			System.err.println(e.getClass().getName() + ": " + e.getMessage());
 		}
 		System.out.println("Table cust_sla created successfully");
+
 	}
 
 	/**
 	 * Insert Record ns-template correlation
 	 */
-	public void insertRecord(String tablename, String ns_uuid, String sla_uuid) {
-
+	public boolean insertRecord(String tablename, String ns_uuid, String sla_uuid) {
+		boolean result = false;
 		try {
 			c.setAutoCommit(false);
 			Statement stmt = c.createStatement();
@@ -104,11 +112,15 @@ public class db_operations {
 			stmt.executeUpdate(sql);
 			stmt.close();
 			c.commit();
-			System.out.println("Records created successfully");
+			result = true;
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
+		System.out.println("Records created successfully? " + result);
+
+		return result;
 	}
 
 	/**
@@ -134,8 +146,9 @@ public class db_operations {
 	/**
 	 * Delete Record
 	 */
-	public void deleteRecord(String tablename, String sla_uuid) {
+	public boolean deleteRecord(String tablename, String sla_uuid) {
 		Statement stmt = null;
+		boolean result = false;
 		try {
 			c.setAutoCommit(false);
 			stmt = c.createStatement();
@@ -143,11 +156,14 @@ public class db_operations {
 			stmt.executeUpdate(sql);
 			c.commit();
 			stmt.close();
+			result = true;
 		} catch (Exception e) {
 			System.err.println(e.getClass().getName() + ": " + e.getMessage());
 			System.exit(0);
 		}
-		System.out.println("Records with sla_uuid:" + sla_uuid + " deleted successfully");
+		System.out.println("Records with deleted? " + result);
+		
+		return result;
 	}
 
 	/**
@@ -232,7 +248,7 @@ public class db_operations {
 		Statement stmt = null;
 		JSONObject root = new JSONObject();
 		JSONArray cust_sla = new JSONArray();
-		
+
 		nsuuid = nsuuid.trim();
 
 		try {
@@ -274,11 +290,11 @@ public class db_operations {
 		JSONArray cust_sla = new JSONArray();
 
 		custuuid = custuuid.trim();
-		
+
 		try {
 			c.setAutoCommit(false);
 			stmt = c.createStatement();
-			ResultSet rs = stmt.executeQuery("SELECT * FROM cust_sla WHERE cust_uuid = '"+custuuid+"'");
+			ResultSet rs = stmt.executeQuery("SELECT * FROM cust_sla WHERE cust_uuid = '" + custuuid + "'");
 
 			while (rs.next()) {
 				String ns_uuid = rs.getString("ns_uuid");

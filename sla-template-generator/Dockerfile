@@ -7,6 +7,19 @@ ADD sla-template-generator /sla-template-generator
 # Set the working directory to /sla-template-generator
 WORKDIR /sla-template-generator
 
+# Set pgSQL Environment Variables
+ENV DATABASE_HOST son-postgres
+ENV GTK_DB_NAME gatekeeper
+ENV GTK_DB_USER sonatatest
+ENV GTK_DB_PASS sonata
+ENV DATABASE_PORT 5432
+
+# Set Catalogue Environment Variables
+ENV CATALOGUES_URL http://tng-cat:4011/catalogues/api/v2/network-services/
+
+# Set MESSAGE BUS Environment Variables
+ENV MQSERVER_URL=amqp://guest:guest@broker:5672
+
 # Run maven install project
 RUN mvn clean install
 

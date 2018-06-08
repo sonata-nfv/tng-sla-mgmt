@@ -40,29 +40,27 @@ import com.jayway.jsonpath.JsonPath;
 
 public class Get_Sla_TemplateTest {
 
-    @Test
-    public void testGet_Sla() {
-        String slafield1 = "tango-sla-template";
-        String slafield2 = "Evgenia Kapassa, Marios Touloupou";
-        String slafield3 = "Test2";
+	@Test
+	public void testGet_Sla() {
+		String slafield1 = "tango-sla-template";
+		String slafield2 = "Evgenia Kapassa, Marios Touloupou";
+		String slafield3 = "Test2";
 
-        JSONObject slaD = null;
-        Configuration conf = Configuration.defaultConfiguration();
+		JSONObject slaD = null;
+		Configuration conf = Configuration.defaultConfiguration();
 
-        JSONParser parser = new JSONParser();
-        try {
-            slaD = (JSONObject) parser.parse(new FileReader("src/main/resources/sla_template_example.json"));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+		JSONParser parser = new JSONParser();
+		try {
+			slaD = (JSONObject) parser.parse(new FileReader("src/main/resources/sla_template_example.json"));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
-        String slavendor = JsonPath.using(conf).parse(slaD).read("slad.vendor");
-        String slaauthor = JsonPath.using(conf).parse(slaD).read("slad.author");
-        String slaname = JsonPath.using(conf).parse(slaD).read("slad.name");
-        
-        
-        
-        assertTrue(slafield1.equals(slavendor) && slafield2.equals(slaauthor) && slafield3.equals(slaname));
-    }
+		String slavendor = JsonPath.using(conf).parse(slaD).read("slad.vendor");
+		String slaauthor = JsonPath.using(conf).parse(slaD).read("slad.author");
+		String slaname = JsonPath.using(conf).parse(slaD).read("slad.name");
+
+		assertTrue(slafield1.equals(slavendor) && slafield2.equals(slaauthor) && slafield3.equals(slaname));
+	}
 
 }
