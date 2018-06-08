@@ -48,8 +48,7 @@ The following shows how to run SLA management framework:
 
 ## API Documentation
 
-The REST interface to the SLA Templates Management supports the following :
-
+### SLA Templates
 
 |           Action          | HTTP Method |                  Endpoint            |  
 | --------------------------| ----------- | --------------------------------------- |  
@@ -58,8 +57,17 @@ The REST interface to the SLA Templates Management supports the following :
 | Delete a SLA Template     |    `DELETE` | `curl -X DELETE -H <Content-Type> http://localhost:8080/tng-sla-mgmt/api/slas/v1/templates/{sla_uuid}` |  
 
 
-The REST interface to the SLA Management supports the following :  
+### SLA Agreements
 
+|           Action           | HTTP Method |                  Endpoint            |  
+| -------------------------- | ----------- | --------------------------------------- |  
+| Get existing SLA Agreements| `GET`    | `curl -H <Content-Type> http://localhost:8080/tng-sla-mgmt/api/slas/v1/agreements/` |  
+| Delete a SLA Agreement     | `DELETE` | `curl -X DELETE -H <Content-Type> http://localhost:8080/tng-sla-mgmt/api/slas/v1/agreements/{sla_uuid}` |  
+| Get Agreements per (instatiated) NS   | `GET`    | `curl -H <Content-Type> http://localhost:8080/tng-sla-mgmt/api/slas/v1/agreements/service/{ns_uuid}` |  
+| Get Agreement guarantee terms| `GET`    | `curl -H <Content-Type> http://localhost:8080/tng-sla-mgmt/api/slas/v1/agreements/guarantee-terms/{sla_uuid}` |  
+
+
+### SLA Management
 
 |           Action          | HTTP Method |                  Endpoint              |  
 | --------------------------| ----------- | --------------------------------------- |  
@@ -67,6 +75,9 @@ The REST interface to the SLA Management supports the following :
 | Access a list with all the ns template correlations | `GET` | `curl -H <Content-Type> http://localhost:8080/tng-sla-mgmt/api/slas/v1/mgmt/services/templates/` |  
 | Access a list with NS that have associated templates | `GET` | `curl -H <Content-Type> http://localhost:8080/tng-sla-mgmt/api/slas/v1/mgmt/services/templates/true` |  
 | Access a list with NS that do not have associated templates yet| `GET` | `curl -H <Content-Type> http://localhost:8080/tng-sla-mgmt/api/slas/v1/mgmt/services/templates/false` |  
+| Access a list with NS that have associated agreements| `GET` | `curl -H <Content-Type> http://localhost:8080/tng-sla-mgmt/api/slas/v1/mgmt/services/agreements/true` |  
+| Access a list with NS that do not have associated agreements yet| `GET` | `curl -H <Content-Type> http://localhost:8080/tng-sla-mgmt/api/slas/v1/mgmt/services/agreements/false`|  
+
 
 ## Development
 
