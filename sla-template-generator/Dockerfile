@@ -21,7 +21,7 @@ ENV CATALOGUES_URL http://tng-cat:4011/catalogues/api/v2/network-services/
 ENV MQSERVER_URL=amqp://guest:guest@broker:5672
 
 # Run maven install project
-RUN mvn install -DskipTests
+RUN mvn clean install
 
 # New container with tomcat8
 FROM tomcat:8.5-alpine
