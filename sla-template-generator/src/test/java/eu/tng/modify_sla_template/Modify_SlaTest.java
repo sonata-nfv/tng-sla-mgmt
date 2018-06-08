@@ -38,104 +38,104 @@ import com.jayway.jsonpath.JsonPath;
 
 public class Modify_SlaTest {
 
-    @Test
-    public void testSwitchState() {
-        String state = "unpublished";
+	@Test
+	public void testSwitchState() {
+		String state = "unpublished";
 
-        JSONObject slaD = null;
-        Configuration conf = Configuration.defaultConfiguration();
+		JSONObject slaD = null;
+		Configuration conf = Configuration.defaultConfiguration();
 
-        JSONParser parser = new JSONParser();
-        try {
-            slaD = (JSONObject) parser.parse(new FileReader("src/main/resources/sla_template_example.json"));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+		JSONParser parser = new JSONParser();
+		try {
+			slaD = (JSONObject) parser.parse(new FileReader("src/main/resources/sla_template_example.json"));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
-        String sla_state = JsonPath.using(conf).parse(slaD).read("state");
+		String sla_state = JsonPath.using(conf).parse(slaD).read("state");
 
-        assertTrue(state.equals(sla_state));
-    }
+		assertTrue(state.equals(sla_state));
+	}
 
-    @Test
-    public void testSwitchStatus() {
-        String status = "active";
+	@Test
+	public void testSwitchStatus() {
+		String status = "active";
 
-        JSONObject slaD = null;
-        Configuration conf = Configuration.defaultConfiguration();
+		JSONObject slaD = null;
+		Configuration conf = Configuration.defaultConfiguration();
 
-        JSONParser parser = new JSONParser();
-        try {
-            slaD = (JSONObject) parser.parse(new FileReader("src/main/resources/sla_template_example.json"));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+		JSONParser parser = new JSONParser();
+		try {
+			slaD = (JSONObject) parser.parse(new FileReader("src/main/resources/sla_template_example.json"));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
-        String sla_status = JsonPath.using(conf).parse(slaD).read("status");
+		String sla_status = JsonPath.using(conf).parse(slaD).read("status");
 
-        assertTrue(status.equals(sla_status));
-    }
+		assertTrue(status.equals(sla_status));
+	}
 
-    @Test
-    public void testEditField() {
+	@Test
+	public void testEditField() {
 
-        JSONObject slaD = null;
-        Configuration conf = Configuration.defaultConfiguration();
+		JSONObject slaD = null;
+		Configuration conf = Configuration.defaultConfiguration();
 
-        JSONParser parser = new JSONParser();
-        try {
-            slaD = (JSONObject) parser.parse(new FileReader("src/main/resources/sla_template_example.json"));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+		JSONParser parser = new JSONParser();
+		try {
+			slaD = (JSONObject) parser.parse(new FileReader("src/main/resources/sla_template_example.json"));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
-        String Field1 = JsonPath.using(conf).parse(slaD).read("slad.name");
-        String Field2 = JsonPath.using(conf).parse(slaD).read("slad.description");
-        String Field3 = JsonPath.using(conf).parse(slaD).read("slad.sla_template.valid_until");
-        List<String> Field4 = JsonPath.using(conf).parse(slaD)
-                .read("slad.sla_template.ns.objectives[*].[?(@.slo_name == 'Bandwidth')].slo_name");
-        List<String> Field5 = JsonPath.using(conf).parse(slaD)
-                .read("slad.sla_template.ns.objectives[*].[?(@.slo_definition == 'Bandwidth Testing')].slo_definition");
-        List<String> Field6 = JsonPath.using(conf).parse(slaD)
-                .read("slad.sla_template.ns.objectives[*].[?(@.slo_value == 'Slo value testing')].slo_value");
-        List<String> Field7 = JsonPath.using(conf).parse(slaD).read(
-                "slad.sla_template.ns.objectives[*].metric[*][?(@.metric_definition == 'lowTranscodingRateRule')].metric_definition");
-        List<String> Field8 = JsonPath.using(conf).parse(slaD).read(
-                "slad.sla_template.ns.objectives[*].metric[*].expression.parameters[*].[?(@.parameter_name == 'price')].parameter_name");
-        List<String> Field9 = JsonPath.using(conf).parse(slaD).read(
-                "slad.sla_template.ns.objectives[*].metric[*].expression.parameters[*].[?(@.parameter_unit == 'Euro')].parameter_unit");
-        List<String> Field10 = JsonPath.using(conf).parse(slaD).read(
-                "slad.sla_template.ns.objectives[*].metric[*].expression.parameters[*].[?(@.parameter_definition == 'Test Price')].parameter_definition");
-        List<String> Field11 = JsonPath.using(conf).parse(slaD).read(
-                "slad.sla_template.ns.objectives[*].metric[*].expression.parameters[*].[?(@.parameter_value == 3000)].parameter_value");
+		String Field1 = JsonPath.using(conf).parse(slaD).read("slad.name");
+		String Field2 = JsonPath.using(conf).parse(slaD).read("slad.description");
+		String Field3 = JsonPath.using(conf).parse(slaD).read("slad.sla_template.valid_until");
+		List<String> Field4 = JsonPath.using(conf).parse(slaD)
+				.read("slad.sla_template.ns.objectives[*].[?(@.slo_name == 'Bandwidth')].slo_name");
+		List<String> Field5 = JsonPath.using(conf).parse(slaD)
+				.read("slad.sla_template.ns.objectives[*].[?(@.slo_definition == 'Bandwidth Testing')].slo_definition");
+		List<String> Field6 = JsonPath.using(conf).parse(slaD)
+				.read("slad.sla_template.ns.objectives[*].[?(@.slo_value == 'Slo value testing')].slo_value");
+		List<String> Field7 = JsonPath.using(conf).parse(slaD).read(
+				"slad.sla_template.ns.objectives[*].metric[*][?(@.metric_definition == 'lowTranscodingRateRule')].metric_definition");
+		List<String> Field8 = JsonPath.using(conf).parse(slaD).read(
+				"slad.sla_template.ns.objectives[*].metric[*].expression.parameters[*].[?(@.parameter_name == 'price')].parameter_name");
+		List<String> Field9 = JsonPath.using(conf).parse(slaD).read(
+				"slad.sla_template.ns.objectives[*].metric[*].expression.parameters[*].[?(@.parameter_unit == 'Euro')].parameter_unit");
+		List<String> Field10 = JsonPath.using(conf).parse(slaD).read(
+				"slad.sla_template.ns.objectives[*].metric[*].expression.parameters[*].[?(@.parameter_definition == 'Test Price')].parameter_definition");
+		List<String> Field11 = JsonPath.using(conf).parse(slaD).read(
+				"slad.sla_template.ns.objectives[*].metric[*].expression.parameters[*].[?(@.parameter_value == 3000)].parameter_value");
 
-        assertTrue(Field1.toString().equals("Test2") && Field2.toString().equals("Testing Testing Testing")
-                && Field3.toString().equals("20/02/2020") && Field4.toString().equals("[\"Bandwidth\"]")
-                && Field5.toString().equals("[\"Bandwidth Testing\"]")
-                && Field6.toString().equals("[\"Slo value testing\"]")
-                && Field7.toString().equals("[\"lowTranscodingRateRule\"]") && Field8.toString().equals("[\"price\"]")
-                && Field9.toString().equals("[\"Euro\"]") && Field10.toString().equals("[\"Test Price\"]")
-                && Field11.toString().equals("[\"3000\"]"));
-    }
+		assertTrue(Field1.toString().equals("Test2") && Field2.toString().equals("Testing Testing Testing")
+				&& Field3.toString().equals("20/02/2020") && Field4.toString().equals("[\"Bandwidth\"]")
+				&& Field5.toString().equals("[\"Bandwidth Testing\"]")
+				&& Field6.toString().equals("[\"Slo value testing\"]")
+				&& Field7.toString().equals("[\"lowTranscodingRateRule\"]") && Field8.toString().equals("[\"price\"]")
+				&& Field9.toString().equals("[\"Euro\"]") && Field10.toString().equals("[\"Test Price\"]")
+				&& Field11.toString().equals("[\"3000\"]"));
+	}
 
-    @Test
-    public void testPUTsla() {
+	@Test
+	public void testPUTsla() {
 
-        String uuid = "a03e8ca7-ebe6-4cb4-ba78-cf9f36656faf";
-        Configuration conf = Configuration.defaultConfiguration();
-        JSONObject slaD = null;
-        JSONParser parser = new JSONParser();
+		String uuid = "a03e8ca7-ebe6-4cb4-ba78-cf9f36656faf";
+		Configuration conf = Configuration.defaultConfiguration();
+		JSONObject slaD = null;
+		JSONParser parser = new JSONParser();
 
-        try {
-            slaD = (JSONObject) parser.parse(new FileReader("src/main/resources/sla_template_example.json"));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+		try {
+			slaD = (JSONObject) parser.parse(new FileReader("src/main/resources/sla_template_example.json"));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
-        String sla_uuid = JsonPath.using(conf).parse(slaD).read("uuid");
+		String sla_uuid = JsonPath.using(conf).parse(slaD).read("uuid");
 
-        assertTrue(uuid.equals(sla_uuid));
+		assertTrue(uuid.equals(sla_uuid));
 
-    }
+	}
 
 }

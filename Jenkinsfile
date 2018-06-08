@@ -24,7 +24,7 @@ pipeline {
         }
         stage('Unit tests for tng-sla-mgmt') {
           steps {
-            sh 'mvn test -f sla-template-generator'
+            sh 'mvn clean test -f sla-template-generator'
           }
         }
       }
