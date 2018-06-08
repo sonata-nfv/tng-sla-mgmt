@@ -52,8 +52,8 @@ public class db_operations {
 			
 			Class.forName("org.postgresql.Driver");
 			
-			c = DriverManager.getConnection(
-					   System.getenv("DATABASE_URL"),System.getenv("POSTGRES_USER"), System.getenv("POSTGRES_PASSWORD"));
+			c = DriverManager.getConnection("jdbc:postgresql://"+System.getenv("DATABASE_HOST")+":"+System.getenv("DATABASE_PORT")+"/"+
+											System.getenv("GTK_DB_NAME"),System.getenv("GTK_DB_USER"),System.getenv("GTK_DB_PASS"));
 		} catch (Exception e) {
 			e.printStackTrace();
 			System.err.println(e.getClass().getName() + ": " + e.getMessage());
