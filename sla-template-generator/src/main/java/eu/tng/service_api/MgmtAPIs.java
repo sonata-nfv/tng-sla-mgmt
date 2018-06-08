@@ -47,6 +47,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
+import eu.tng.correlations.cust_sla_corr;
 import eu.tng.correlations.db_operations;
 import eu.tng.correlations.ns_template_corr;
 
@@ -122,6 +123,33 @@ public class MgmtAPIs {
 			e.printStackTrace();
 		}
 		return Response.status(200).entity(jsonObject).build();
+	}
+	
+	/**
+	 * Get all ns with associated sla agreement
+	 */
+	@Path("/services/agreements/true")
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getNSwithAgreement() {
+		cust_sla_corr custslacorr = new cust_sla_corr();
+		JSONArray correlatedNS = custslacorr.nsWithAgreement();
+		return Response.status(200).entity(correlatedNS).build();
+
+	}
+	
+
+	/**
+	 * Get all ns with associated sla agreement
+	 */
+	@Path("/services/agreements/false")
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getNSwithoutAgreement() {
+		cust_sla_corr custslacorr = new cust_sla_corr();
+		ArrayList<String> correlatedNS = custslacorr.nsWithoutAgreement();
+		return Response.status(200).entity(correlatedNS).build();
+
 	}
 
 }

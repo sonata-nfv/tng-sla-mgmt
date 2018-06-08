@@ -123,9 +123,6 @@ public class ns_template_corr {
 
 		// get all the available ns from the catalogue
 		try {
-
-			System.out.println("mpi8ke try");
-
 			String url = "http://pre-int-sp-ath.5gtango.eu:4011/catalogues/api/v2/network-services\r\n";
 			URL object = new URL(url);
 
@@ -184,5 +181,9 @@ public class ns_template_corr {
 
 		return nsWithoutTemplate;
 	}
+	
+	
+	
+	
 
 }

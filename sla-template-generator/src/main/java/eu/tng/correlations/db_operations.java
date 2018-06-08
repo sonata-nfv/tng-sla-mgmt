@@ -120,7 +120,7 @@ public class db_operations {
 			c.setAutoCommit(false);
 			Statement stmt = c.createStatement();
 			String sql = "INSERT INTO cust_sla " + " (ns_uuid,sla_uuid,cust_uuid) " + "VALUES ('" + ns_uuid + "','"
-					+ sla_uuid + "','" + cust_uuid + " ');";
+					+ sla_uuid + "','" + cust_uuid + "');";
 			stmt.executeUpdate(sql);
 			stmt.close();
 			c.commit();
@@ -160,7 +160,9 @@ public class db_operations {
 
 		JSONObject root = new JSONObject();
 		JSONArray ns_template = new JSONArray();
+		JSONArray cust_sla = new JSONArray();
 
+		System.out.println(tablename);
 		if (tablename == "ns_template") {
 
 			try {
@@ -186,8 +188,117 @@ public class db_operations {
 				System.exit(0);
 			}
 
-		} else {
+		} else if (tablename == "cust_sla") {
 
+			try {
+				c.setAutoCommit(false);
+				stmt = c.createStatement();
+				ResultSet rs = stmt.executeQuery("SELECT * FROM " + tablename + ";");
+
+				while (rs.next()) {
+
+					int id = rs.getInt("id");
+					String ns_uuid = rs.getString("ns_uuid");
+					String sla_uuid = rs.getString("sla_uuid");
+					String cust_uuid = rs.getString("cust_uuid");
+
+					JSONObject obj = new JSONObject();
+					obj.put("ns_uuid", ns_uuid);
+					obj.put("sla_uuid", sla_uuid);
+					obj.put("cust_uuid", cust_uuid);
+					cust_sla.add(obj);
+				}
+
+				root.put("cust_sla", cust_sla);
+
+				rs.close();
+				stmt.close();
+
+			} catch (Exception e) {
+				System.err.println(e.getClass().getName() + ": " + e.getMessage());
+				System.exit(0);
+			}
+
+		}
+
+		return root;
+	}
+
+	/**
+	 * Get agreement per NS uuid
+	 */
+	public JSONObject selectAgreementPerNS(String nsuuid) {
+
+		Statement stmt = null;
+		JSONObject root = new JSONObject();
+		JSONArray cust_sla = new JSONArray();
+		
+		nsuuid = nsuuid.trim();
+
+		try {
+			c.setAutoCommit(false);
+			stmt = c.createStatement();
+			ResultSet rs = stmt.executeQuery("SELECT * FROM cust_sla WHERE ns_uuid = '" + nsuuid + "';");
+			while (rs.next()) {
+				int id = rs.getInt("id");
+				String ns_uuid = rs.getString("ns_uuid");
+				String sla_uuid = rs.getString("sla_uuid");
+				String cust_uuid = rs.getString("cust_uuid");
+
+				JSONObject obj = new JSONObject();
+				obj.put("ns_uuid", ns_uuid);
+				obj.put("sla_uuid", sla_uuid);
+				obj.put("cust_uuid", cust_uuid);
+				cust_sla.add(obj);
+			}
+
+			root.put("cust_sla", cust_sla);
+
+			rs.close();
+			stmt.close();
+		} catch (Exception e) {
+			System.err.println(e.getClass().getName() + ": " + e.getMessage());
+			System.exit(0);
+		}
+
+		return root;
+	}
+
+	/**
+	 * Get agreement per customer
+	 */
+	public JSONObject selectAgreementPerCustomer(String custuuid) {
+
+		Statement stmt = null;
+		JSONObject root = new JSONObject();
+		JSONArray cust_sla = new JSONArray();
+
+		custuuid = custuuid.trim();
+		
+		try {
+			c.setAutoCommit(false);
+			stmt = c.createStatement();
+			ResultSet rs = stmt.executeQuery("SELECT * FROM cust_sla WHERE cust_uuid = '"+custuuid+"'");
+
+			while (rs.next()) {
+				String ns_uuid = rs.getString("ns_uuid");
+				String sla_uuid = rs.getString("sla_uuid");
+				String cust_uuid = rs.getString("cust_uuid");
+
+				JSONObject obj = new JSONObject();
+				obj.put("ns_uuid", ns_uuid);
+				obj.put("sla_uuid", sla_uuid);
+				obj.put("cust_uuid", cust_uuid);
+				cust_sla.add(obj);
+			}
+
+			root.put("cust_sla", cust_sla);
+
+			rs.close();
+			stmt.close();
+		} catch (Exception e) {
+			System.err.println(e.getClass().getName() + ": " + e.getMessage());
+			System.exit(0);
 		}
 
 		return root;
