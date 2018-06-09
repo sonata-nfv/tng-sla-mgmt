@@ -72,7 +72,7 @@ public class cust_sla_corr {
 
 		JSONArray guaranteeTerms = null;
 		try {
-			String url = "http://pre-int-sp-ath.5gtango.eu:4011/catalogues/api/v2/slas/template-descriptors/" + sla_uuid
+			String url = System.getenv("CATALOGUES_URL")+"slas/template-descriptors/" + sla_uuid
 					+ "\r\n";
 			URL object = new URL(url);
 
@@ -158,7 +158,7 @@ public class cust_sla_corr {
 
 		// get all the available ns from the catalogue
 		try {
-			String url = "http://pre-int-sp-ath.5gtango.eu:4011/catalogues/api/v2/network-services\r\n";
+			String url = System.getenv("CATALOGUES_URL")+"network-services";
 			URL object = new URL(url);
 
 			HttpURLConnection con = (HttpURLConnection) object.openConnection();
