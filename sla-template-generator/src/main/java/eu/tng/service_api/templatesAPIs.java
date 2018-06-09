@@ -77,7 +77,7 @@ public class templatesAPIs {
 	public Response getTemplates() {
 
 		try {
-			String url = "http://pre-int-sp-ath.5gtango.eu:4011/catalogues/api/v2/slas/template-descriptors";
+			String url = System.getenv("CATALOGUES_URL")+"slas/template-descriptors";
 			URL object = new URL(url);
 
 			HttpURLConnection con = (HttpURLConnection) object.openConnection();
@@ -130,7 +130,7 @@ public class templatesAPIs {
 		System.out.println("Created SLA Template: " + template);
 
 		try {
-			String url = "http://pre-int-sp-ath.5gtango.eu:4011/catalogues/api/v2/slas/template-descriptors";
+			String url = System.getenv("CATALOGUES_URL")+"slas/template-descriptors";
 			URL object = new URL(url);
 
 			HttpURLConnection con = (HttpURLConnection) object.openConnection();
@@ -186,7 +186,7 @@ public class templatesAPIs {
 		URL url = null;
 		try {
 			url = new URL(
-					"http://pre-int-sp-ath.5gtango.eu:4011/api/catalogues/v2/slas/template-descriptors/" + sla_uuid);
+					System.getenv("CATALOGUES_URL")+"slas/template-descriptors/" + sla_uuid);
 		} catch (MalformedURLException exception) {
 			exception.printStackTrace();
 		}
