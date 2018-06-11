@@ -13,8 +13,11 @@ RUN mvn clean install
 # New container with tomcat8
 FROM tomcat:8.5-alpine
 
+# Delete existing ROOT folder
+RUN rm -rf /usr/local/tomcat/webapps/ROOT
+
 # Copy the artifact generated on first container to this one
-COPY --from=0 /sla-template-generator/target/tng-sla-mgmt.war /usr/local/tomcat/webapps/
+COPY --from=0 /sla-template-generator/target/ROOT.war /usr/local/tomcat/webapps/
 
 # Set pgSQL Environment Variables
 ENV DATABASE_HOST son-postgres
