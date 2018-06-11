@@ -24,7 +24,7 @@ ENV GTK_DB_PASS sonata
 ENV DATABASE_PORT 5432
 
 # Set Catalogue Environment Variables
-ENV CATALOGUES_URL http://pre-int-sp-ath.5gtango.eu:4011/catalogues/api/v2/
+ENV CATALOGUES_URL http://tng-cat:4011/catalogues/api/v2
 
 # Set MESSAGE BUS Environment Variables
 ENV MQSERVER_URL amqp://guest:guest@broker:5672
