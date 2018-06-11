@@ -11,7 +11,7 @@
         }
     },
     "host": "tng-sla-mgmt:8080",
-    "basePath": "/sla-mgmt",
+    "basePath": "/tng-sla-mgmt",
     "tags": [
     {
       "name": "default",
