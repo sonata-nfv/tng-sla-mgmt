@@ -123,7 +123,7 @@ public class ns_template_corr {
 
 		// get all the available ns from the catalogue
 		try {
-			String url = System.getenv("CATALOGUES_URL")+"network-services";
+			String url = System.getenv("CATALOGUES_URL") + "network-services";
 			URL object = new URL(url);
 
 			HttpURLConnection con = (HttpURLConnection) object.openConnection();
@@ -155,7 +155,7 @@ public class ns_template_corr {
 		// create array list with ns uuids that have not sla templates yet
 		for (int i = 0; i < existingNSIDs.size(); i++) {
 			for (int j = 0; j < correlatedNSArray.size(); j++) {
-				if (existingNSIDs.get(i) == correlatedNSArray.get(j)) {
+				if (existingNSIDs.get(i).equals(correlatedNSArray.get(j))) {
 					continue;
 				} else {
 					nsWithoutTemplate.add(existingNSIDs.get(i));
@@ -181,9 +181,5 @@ public class ns_template_corr {
 
 		return nsWithoutTemplate;
 	}
-	
-	
-	
-	
 
 }
