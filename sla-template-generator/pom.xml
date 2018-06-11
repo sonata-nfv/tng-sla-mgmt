@@ -8,7 +8,7 @@
 	<version>0.0.1-SNAPSHOT</version>
 	<name>tng-sla-mgmt Jersey Webapp</name>
 	<build>
-		<finalName>tng-sla-mgmt</finalName>
+		<finalName>ROOT</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
