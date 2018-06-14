@@ -8,6 +8,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.ResponseBuilder;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -25,6 +26,8 @@ public class AgreementsAPIs {
 	@GET
 	public Response getAgreements() {
 
+		ResponseBuilder apiresponse = null;
+
 		db_operations dbo = new db_operations();
 
 		dbo.connectPostgreSQL();
@@ -32,7 +35,9 @@ public class AgreementsAPIs {
 		JSONObject correlations = dbo.selectAllRecords("cust_sla");
 		dbo.closePostgreSQL();
 
-		return Response.status(200).entity(correlations).build();
+		apiresponse = Response.ok((Object) correlations);
+		apiresponse.header("Content-Length", correlations.toString().length());
+		return apiresponse.status(200).build();
 	}
 
 	/**
@@ -43,9 +48,16 @@ public class AgreementsAPIs {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response deleteAgreement(@PathParam("sla_uuid") String sla_uuid) {
 
+		ResponseBuilder apiresponse = null;
+
 		new cust_sla_corr();
 		cust_sla_corr.deleteCorr(sla_uuid);
-		return Response.status(200).build();
+
+		String dr = "Agreement deleted";
+		apiresponse = Response.ok(dr);
+		apiresponse.header("Content-Length", dr.toString().length());
+		return apiresponse.status(200).build();
+
 	}
 
 	/**
@@ -56,16 +68,19 @@ public class AgreementsAPIs {
 	@Path("service/{ns_uuid}")
 	public Response getAgreementsPerNS(@PathParam("ns_uuid") String ns_uuid) {
 
+		ResponseBuilder apiresponse = null;
+
 		db_operations dbo = new db_operations();
 
 		dbo.connectPostgreSQL();
-		//dbo.createTableCustSla();
+		// dbo.createTableCustSla();
 		JSONObject agrPerNs = dbo.selectAgreementPerNS(ns_uuid);
 		dbo.closePostgreSQL();
 
-		return Response.status(200).entity(agrPerNs).build();
+		apiresponse = Response.ok(agrPerNs);
+		apiresponse.header("Content-Length", agrPerNs.toString().length());
+		return apiresponse.status(200).build();
 	}
-	
 
 	/**
 	 * api call in order to get a list with all the existing agreements per Customer
@@ -75,16 +90,20 @@ public class AgreementsAPIs {
 	@Path("customer/{cust_uuid}")
 	public Response getAgreementsPerCustonmer(@PathParam("cust_uuid") String cust_uuid) {
 
+		ResponseBuilder apiresponse = null;
+
 		db_operations dbo = new db_operations();
 		dbo.connectPostgreSQL();
-		
-		//dbo.createTableCustSla();
+
+		// dbo.createTableCustSla();
 		JSONObject agrPerNs = dbo.selectAgreementPerCustomer(cust_uuid);
 		dbo.closePostgreSQL();
 
-		return Response.status(200).entity(agrPerNs).build();
+		apiresponse = Response.ok(agrPerNs);
+		apiresponse.header("Content-Length", agrPerNs.toString().length());
+		return apiresponse.status(200).build();
 	}
-	
+
 	/**
 	 * get the garantee terms for a specific agreement
 	 */
@@ -93,11 +112,15 @@ public class AgreementsAPIs {
 	@Path("guarantee-terms/{sla_uuid}")
 	public Response getAgreementTerms(@PathParam("sla_uuid") String sla_uuid) {
 
+		ResponseBuilder apiresponse = null;
+
 		new cust_sla_corr();
 		JSONArray gt = cust_sla_corr.getGuaranteeTerms(sla_uuid);
-		return Response.status(200).entity(gt).build();
+		
+		apiresponse = Response.ok(gt);
+		apiresponse.header("Content-Length", gt.toString().length());
+		return apiresponse.status(200).build();
+		
 	}
-	
-	
 
 }

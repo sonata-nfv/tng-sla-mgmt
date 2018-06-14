@@ -54,6 +54,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.UriInfo;
 
 import org.json.simple.JSONObject;
@@ -75,9 +76,10 @@ public class templatesAPIs {
 	@Produces(MediaType.APPLICATION_JSON)
 	@GET
 	public Response getTemplates() {
-
+		ResponseBuilder apiresponse = null;
 		try {
 			String url = System.getenv("CATALOGUES_URL")+"slas/template-descriptors";
+			//String url = "http://pre-int-sp-ath.5gtango.eu:4011/catalogues/api/v2/slas/template-descriptors";
 			URL object = new URL(url);
 
 			HttpURLConnection con = (HttpURLConnection) object.openConnection();
@@ -98,18 +100,19 @@ public class templatesAPIs {
 			in.close();
 			JSONParser parser = new JSONParser();
 			Object existingTemplates = parser.parse(response.toString());
-
-			return Response.status(200).entity(existingTemplates).build();
+			apiresponse = Response.ok((Object) existingTemplates);
+			apiresponse.header("Content-Length", response.length());
+			return apiresponse.build();
 
 		} catch (Exception e) {
 
-			return Response.status(400).build();
+			return apiresponse.status(400).build();
 		}
 
 	}
 
 	/**
-	 * api call in order to generate a sla template 
+	 * api call in order to generate a sla template
 	 */
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes("application/x-www-form-urlencoded")
@@ -118,6 +121,7 @@ public class templatesAPIs {
 	public Response createTemplate(@PathParam("nsd_uuid") String nsd_uuid, @Context UriInfo info,
 			final MultivaluedMap<String, String> formParams) {
 
+		ResponseBuilder apiresponse = null;
 		String templateName = info.getQueryParameters().getFirst("templateName");
 		String expireDate = info.getQueryParameters().getFirst("expireDate");
 
@@ -129,8 +133,10 @@ public class templatesAPIs {
 		JSONObject template = ct.createTemplate(nsd_uuid, templateName, expireDate, guarantees);
 		System.out.println("Created SLA Template: " + template);
 
+		Object createdTemplate = null;
 		try {
-			String url = System.getenv("CATALOGUES_URL")+"slas/template-descriptors";
+			//String url = "http://pre-int-sp-ath.5gtango.eu:4011/catalogues/api/v2/slas/template-descriptors";
+			String url = System.getenv("CATALOGUES_URL") + "slas/template-descriptors";
 			URL object = new URL(url);
 
 			HttpURLConnection con = (HttpURLConnection) object.openConnection();
@@ -145,33 +151,34 @@ public class templatesAPIs {
 
 			StringBuilder sb = new StringBuilder();
 			int HttpResult = con.getResponseCode();
-	
+
 			if (HttpResult == HttpURLConnection.HTTP_CREATED) {
 				BufferedReader br = new BufferedReader(new InputStreamReader(con.getInputStream(), "utf-8"));
 				String line = null;
 				while ((line = br.readLine()) != null) {
 					sb.append(line + "\n");
-					
+
 				}
 				System.out.println("UPLOADED TO CAT:" + sb.toString());
-				
+
 				// create correlation between ns and sla template
 				JSONParser parser = new JSONParser();
-				Object createdTemplate = parser.parse(sb.toString());
+				createdTemplate = parser.parse(sb.toString());
 				JSONObject responseSLA = (JSONObject) createdTemplate;
 				String sla_uuid = (String) responseSLA.get("uuid");
 				ns_template_corr nstemplcorr = new ns_template_corr();
 				nstemplcorr.createNsTempCorr(nsd_uuid, sla_uuid);
-				
+
 				br.close();
-			
+
 			} else {
 				System.out.println(con.getResponseMessage());
 			}
 		} catch (Exception e) {
 		}
-		return Response.status(200).entity(template).build();
-
+		apiresponse = Response.ok(createdTemplate);
+		apiresponse.header("Content-Length", createdTemplate.toString().length());
+		return apiresponse.status(200).build();
 	}
 
 	/**
@@ -183,10 +190,12 @@ public class templatesAPIs {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response deleteTemplate(@PathParam("sla_uuid") String sla_uuid) {
 
+		ResponseBuilder apiresponse = null;
+		String dr = null;
+
 		URL url = null;
 		try {
-			url = new URL(
-					System.getenv("CATALOGUES_URL")+"slas/template-descriptors/" + sla_uuid);
+			url = new URL(System.getenv("CATALOGUES_URL") + "slas/template-descriptors/" + sla_uuid);
 		} catch (MalformedURLException exception) {
 			exception.printStackTrace();
 		}
@@ -196,11 +205,12 @@ public class templatesAPIs {
 			httpURLConnection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
 			httpURLConnection.setRequestMethod("DELETE");
 			System.out.println(httpURLConnection.getResponseCode());
-			
+
 			// delete all correlations with the deleted sla template from postgreSQL table
 			ns_template_corr nstemplcorr = new ns_template_corr();
 			nstemplcorr.deleteNsTempCorr(sla_uuid);
-			
+			dr = "SLA Template with uuid: " + sla_uuid + " deleted";
+
 		} catch (IOException exception) {
 			exception.printStackTrace();
 		} finally {
@@ -208,7 +218,9 @@ public class templatesAPIs {
 				httpURLConnection.disconnect();
 			}
 		}
-		return Response.status(200).build();
+		apiresponse = Response.ok();
+		apiresponse.header("Content-Length", (dr.length()));
+		return apiresponse.status(200).entity(dr).build();
 
 	}
 

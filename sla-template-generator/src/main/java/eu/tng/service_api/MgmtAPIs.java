@@ -41,6 +41,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.ResponseBuilder;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -63,16 +64,18 @@ public class MgmtAPIs {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getTemplateNsCorrelations() {
 
+		ResponseBuilder apiresponse = null;
 		db_operations dbo = new db_operations();
-
 		dbo.connectPostgreSQL();
 		dbo.createTableNSTemplate();
 		JSONObject correlations = dbo.selectAllRecords("ns_template");
 		dbo.closePostgreSQL();
-		
-		return Response.status(200).entity(correlations).build();
+
+		apiresponse = Response.ok((Object) correlations);
+		apiresponse.header("Content-Length", correlations.toString().length());
+		return apiresponse.status(200).build();
 	}
-	
+
 	/**
 	 * Get all ns with associated sla template
 	 */
@@ -80,24 +83,31 @@ public class MgmtAPIs {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getNSwithTemplate() {
+		ResponseBuilder apiresponse = null;
 		ns_template_corr nstemplcorr = new ns_template_corr();
 		JSONArray correlatedNS = nstemplcorr.nsWithTemplate();
-		return Response.status(200).entity(correlatedNS).build();
+
+		apiresponse = Response.ok((Object) correlatedNS);
+		apiresponse.header("Content-Length", correlatedNS.toString().length());
+		return apiresponse.status(200).build();
 	}
-	
+
 	/**
-	 * Get all ns with associated sla template 
+	 * Get all ns with associated sla template
 	 */
 	@Path("/services/templates/false")
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getNSwithoutTemplate() {
+		ResponseBuilder apiresponse = null;
 		ns_template_corr nstemplcorr = new ns_template_corr();
 		ArrayList<String> correlatedNS = nstemplcorr.nsWithoutTemplate();
-		return Response.status(200).entity(correlatedNS).build();
+
+		apiresponse = Response.ok((Object) correlatedNS);
+		apiresponse.header("Content-Length", correlatedNS.toString().length());
+		return apiresponse.status(200).entity(correlatedNS).build();
 	}
-	
-	
+
 	/**
 	 * api call in order to get a predifined list with Service Guarantees
 	 */
@@ -107,6 +117,9 @@ public class MgmtAPIs {
 	public Response getGuarantees() {
 		JSONParser parser = new JSONParser();
 		JSONObject jsonObject = null;
+
+		ResponseBuilder apiresponse = null;
+
 		try {
 			File testf = new File(this.getClass().getResource("/slos_list_release1.json").toURI());
 			jsonObject = (JSONObject) parser.parse(new FileReader(testf));
@@ -122,9 +135,13 @@ public class MgmtAPIs {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return Response.status(200).entity(jsonObject).build();
+
+		apiresponse = Response.ok((Object) jsonObject);
+		apiresponse.header("Content-Length", jsonObject.toString().length());
+		return apiresponse.status(200).build();
+
 	}
-	
+
 	/**
 	 * Get all ns with associated sla agreement
 	 */
@@ -132,12 +149,16 @@ public class MgmtAPIs {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getNSwithAgreement() {
+
+		ResponseBuilder apiresponse = null;
 		cust_sla_corr custslacorr = new cust_sla_corr();
 		JSONArray correlatedNS = custslacorr.nsWithAgreement();
-		return Response.status(200).entity(correlatedNS).build();
+
+		apiresponse = Response.ok((Object) correlatedNS);
+		apiresponse.header("Content-Length", correlatedNS.toString().length());
+		return apiresponse.status(200).build();
 
 	}
-	
 
 	/**
 	 * Get all ns with associated sla agreement
@@ -146,9 +167,15 @@ public class MgmtAPIs {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getNSwithoutAgreement() {
+
+		ResponseBuilder apiresponse = null;
+
 		cust_sla_corr custslacorr = new cust_sla_corr();
 		ArrayList<String> correlatedNS = custslacorr.nsWithoutAgreement();
-		return Response.status(200).entity(correlatedNS).build();
+
+		apiresponse = Response.ok((Object) correlatedNS);
+		apiresponse.header("Content-Length", correlatedNS.toString().length());
+		return apiresponse.status(200).build();
 
 	}
 
