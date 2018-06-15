@@ -49,11 +49,16 @@ public class db_operations {
 	 */
 	public void connectPostgreSQL() {
 		try {
-			
-			Class.forName("org.postgresql.Driver");
-			//c = DriverManager.getConnection("jdbc:postgresql://localhost:5432/sla-manager", "postgres", "admin");			
-			c = DriverManager.getConnection("jdbc:postgresql://"+System.getenv("DATABASE_HOST")+":"+System.getenv("DATABASE_PORT")+"/"+
-											System.getenv("GTK_DB_NAME"),System.getenv("GTK_DB_USER"),System.getenv("GTK_DB_PASS"));
+
+			// Class.forName("org.postgresql.Driver");
+			// c =
+			// DriverManager.getConnection("jdbc:postgresql://localhost:5432/sla-manager",
+			// "postgres", "admin");
+			c = DriverManager
+					.getConnection(
+							"jdbc:postgresql://" + System.getenv("DATABASE_HOST") + ":" + System.getenv("DATABASE_PORT")
+									+ "/" + System.getenv("GTK_DB_NAME"),
+							System.getenv("GTK_DB_USER"), System.getenv("GTK_DB_PASS"));
 		} catch (Exception e) {
 			e.printStackTrace();
 			System.err.println(e.getClass().getName() + ": " + e.getMessage());
@@ -88,8 +93,10 @@ public class db_operations {
 	public void createTableCustSla() {
 		try {
 			stmt = c.createStatement();
-			String sql = "CREATE TABLE IF NOT EXISTS cust_sla" + "(ID  SERIAL PRIMARY KEY," + " NS_UUID TEXT NOT NULL, "
-					+ "SLA_UUID  TEXT NOT NULL," + "CUST_UUID  TEXT NOT NULL )";
+			String sql = "CREATE TABLE cust_sla" + "(ID  SERIAL PRIMARY KEY," + " NS_UUID TEXT NOT NULL, "
+					+ "NS_NAME TEXT NOT NULL," + "SLA_UUID  TEXT NOT NULL," + "SLA_NAME TEXT NOT NULL,"
+					+ "SLA_DATE TIMESTAMPTZ DEFAULT Now()," + "SLA_STATUS TEXT NOT NULL," + "CUST_NAME TEXT NOT NULL,"
+					+ "CUST_UUID  TEXT NOT NULL )";
 			stmt.executeUpdate(sql);
 			stmt.close();
 		} catch (Exception e) {
@@ -125,14 +132,22 @@ public class db_operations {
 
 	/**
 	 * Insert Record cust-sla correlation
+	 * 
+	 * @param cust_uuid
+	 * @param cust_name
+	 * @param sla_status
+	 * @param sla_name
 	 */
-	public void insertRecordAgreement(String ns_uuid, String sla_uuid, String cust_uuid) {
+	public void insertRecordAgreement(String ns_uuid, String ns_name, String sla_uuid, String sla_name,
+			String sla_status, String cust_name, String cust_uuid) {
 
 		try {
 			c.setAutoCommit(false);
 			Statement stmt = c.createStatement();
-			String sql = "INSERT INTO cust_sla " + " (ns_uuid,sla_uuid,cust_uuid) " + "VALUES ('" + ns_uuid + "','"
-					+ sla_uuid + "','" + cust_uuid + "');";
+			String sql = "INSERT INTO cust_sla "
+					+ " (ns_uuid, ns_name, sla_uuid, sla_name, sla_status, cust_name, cust_uuid) " + "VALUES ('"
+					+ ns_uuid + "','" + ns_name + "','" + sla_uuid + "' ,'" + sla_name + "' ,'" + sla_status + "','"
+					+ cust_name + "','" + cust_uuid + "');";
 			stmt.executeUpdate(sql);
 			stmt.close();
 			c.commit();
@@ -162,7 +177,7 @@ public class db_operations {
 			System.exit(0);
 		}
 		System.out.println("Records with deleted? " + result);
-		
+
 		return result;
 	}
 

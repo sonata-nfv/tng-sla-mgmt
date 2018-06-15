@@ -78,8 +78,8 @@ public class templatesAPIs {
 	public Response getTemplates() {
 		ResponseBuilder apiresponse = null;
 		try {
-			//String url = System.getenv("CATALOGUES_URL")+"slas/template-descriptors";
-			String url = "http://pre-int-sp-ath.5gtango.eu:4011/catalogues/api/v2/slas/template-descriptors";
+			String url = System.getenv("CATALOGUES_URL")+"slas/template-descriptors";
+			//String url = "http://pre-int-sp-ath.5gtango.eu:4011/catalogues/api/v2/slas/template-descriptors";
 			URL object = new URL(url);
 
 			HttpURLConnection con = (HttpURLConnection) object.openConnection();
