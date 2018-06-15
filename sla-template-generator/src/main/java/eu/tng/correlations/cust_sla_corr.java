@@ -29,8 +29,10 @@
 package eu.tng.correlations;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -39,6 +41,10 @@ import java.util.Set;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+
+import eu.tng.template_gen.GetNsd;
+import eu.tng.template_gen.Nsd;
 
 public class cust_sla_corr {
 
@@ -46,17 +52,78 @@ public class cust_sla_corr {
 	 * Create a correlation between an instatiated network service, a customer and a
 	 * sla
 	 */
-	public static void createCustSlaCorr(String ns_uuid, String sla_uuid, String cust_uuid) {
+	public static void createCustSlaCorr(String ns_uuid,String sla_uuid, String cust_uuid, String cust_name) {
+
+		Nsd getNsd = new Nsd();
+		GetNsd nsd = new GetNsd();
+		nsd.getNSD(ns_uuid);
+		String ns_name =  getNsd.getName();
+		
+		ArrayList agreementDetails = getSLAdetails(sla_uuid);
+		String sla_name= (String) agreementDetails.get(1);
+		String sla_status= (String) agreementDetails.get(0);
 
 		db_operations dbo = new db_operations();
 
 		dbo.connectPostgreSQL();
 		dbo.createTableCustSla();
-		dbo.insertRecordAgreement(ns_uuid, sla_uuid, cust_uuid);
+		dbo.insertRecordAgreement(ns_uuid, ns_name, sla_uuid, sla_name, sla_status, cust_name, cust_uuid);
 		dbo.closePostgreSQL();
 
 	}
+	
+	private static ArrayList getSLAdetails(String sla_uuid) {
+		ArrayList<String> details = new ArrayList<String>();
+		
+		try {
+//			String url ="http://pre-int-sp-ath.5gtango.eu:4011/catalogues/api/v2/slas/template-descriptors/" + sla_uuid;
+//			URL object = new URL(url);
+			
+			URL url = new URL(System.getenv("CATALOGUES_URL")+"slas/template-descriptors/" + sla_uuid);
+			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+			conn.setRequestProperty("Content-Type", "application/json");
 
+			if (conn.getResponseCode() != 200) {
+				System.out.println("Failed : HTTP error code : SLA not FOUND");
+			}
+
+			BufferedReader br = new BufferedReader(new InputStreamReader((conn.getInputStream())));
+			String output;
+
+			while ((output = br.readLine()) != null) {
+				JSONParser parser = new JSONParser();
+				try {
+					Object obj = parser.parse(output);
+					JSONObject jsonObject = (JSONObject) obj;
+					// get slad status
+					String status = (String) jsonObject.get("status");
+					details.add(status);
+					if (jsonObject.containsKey("slad")) {
+						JSONObject slad = (JSONObject) jsonObject.get("slad");
+						// get slad name
+						String name = (String) slad.get("name");
+						details.add(name);
+					}
+
+				} catch (ParseException e) {
+					e.printStackTrace();
+				}
+
+			}
+			conn.disconnect();
+		} catch (MalformedURLException e) {
+
+			e.printStackTrace();
+
+		} catch (IOException e) {
+
+			e.printStackTrace();
+
+		}
+		System.out.println(details);
+		return details;
+	}
+	
 	/**
 	 * Delete a correlation between a network service and a sla template
 	 */
@@ -72,8 +139,7 @@ public class cust_sla_corr {
 
 		JSONArray guaranteeTerms = null;
 		try {
-			String url = System.getenv("CATALOGUES_URL")+"slas/template-descriptors/" + sla_uuid
-					+ "\r\n";
+			String url = System.getenv("CATALOGUES_URL") + "slas/template-descriptors/" + sla_uuid + "\r\n";
 			URL object = new URL(url);
 
 			HttpURLConnection con = (HttpURLConnection) object.openConnection();
@@ -104,12 +170,6 @@ public class cust_sla_corr {
 		}
 
 		return guaranteeTerms;
-	}
-
-	public static void main(String[] args) {
-
-		createCustSlaCorr("test_ns2", "test_sla2", "test_cust3");
-		// getGuaranteeTerms("830b1005-0886-456f-9d69-1565eb85b844");
 	}
 
 	public JSONArray nsWithAgreement() {
@@ -147,7 +207,7 @@ public class cust_sla_corr {
 
 	}
 
-	public ArrayList<String>  nsWithoutAgreement() {
+	public ArrayList<String> nsWithoutAgreement() {
 		JSONArray existingNSArray = null;
 		ArrayList<String> existingNSIDs = new ArrayList<String>();
 		ArrayList<String> nsWithoutAgreement = new ArrayList<String>();
@@ -158,7 +218,7 @@ public class cust_sla_corr {
 
 		// get all the available ns from the catalogue
 		try {
-			String url = System.getenv("CATALOGUES_URL")+"network-services";
+			String url = System.getenv("CATALOGUES_URL") + "network-services";
 			URL object = new URL(url);
 
 			HttpURLConnection con = (HttpURLConnection) object.openConnection();
@@ -216,6 +276,5 @@ public class cust_sla_corr {
 
 		return nsWithoutAgreement;
 	}
-	
 
 }

@@ -6,10 +6,15 @@
 ------------------------------------------------------------------
 
 
-<h3>Get existing SLA Templates</h3>
+<h3>Get all existing SLA Templates</h3>
 - URI: /api/slas/v1/templates<br>
 &nbsp;&nbsp;Method: GET<br>
 &nbsp;&nbsp;Purpose: Get a list with the existing sla templates
+
+<h3>Get specific SLA Template</h3>
+- URI: /api/slas/v1/templates/{sla_uuid}<br>
+&nbsp;&nbsp;Method: GET<br>
+&nbsp;&nbsp;Purpose: List an sla template using the UUID to get all its details
 
 <h3>Create SLA Template</h3>
 - URI: /api/slas/v1/templates/{ns_uuid}<br>
@@ -73,7 +78,7 @@
 
 <h3>Get a list with ns uuids without SLA Templates</h3>
 - URI: api/slas/v1/mgmt/services/templates/false<br>
-&nbsp;&nbsp;Method: GET </p>
+&nbsp;&nbsp;Method: GET
 &nbsp;&nbsp;Purpose: Get a list with ns_uuids that do not have associated SLA Templates yet
 
 <h3>Get a list with instatiated NS with SLA Agreement</h3>
