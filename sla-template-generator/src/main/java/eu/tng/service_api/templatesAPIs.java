@@ -78,8 +78,50 @@ public class templatesAPIs {
 	public Response getTemplates() {
 		ResponseBuilder apiresponse = null;
 		try {
-			String url = System.getenv("CATALOGUES_URL")+"slas/template-descriptors";
-			//String url = "http://pre-int-sp-ath.5gtango.eu:4011/catalogues/api/v2/slas/template-descriptors";
+			//String url = System.getenv("CATALOGUES_URL")+"slas/template-descriptors";
+			String url = "http://pre-int-sp-ath.5gtango.eu:4011/catalogues/api/v2/slas/template-descriptors";
+			URL object = new URL(url);
+
+			HttpURLConnection con = (HttpURLConnection) object.openConnection();
+			con.setDoOutput(true);
+			con.setDoInput(true);
+			con.setRequestProperty("Content-Type", "application/json");
+			con.setRequestProperty("Accept", "application/json");
+			con.setRequestMethod("GET");
+
+			@SuppressWarnings("unused")
+			int responseCode = con.getResponseCode();
+			BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
+			String inputLine;
+			StringBuffer response = new StringBuffer();
+			while ((inputLine = in.readLine()) != null) {
+				response.append(inputLine);
+			}
+			in.close();
+			JSONParser parser = new JSONParser();
+			Object existingTemplates = parser.parse(response.toString());
+			apiresponse = Response.ok((Object) existingTemplates);
+			apiresponse.header("Content-Length", response.length());
+			return apiresponse.build();
+
+		} catch (Exception e) {
+
+			return apiresponse.status(400).build();
+		}
+
+	}
+	
+	/**
+	 * api call in order to get a list with all the existing sla templates
+	 */
+	@Produces(MediaType.APPLICATION_JSON)
+	@GET
+	@Path("/{sla_uuid}")
+	public Response getTemplate(@PathParam("sla_uuid") String sla_uuid) {
+		ResponseBuilder apiresponse = null;
+		try {
+			String url = System.getenv("CATALOGUES_URL")+"slas/template-descriptors/"+sla_uuid;
+			//String url = "http://pre-int-sp-ath.5gtango.eu:4011/catalogues/api/v2/slas/template-descriptors/"+sla_uuid;
 			URL object = new URL(url);
 
 			HttpURLConnection con = (HttpURLConnection) object.openConnection();
