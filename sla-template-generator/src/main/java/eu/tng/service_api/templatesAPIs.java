@@ -159,20 +159,20 @@ public class templatesAPIs {
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes("application/x-www-form-urlencoded")
 	@POST
-	@Path("/{nsd_uuid}")
-	public Response createTemplate(@PathParam("nsd_uuid") String nsd_uuid, @Context UriInfo info,
-			final MultivaluedMap<String, String> formParams) {
+	public Response createTemplate(final MultivaluedMap<String, String> formParams) {
 
 		ResponseBuilder apiresponse = null;
-		String templateName = info.getQueryParameters().getFirst("templateName");
-		String expireDate = info.getQueryParameters().getFirst("expireDate");
+		
+		List<String> nsd_uuid = formParams.get("nsd_uuid") ;
+		List<String> expireDate = formParams.get("expireDate") ;
+		List<String> templateName = formParams.get("templateName") ;
 
 		ArrayList<String> guarantees = new ArrayList<String>();
 		guarantees.addAll(formParams.get("guaranteeId"));
 
 		// call CreateTemplate method
 		CreateTemplate ct = new CreateTemplate();
-		JSONObject template = ct.createTemplate(nsd_uuid, templateName, expireDate, guarantees);
+		JSONObject template = ct.createTemplate(nsd_uuid.get(0), templateName.get(0), expireDate.get(0), guarantees);
 		System.out.println("Created SLA Template: " + template);
 
 		Object createdTemplate = null;
@@ -209,18 +209,22 @@ public class templatesAPIs {
 				JSONObject responseSLA = (JSONObject) createdTemplate;
 				String sla_uuid = (String) responseSLA.get("uuid");
 				ns_template_corr nstemplcorr = new ns_template_corr();
-				nstemplcorr.createNsTempCorr(nsd_uuid, sla_uuid);
+				nstemplcorr.createNsTempCorr(nsd_uuid.get(0), sla_uuid);
 
 				br.close();
+				
+				apiresponse = Response.ok(responseSLA);
+				apiresponse.header("Content-Length", responseSLA.toString().length());
+				return apiresponse.status(201).build();
 
 			} else {
 				System.out.println(con.getResponseMessage());
 			}
-		} catch (Exception e) {
+		} 
+		catch (Exception e) {
 		}
-		apiresponse = Response.ok(createdTemplate);
-		apiresponse.header("Content-Length", createdTemplate.toString().length());
-		return apiresponse.status(200).build();
+		return apiresponse.status(400).build();
+		
 	}
 
 	/**

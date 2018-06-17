@@ -40,6 +40,7 @@ public class CreateTemplate {
 		/** valid until date */
 		SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 		String dateInString = expireDate;
+		System.out.println(dateInString);
 		Date date2 = null;
 		try {
 			date2 = formatter.parse(dateInString);
