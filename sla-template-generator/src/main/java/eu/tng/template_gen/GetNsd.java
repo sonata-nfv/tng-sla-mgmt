@@ -48,6 +48,7 @@ public class GetNsd {
 		ArrayList<String> mon_metric_list = new ArrayList<String>();
 		try {
 			URL url = new URL(System.getenv("CATALOGUES_URL")+"network-services/" + nsId);
+			//URL url = new URL("http://pre-int-sp-ath.5gtango.eu:4011/catalogues/api/v2/network-services/" + nsId);
 			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 			conn.setRequestProperty("Content-Type", "application/json");
 

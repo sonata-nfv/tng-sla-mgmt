@@ -17,10 +17,16 @@
 &nbsp;&nbsp;Purpose: List an sla template using the UUID to get all its details
 
 <h3>Create SLA Template</h3>
-- URI: /api/slas/v1/templates/{ns_uuid}<br>
+ curl -v --raw -X POST -H "Content-type:application/x-www-form-urlencoded" -d "guaranteeId=g1&expireDate=02/02/2020&templateName=Normal6" http://localhost:8080/ROOT/tng-sla-mgmt/api/slas/v1/templates/92da0001-0c02-4a38-8610-05a6bf981c43
+
+- URI: /api/slas/v1/templates<br>
 &nbsp;&nbsp;Method: POST<br>
 &nbsp;&nbsp;Parameters: templateName, expireDate<br>
-&nbsp;&nbsp;Body parameters: Key: guaranteeId, Value: selected guarantee id from the list of gurantees (e.g. g1, g3 ..)<br>
+&nbsp;&nbsp;Body parameters: <br>
+&nbsp;&nbsp;Key: ns_uuid, Value: the ns uuid for which we create the sla template<br>
+&nbsp;&nbsp;Key: templateName, Value: Premium/Normal.....etc<br>
+&nbsp;&nbsp;Key: expireDate, Value: the template expiration date e.g. 20/03/2020<br>
+&nbsp;&nbsp;Key: guaranteeId, Value: selected guarantee id from the list of gurantees (e.g. g1, g3 ..)<br>
 &nbsp;&nbsp;Headers: Content-Type : application/x-www-form-urlencoded<br>
 &nbsp;&nbsp;Purpose: Generate a new sla template
 
