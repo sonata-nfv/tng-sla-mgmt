@@ -41,10 +41,9 @@ public class RabbitMqConsumer implements ServletContextListener {
 	 */
 	public void contextInitialized(ServletContextEvent arg0) {
 		System.out.println("Server started");
+		RabbitMqConnector connect = new RabbitMqConnector();
 
 		try {
-			RabbitMqConnector connect = new RabbitMqConnector();
-
 			Connection connection = connect.MqConnector();
 			Channel channel = connection.createChannel();
 
