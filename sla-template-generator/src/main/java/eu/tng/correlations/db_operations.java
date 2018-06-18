@@ -50,7 +50,7 @@ public class db_operations {
 	public void connectPostgreSQL() {
 		try {
 
-//			 Class.forName("org.postgresql.Driver");
+			 Class.forName("org.postgresql.Driver");
 //			 c =
 //			 DriverManager.getConnection("jdbc:postgresql://localhost:5432/sla-manager",
 //			 "postgres", "admin");
