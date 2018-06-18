@@ -38,7 +38,6 @@
           {
             "name": "nsd_uuid",
             "in": "body",
-            "type": "String",
             "required": true,
 			 "schema": {
               "description": "Network Service Descriptor UUID",
@@ -60,22 +59,64 @@
           {
             "name": "templateName",
             "in": "body",
-            "type": "string",
-			"required": true,			
+			"required": true,
+			 "schema": {
+              "description": "SLA Template Name",
+              "type": "object",
+              "properties": {
+                "timeStamp": {
+                  "description": "Date-time stamp. Representation: String formatted according to IETF RFC 3339.\n",
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "id": {
+                  "description": "SLA template name.\n",
+                  "type": "string"
+                }
+              }
+            },			
             "description": "Name of the SLA template"
           },
           {
             "name": "expireDate",
             "in": "body",
-            "type": "string",
 			"required": true,
+			 "schema": {
+              "description": "SLA template expire Date",
+              "type": "object",
+              "properties": {
+                "timeStamp": {
+                  "description": "Date-time stamp. Representation: String formatted according to IETF RFC 3339.\n",
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "id": {
+                  "description": "SLA template valid until.\n",
+                  "type": "string"
+                }
+              }
+            },
             "description": "Expire date of the SLA"
           },
           {
             "name": "guaranteeID",
             "in": "body",
-            "type": "string",
 			"required": true,
+			 "schema": {
+              "description": "Id of at least one signed SLO",
+              "type": "object",
+              "properties": {
+                "timeStamp": {
+                  "description": "Date-time stamp. Representation: String formatted according to IETF RFC 3339.\n",
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "id": {
+                  "description": "SLO identifier.\n",
+                  "type": "string"
+                }
+              }
+            },
             "description": "The ID of the SLO",
             "default": "g1"
           }
