@@ -123,7 +123,8 @@ public class ns_template_corr {
 
 		// get all the available ns from the catalogue
 		try {
-			String url = System.getenv("CATALOGUES_URL") + "network-services";
+			String url = "http://pre-int-sp-ath.5gtango.eu:4011/catalogues/api/v2/network-services";
+			//String url = System.getenv("CATALOGUES_URL") + "network-services";
 			URL object = new URL(url);
 
 			HttpURLConnection con = (HttpURLConnection) object.openConnection();
