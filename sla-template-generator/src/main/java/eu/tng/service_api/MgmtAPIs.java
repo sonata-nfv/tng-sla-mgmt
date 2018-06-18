@@ -138,7 +138,7 @@ public class MgmtAPIs {
 
 		apiresponse = Response.ok((Object) jsonObject);
 		apiresponse.header("Content-Length", jsonObject.toString().length());
-		return apiresponse.status(200).build();
+		return apiresponse.build();
 
 	}
 

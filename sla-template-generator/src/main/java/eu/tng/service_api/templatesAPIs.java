@@ -223,7 +223,8 @@ public class templatesAPIs {
 		} 
 		catch (Exception e) {
 		}
-		return apiresponse.status(400).build();
+		//return apiresponse.status(400).build();
+		return null;
 		
 	}
 
@@ -241,7 +242,8 @@ public class templatesAPIs {
 
 		URL url = null;
 		try {
-			url = new URL(System.getenv("CATALOGUES_URL") + "slas/template-descriptors/" + sla_uuid);
+			url = new URL("http://pre-int-sp-ath.5gtango.eu:4011/catalogues/api/v2/slas/template-descriptors/" + sla_uuid);
+			//url = new URL(System.getenv("CATALOGUES_URL") + "slas/template-descriptors/" + sla_uuid);
 		} catch (MalformedURLException exception) {
 			exception.printStackTrace();
 		}
