@@ -77,7 +77,7 @@
       "delete": {
         "responses": {
           "200": {
-            "description": "Success",          
+            "description": "Success"        
           },
 		  "400": {
             "description": "Bad request: HTTP bad request"
@@ -101,7 +101,7 @@
       "get": {
         "responses": {
           "200": {
-            "description": "Success",          
+            "description": "Success"          
           },
 		  "400": {
             "description": "Bad request: HTTP bad request"
@@ -117,7 +117,7 @@
       "get": {
         "responses": {
           "200": {
-            "description": "Success",          
+            "description": "Success"          
           },
 		  "400": {
             "description": "Bad request: HTTP bad request"
@@ -135,7 +135,7 @@
       "get": {
         "responses": {
           "200": {
-            "description": "Success",          
+            "description": "Success"          
           },
 		  "400": {
             "description": "Bad request: HTTP bad request"
@@ -153,7 +153,7 @@
       "get": {
         "responses": {
           "200": {
-            "description": "Success",          
+            "description": "Success"          
           },
 		  "400": {
             "description": "Bad request: HTTP bad request"
@@ -171,7 +171,7 @@
       "get": {
         "responses": {
           "200": {
-            "description": "Success",          
+            "description": "Success"          
           },
 		  "400": {
             "description": "Bad request: HTTP bad request"
