@@ -52,7 +52,7 @@ The following shows how to run SLA management framework:
 
 |           Action          | HTTP Method |                  Endpoint            |  
 | --------------------------| ----------- | --------------------------------------- |  
-| Create a new SLA Template |    `POST`   | `curl -X POST -H "Content-type:application/x-www-form-urlencoded" -d "ns_uuid=<>&guaranteeId=<>&expireDate=<>&templateName=<>" http://localhost:8080tng-sla-mgmt/api/slas/v1/templates` |  
+| Create a new SLA Template |    `POST`   | `curl -X POST -H "Content-type:application/x-www-form-urlencoded" -d "nsd_uuid=<>&guaranteeId=<>&expireDate=<>&templateName=<>" http://localhost:8080tng-sla-mgmt/api/slas/v1/templates` |  
 | Get existing SLA Template |    `GET`    | `curl -H "Content-type:application/json" http://localhost:8080/tng-sla-mgmt/api/slas/v1/templates/` |  
 | Get specific SLA Template based on uuid | `GET`    | `curl -H "Content-type:application/json" http://localhost:8080/tng-sla-mgmt/api/slas/v1/templates/{sla_uuid}` |  
 | Delete a SLA Template     |    `DELETE` | `curl -X DELETE http://localhost:8080/tng-sla-mgmt/api/slas/v1/templates/{sla_uuid}` |  
