@@ -1,57 +1,263 @@
 {
-  "created_at": "2018-06-18T15:18:46.738+00:00",
-  "md5": "120c833d77e1d812ea0a2e7fe6a376f1",
-  "published": false,
+  "created_at": "2018-03-22T15:49:46.817+00:00",
+  "md5": "76b414f98ca0c1766df3ef02093e9e67",
   "signature": null,
   "slad": {
-    "vendor": "tango-sla-mgmt",
+    "vendor": "tango-sla-template",
     "author": "Evgenia Kapassa, Marios Touloupou",
-    "name": "Premium",
-    "description": "",
+    "name": "Test2",
+    "description": "Testing Testing Testing",
     "descriptor_schema": "https://raw.githubusercontent.com/sonata-nfv/tng-schema/master/service-descriptor/nsd-schema.yml",
-    "version": "0.1",
+    "version": "0.5",
     "sla_template": {
-      "offered_date": "2018-06-18T15:18:46Z",
-      "template_name": "Premium",
-      "valid_until": "2020-06-19T21:00:00Z",
+      "offered_date": "22/03/2018",
+      "valid_until": "20/02/2020",
+      "service_provider_id": "sp001",
       "ns": {
-        "ns_description": "Example recursive network service reusing the sonata-demo NS and adding a vTC at the beginning.",
-        "guaranteeTerms": [
+        "description": "Example recursive network service reusing the sonata-demo NS and adding a vTC at the beginning.",
+        "objectives": [
           {
-            "unit": "mins",
-            "serviceLevelObjetive": {
-              "period": "Daily",
-              "parameter": "Resilience",
-              "serviceLevel": "1min/24h",
-              "serviceLevelDetail": [
-                {
-                  "unit": "mins",
-                  "value": "1",
-                  "operator": "greater"
+            "slo_value": "",
+            "slo_name": "Bandwidth",
+            "metric": [
+              {
+                "metric_id": "mtr1",
+                "expression": {
+                  "expression_language": "ISO80000",
+                  "expression_statement": "vnf1.CPULoad\u003c70ANDvnf2.RAM\u003c8",
+                  "expression_unit": "",
+                  "parameters": [
+                    {
+                      "parameter_unit": "",
+                      "parameter_definition": "",
+                      "parameter_value": "85",
+                      "parameter_name": "vnf1.CPULoad",
+                      "parameter_id": "prmtr1"
+                    },
+                    {
+                      "parameter_unit": "",
+                      "parameter_definition": "",
+                      "parameter_value": "8",
+                      "parameter_name": "vnf2.RAM",
+                      "parameter_id": "prmtr2"
+                    }
+                  ]
                 },
+                "rate": {
+                  "sampleInterval": "",
+                  "parameterWindow": "10 m"
+                },
+                "metric_definition": "highTranscodingRateRule"
+              }
+            ],
+            "slo_id": "slo1",
+            "slo_definition": "Bandwidth Testing",
+            "slo_unit": "Mbps"
+          },
+          {
+            "slo_value": "",
+            "slo_name": "cpu_perc_usage",
+            "metric": [
+              {
+                "metric_id": "mtr2",
+                "expression": {
+                  "expression_language": "ISO80000",
+                  "expression_statement": "price\u003c3000ANDvnf1.CPULoad\u003c60ORvnf2.RAM\u003c8",
+                  "expression_unit": "",
+                  "parameters": [
+                    {
+                      "parameter_unit": "Euro",
+                      "parameter_definition": "Test Price",
+                      "parameter_value": "3000",
+                      "parameter_name": "price",
+                      "parameter_id": "prmtr3"
+                    },
+                    {
+                      "parameter_unit": "",
+                      "parameter_definition": "",
+                      "parameter_value": "60",
+                      "parameter_name": "vnf1.CPULoad",
+                      "parameter_id": "prmtr4"
+                    },
+                    {
+                      "parameter_unit": "",
+                      "parameter_definition": "",
+                      "parameter_value": "8",
+                      "parameter_name": "vnf2.RAM",
+                      "parameter_id": "prmtr5"
+                    }
+                  ]
+                },
+                "rate": {
+                  "sampleInterval": "",
+                  "parameterWindow": "10 m"
+                },
+                "metric_definition": "lowTranscodingRateRule"
+              }
+            ],
+            "slo_id": "slo2",
+            "slo_definition": "CPU Testing",
+            "slo_unit": "Ghz"
+          },
+          {
+            "slo_value": "Slo value testing",
+            "slo_name": "1",
+            "metric": [
+              {
+                "metric_id": "mtrNEW1",
+                "expression": {
+                  "expression_language": "ISO80000",
+                  "expression_statement": "7*5",
+                  "expression_unit": "%",
+                  "parameters": [
+                    {
+                      "parameter_unit": "%",
+                      "parameter_definition": "parameddef1",
+                      "parameter_value": "100",
+                      "parameter_name": "parameter1",
+                      "parameter_id": "prmtrNEW1"
+                    }
+                  ]
+                },
+                "rate": {
+                  "parameterWindow": "10mins"
+                },
+                "metric_definition": "test1"
+              }
+            ],
+            "slo_id": "sloNEW1",
+            "slo_definition": "20",
+            "slo_unit": "%"
+          },
+          {
+            "slo_value": "20",
+            "slo_name": "2",
+            "metric": [
+              {
+                "metric_id": "mtrNEW2",
+                "expression": {
+                  "expression_language": "ISO80000",
+                  "expression_statement": "expression2",
+                  "expression_unit": "%",
+                  "parameters": [
+                    {
+                      "parameter_unit": "%",
+                      "parameter_definition": "parameddef1",
+                      "parameter_value": "100",
+                      "parameter_name": "parameter1",
+                      "parameter_id": "prmtrNEW2"
+                    }
+                  ]
+                },
+                "rate": {
+                  "parameterWindow": "20min"
+                },
+                "metric_definition": "test2"
+              }
+            ],
+            "slo_id": "sloNEW2",
+            "slo_definition": "20",
+            "slo_unit": "%"
+          },
+          {
+            "slo_value": "20",
+            "slo_name": "1",
+            "metric": [
+              {
+                "metric_id": "mtrNEW1",
+                "expression": {
+                  "expression_language": "ISO80000",
+                  "expression_statement": "7*5",
+                  "expression_unit": "%",
+                  "parameters": [
+                    {
+                      "parameter_unit": "%",
+                      "parameter_definition": "parameddef1",
+                      "parameter_value": "100",
+                      "parameter_name": "parameter1",
+                      "parameter_id": "prmtrNEW1"
+                    }
+                  ]
+                },
+                "rate": {
+                  "parameterWindow": "10mins"
+                },
+                "metric_definition": "test1"
+              }
+            ],
+            "slo_id": "sloNEW1",
+            "slo_definition": "20",
+            "slo_unit": "%"
+          },
+          {
+            "slo_value": "20",
+            "slo_name": "2",
+            "metric": [
+              {
+                "metric_id": "mtrNEW2",
+                "expression": {
+                  "expression_language": "ISO80000",
+                  "expression_statement": "expression2",
+                  "expression_unit": "%",
+                  "parameters": [
+                    {
+                      "parameter_unit": "%",
+                      "parameter_definition": "parameddef1",
+                      "parameter_value": "100",
+                      "parameter_name": "parameter1",
+                      "parameter_id": "prmtrNEW2"
+                    }
+                  ]
+                },
+                "rate": {
+                  "parameterWindow": "20min"
+                },
+                "metric_definition": "test2"
+              }
+            ],
+            "slo_id": "sloNEW2",
+            "slo_definition": "20",
+            "slo_unit": "%"
+          },
+      {
+        "slo_value": "20",
+        "slo_name": "2",
+        "metric": [
+          {
+            "metric_id": "mtrNEW2",
+            "expression": {
+              "expression_language": "ISO80000",
+              "expression_statement": "expression2",
+              "expression_unit": "%",
+              "parameters": [
                 {
-                  "unit": "hours",
-                  "value": "24",
-                  "operator": "equal"
+                  "parameter_unit": "%",
+                  "parameter_definition": "parameddef1",
+                  "parameter_value": "100",
+                  "parameter_name": "parameter1",
+                  "parameter_id": "prmtrNEW2"
                 }
               ]
             },
-            "name": "Resilience",
-            "definition": "Resilience is the persistence of dependability when facing changes",
-            "value": "1",
-            "operator": "greater",
-            "guaranteeID": "g1"
+            "rate": {
+              "parameterWindow": "20min"
+            },
+            "metric_definition": "test2"
           }
         ],
-        "ns_uuid": "9d6b6880-b29f-46b7-94ba-b22e499a2e73",
-        "ns_name": "recursive-sonata",
-        "ns_vendor": "eu.tango-nfv.service-descriptor",
-        "ns_version": "0.1"
+        "slo_id": "sloNEW2",
+        "slo_definition": "20",
+        "slo_unit": "%"
       }
-    }
-  },
-  "status": "active",
-  "updated_at": "2018-06-18T15:18:46.738+00:00",
-  "username": null,
-  "uuid": "ae73e044-fad3-45ee-86cb-f46d737805c9"
+    ],
+    "ns_name": "recursive-sonata",
+    "nsd_uuid": "bdfb73d1-89a6-4bcf-bd4e-a1d8002546f3"
+  }
+}
+},
+"state": "unpublished",
+"status": "active",
+"updated_at": "2018-03-22T15:49:46.817+00:00",
+"username": null,
+"uuid": "a03e8ca7-ebe6-4cb4-ba78-cf9f36656faf"
 }
