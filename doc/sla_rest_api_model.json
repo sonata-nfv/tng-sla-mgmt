@@ -6,7 +6,7 @@
         "title": "5GTANGO SLA Manager REST API",
         "termsOfService": "https://5gtango.eu/",
         "license": {
-            "name": "Apache License 2.0",
+            "name": "H2020 5GTANGO Copyright",
             "url": "https://github.com/sonata-nfv/tng-sla-mgmt/blob/master/LICENSE"
         }
     },
@@ -23,42 +23,57 @@
     }
     ],
     "paths": {
-	  "/api/slas/v1/templates/{nsd_uuid}": {
+	  "/api/slas/v1/templates": {
       "post": {
         "responses": {
           "404": {
-            "description": "Not Found: NS uuid not found."
+            "description": "Not Found: NS not found."
           },
-          "200": {
-            "description": "Success"       
+          "201": {
+            "description": "Created"       
           }
         },
         "operationId": "create_template",
         "parameters": [
           {
             "name": "nsd_uuid",
-            "in": "path",
+            "in": "body",
             "type": "String",
             "required": true,
+			 "schema": {
+              "description": "Network Service Descriptor UUID",
+              "type": "object",
+              "properties": {
+                "timeStamp": {
+                  "description": "Date-time stamp. Representation: String formatted according to IETF RFC 3339.\n",
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "id": {
+                  "description": "NSD Identifier.\n",
+                  "type": "string"
+                }
+              }
+            },
             "description": "Network Service UUID"
           },
           {
             "name": "templateName",
-            "in": "path",
+            "in": "body",
             "type": "string",
-			"required": true,
+			"required": true,			
             "description": "Name of the SLA template"
           },
           {
             "name": "expireDate",
-            "in": "path",
+            "in": "body",
             "type": "string",
 			"required": true,
             "description": "Expire date of the SLA"
           },
           {
             "name": "guaranteeID",
-            "in": "formData",
+            "in": "body",
             "type": "string",
 			"required": true,
             "description": "The ID of the SLO",

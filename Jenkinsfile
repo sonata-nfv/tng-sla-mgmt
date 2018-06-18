@@ -15,6 +15,11 @@ pipeline {
 		}
       }
     }
+	stage('Checking Swagger Documentation') {
+      steps {
+        swagger-cli validate doc/sla_rest_api_model.json
+      }
+   }
     stage('Unit Tests') {
       parallel {
         stage('Unit Tests') {
