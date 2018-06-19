@@ -50,11 +50,8 @@ public class db_operations {
 	public void connectPostgreSQL() {
 		try {
 
-			 Class.forName("org.postgresql.Driver");
-//			 c =
-//			 DriverManager.getConnection("jdbc:postgresql://localhost:5432/sla-manager",
-//			 "postgres", "admin");
-			 
+			Class.forName("org.postgresql.Driver");
+			//c = DriverManager.getConnection("jdbc:postgresql://localhost:5432/sla-manager", "postgres", "admin"); 
 			c = DriverManager.getConnection("jdbc:postgresql://"+System.getenv("DATABASE_HOST")+":"+System.getenv("DATABASE_PORT")+"/"+System.getenv("GTK_DB_NAME"), System.getenv("GTK_DB_USER"), System.getenv("GTK_DB_PASS"));
 
 		} catch (Exception e) {
