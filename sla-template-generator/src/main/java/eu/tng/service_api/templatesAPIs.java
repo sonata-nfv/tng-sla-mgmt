@@ -170,7 +170,7 @@ public class templatesAPIs {
 		} else {
 			Object createdTemplate = null;
 			try {
-				// String url = "http://pre-int-sp-ath.5gtango.eu:4011/catalogues/api/v2/slas/template-descriptors";
+				//String url = "http://pre-int-sp-ath.5gtango.eu:4011/catalogues/api/v2/slas/template-descriptors";
 				String url = System.getenv("CATALOGUES_URL") + "slas/template-descriptors";
 				URL object = new URL(url);
 
@@ -214,7 +214,7 @@ public class templatesAPIs {
 					return apiresponse.status(400).entity(con.getResponseMessage()).build();
 				}
 			} catch (Exception e) {
-				return Response.serverError().entity("Upload URL Not Found").build();
+				return Response.status(404).entity("Upload URL Not Found").build();
 			}
 		}
 
