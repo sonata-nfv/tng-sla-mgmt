@@ -57,7 +57,8 @@ pipeline {
 		}
       }
     }	
-	stage('Deployment in Integration') {
+	
+	stage('Deployment in Pre-Integration') {
           parallel {
             stage('Deployment in Integration') {
               steps {
@@ -75,6 +76,21 @@ pipeline {
             }
           }
 	}
+	
+	 stage('Promoting to integration') {
+      when{
+        branch 'master'
+      }      
+      steps {
+        sh 'docker tag registry.sonata-nfv.eu:5000/tng-sla-mgmt:latest registry.sonata-nfv.eu:5000/<container_name>:int'
+        sh 'docker push registry.sonata-nfv.eu:5000/tng-sla-mgmt:int'
+        sh 'rm -rf tng-devops || true'
+        sh 'git clone https://github.com/sonata-nfv/tng-devops.git'
+        dir(path: 'tng-devops') {
+          sh 'ansible-playbook roles/sp.yml -i environments -e "target=int-sp"'
+        }
+      }
+    }
   }
   
   post {
