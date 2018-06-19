@@ -168,7 +168,7 @@ public class db_operations {
 			result = true;
 		} catch (Exception e) {
 			System.err.println(e.getClass().getName() + ": " + e.getMessage());
-			System.exit(0);
+		
 		}
 		System.out.println("Records with deleted? " + result);
 
@@ -210,7 +210,7 @@ public class db_operations {
 				stmt.close();
 			} catch (Exception e) {
 				System.err.println(e.getClass().getName() + ": " + e.getMessage());
-				System.exit(0);
+				
 			}
 
 		} else if (tablename == "cust_sla") {
@@ -241,7 +241,7 @@ public class db_operations {
 
 			} catch (Exception e) {
 				System.err.println(e.getClass().getName() + ": " + e.getMessage());
-				System.exit(0);
+				
 			}
 
 		}
@@ -283,7 +283,7 @@ public class db_operations {
 			stmt.close();
 		} catch (Exception e) {
 			System.err.println(e.getClass().getName() + ": " + e.getMessage());
-			System.exit(0);
+			
 		}
 
 		return root;
@@ -323,7 +323,7 @@ public class db_operations {
 			stmt.close();
 		} catch (Exception e) {
 			System.err.println(e.getClass().getName() + ": " + e.getMessage());
-			System.exit(0);
+			
 		}
 
 		return root;
