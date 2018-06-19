@@ -37,89 +37,32 @@
         "parameters": [
           {
             "name": "nsd_uuid",
-            "in": "body",
+            "in": "formData",
             "required": true,
-			 "schema": {
-              "description": "Network Service Descriptor UUID",
-              "type": "object",
-              "properties": {
-                "timeStamp": {
-                  "description": "Date-time stamp. Representation: String formatted according to IETF RFC 3339.\n",
-                  "type": "string",
-                  "format": "date-time"
-                },
-                "id": {
-                  "description": "NSD Identifier.\n",
-                  "type": "string"
-                }
-              }
-            },
+			"type": "string",
             "description": "Network Service UUID"
           },
           {
             "name": "templateName",
-            "in": "body",
-			"required": true,
-			 "schema": {
-              "description": "SLA Template Name",
-              "type": "object",
-              "properties": {
-                "timeStamp": {
-                  "description": "Date-time stamp. Representation: String formatted according to IETF RFC 3339.\n",
-                  "type": "string",
-                  "format": "date-time"
-                },
-                "id": {
-                  "description": "SLA template name.\n",
-                  "type": "string"
-                }
-              }
-            },			
+            "in": "formData",
+			"required": true,	
+			"type": "string",			
             "description": "Name of the SLA template"
           },
           {
             "name": "expireDate",
-            "in": "body",
+            "in": "formData",
 			"required": true,
-			 "schema": {
-              "description": "SLA template expire Date",
-              "type": "object",
-              "properties": {
-                "timeStamp": {
-                  "description": "Date-time stamp. Representation: String formatted according to IETF RFC 3339.\n",
-                  "type": "string",
-                  "format": "date-time"
-                },
-                "id": {
-                  "description": "SLA template valid until.\n",
-                  "type": "string"
-                }
-              }
-            },
+			"type": "string",
             "description": "Expire date of the SLA"
           },
           {
             "name": "guaranteeID",
-            "in": "body",
+            "in": "formData",
 			"required": true,
-			 "schema": {
-              "description": "Id of at least one signed SLO",
-              "type": "object",
-              "properties": {
-                "timeStamp": {
-                  "description": "Date-time stamp. Representation: String formatted according to IETF RFC 3339.\n",
-                  "type": "string",
-                  "format": "date-time"
-                },
-                "id": {
-                  "description": "SLO identifier.\n",
-                  "type": "string"
-                }
-              }
-            },
-            "description": "The ID of the SLO",
-            "default": "g1"
-          }
+			"type": "string",
+            "description": "The ID of the SLO"
+			}
         ],
         "consumes": [
           "multipart/form-data"
@@ -130,7 +73,15 @@
       }
     },
 	"/api/slas/v1/templates/{sla_uuid}": {
-      "delete": {
+	  "parameters": [
+          {
+            "name": "sla_uuid",
+            "in": "formData",
+            "type": "string",
+            "description": "SLA uuid"
+          }
+        ],
+    "delete": {
         "responses": {
           "200": {
             "description": "Success"        
@@ -140,14 +91,20 @@
           }
         },
         "operationId": "delete_sla_template",
-        "parameters": [
-          {
-            "name": "sla_uuid",
-            "in": "path",
-            "type": "string",
-            "description": "SLA uuid to be deleted"
+        "tags": [
+          "v1"
+        ]
+      },
+	"get": {
+        "responses": {
+          "200": {
+            "description": "Success"        
+          },
+		  "404": {
+            "description": "Not Found: SLA Not found"
           }
-        ],
+        },
+        "operationId": "get_sla_by_uuid",
         "tags": [
           "v1"
         ]
@@ -169,7 +126,7 @@
         ]
       }
     },
-	"/api/slas/v1/templates/guaranteesList": {
+	"/api/slas/v1/mgmt/guaranteesList": {
       "get": {
         "responses": {
           "200": {
@@ -234,6 +191,42 @@
           }
         },
         "operationId": "get_ns_withno_slas",
+        "parameters": [        
+        ],
+        "tags": [
+          "v1"
+        ]
+      }
+    },
+	"/api/slas/v1/mgmt/services/agreementes/true": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Success"          
+          },
+		  "400": {
+            "description": "Bad request: HTTP bad request"
+          }
+        },
+        "operationId": "get_ns_with_agreements",
+        "parameters": [        
+        ],
+        "tags": [
+          "v1"
+        ]
+      }
+    },
+	"/api/slas/v1/mgmt/services/agreementes/false": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Success"          
+          },
+		  "400": {
+            "description": "Bad request: HTTP bad request"
+          }
+        },
+        "operationId": "get_ns_with_no_agreements",
         "parameters": [        
         ],
         "tags": [
