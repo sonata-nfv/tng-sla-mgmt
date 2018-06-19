@@ -60,7 +60,7 @@ public class ns_template_corr {
 	/**
 	 * Delete a correlation between a network service and a sla template
 	 */
-	public static void deleteNsTempCorr(String sla_uuid) {
+	public void deleteNsTempCorr(String sla_uuid) {
 		String tablename = "ns_template";
 		db_operations dbo = new db_operations();
 		dbo.connectPostgreSQL();
@@ -111,6 +111,7 @@ public class ns_template_corr {
 	/**
 	 * Get an array with the ns uuids that do not have accosiated an sla template
 	 */
+	@SuppressWarnings("unchecked")
 	public ArrayList<String> nsWithoutTemplate() {
 
 		JSONArray existingNSArray = null;

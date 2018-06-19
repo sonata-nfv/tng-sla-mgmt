@@ -257,25 +257,6 @@
 				"operator": "less",
 				"period": "Monthly"
 			}
-        },
-		{
-			"guaranteeID": "g10",
-			"name": "Throughput",
-			"definition": "Throughput is a measure of how many units of information the network can process in a given amount of time (monthly). ",
-			"value": "100",
-			"unit": "Mbp/s",
-			"operator": "greater",
-			"period": "Monthly"
-        },
-		{
-			"guaranteeID": "g11",
-			"name": "Throughput",
-			"definition": "Throughput is a measure of how many units of information the network can process in a given amount of time (monthly). ",
-			"value": "1",
-			"unit": "Gbp/s",
-			"operator": "greater",
-			"period": "Monthly"
-        }	
-		
+        }		
     ]
 }

@@ -42,56 +42,59 @@ import org.json.simple.parser.ParseException;
 
 public class GetNsd {
 
-	public void getNSD(String nsId) {
+	public boolean getNSD(String nsId) {
 		Nsd setNsdFields = new Nsd();
 		ArrayList<String> mon_desc_list = new ArrayList<String>();
 		ArrayList<String> mon_metric_list = new ArrayList<String>();
+		boolean nsdr = false;
 		try {
-			URL url = new URL(System.getenv("CATALOGUES_URL")+"network-services/" + nsId);
+			URL url = new URL(System.getenv("CATALOGUES_URL")+"network-services/"+ nsId);
 			//URL url = new URL("http://pre-int-sp-ath.5gtango.eu:4011/catalogues/api/v2/network-services/" + nsId);
 			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 			conn.setRequestProperty("Content-Type", "application/json");
 
 			if (conn.getResponseCode() != 200) {
-				System.out.println("Failed : HTTP error code : NSD not FOUND");
-			}
+				//System.out.println("Failed : HTTP error code : NSD not FOUND");
+				nsdr = false;
+			} else {
+				BufferedReader br = new BufferedReader(new InputStreamReader((conn.getInputStream())));
+				String output;
 
-			BufferedReader br = new BufferedReader(new InputStreamReader((conn.getInputStream())));
-			String output;
+				while ((output = br.readLine()) != null) {
+					JSONParser parser = new JSONParser();
+					try {
 
-			while ((output = br.readLine()) != null) {
-				JSONParser parser = new JSONParser();
-				try {
+						Object obj = parser.parse(output);
+						JSONObject jsonObject = (JSONObject) obj;
+						if (jsonObject.containsKey("nsd")) {
+							JSONObject nsd = (JSONObject) jsonObject.get("nsd");
 
-					Object obj = parser.parse(output);
-					JSONObject jsonObject = (JSONObject) obj;
-					if (jsonObject.containsKey("nsd")) {
-						JSONObject nsd = (JSONObject) jsonObject.get("nsd");
+							// get nsd name
+							String name = (String) nsd.get("name");
+							setNsdFields.setName(name);
 
-						// get nsd name
-						String name = (String) nsd.get("name");
-						setNsdFields.setName(name);
+							// get nsd vendor
+							String vendor = (String) nsd.get("vendor");
+							setNsdFields.setVendor(vendor);
 
-						// get nsd vendor
-						String vendor = (String) nsd.get("vendor");
-						setNsdFields.setVendor(vendor);
+							// get nsd version
+							String version = (String) nsd.get("version");
+							setNsdFields.setVersion(version);
 
-						// get nsd version
-						String version = (String) nsd.get("version");
-						setNsdFields.setVersion(version);
+							// get nsd description
+							String description = (String) nsd.get("description");
+							setNsdFields.setDescription(description);
 
-						// get nsd description
-						String description = (String) nsd.get("description");
-						setNsdFields.setDescription(description);
+						}
 
+					} catch (ParseException e) {
+						e.printStackTrace();
 					}
 
-				} catch (ParseException e) {
-					e.printStackTrace();
 				}
-
+				conn.disconnect();
+				nsdr = true;
 			}
-			conn.disconnect();
 		} catch (MalformedURLException e) {
 
 			e.printStackTrace();
@@ -101,6 +104,7 @@ public class GetNsd {
 			e.printStackTrace();
 
 		}
+		return nsdr;
 
 	}
 

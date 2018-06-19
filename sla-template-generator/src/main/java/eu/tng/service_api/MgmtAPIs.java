@@ -119,27 +119,17 @@ public class MgmtAPIs {
 		JSONObject jsonObject = null;
 
 		ResponseBuilder apiresponse = null;
-
 		try {
 			File testf = new File(this.getClass().getResource("/slos_list_release1.json").toURI());
 			jsonObject = (JSONObject) parser.parse(new FileReader(testf));
 			System.out.println(jsonObject);
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (URISyntaxException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			
+			apiresponse = Response.ok((Object) jsonObject);
+			apiresponse.header("Content-Length", jsonObject.toString().length());
+			return apiresponse.status(200).build();
+		} catch (Exception e) {
+			return Response.status(404).entity("Guarantees List Not Found").build();
 		}
-
-		apiresponse = Response.ok((Object) jsonObject);
-		apiresponse.header("Content-Length", jsonObject.toString().length());
-		return apiresponse.status(200).build();
-
 	}
 
 	/**

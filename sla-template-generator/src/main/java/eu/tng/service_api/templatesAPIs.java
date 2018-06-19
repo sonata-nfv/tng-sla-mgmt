@@ -29,15 +29,9 @@
 package eu.tng.service_api;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -59,10 +53,7 @@ import javax.ws.rs.core.UriInfo;
 
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
-
 import eu.tng.template_gen.*;
-import eu.tng.correlations.db_operations;
 import eu.tng.correlations.ns_template_corr;
 import eu.tng.modify_sla_template.*;
 
@@ -78,8 +69,8 @@ public class templatesAPIs {
 	public Response getTemplates() {
 		ResponseBuilder apiresponse = null;
 		try {
-			String url = System.getenv("CATALOGUES_URL")+"slas/template-descriptors";
-			//String url = "http://pre-int-sp-ath.5gtango.eu:4011/catalogues/api/v2/slas/template-descriptors";
+			String url = System.getenv("CATALOGUES_URL") + "slas/template-descriptors";
+			// String url = "http://pre-int-sp-ath.5gtango.eu:4011/catalogues/api/v2/slas/template-descriptors";
 			URL object = new URL(url);
 
 			HttpURLConnection con = (HttpURLConnection) object.openConnection();
@@ -102,15 +93,14 @@ public class templatesAPIs {
 			Object existingTemplates = parser.parse(response.toString());
 			apiresponse = Response.ok((Object) existingTemplates);
 			apiresponse.header("Content-Length", response.length());
-			return apiresponse.build();
+			return apiresponse.status(200).build();
 
 		} catch (Exception e) {
-
-			return apiresponse.status(400).build();
+			return Response.status(404).entity("Not Found").build();
 		}
 
 	}
-	
+
 	/**
 	 * api call in order to get a list with all the existing sla templates
 	 */
@@ -120,8 +110,8 @@ public class templatesAPIs {
 	public Response getTemplate(@PathParam("sla_uuid") String sla_uuid) {
 		ResponseBuilder apiresponse = null;
 		try {
-			String url = System.getenv("CATALOGUES_URL")+"slas/template-descriptors/"+sla_uuid;
-			//String url = "http://pre-int-sp-ath.5gtango.eu:4011/catalogues/api/v2/slas/template-descriptors/"+sla_uuid;
+			String url = System.getenv("CATALOGUES_URL") + "slas/template-descriptors/" + sla_uuid;
+			// String url ="http://pre-int-sp-ath.5gtango.eu:4011/catalogues/api/v2/slas/template-descriptors/"+sla_uuid;
 			URL object = new URL(url);
 
 			HttpURLConnection con = (HttpURLConnection) object.openConnection();
@@ -144,11 +134,11 @@ public class templatesAPIs {
 			Object existingTemplates = parser.parse(response.toString());
 			apiresponse = Response.ok((Object) existingTemplates);
 			apiresponse.header("Content-Length", response.length());
-			return apiresponse.build();
+			return apiresponse.status(200).build();
 
 		} catch (Exception e) {
 
-			return apiresponse.status(400).build();
+			return Response.status(404).entity("Not Found").build();
 		}
 
 	}
@@ -156,16 +146,17 @@ public class templatesAPIs {
 	/**
 	 * api call in order to generate a sla template
 	 */
+	@SuppressWarnings("null")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes("application/x-www-form-urlencoded")
 	@POST
 	public Response createTemplate(final MultivaluedMap<String, String> formParams) {
 
 		ResponseBuilder apiresponse = null;
-		
-		List<String> nsd_uuid = formParams.get("nsd_uuid") ;
-		List<String> expireDate = formParams.get("expireDate") ;
-		List<String> templateName = formParams.get("templateName") ;
+
+		List<String> nsd_uuid = formParams.get("nsd_uuid");
+		List<String> expireDate = formParams.get("expireDate");
+		List<String> templateName = formParams.get("templateName");
 
 		ArrayList<String> guarantees = new ArrayList<String>();
 		guarantees.addAll(formParams.get("guaranteeId"));
@@ -173,58 +164,60 @@ public class templatesAPIs {
 		// call CreateTemplate method
 		CreateTemplate ct = new CreateTemplate();
 		JSONObject template = ct.createTemplate(nsd_uuid.get(0), templateName.get(0), expireDate.get(0), guarantees);
-		System.out.println("Created SLA Template: " + template);
 
-		Object createdTemplate = null;
-		try {
-			//String url = "http://pre-int-sp-ath.5gtango.eu:4011/catalogues/api/v2/slas/template-descriptors";
-			String url = System.getenv("CATALOGUES_URL") + "slas/template-descriptors";
-			URL object = new URL(url);
+		if (template == null) {
+			return Response.status(404).entity("NSD uuid not found").build();
+		} else {
+			Object createdTemplate = null;
+			try {
+				// String url = "http://pre-int-sp-ath.5gtango.eu:4011/catalogues/api/v2/slas/template-descriptors";
+				String url = System.getenv("CATALOGUES_URL") + "slas/template-descriptors";
+				URL object = new URL(url);
 
-			HttpURLConnection con = (HttpURLConnection) object.openConnection();
-			con.setDoOutput(true);
-			con.setDoInput(true);
-			con.setRequestProperty("Content-Type", "application/json");
-			con.setRequestProperty("Accept", "application/json");
-			con.setRequestMethod("POST");
-			OutputStreamWriter wr = new OutputStreamWriter(con.getOutputStream());
-			wr.write(template.toString());
-			wr.flush();
+				HttpURLConnection con = (HttpURLConnection) object.openConnection();
+				con.setDoOutput(true);
+				con.setDoInput(true);
+				con.setRequestProperty("Content-Type", "application/json");
+				con.setRequestProperty("Accept", "application/json");
+				con.setRequestMethod("POST");
+				OutputStreamWriter wr = new OutputStreamWriter(con.getOutputStream());
+				wr.write(template.toString());
+				wr.flush();
 
-			StringBuilder sb = new StringBuilder();
-			int HttpResult = con.getResponseCode();
+				StringBuilder sb = new StringBuilder();
+				int HttpResult = con.getResponseCode();
 
-			if (HttpResult == HttpURLConnection.HTTP_CREATED) {
-				BufferedReader br = new BufferedReader(new InputStreamReader(con.getInputStream(), "utf-8"));
-				String line = null;
-				while ((line = br.readLine()) != null) {
-					sb.append(line + "\n");
+				if (HttpResult == HttpURLConnection.HTTP_CREATED) {
+					BufferedReader br = new BufferedReader(new InputStreamReader(con.getInputStream(), "utf-8"));
+					String line = null;
+					while ((line = br.readLine()) != null) {
+						sb.append(line + "\n");
 
+					}
+					// create correlation between ns and sla template
+					JSONParser parser = new JSONParser();
+					createdTemplate = parser.parse(sb.toString());
+					JSONObject responseSLA = (JSONObject) createdTemplate;
+					String sla_uuid = (String) responseSLA.get("uuid");
+					ns_template_corr nstemplcorr = new ns_template_corr();
+					nstemplcorr.createNsTempCorr(nsd_uuid.get(0), sla_uuid);
+
+					br.close();
+
+					apiresponse = Response.ok(responseSLA);
+					apiresponse.header("Content-Length", responseSLA.toString().length());
+					return apiresponse.status(201).build();
+
+				} else {
+					// conflict in uploading sla template to the catalogue
+					System.out.println(con.getResponseMessage());
+					return apiresponse.status(400).entity(con.getResponseMessage()).build();
 				}
-				System.out.println("UPLOADED TO CAT:" + sb.toString());
-
-				// create correlation between ns and sla template
-				JSONParser parser = new JSONParser();
-				createdTemplate = parser.parse(sb.toString());
-				JSONObject responseSLA = (JSONObject) createdTemplate;
-				String sla_uuid = (String) responseSLA.get("uuid");
-				ns_template_corr nstemplcorr = new ns_template_corr();
-				nstemplcorr.createNsTempCorr(nsd_uuid.get(0), sla_uuid);
-
-				br.close();
-				
-				apiresponse = Response.ok(responseSLA);
-				apiresponse.header("Content-Length", responseSLA.toString().length());
-				return apiresponse.status(201).build();
-
-			} else {
-				System.out.println(con.getResponseMessage());
+			} catch (Exception e) {
+				return Response.serverError().entity("Upload URL Not Found").build();
 			}
-		} 
-		catch (Exception e) {
 		}
-		return apiresponse.status(400).build();
-		
+
 	}
 
 	/**
@@ -238,35 +231,36 @@ public class templatesAPIs {
 
 		ResponseBuilder apiresponse = null;
 		String dr = null;
-
-		URL url = null;
-		try {
-			url = new URL(System.getenv("CATALOGUES_URL") + "slas/template-descriptors/" + sla_uuid);
-		} catch (MalformedURLException exception) {
-			exception.printStackTrace();
-		}
 		HttpURLConnection httpURLConnection = null;
+		URL url = null;
+
 		try {
+			//url = new URL("http://pre-int-sp-ath.5gtango.eu:4011/catalogues/api/v2/slas/template-descriptors/" + sla_uuid);
+			 url = new URL(System.getenv("CATALOGUES_URL") + "slas/template-descriptors/" + sla_uuid);
+
 			httpURLConnection = (HttpURLConnection) url.openConnection();
-			httpURLConnection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+			httpURLConnection.setRequestProperty("Content-Type", "application/json");
 			httpURLConnection.setRequestMethod("DELETE");
 			System.out.println(httpURLConnection.getResponseCode());
 
-			// delete all correlations with the deleted sla template from postgreSQL table
-			ns_template_corr nstemplcorr = new ns_template_corr();
-			nstemplcorr.deleteNsTempCorr(sla_uuid);
-			dr = "SLA Template with uuid: " + sla_uuid + " deleted";
+			if (httpURLConnection.getResponseCode() == 404) {
+				return Response.status(404).entity("SLA uuid Not Found").build();
 
-		} catch (IOException exception) {
-			exception.printStackTrace();
-		} finally {
-			if (httpURLConnection != null) {
-				httpURLConnection.disconnect();
+			} else {
+				// delete all correlations with the deleted sla template from postgreSQL table
+				ns_template_corr nstemplcorr = new ns_template_corr();
+				nstemplcorr.deleteNsTempCorr(sla_uuid);
+				dr = ("Deleted: " + sla_uuid);
+
+				apiresponse = Response.ok();
+				apiresponse.header("Content-Length", (dr.length()));
+				return apiresponse.status(200).entity(dr).build();
+
 			}
+
+		} catch (Exception e) {
+			return Response.status(404).entity("URL Not Found").build();
 		}
-		apiresponse = Response.ok();
-		apiresponse.header("Content-Length", (dr.length()));
-		return apiresponse.status(200).entity(dr).build();
 
 	}
 
