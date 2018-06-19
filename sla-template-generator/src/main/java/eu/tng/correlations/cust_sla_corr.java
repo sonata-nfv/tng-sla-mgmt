@@ -179,6 +179,7 @@ public class cust_sla_corr {
 
 		// get the stored correlations
 		dbo.connectPostgreSQL();
+		dbo.createTableCustSla();
 		JSONObject correlations = dbo.selectAllRecords("cust_sla");
 		JSONArray cust_sla = (JSONArray) correlations.get("cust_sla");
 		for (int i = 0; i < cust_sla.size(); i++) {

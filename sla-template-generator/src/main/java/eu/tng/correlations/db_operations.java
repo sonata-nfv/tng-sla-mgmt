@@ -57,7 +57,6 @@ public class db_operations {
 		} catch (Exception e) {
 			e.printStackTrace();
 			System.err.println(e.getClass().getName() + ": " + e.getMessage());
-			System.exit(0);
 		}
 		System.out.println("Opened sla-manager database successfully");
 	}
