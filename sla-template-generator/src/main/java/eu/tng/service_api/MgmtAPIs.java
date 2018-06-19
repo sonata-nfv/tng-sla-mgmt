@@ -159,6 +159,7 @@ public class MgmtAPIs {
 	public Response getNSwithoutAgreement() {
 
 		ResponseBuilder apiresponse = null;
+
 		cust_sla_corr custslacorr = new cust_sla_corr();
 		ArrayList<String> correlatedNS = custslacorr.nsWithoutAgreement();
 

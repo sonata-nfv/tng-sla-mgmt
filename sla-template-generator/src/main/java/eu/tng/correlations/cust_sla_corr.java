@@ -51,66 +51,62 @@ public class cust_sla_corr {
 	/**
 	 * Create a correlation between an instatiated network service, a customer and a
 	 * sla
+	 * @param correlation_id 
 	 */
-	public static void createCustSlaCorr(String ns_uuid,String sla_uuid, String cust_uuid, String cust_name) {
-
-		Nsd getNsd = new Nsd();
-		GetNsd nsd = new GetNsd();
-		nsd.getNSD(ns_uuid);
-		String ns_name =  getNsd.getName();
-		
-		ArrayList agreementDetails = getSLAdetails(sla_uuid);
-		String sla_name= (String) agreementDetails.get(1);
-		String sla_status= (String) agreementDetails.get(0);
+	public static void createCustSlaCorr(String sla_uuid,String sla_name,String sla_status, String ns_uuid, String ns_name, String cust_uuid, String cust_email, String inst_status, String correlation_id) {
 
 		db_operations dbo = new db_operations();
 
 		dbo.connectPostgreSQL();
 		dbo.createTableCustSla();
-		dbo.insertRecordAgreement(ns_uuid, ns_name, sla_uuid, sla_name, sla_status, cust_name, cust_uuid);
+		dbo.insertRecordAgreement(ns_uuid, ns_name, sla_uuid, sla_name, sla_status , cust_email, cust_uuid,inst_status,correlation_id);
 		dbo.closePostgreSQL();
 
 	}
-	
-	private static ArrayList getSLAdetails(String sla_uuid) {
+
+	public ArrayList getSLAdetails(String sla_uuid) {
 		ArrayList<String> details = new ArrayList<String>();
-		
+
 		try {
-//			String url ="http://pre-int-sp-ath.5gtango.eu:4011/catalogues/api/v2/slas/template-descriptors/" + sla_uuid;
-//			URL object = new URL(url);
-			
-			URL url = new URL(System.getenv("CATALOGUES_URL")+"slas/template-descriptors/" + sla_uuid);
+			//String url = "http://pre-int-sp-ath.5gtango.eu:4011/catalogues/api/v2/slas/template-descriptors/"
+					//+ sla_uuid;
+			//URL object = new URL(url);
+
+			URL url = new URL(System.getenv("CATALOGUES_URL") + "slas/template-descriptors/" + sla_uuid);
 			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 			conn.setRequestProperty("Content-Type", "application/json");
 
 			if (conn.getResponseCode() != 200) {
 				System.out.println("Failed : HTTP error code : SLA not FOUND");
-			}
+				details = null;
+			} 
+			else {
+				BufferedReader br = new BufferedReader(new InputStreamReader((conn.getInputStream())));
+				String output;
 
-			BufferedReader br = new BufferedReader(new InputStreamReader((conn.getInputStream())));
-			String output;
+				while ((output = br.readLine()) != null) {
+					JSONParser parser = new JSONParser();
+					try {
+						Object obj = parser.parse(output);
+						JSONObject jsonObject = (JSONObject) obj;
+						// get slad status
+						String status = (String) jsonObject.get("status");
+						details.add(status);
+						if (jsonObject.containsKey("slad")) {
+							JSONObject slad = (JSONObject) jsonObject.get("slad");
+							// get slad name
+							String name = (String) slad.get("name");
+							details.add(name);
+						}
 
-			while ((output = br.readLine()) != null) {
-				JSONParser parser = new JSONParser();
-				try {
-					Object obj = parser.parse(output);
-					JSONObject jsonObject = (JSONObject) obj;
-					// get slad status
-					String status = (String) jsonObject.get("status");
-					details.add(status);
-					if (jsonObject.containsKey("slad")) {
-						JSONObject slad = (JSONObject) jsonObject.get("slad");
-						// get slad name
-						String name = (String) slad.get("name");
-						details.add(name);
+					} catch (ParseException e) {
+						e.printStackTrace();
 					}
 
-				} catch (ParseException e) {
-					e.printStackTrace();
 				}
-
+				conn.disconnect();
 			}
-			conn.disconnect();
+
 		} catch (MalformedURLException e) {
 
 			e.printStackTrace();
@@ -118,12 +114,10 @@ public class cust_sla_corr {
 		} catch (IOException e) {
 
 			e.printStackTrace();
-
 		}
-		System.out.println(details);
 		return details;
 	}
-	
+
 	/**
 	 * Delete a correlation between a network service and a sla template
 	 */
