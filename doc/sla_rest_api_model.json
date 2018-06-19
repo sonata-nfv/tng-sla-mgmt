@@ -1,18 +1,18 @@
 {
-    "swagger": "2.0",
-    "info": {
-        "description": "An H2020 5GTANGO project",
-        "version": "0.0.1",
-        "title": "5GTANGO SLA Manager REST API",
-        "termsOfService": "https://5gtango.eu/",
-        "license": {
-            "name": "H2020 5GTANGO Copyright",
-            "url": "https://github.com/sonata-nfv/tng-sla-mgmt/blob/master/LICENSE"
-        }
-    },
-    "host": "tng-sla-mgmt:8080",
-    "basePath": "/tng-sla-mgmt",
-    "tags": [
+  "swagger": "2.0",
+  "info": {
+    "description": "An H2020 5GTANGO project",
+    "version": "0.0.1",
+    "title": "5GTANGO SLA Manager REST API",
+    "termsOfService": "https://5gtango.eu/",
+    "license": {
+      "name": "H2020 5GTANGO Copyright",
+      "url": "https://github.com/sonata-nfv/tng-sla-mgmt/blob/master/LICENSE"
+    }
+  },
+  "host": "tng-sla-mgmt:8080",
+  "basePath": "/tng-sla-mgmt",
+  "tags": [
     {
       "name": "default",
       "description": "Default namespace"
@@ -21,16 +21,16 @@
       "name": "v1",
       "description": "sla-mgmt API"
     }
-    ],
-    "paths": {
-	  "/api/slas/v1/templates": {
+  ],
+  "paths": {
+    "/api/slas/v1/templates": {
       "post": {
         "responses": {
+          "201": {
+            "description": "Created"
+          },
           "404": {
             "description": "Not Found: NS not found."
-          },
-          "201": {
-            "description": "Created"       
           }
         },
         "operationId": "create_template",
@@ -39,30 +39,30 @@
             "name": "nsd_uuid",
             "in": "formData",
             "required": true,
-			"type": "string",
+            "type": "string",
             "description": "Network Service UUID"
           },
           {
             "name": "templateName",
             "in": "formData",
-			"required": true,	
-			"type": "string",			
+            "required": true,
+            "type": "string",
             "description": "Name of the SLA template"
           },
           {
             "name": "expireDate",
             "in": "formData",
-			"required": true,
-			"type": "string",
+            "required": true,
+            "type": "string",
             "description": "Expire date of the SLA"
           },
           {
             "name": "guaranteeID",
             "in": "formData",
-			"required": true,
-			"type": "string",
+            "required": true,
+            "type": "string",
             "description": "The ID of the SLO"
-			}
+          }
         ],
         "consumes": [
           "multipart/form-data"
@@ -72,21 +72,21 @@
         ]
       }
     },
-	"/api/slas/v1/templates/{sla_uuid}": {
-	  "parameters": [
-          {
-            "name": "sla_uuid",
-            "in": "formData",
-            "type": "string",
-            "description": "SLA uuid"
-          }
-        ],
-    "delete": {
+    "/api/slas/v1/templates/{sla_uuid}": {
+      "parameters": [
+        {
+          "name": "sla_uuid",
+          "in": "formData",
+          "type": "string",
+          "description": "SLA uuid"
+        }
+      ],
+      "delete": {
         "responses": {
           "200": {
-            "description": "Success"        
+            "description": "Success"
           },
-		  "400": {
+          "400": {
             "description": "Bad request: HTTP bad request"
           }
         },
@@ -95,12 +95,12 @@
           "v1"
         ]
       },
-	"get": {
+      "get": {
         "responses": {
           "200": {
-            "description": "Success"        
+            "description": "Success"
           },
-		  "404": {
+          "404": {
             "description": "Not Found: SLA Not found"
           }
         },
@@ -110,13 +110,13 @@
         ]
       }
     },
-	"/api/slas/v1/templates/": {
+    "/api/slas/v1/templates/": {
       "get": {
         "responses": {
           "200": {
-            "description": "Success"          
+            "description": "Success"
           },
-		  "400": {
+          "400": {
             "description": "Bad request: HTTP bad request"
           }
         },
@@ -126,113 +126,196 @@
         ]
       }
     },
-	"/api/slas/v1/mgmt/guaranteesList": {
+    "/api/slas/v1/mgmt/guaranteesList": {
       "get": {
         "responses": {
           "200": {
-            "description": "Success"          
+            "description": "Success"
           },
-		  "400": {
+          "400": {
             "description": "Bad request: HTTP bad request"
           }
         },
         "operationId": "get_guarantee_list",
-        "parameters": [        
-        ],
+        "parameters": [],
         "tags": [
           "v1"
         ]
       }
     },
-	"/api/slas/v1/mgmt/services/templates/": {
+    "/api/slas/v1/mgmt/services/templates/": {
       "get": {
         "responses": {
           "200": {
-            "description": "Success"          
+            "description": "Success"
           },
-		  "400": {
+          "400": {
             "description": "Bad request: HTTP bad request"
           }
         },
         "operationId": "get_correlated_sla_ns",
-        "parameters": [        
-        ],
+        "parameters": [],
         "tags": [
           "v1"
         ]
       }
     },
-	"/api/slas/v1/mgmt/services/templates/true": {
+    "/api/slas/v1/mgmt/services/templates/true": {
       "get": {
         "responses": {
           "200": {
-            "description": "Success"          
+            "description": "Success"
           },
-		  "400": {
+          "400": {
             "description": "Bad request: HTTP bad request"
           }
         },
         "operationId": "get_ns_assosiated_Slas",
-        "parameters": [        
-        ],
+        "parameters": [],
         "tags": [
           "v1"
         ]
       }
     },
-	"/api/slas/v1/mgmt/services/templates/false": {
+    "/api/slas/v1/mgmt/services/templates/false": {
       "get": {
         "responses": {
           "200": {
-            "description": "Success"          
+            "description": "Success"
           },
-		  "400": {
+          "400": {
             "description": "Bad request: HTTP bad request"
           }
         },
         "operationId": "get_ns_withno_slas",
-        "parameters": [        
-        ],
+        "parameters": [],
         "tags": [
           "v1"
         ]
       }
     },
-	"/api/slas/v1/mgmt/services/agreementes/true": {
+    "/api/slas/v1/mgmt/services/agreementes/true": {
       "get": {
         "responses": {
           "200": {
-            "description": "Success"          
+            "description": "Success"
           },
-		  "400": {
+          "400": {
             "description": "Bad request: HTTP bad request"
           }
         },
         "operationId": "get_ns_with_agreements",
-        "parameters": [        
-        ],
+        "parameters": [],
         "tags": [
           "v1"
         ]
       }
     },
-	"/api/slas/v1/mgmt/services/agreementes/false": {
+    "/api/slas/v1/mgmt/services/agreementes/false": {
       "get": {
         "responses": {
           "200": {
-            "description": "Success"          
+            "description": "Success"
           },
-		  "400": {
+          "400": {
             "description": "Bad request: HTTP bad request"
           }
         },
         "operationId": "get_ns_with_no_agreements",
-        "parameters": [        
-        ],
+        "parameters": [],
+        "tags": [
+          "v1"
+        ]
+      }
+    },
+    "/api/slas/v1/mgmt/services/agreementes": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Bad request: HTTP bad request"
+          }
+        },
+        "operationId": "get_agreements",
+        "parameters": [],
+        "tags": [
+          "v1"
+        ]
+      }
+    },
+    "/api/slas/v1/agreements/{sla_uuid}": {
+      "parameters": [
+        {
+          "name": "sla_uuid",
+          "in": "formData",
+          "type": "string",
+          "description": "SLA uuid"
+        }
+      ],
+      "delete": {
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "404": {
+            "description": "NOT Found: SLA not found"
+          }
+        },
+        "operationId": "delete_agreement",
+        "tags": [
+          "v1"
+        ]
+      }
+    },
+    "/api/slas/v1/agreements/service/{ns_uuid}": {
+      "parameters": [
+        {
+          "name": "ns_uuid",
+          "in": "formData",
+          "type": "string",
+          "description": "NS uuid"
+        }
+      ],
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "404": {
+            "description": "NOT Found: NS not found"
+          }
+        },
+        "operationId": "agreements_per_InsNs",
+        "tags": [
+          "v1"
+        ]
+      }
+    },
+    "/api/slas/v1/agreements/guarantee-terms/{sla_uuid}": {
+      "parameters": [
+        {
+          "name": "sla_uuid",
+          "in": "formData",
+          "type": "string",
+          "description": "NS uuid"
+        }
+      ],
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "404": {
+            "description": "NOT Found: SLA not found"
+          }
+        },
+        "operationId": "guarantees_per_sla",
         "tags": [
           "v1"
         ]
       }
     }
-    }
+  }
 }
