@@ -102,7 +102,7 @@ public class templatesAPIs {
 	}
 
 	/**
-	 * api call in order to get a list with all the existing sla templates
+	 * api call in order to get specific sla
 	 */
 	@Produces(MediaType.APPLICATION_JSON)
 	@GET

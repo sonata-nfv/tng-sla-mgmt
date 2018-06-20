@@ -36,7 +36,6 @@ public class AgreementsAPIs {
 		ResponseBuilder apiresponse = null;
 
 		db_operations dbo = new db_operations();
-
 		db_operations.connectPostgreSQL();
 		db_operations.createTableCustSla();
 		JSONObject correlations = dbo.getAgreements();
@@ -121,7 +120,7 @@ public class AgreementsAPIs {
 		ResponseBuilder apiresponse = null;
 		try {
 			String url = System.getenv("CATALOGUES_URL") + "slas/template-descriptors/" + sla_uuid;
-			// String url ="http://pre-int-sp-ath.5gtango.eu:4011/catalogues/api/v2/slas/template-descriptors/"+sla_uuid;
+			//String url ="http://pre-int-sp-ath.5gtango.eu:4011/catalogues/api/v2/slas/template-descriptors/"+sla_uuid;
 			URL object = new URL(url);
 
 			HttpURLConnection con = (HttpURLConnection) object.openConnection();
