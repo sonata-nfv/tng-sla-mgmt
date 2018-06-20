@@ -52,13 +52,14 @@ public class db_operations {
 
 			Class.forName("org.postgresql.Driver");
 			//c = DriverManager.getConnection("jdbc:postgresql://localhost:5432/sla-manager", "postgres", "admin");
-			 c =
-			 DriverManager.getConnection("jdbc:postgresql://"+System.getenv("DATABASE_HOST")+":"+System.getenv("DATABASE_PORT")+"/"+System.getenv("GTK_DB_NAME"),
-			 System.getenv("GTK_DB_USER"), System.getenv("GTK_DB_PASS"));
+			c =
+			DriverManager.getConnection("jdbc:postgresql://"+System.getenv("DATABASE_HOST")+":"+System.getenv("DATABASE_PORT")+"/"+System.getenv("GTK_DB_NAME"),
+		    System.getenv("GTK_DB_USER"), System.getenv("GTK_DB_PASS"));
 
 		} catch (Exception e) {
 			e.printStackTrace();
 			System.err.println(e.getClass().getName() + ": " + e.getMessage());
+			System.exit(0);
 		}
 		System.out.println("Opened sla-manager database successfully");
 	}
@@ -175,8 +176,6 @@ public class db_operations {
 
 	}
 
-
-
 	/**
 	 * Delete Record
 	 */
@@ -193,6 +192,7 @@ public class db_operations {
 			result = true;
 		} catch (Exception e) {
 			System.err.println(e.getClass().getName() + ": " + e.getMessage());
+			System.exit(0);
 		}
 		System.out.println("Records with deleted? " + result);
 
@@ -234,6 +234,7 @@ public class db_operations {
 				stmt.close();
 			} catch (Exception e) {
 				System.err.println(e.getClass().getName() + ": " + e.getMessage());
+				System.exit(0);
 			}
 
 		} else if (tablename == "cust_sla") {
@@ -264,10 +265,63 @@ public class db_operations {
 
 			} catch (Exception e) {
 				System.err.println(e.getClass().getName() + ": " + e.getMessage());
+				System.exit(0);
 			}
 
 		}
 
+		return root;
+	}
+
+	/**
+	 * Select all records
+	 * 
+	 * @return
+	 */
+	public static JSONObject getAgreements() {
+		Statement stmt = null;
+
+		JSONObject root = new JSONObject();
+		// JSONArray ns_template = new JSONArray();
+		JSONArray agreements = new JSONArray();
+
+		try {
+			c.setAutoCommit(false);
+			stmt = c.createStatement();
+			ResultSet rs = stmt.executeQuery("SELECT * FROM cust_sla WHERE inst_status='READY';");
+			while (rs.next()) {
+				String ns_uuid = rs.getString("ns_uuid");
+				String ns_name = rs.getString("ns_name");
+				String sla_uuid = rs.getString("sla_uuid");
+				String sla_name = rs.getString("sla_name");
+				String sla_date = rs.getString("sla_date");
+				String sla_status = rs.getString("sla_status");
+				String cust_email = rs.getString("cust_email");
+				String cust_uuid = rs.getString("cust_uuid");
+
+				JSONObject obj = new JSONObject();
+				obj.put("ns_uuid", ns_uuid);
+				obj.put("ns_name", ns_name);
+				obj.put("sla_name", sla_name);
+				obj.put("sla_date", sla_date);
+				obj.put("sla_status", sla_status);
+				obj.put("sla_uuid", sla_uuid);
+				obj.put("cust_email", cust_email);
+				obj.put("cust_uuid", cust_uuid);
+
+				agreements.add(obj);
+			}
+
+			root.put("agreements", agreements);
+
+			rs.close();
+			stmt.close();
+		} catch (Exception e) {
+			System.err.println(e.getClass().getName() + ": " + e.getMessage());
+			System.exit(0);
+		}
+
+		System.out.println(root);
 		return root;
 	}
 
@@ -305,6 +359,7 @@ public class db_operations {
 			stmt.close();
 		} catch (Exception e) {
 			System.err.println(e.getClass().getName() + ": " + e.getMessage());
+			System.exit(0);
 		}
 
 		return root;
@@ -344,6 +399,7 @@ public class db_operations {
 			stmt.close();
 		} catch (Exception e) {
 			System.err.println(e.getClass().getName() + ": " + e.getMessage());
+			System.exit(0);
 		}
 
 		return root;

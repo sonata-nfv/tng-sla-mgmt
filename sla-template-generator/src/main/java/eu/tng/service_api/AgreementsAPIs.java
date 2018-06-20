@@ -30,9 +30,9 @@ public class AgreementsAPIs {
 
 		db_operations dbo = new db_operations();
 
-		dbo.connectPostgreSQL();
-		dbo.createTableCustSla();
-		JSONObject correlations = dbo.selectAllRecords("cust_sla");
+		db_operations.connectPostgreSQL();
+		db_operations.createTableCustSla();
+		JSONObject correlations = dbo.getAgreements();
 		dbo.closePostgreSQL();
 
 		apiresponse = Response.ok((Object) correlations);
@@ -73,7 +73,7 @@ public class AgreementsAPIs {
 		db_operations dbo = new db_operations();
 
 		dbo.connectPostgreSQL();
-		// dbo.createTableCustSla();
+		dbo.createTableCustSla();
 		JSONObject agrPerNs = dbo.selectAgreementPerNS(ns_uuid);
 		dbo.closePostgreSQL();
 
@@ -95,7 +95,7 @@ public class AgreementsAPIs {
 		db_operations dbo = new db_operations();
 		dbo.connectPostgreSQL();
 
-		// dbo.createTableCustSla();
+		dbo.createTableCustSla();
 		JSONObject agrPerNs = dbo.selectAgreementPerCustomer(cust_uuid);
 		dbo.closePostgreSQL();
 
@@ -116,11 +116,11 @@ public class AgreementsAPIs {
 
 		new cust_sla_corr();
 		JSONArray gt = cust_sla_corr.getGuaranteeTerms(sla_uuid);
-		
+
 		apiresponse = Response.ok(gt);
 		apiresponse.header("Content-Length", gt.toString().length());
 		return apiresponse.status(200).build();
-		
+
 	}
 
 }
