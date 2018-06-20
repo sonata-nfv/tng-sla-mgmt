@@ -1,5 +1,10 @@
 package eu.tng.service_api;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -12,6 +17,8 @@ import javax.ws.rs.core.Response.ResponseBuilder;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+
 import eu.tng.correlations.cust_sla_corr;
 import eu.tng.correlations.db_operations;
 
@@ -29,10 +36,9 @@ public class AgreementsAPIs {
 		ResponseBuilder apiresponse = null;
 
 		db_operations dbo = new db_operations();
-
-		dbo.connectPostgreSQL();
-		dbo.createTableCustSla();
-		JSONObject correlations = dbo.selectAllRecords("cust_sla");
+		db_operations.connectPostgreSQL();
+		db_operations.createTableCustSla();
+		JSONObject correlations = dbo.getAgreements();
 		dbo.closePostgreSQL();
 
 		apiresponse = Response.ok((Object) correlations);
@@ -73,7 +79,7 @@ public class AgreementsAPIs {
 		db_operations dbo = new db_operations();
 
 		dbo.connectPostgreSQL();
-		// dbo.createTableCustSla();
+		dbo.createTableCustSla();
 		JSONObject agrPerNs = dbo.selectAgreementPerNS(ns_uuid);
 		dbo.closePostgreSQL();
 
@@ -94,14 +100,56 @@ public class AgreementsAPIs {
 
 		db_operations dbo = new db_operations();
 		dbo.connectPostgreSQL();
-
-		// dbo.createTableCustSla();
+		dbo.createTableCustSla();
 		JSONObject agrPerNs = dbo.selectAgreementPerCustomer(cust_uuid);
 		dbo.closePostgreSQL();
 
 		apiresponse = Response.ok(agrPerNs);
 		apiresponse.header("Content-Length", agrPerNs.toString().length());
 		return apiresponse.status(200).build();
+	}
+	
+	/**
+	 * api call in order to get a list with all the existing agreements per Customer
+	 */
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("/{sla_uuid}")
+	public Response getAgreementDetails(@PathParam("sla_uuid") String sla_uuid) {
+
+		ResponseBuilder apiresponse = null;
+		try {
+			String url = System.getenv("CATALOGUES_URL") + "slas/template-descriptors/" + sla_uuid;
+			//String url ="http://pre-int-sp-ath.5gtango.eu:4011/catalogues/api/v2/slas/template-descriptors/"+sla_uuid;
+			URL object = new URL(url);
+
+			HttpURLConnection con = (HttpURLConnection) object.openConnection();
+			con.setDoOutput(true);
+			con.setDoInput(true);
+			con.setRequestProperty("Content-Type", "application/json");
+			con.setRequestProperty("Accept", "application/json");
+			con.setRequestMethod("GET");
+
+			@SuppressWarnings("unused")
+			int responseCode = con.getResponseCode();
+			BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
+			String inputLine;
+			StringBuffer response = new StringBuffer();
+			while ((inputLine = in.readLine()) != null) {
+				response.append(inputLine);
+			}
+			in.close();
+			JSONParser parser = new JSONParser();
+			Object existingTemplates = parser.parse(response.toString());
+			apiresponse = Response.ok((Object) existingTemplates);
+			apiresponse.header("Content-Length", response.length());
+			return apiresponse.status(200).build();
+
+		} catch (Exception e) {
+
+			return Response.status(404).entity("Not Found").build();
+		}
+		
 	}
 
 	/**
@@ -116,11 +164,11 @@ public class AgreementsAPIs {
 
 		new cust_sla_corr();
 		JSONArray gt = cust_sla_corr.getGuaranteeTerms(sla_uuid);
-		
+
 		apiresponse = Response.ok(gt);
 		apiresponse.header("Content-Length", gt.toString().length());
 		return apiresponse.status(200).build();
-		
+
 	}
 
 }

@@ -51,15 +51,18 @@ public class cust_sla_corr {
 	/**
 	 * Create a correlation between an instatiated network service, a customer and a
 	 * sla
-	 * @param correlation_id 
+	 * 
+	 * @param correlation_id
 	 */
-	public static void createCustSlaCorr(String sla_uuid,String sla_name,String sla_status, String ns_uuid, String ns_name, String cust_uuid, String cust_email, String inst_status, String correlation_id) {
+	public static void createCustSlaCorr(String sla_uuid, String sla_name, String sla_status, String ns_uuid,
+			String ns_name, String cust_uuid, String cust_email, String inst_status, String correlation_id) {
 
 		db_operations dbo = new db_operations();
 
 		dbo.connectPostgreSQL();
 		dbo.createTableCustSla();
-		dbo.insertRecordAgreement(ns_uuid, ns_name, sla_uuid, sla_name, sla_status , cust_email, cust_uuid,inst_status,correlation_id);
+		dbo.insertRecordAgreement(ns_uuid, ns_name, sla_uuid, sla_name, sla_status, cust_email, cust_uuid, inst_status,
+				correlation_id);
 		dbo.closePostgreSQL();
 
 	}
@@ -68,19 +71,19 @@ public class cust_sla_corr {
 		ArrayList<String> details = new ArrayList<String>();
 
 		try {
-			//String url = "http://pre-int-sp-ath.5gtango.eu:4011/catalogues/api/v2/slas/template-descriptors/"
-					//+ sla_uuid;
-			//URL object = new URL(url);
+//			String url = "http://pre-int-sp-ath.5gtango.eu:4011/catalogues/api/v2/slas/template-descriptors/"
+//					+ sla_uuid;
+//			URL object = new URL(url);
 
-			URL url = new URL(System.getenv("CATALOGUES_URL") + "slas/template-descriptors/" + sla_uuid);
+			 URL url = new URL(System.getenv("CATALOGUES_URL") +
+			 "slas/template-descriptors/" + sla_uuid);
 			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 			conn.setRequestProperty("Content-Type", "application/json");
 
 			if (conn.getResponseCode() != 200) {
 				System.out.println("Failed : HTTP error code : SLA not FOUND");
 				details = null;
-			} 
-			else {
+			} else {
 				BufferedReader br = new BufferedReader(new InputStreamReader((conn.getInputStream())));
 				String output;
 
