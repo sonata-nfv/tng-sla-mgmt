@@ -60,9 +60,9 @@ pipeline {
 	
 	stage('Deployment in Pre-Integration') {
           parallel {
-            stage('Deployment in Integration') {
+            stage('Deployment in Pre-Integration') {
               steps {
-                echo 'Deploying in integration...'
+                echo 'Deploying in Pre-integration...'
               }
             }
             stage('Deploying') {
