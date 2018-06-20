@@ -62,7 +62,8 @@ The following shows how to run SLA management framework:
 
 |           Action           | HTTP Method |                  Endpoint            |  
 | -------------------------- | ----------- | --------------------------------------- |  
-| Get existing SLA Agreements| `GET`    | `curl -H "Content-type:application/json" http://localhost:8080/tng-sla-mgmt/api/slas/v1/agreements/` |  
+| Get existing Agreements| `GET`    | `curl -H "Content-type:application/json" http://localhost:8080/tng-sla-mgmt/api/slas/v1/agreements/` | 
+| Get specific Agreement details based on uuid | `GET`    | `curl -H "Content-type:application/json" http://localhost:8080/tng-sla-mgmt/api/slas/v1/agreements/{sla_uuid}` |   
 | Delete a SLA Agreement     | `DELETE` | `curl -X DELETE http://localhost:8080/tng-sla-mgmt/api/slas/v1/agreements/{sla_uuid}` |  
 | Get Agreements per (instatiated) NS   | `GET`    | `curl -H "Content-type:application/json" http://localhost:8080/tng-sla-mgmt/api/slas/v1/agreements/service/{ns_uuid}` |  
 | Get Agreement guarantee terms| `GET`  | `curl -H "Content-type:application/json" http://localhost:8080/tng-sla-mgmt/api/slas/v1/agreements/guarantee-terms/{sla_uuid}` |  
