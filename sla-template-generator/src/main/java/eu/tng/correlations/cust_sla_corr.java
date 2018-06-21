@@ -59,8 +59,8 @@ public class cust_sla_corr {
 
 		db_operations dbo = new db_operations();
 
-		dbo.connectPostgreSQL();
-		dbo.createTableCustSla();
+		db_operations.connectPostgreSQL();
+		db_operations.createTableCustSla();
 		dbo.insertRecordAgreement(ns_uuid, ns_name, sla_uuid, sla_name, sla_status, cust_email, cust_uuid, inst_status,
 				correlation_id);
 		dbo.closePostgreSQL();
@@ -124,12 +124,21 @@ public class cust_sla_corr {
 	/**
 	 * Delete a correlation between a network service and a sla template
 	 */
-	public static void deleteCorr(String sla_uuid) {
+	public static int deleteCorr(String sla_uuid) {
 		String tablename = "cust_sla";
 		db_operations dbo = new db_operations();
-		dbo.connectPostgreSQL();
-		dbo.deleteRecord(tablename, sla_uuid);
-		dbo.closePostgreSQL();
+		boolean connect = db_operations.connectPostgreSQL();
+		int status = 0;
+		if (connect == true) {
+			status = 200;
+			dbo.deleteRecord(tablename, sla_uuid);
+			dbo.closePostgreSQL();
+		} else {
+			// failed to connect to database
+			status = 404; 
+		}
+		return status;
+		
 	}
 
 	public static JSONArray getGuaranteeTerms(String sla_uuid) {
@@ -175,8 +184,8 @@ public class cust_sla_corr {
 		db_operations dbo = new db_operations();
 
 		// get the stored correlations
-		dbo.connectPostgreSQL();
-		dbo.createTableCustSla();
+		db_operations.connectPostgreSQL();
+		db_operations.createTableCustSla();
 		JSONObject correlations = dbo.selectAllRecords("cust_sla");
 		JSONArray cust_sla = (JSONArray) correlations.get("cust_sla");
 		for (int i = 0; i < cust_sla.size(); i++) {
