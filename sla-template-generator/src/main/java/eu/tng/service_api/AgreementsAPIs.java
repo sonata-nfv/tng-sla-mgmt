@@ -18,6 +18,7 @@ import javax.ws.rs.core.Response.ResponseBuilder;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 import eu.tng.correlations.cust_sla_corr;
 import eu.tng.correlations.db_operations;
@@ -137,10 +138,10 @@ public class AgreementsAPIs {
 
 		ResponseBuilder apiresponse = null;
 		try {
-			 String url = System.getenv("CATALOGUES_URL") + "slas/template-descriptors/" +
-			 sla_uuid;
-//			String url = "http://pre-int-sp-ath.5gtango.eu:4011/catalogues/api/v2/slas/template-descriptors/"
-//					+ sla_uuid;
+			String url = System.getenv("CATALOGUES_URL") + "slas/template-descriptors/" + sla_uuid;
+			// String url =
+			// "http://pre-int-sp-ath.5gtango.eu:4011/catalogues/api/v2/slas/template-descriptors/"
+			// + sla_uuid;
 			URL object = new URL(url);
 
 			HttpURLConnection con = (HttpURLConnection) object.openConnection();
@@ -181,16 +182,24 @@ public class AgreementsAPIs {
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("guarantee-terms/{sla_uuid}")
 	public Response getAgreementTerms(@PathParam("sla_uuid") String sla_uuid) {
-
+		
 		ResponseBuilder apiresponse = null;
-
+		
 		new cust_sla_corr();
 		JSONArray gt = cust_sla_corr.getGuaranteeTerms(sla_uuid);
+		if (gt !=null) {
+			apiresponse = Response.ok(gt);
+			System.out.println(gt.toString().length());
+			
+			apiresponse.header("Content-Length", gt.toString().length()-1);
+			return apiresponse.status(200).build();
+		} 
+		else {
+			apiresponse = Response.ok(null);
+			apiresponse.header("Content-Length", 0);
+			return apiresponse.status(404).build();
+		}
 
-		apiresponse = Response.ok(gt);
-		apiresponse.header("Content-Length", gt.toString().length());
-		return apiresponse.status(200).build();
-
-	}
+}
 
 }
