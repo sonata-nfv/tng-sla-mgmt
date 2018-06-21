@@ -47,7 +47,8 @@ public class db_operations {
 	/**
 	 * Connect to PostgreSQL
 	 */
-	public static void connectPostgreSQL() {
+	public static boolean connectPostgreSQL() {
+		boolean connect = false;
 		try {
 
 			Class.forName("org.postgresql.Driver");
@@ -59,12 +60,15 @@ public class db_operations {
 							"jdbc:postgresql://" + System.getenv("DATABASE_HOST") + ":" + System.getenv("DATABASE_PORT")
 									+ "/" + System.getenv("GTK_DB_NAME"),
 							System.getenv("GTK_DB_USER"), System.getenv("GTK_DB_PASS"));
+			connect = true;
+			System.out.println("Opened sla-manager database successfully");
 
 		} catch (Exception e) {
 			e.printStackTrace();
 			System.err.println(e.getClass().getName() + ": " + e.getMessage());
+			connect = false;
 		}
-		System.out.println("Opened sla-manager database successfully");
+		return connect;
 	}
 
 	/**

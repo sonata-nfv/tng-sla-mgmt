@@ -38,7 +38,7 @@ public class AgreementsAPIs {
 		db_operations dbo = new db_operations();
 		db_operations.connectPostgreSQL();
 		db_operations.createTableCustSla();
-		JSONObject correlations = dbo.getAgreements();
+		JSONObject correlations = db_operations.getAgreements();
 		dbo.closePostgreSQL();
 
 		apiresponse = Response.ok((Object) correlations);
@@ -51,18 +51,23 @@ public class AgreementsAPIs {
 	 */
 	@DELETE
 	@Path("/{sla_uuid}")
-	@Produces(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.TEXT_PLAIN)
 	public Response deleteAgreement(@PathParam("sla_uuid") String sla_uuid) {
 
 		ResponseBuilder apiresponse = null;
-
 		new cust_sla_corr();
-		cust_sla_corr.deleteCorr(sla_uuid);
-
-		String dr = "Agreement deleted";
-		apiresponse = Response.ok(dr);
-		apiresponse.header("Content-Length", dr.toString().length());
-		return apiresponse.status(200).build();
+		int status = cust_sla_corr.deleteCorr(sla_uuid);
+		if (status == 200) {
+			String dr = "Agreement deleted";
+			apiresponse = Response.ok(dr);
+			apiresponse.header("Content-Length", dr.toString().length());
+			return apiresponse.status(200).build();
+		} else {
+			String dr = "Error connecting to database";
+			apiresponse = Response.ok(dr);
+			apiresponse.header("Content-Length", dr.toString().length());
+			return apiresponse.status(404).build();
+		}
 
 	}
 
@@ -77,15 +82,21 @@ public class AgreementsAPIs {
 		ResponseBuilder apiresponse = null;
 
 		db_operations dbo = new db_operations();
+		boolean connect = db_operations.connectPostgreSQL();
+		if (connect == true) {
+			db_operations.createTableCustSla();
+			JSONObject agrPerNs = dbo.selectAgreementPerNS(ns_uuid);
+			dbo.closePostgreSQL();
+			apiresponse = Response.ok(agrPerNs);
+			apiresponse.header("Content-Length", agrPerNs.toString().length());
+			return apiresponse.status(200).build();
 
-		dbo.connectPostgreSQL();
-		dbo.createTableCustSla();
-		JSONObject agrPerNs = dbo.selectAgreementPerNS(ns_uuid);
-		dbo.closePostgreSQL();
+		} else {
+			apiresponse = Response.ok(null);
+			apiresponse.header("Content-Length", 0);
+			return apiresponse.status(404).build();
+		}
 
-		apiresponse = Response.ok(agrPerNs);
-		apiresponse.header("Content-Length", agrPerNs.toString().length());
-		return apiresponse.status(200).build();
 	}
 
 	/**
@@ -97,30 +108,39 @@ public class AgreementsAPIs {
 	public Response getAgreementsPerCustonmer(@PathParam("cust_uuid") String cust_uuid) {
 
 		ResponseBuilder apiresponse = null;
-
 		db_operations dbo = new db_operations();
-		dbo.connectPostgreSQL();
-		dbo.createTableCustSla();
-		JSONObject agrPerNs = dbo.selectAgreementPerCustomer(cust_uuid);
-		dbo.closePostgreSQL();
+		boolean connect = db_operations.connectPostgreSQL();
 
-		apiresponse = Response.ok(agrPerNs);
-		apiresponse.header("Content-Length", agrPerNs.toString().length());
-		return apiresponse.status(200).build();
+		if (connect == true) {
+			db_operations.createTableCustSla();
+			JSONObject agrPerNs = dbo.selectAgreementPerCustomer(cust_uuid);
+			dbo.closePostgreSQL();
+			apiresponse = Response.ok(agrPerNs);
+			apiresponse.header("Content-Length", agrPerNs.toString().length());
+			return apiresponse.status(200).build();
+
+		} else {
+			apiresponse = Response.ok(null);
+			apiresponse.header("Content-Length", 0);
+			return apiresponse.status(404).build();
+		}
+
 	}
-	
+
 	/**
 	 * api call in order to get a list with all the existing agreements per Customer
 	 */
 	@GET
-	@Produces(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.TEXT_PLAIN)
 	@Path("/{sla_uuid}")
 	public Response getAgreementDetails(@PathParam("sla_uuid") String sla_uuid) {
 
 		ResponseBuilder apiresponse = null;
 		try {
-			String url = System.getenv("CATALOGUES_URL") + "slas/template-descriptors/" + sla_uuid;
-			//String url ="http://pre-int-sp-ath.5gtango.eu:4011/catalogues/api/v2/slas/template-descriptors/"+sla_uuid;
+			 String url = System.getenv("CATALOGUES_URL") + "slas/template-descriptors/" +
+			 sla_uuid;
+//			String url = "http://pre-int-sp-ath.5gtango.eu:4011/catalogues/api/v2/slas/template-descriptors/"
+//					+ sla_uuid;
 			URL object = new URL(url);
 
 			HttpURLConnection con = (HttpURLConnection) object.openConnection();
@@ -146,10 +166,12 @@ public class AgreementsAPIs {
 			return apiresponse.status(200).build();
 
 		} catch (Exception e) {
-
-			return Response.status(404).entity("Not Found").build();
+			String nf = "SLA Not Found";
+			apiresponse = Response.ok(nf);
+			apiresponse.header("Content-Length", nf.length());
+			return apiresponse.status(404).entity(nf).build();
 		}
-		
+
 	}
 
 	/**
