@@ -51,10 +51,14 @@ public class db_operations {
 		try {
 
 			Class.forName("org.postgresql.Driver");
-			//c = DriverManager.getConnection("jdbc:postgresql://localhost:5432/sla-manager", "postgres", "admin");
-			c =
-			DriverManager.getConnection("jdbc:postgresql://"+System.getenv("DATABASE_HOST")+":"+System.getenv("DATABASE_PORT")+"/"+System.getenv("GTK_DB_NAME"),
-		    System.getenv("GTK_DB_USER"), System.getenv("GTK_DB_PASS"));
+			// c =
+			// DriverManager.getConnection("jdbc:postgresql://localhost:5432/sla-manager",
+			// "postgres", "admin");
+			c = DriverManager
+					.getConnection(
+							"jdbc:postgresql://" + System.getenv("DATABASE_HOST") + ":" + System.getenv("DATABASE_PORT")
+									+ "/" + System.getenv("GTK_DB_NAME"),
+							System.getenv("GTK_DB_USER"), System.getenv("GTK_DB_PASS"));
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -202,6 +206,7 @@ public class db_operations {
 	 * 
 	 * @return
 	 */
+	@SuppressWarnings("unchecked")
 	public JSONObject selectAllRecords(String tablename) {
 		Statement stmt = null;
 
@@ -217,7 +222,6 @@ public class db_operations {
 				stmt = c.createStatement();
 				ResultSet rs = stmt.executeQuery("SELECT * FROM " + tablename + ";");
 				while (rs.next()) {
-					int id = rs.getInt("id");
 					String ns_uuid = rs.getString("ns_uuid");
 					String sla_uuid = rs.getString("sla_uuid");
 					JSONObject obj = new JSONObject();
@@ -242,8 +246,6 @@ public class db_operations {
 				ResultSet rs = stmt.executeQuery("SELECT * FROM " + tablename + ";");
 
 				while (rs.next()) {
-
-					int id = rs.getInt("id");
 					String ns_uuid = rs.getString("ns_uuid");
 					String sla_uuid = rs.getString("sla_uuid");
 					String cust_uuid = rs.getString("cust_uuid");
@@ -274,6 +276,7 @@ public class db_operations {
 	 * 
 	 * @return
 	 */
+	@SuppressWarnings("unchecked")
 	public static JSONObject getAgreements() {
 		Statement stmt = null;
 
@@ -322,6 +325,7 @@ public class db_operations {
 	/**
 	 * Get agreement per NS uuid
 	 */
+	@SuppressWarnings("unchecked")
 	public JSONObject selectAgreementPerNS(String nsuuid) {
 
 		Statement stmt = null;
@@ -333,9 +337,9 @@ public class db_operations {
 		try {
 			c.setAutoCommit(false);
 			stmt = c.createStatement();
-			ResultSet rs = stmt.executeQuery("SELECT * FROM cust_sla WHERE ns_uuid = '" + nsuuid + "';");
+			ResultSet rs = stmt
+					.executeQuery("SELECT * FROM cust_sla WHERE ns_uuid = '" + nsuuid + "' AND inst_status='READY'; ");
 			while (rs.next()) {
-				int id = rs.getInt("id");
 				String ns_uuid = rs.getString("ns_uuid");
 				String sla_uuid = rs.getString("sla_uuid");
 				String cust_uuid = rs.getString("cust_uuid");
@@ -359,6 +363,7 @@ public class db_operations {
 	/**
 	 * Get agreement per customer
 	 */
+	@SuppressWarnings("unchecked")
 	public JSONObject selectAgreementPerCustomer(String custuuid) {
 
 		Statement stmt = null;
@@ -370,7 +375,8 @@ public class db_operations {
 		try {
 			c.setAutoCommit(false);
 			stmt = c.createStatement();
-			ResultSet rs = stmt.executeQuery("SELECT * FROM cust_sla WHERE cust_uuid = '" + custuuid + "'");
+			ResultSet rs = stmt.executeQuery(
+					"SELECT * FROM cust_sla WHERE cust_uuid = '" + custuuid + "' AND inst_status='READY';");
 
 			while (rs.next()) {
 				String ns_uuid = rs.getString("ns_uuid");
@@ -405,6 +411,5 @@ public class db_operations {
 			e.printStackTrace();
 		}
 	}
-
 
 }

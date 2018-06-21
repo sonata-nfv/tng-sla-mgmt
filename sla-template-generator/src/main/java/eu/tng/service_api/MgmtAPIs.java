@@ -28,13 +28,8 @@
 
 package eu.tng.service_api;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 
 import javax.ws.rs.Consumes;
@@ -48,8 +43,6 @@ import javax.ws.rs.core.Response.ResponseBuilder;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
-
 import eu.tng.correlations.cust_sla_corr;
 import eu.tng.correlations.db_operations;
 import eu.tng.correlations.ns_template_corr;
@@ -71,7 +64,6 @@ public class MgmtAPIs {
 		dbo.connectPostgreSQL();
 		dbo.createTableNSTemplate();
 		JSONObject correlations = dbo.selectAllRecords("ns_template");
-		dbo.closePostgreSQL();
 
 		apiresponse = Response.ok((Object) correlations);
 		apiresponse.header("Content-Length", correlations.toString().length());
@@ -124,10 +116,11 @@ public class MgmtAPIs {
 		try {
 			File testf = new File(this.getClass().getResource("/slos_list_release1.json").toURI());
 			jsonObject = (JSONObject) parser.parse(new FileReader(testf));
-			int contentLength = (jsonObject.toJSONString().length() - 2 ) ;
+			System.out.println(jsonObject.toJSONString().length());
+			
 					
 			apiresponse = Response.ok(jsonObject);
-			apiresponse.header("Content-Length", contentLength);
+			apiresponse.header("Content-Length", jsonObject.toJSONString().length()-2);
 			return apiresponse.status(200).build();
 			
 		} catch (Exception e) {

@@ -50,7 +50,7 @@ public class ns_template_corr {
 
 		db_operations dbo = new db_operations();
 
-		dbo.connectPostgreSQL();
+		db_operations.connectPostgreSQL();
 		dbo.createTableNSTemplate();
 		dbo.insertRecord(tablename, ns_uuid, sla_uuid);
 		dbo.closePostgreSQL();
@@ -63,7 +63,7 @@ public class ns_template_corr {
 	public void deleteNsTempCorr(String sla_uuid) {
 		String tablename = "ns_template";
 		db_operations dbo = new db_operations();
-		dbo.connectPostgreSQL();
+		db_operations.connectPostgreSQL();
 		dbo.deleteRecord(tablename, sla_uuid);
 		dbo.closePostgreSQL();
 	}
@@ -79,7 +79,8 @@ public class ns_template_corr {
 		db_operations dbo = new db_operations();
 
 		// get the stored correlations
-		dbo.connectPostgreSQL();
+		db_operations.connectPostgreSQL();
+		dbo.createTableNSTemplate();
 		JSONObject correlations = dbo.selectAllRecords("ns_template");
 		JSONArray ns_template = (JSONArray) correlations.get("ns_template");
 		for (int i = 0; i < ns_template.size(); i++) {
@@ -121,10 +122,12 @@ public class ns_template_corr {
 		// get the ns uuids that have correlated an sla template
 		ArrayList<String> correlatedNSArray = new ArrayList<String>();
 		correlatedNSArray = nsWithTemplate();
+		System.out.println("NS WITH TEMPLATE " + correlatedNSArray);
 
 		// get all the available ns from the catalogue
 		try {
 			String url = System.getenv("CATALOGUES_URL") + "network-services";
+			//String url = "http://pre-int-sp-ath.5gtango.eu:4011/catalogues/api/v2/network-services/";
 			URL object = new URL(url);
 
 			HttpURLConnection con = (HttpURLConnection) object.openConnection();
@@ -145,11 +148,12 @@ public class ns_template_corr {
 			in.close();
 			JSONParser parser = new JSONParser();
 			existingNSArray = (JSONArray) parser.parse(response.toString());
-
 			for (int i = 0; i < existingNSArray.size(); i++) {
 				JSONObject ns_obj = (JSONObject) existingNSArray.get(i);
 				existingNSIDs.add((String) ns_obj.get("uuid"));
 			}
+			System.out.println("ALL THE NS UUIDS" + existingNSIDs);
+
 		} catch (Exception e) {
 		}
 
@@ -179,6 +183,7 @@ public class ns_template_corr {
 		}
 
 		nsWithoutTemplate = tempArray; // assign temp to original
+		System.out.println("NS UUIDS WITHOUT TEMPLATE" + nsWithoutTemplate);
 
 		return nsWithoutTemplate;
 	}
