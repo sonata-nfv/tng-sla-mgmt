@@ -57,7 +57,6 @@ public class RabbitMqConsumer implements ServletContextListener {
 
 			channel = connection.createChannel();
 			channel.queueDeclare(QUEUE_NAME, true, false, false, null);
-			//channel.queueDeclare(QUEUE_NAME, false, false, false, null);			
 			
 			System.out.println(" [*] Waiting for messages. To exit press CTRL+C");
 
@@ -138,20 +137,22 @@ public class RabbitMqConsumer implements ServletContextListener {
 							e.printStackTrace();
 						}
 
-						cust_sla_corr cust_sla = new cust_sla_corr();
-						@SuppressWarnings("unchecked")
-						ArrayList<String> SLADetails = cust_sla.getSLAdetails(sla_uuid);
-						sla_name = (String) SLADetails.get(1);
-						sla_status = (String) SLADetails.get(0);
+						if (sla_uuid != null) {
+							cust_sla_corr cust_sla = new cust_sla_corr();
+							@SuppressWarnings("unchecked")
+							ArrayList<String> SLADetails = cust_sla.getSLAdetails(sla_uuid);
+							sla_name = (String) SLADetails.get(1);
+							sla_status = (String) SLADetails.get(0);
 
-						System.out.println("SLA name  ==> " + sla_name);
-						System.out.println("SLA status  ==> " + sla_status);
+							System.out.println("SLA name  ==> " + sla_name);
+							System.out.println("SLA status  ==> " + sla_status);
+							
+							String inst_status = "PENDING";
+
+							db_operations.connectPostgreSQL();
+							cust_sla_corr.createCustSlaCorr(sla_uuid, sla_name, sla_status, ns_uuid, ns_name, cust_uuid,cust_email, inst_status, correlation_id);
+						}
 						
-						String inst_status = "PENDING";
-
-						db_operations.connectPostgreSQL();
-						cust_sla_corr.createCustSlaCorr(sla_uuid, sla_name, sla_status, ns_uuid, ns_name, cust_uuid,cust_email, inst_status, correlation_id);
-
 					} 
 					// if message coming from the MANO
 					else {
