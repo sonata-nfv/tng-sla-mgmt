@@ -107,6 +107,32 @@ public class db_operations {
 		System.out.println("Table cust_sla created successfully");
 
 	}
+	
+	/**
+	 * Create table if not exist - sla_violations
+	 */
+	public static void createTableViolations() {
+		try {
+			stmt = c.createStatement();
+			String sql = "CREATE TABLE sla_violations" + "(ID  SERIAL PRIMARY KEY," + " NS_UUID TEXT NOT NULL, "
+					+ "SLA_UUID TEXT NOT NULL," + "VIOLATION_TIME TEXT NOT NULL," + "ALERT_STATE TEXT NOT NULL," + "CUST_EMAIL TEXT NOT NULL,"
+					+ "CUST_UUID  TEXT NOT NULL )";
+			stmt.executeUpdate(sql);
+			stmt.close();
+			System.out.println("Table sla_violations created successfully");
+
+		} catch (Exception e) {
+			System.err.println(e.getClass().getName() + ": " + e.getMessage());
+			System.out.println("Error creating sla violations table");
+
+		}
+
+	}
+	
+	public static void main(String args[]) {
+        connectPostgreSQL();
+        createTableViolations();
+	}
 
 	/**
 	 * Insert Record ns-template correlation
