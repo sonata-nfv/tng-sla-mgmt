@@ -52,9 +52,7 @@ public class db_operations {
 		try {
 
 			Class.forName("org.postgresql.Driver");
-			// c =
-			// DriverManager.getConnection("jdbc:postgresql://localhost:5432/sla-manager",
-			// "postgres", "admin");
+			//c = DriverManager.getConnection("jdbc:postgresql://localhost:5432/sla-manager","postgres", "admin");
 			c = DriverManager
 					.getConnection(
 							"jdbc:postgresql://" + System.getenv("DATABASE_HOST") + ":" + System.getenv("DATABASE_PORT")
@@ -168,7 +166,8 @@ public class db_operations {
 		try {
 			c.setAutoCommit(false);
 			Statement stmt = c.createStatement();
-
+			System.out.println(correlation_id);
+			
 			String sql = "UPDATE cust_sla set inst_status = '" + inst_status + "' where inst_id = '" + correlation_id
 					+ "' ; ";
 			stmt.executeUpdate(sql);

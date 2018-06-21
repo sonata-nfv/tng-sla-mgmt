@@ -146,6 +146,7 @@ public class cust_sla_corr {
 		JSONArray guaranteeTerms = null;
 		try {
 			String url = System.getenv("CATALOGUES_URL") + "slas/template-descriptors/" + sla_uuid + "\r\n";
+			//String url = "http://pre-int-sp-ath.5gtango.eu:4011/catalogues/api/v2/slas/template-descriptors/"+sla_uuid;
 			URL object = new URL(url);
 
 			HttpURLConnection con = (HttpURLConnection) object.openConnection();
@@ -171,11 +172,13 @@ public class cust_sla_corr {
 			JSONObject ns = (JSONObject) sla_template.get("ns");
 			guaranteeTerms = (JSONArray) ns.get("guaranteeTerms");
 			System.out.println(guaranteeTerms);
-
-		} catch (Exception e) {
+			return guaranteeTerms;
+		} 
+		catch (Exception e) {
+			System.out.println("SLA Agreement not found");
+			return null;
 		}
 
-		return guaranteeTerms;
 	}
 
 	public JSONArray nsWithAgreement() {
