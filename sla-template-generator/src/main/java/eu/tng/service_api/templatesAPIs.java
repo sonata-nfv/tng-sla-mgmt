@@ -70,7 +70,8 @@ public class templatesAPIs {
 		ResponseBuilder apiresponse = null;
 		try {
 			String url = System.getenv("CATALOGUES_URL") + "slas/template-descriptors";
-			// String url = "http://pre-int-sp-ath.5gtango.eu:4011/catalogues/api/v2/slas/template-descriptors";
+			// String url =
+			// "http://pre-int-sp-ath.5gtango.eu:4011/catalogues/api/v2/slas/template-descriptors";
 			URL object = new URL(url);
 
 			HttpURLConnection con = (HttpURLConnection) object.openConnection();
@@ -111,7 +112,8 @@ public class templatesAPIs {
 		ResponseBuilder apiresponse = null;
 		try {
 			String url = System.getenv("CATALOGUES_URL") + "slas/template-descriptors/" + sla_uuid;
-			// String url ="http://pre-int-sp-ath.5gtango.eu:4011/catalogues/api/v2/slas/template-descriptors/"+sla_uuid;
+			// String url
+			// ="http://pre-int-sp-ath.5gtango.eu:4011/catalogues/api/v2/slas/template-descriptors/"+sla_uuid;
 			URL object = new URL(url);
 
 			HttpURLConnection con = (HttpURLConnection) object.openConnection();
@@ -170,7 +172,8 @@ public class templatesAPIs {
 		} else {
 			Object createdTemplate = null;
 			try {
-				//String url = "http://pre-int-sp-ath.5gtango.eu:4011/catalogues/api/v2/slas/template-descriptors";
+				// String url =
+				// "http://pre-int-sp-ath.5gtango.eu:4011/catalogues/api/v2/slas/template-descriptors";
 				String url = System.getenv("CATALOGUES_URL") + "slas/template-descriptors";
 				URL object = new URL(url);
 
@@ -225,7 +228,7 @@ public class templatesAPIs {
 	 */
 
 	@Path("/{sla_uuid}")
-	@Produces(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.TEXT_PLAIN)
 	@DELETE
 	public Response deleteTemplate(@PathParam("sla_uuid") String sla_uuid) {
 
@@ -236,7 +239,7 @@ public class templatesAPIs {
 
 		try {
 			//url = new URL("http://pre-int-sp-ath.5gtango.eu:4011/catalogues/api/v2/slas/template-descriptors/" + sla_uuid);
-			 url = new URL(System.getenv("CATALOGUES_URL") + "slas/template-descriptors/" + sla_uuid);
+			url = new URL(System.getenv("CATALOGUES_URL") + "slas/template-descriptors/" + sla_uuid);
 
 			httpURLConnection = (HttpURLConnection) url.openConnection();
 			httpURLConnection.setRequestProperty("Content-Type", "application/json");
@@ -250,8 +253,7 @@ public class templatesAPIs {
 				// delete all correlations with the deleted sla template from postgreSQL table
 				ns_template_corr nstemplcorr = new ns_template_corr();
 				nstemplcorr.deleteNsTempCorr(sla_uuid);
-				dr = ("Deleted: " + sla_uuid);
-
+				dr = ("SLA: " + sla_uuid + " deleted succesfully");
 				apiresponse = Response.ok();
 				apiresponse.header("Content-Length", (dr.length()));
 				return apiresponse.status(200).entity(dr).build();
