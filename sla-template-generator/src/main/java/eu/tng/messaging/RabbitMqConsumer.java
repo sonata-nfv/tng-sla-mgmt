@@ -32,6 +32,8 @@ public class RabbitMqConsumer implements ServletContextListener {
 
 	private final static String QUEUE_NAME_instance = "service.instance.create";
 	private final static String QUEUE_NAME_monitoring = "son.monitoring.SLA";
+	private final static String QUEUE_NAME_violations = "tng.sla.violation";
+
 
 	/**
 	 * Default constructor.
@@ -58,15 +60,22 @@ public class RabbitMqConsumer implements ServletContextListener {
 			Connection connection = connect.MqConnector();
 			Channel channel = connection.createChannel();
 			Channel channel_monitoring = connection.createChannel();
+			Channel channel_violations = connection.createChannel();
+
 
 			channel = connection.createChannel();
 			channel.queueDeclare(QUEUE_NAME_instance, true, false, false, null);
 
 			channel_monitoring = connection.createChannel();
 			channel.queueDeclare(QUEUE_NAME_monitoring, true, false, false, null);
-
+			
+			channel_violations = connection.createChannel();
+			channel.queueDeclare(QUEUE_NAME_violations, true, false, false, null);
+			
 			System.out.println(" [*] Waiting for messages from " + QUEUE_NAME_instance + ". To exit press CTRL+C");
 			System.out.println(" [*] Waiting for messages " + QUEUE_NAME_monitoring + " . To exit press CTRL+C");
+			System.out.println(" [*] Waiting for messages " + QUEUE_NAME_violations + " . To exit press CTRL+C");
+
 
 			// Consume instatiation messages
 			Consumer consumer = new DefaultConsumer(channel) {
@@ -211,7 +220,8 @@ public class RabbitMqConsumer implements ServletContextListener {
 						sla_uuid = (String) violated_sla.get(0);
 						cust_uuid = (String) violated_sla.get(1);
 						dbo.insertRecordViolation(ns_uuid, sla_uuid, alert_time, alert_state, cust_uuid);
-
+						JSONObject violationMessage = ViolationsProducer.createViolationMessage(ns_uuid, sla_uuid, alert_time, alert_state, cust_uuid);
+						System.out.println(violationMessage);
 
 					} catch (JSONException e) {
 						// TODO Auto-generated catch block
@@ -219,9 +229,38 @@ public class RabbitMqConsumer implements ServletContextListener {
 					}
 				}
 			};
+			
+			
+			
+			// Consume monitoring alert messages for sla violation
+						Consumer consumer_violations = new DefaultConsumer(channel_violations) {
+							@Override
+							public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties,
+									byte[] body) throws IOException {
+
+								JSONObject jmessage = null;
+
+								// Parse headers
+								try {
+									String message = new String(body, "UTF-8");
+									jmessage = new JSONObject(message);
+									System.out.println("VIOLATION MESSAGE " + jmessage);
+									
+
+								} catch (JSONException e) {
+									// TODO Auto-generated catch block
+									e.printStackTrace();
+								}
+							}
+						};
+
+			
+			
 
 			channel.basicConsume(QUEUE_NAME_instance, true, consumer);
 			channel_monitoring.basicConsume(QUEUE_NAME_monitoring, true, consumer_monitoring);
+			channel_violations.basicConsume(QUEUE_NAME_monitoring, true, consumer_violations);
+
 
 		} catch (Exception e) {
 			e.printStackTrace();
