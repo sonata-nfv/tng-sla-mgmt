@@ -118,8 +118,8 @@ public class RabbitMqConsumer implements ServletContextListener {
 					}
 
 					// if message coming from the GK
-					if (status == null) {
-						System.out.println("Message from  GK received");
+					if (status.equals("NEW")) {
+						System.out.println("Message from  GK received: " + jmessage);
 
 						// Get nsd data
 						try {
@@ -176,7 +176,7 @@ public class RabbitMqConsumer implements ServletContextListener {
 					}
 					// if message coming from the MANO
 					else {
-						System.out.println("Message from  MANO received");
+						System.out.println("Message from  MANO received: " + jmessage);
 						System.out.println("status ==> " + status);
 						db_operations dbo = new db_operations();
 						db_operations.connectPostgreSQL();
