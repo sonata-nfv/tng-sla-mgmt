@@ -52,7 +52,9 @@ public class db_operations {
 		try {
 
 			Class.forName("org.postgresql.Driver");
-			//c = DriverManager.getConnection("jdbc:postgresql://localhost:5432/sla-manager","postgres", "admin");
+//			 c =
+//			 DriverManager.getConnection("jdbc:postgresql://localhost:5432/sla-manager","postgres",
+//			 "admin");
 			c = DriverManager
 					.getConnection(
 							"jdbc:postgresql://" + System.getenv("DATABASE_HOST") + ":" + System.getenv("DATABASE_PORT")
@@ -109,6 +111,27 @@ public class db_operations {
 	}
 
 	/**
+	 * Create table if not exist - sla_violations
+	 */
+	public void createTableViolations() {
+		try {
+			stmt = c.createStatement();
+			String sql = "CREATE TABLE sla_violations" + "(ID  SERIAL PRIMARY KEY," + " NS_UUID TEXT NOT NULL, "
+					+ "SLA_UUID TEXT NOT NULL," + "VIOLATION_TIME TEXT NOT NULL," + "ALERT_STATE TEXT NOT NULL,"
+					+ "CUST_UUID  TEXT NOT NULL )";
+			stmt.executeUpdate(sql);
+			stmt.close();
+			System.out.println("Table sla_violations created successfully");
+
+		} catch (Exception e) {
+			System.err.println(e.getClass().getName() + ": " + e.getMessage());
+			System.out.println("Error creating sla violations table or already exists");
+
+		}
+
+	}
+
+	/**
 	 * Insert Record ns-template correlation
 	 */
 	public boolean insertRecord(String tablename, String ns_uuid, String sla_uuid) {
@@ -158,6 +181,61 @@ public class db_operations {
 	}
 
 	/**
+	 * Insert Record cust-sla correlation
+	 * 
+	 */
+	public void insertRecordViolation(String ns_uuid, String sla_uuid, String violation_time, String alert_state,
+			String cust_uuid) {
+
+		try {
+			c.setAutoCommit(false);
+			Statement stmt = c.createStatement();
+			String sql = "INSERT INTO sla_violations  (ns_uuid, sla_uuid,violation_time, alert_state, cust_uuid ) VALUES ('"
+					+ ns_uuid + "', '" + sla_uuid + "', '" + violation_time + "','" + alert_state + "', '" + cust_uuid
+					+ "');  ";
+			stmt.executeUpdate(sql);
+			stmt.close();
+			c.commit();
+			System.out.println("Violation record created successfully");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+	}
+
+	@SuppressWarnings("unchecked")
+	public JSONArray getViolatedSLA(String ns_uuid) {
+
+		Statement stmt = null;
+
+		String sla_uuid = null;
+		String cust_uuid = null;
+		JSONArray violated_sla = new JSONArray();
+
+		try {
+			c.setAutoCommit(false);
+			stmt = c.createStatement();
+			ResultSet rs = stmt
+					.executeQuery("SELECT * FROM cust_sla WHERE ns_uuid='" + ns_uuid + "' AND inst_status='READY';");
+			while (rs.next()) {
+				sla_uuid = rs.getString("sla_uuid");
+				cust_uuid = rs.getString("cust_uuid");
+				System.out.println("sla_uuid = " + sla_uuid);
+				System.out.println("cust_uuid = " + cust_uuid);
+
+				violated_sla.add(sla_uuid);
+				violated_sla.add(cust_uuid);
+
+			}
+			rs.close();
+			stmt.close();
+		} catch (Exception e) {
+			System.err.println(e.getClass().getName() + ": " + e.getMessage());
+		}
+		return violated_sla;
+	}
+
+	/**
 	 * Update Record cust-sla correlation
 	 * 
 	 */
@@ -167,7 +245,7 @@ public class db_operations {
 			c.setAutoCommit(false);
 			Statement stmt = c.createStatement();
 			System.out.println(correlation_id);
-			
+
 			String sql = "UPDATE cust_sla set inst_status = '" + inst_status + "' where inst_id = '" + correlation_id
 					+ "' ; ";
 			stmt.executeUpdate(sql);
