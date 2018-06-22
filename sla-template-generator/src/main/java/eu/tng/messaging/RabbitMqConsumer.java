@@ -8,6 +8,8 @@ import java.util.Map;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
+import org.codehaus.jettison.json.JSONArray;
+import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 
 import com.esotericsoftware.yamlbeans.YamlReader;
@@ -28,7 +30,8 @@ import eu.tng.correlations.db_operations;
  */
 public class RabbitMqConsumer implements ServletContextListener {
 
-	private final static String QUEUE_NAME = "service.instance.create";
+	private final static String QUEUE_NAME_instance = "service.instance.create";
+	private final static String QUEUE_NAME_monitoring = "son.monitoring.SLA";
 
 	/**
 	 * Default constructor.
@@ -54,12 +57,18 @@ public class RabbitMqConsumer implements ServletContextListener {
 		try {
 			Connection connection = connect.MqConnector();
 			Channel channel = connection.createChannel();
+			Channel channel_monitoring = connection.createChannel();
 
 			channel = connection.createChannel();
-			channel.queueDeclare(QUEUE_NAME, true, false, false, null);
-			
-			System.out.println(" [*] Waiting for messages. To exit press CTRL+C");
+			channel.queueDeclare(QUEUE_NAME_instance, true, false, false, null);
 
+			channel_monitoring = connection.createChannel();
+			channel.queueDeclare(QUEUE_NAME_monitoring, true, false, false, null);
+
+			System.out.println(" [*] Waiting for messages from " + QUEUE_NAME_instance + ". To exit press CTRL+C");
+			System.out.println(" [*] Waiting for messages " + QUEUE_NAME_monitoring + " . To exit press CTRL+C");
+
+			// Consume instatiation messages
 			Consumer consumer = new DefaultConsumer(channel) {
 				@Override
 				public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties,
@@ -96,7 +105,8 @@ public class RabbitMqConsumer implements ServletContextListener {
 					// Get instntiation request status
 					try {
 						status = (String) jmessage.get("status");
-					} catch (Exception e) {	}
+					} catch (Exception e) {
+					}
 
 					// if message coming from the GK
 					if (status == null) {
@@ -146,14 +156,15 @@ public class RabbitMqConsumer implements ServletContextListener {
 
 							System.out.println("SLA name  ==> " + sla_name);
 							System.out.println("SLA status  ==> " + sla_status);
-							
+
 							String inst_status = "PENDING";
 
 							db_operations.connectPostgreSQL();
-							cust_sla_corr.createCustSlaCorr(sla_uuid, sla_name, sla_status, ns_uuid, ns_name, cust_uuid,cust_email, inst_status, correlation_id);
+							cust_sla_corr.createCustSlaCorr(sla_uuid, sla_name, sla_status, ns_uuid, ns_name, cust_uuid,
+									cust_email, inst_status, correlation_id);
 						}
-						
-					} 
+
+					}
 					// if message coming from the MANO
 					else {
 						System.out.println("Message from  MANO received");
@@ -166,7 +177,52 @@ public class RabbitMqConsumer implements ServletContextListener {
 
 				}
 			};
-			channel.basicConsume(QUEUE_NAME, true, consumer);
+
+			// Consume monitoring alert messages for sla violation
+			Consumer consumer_monitoring = new DefaultConsumer(channel_monitoring) {
+				@Override
+				public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties,
+						byte[] body) throws IOException {
+
+					// Initialize variables
+					JSONObject jmessage = null;
+					String ns_uuid=null;
+					String alert_time =null;
+					String alert_name = null;
+					String alert_state = null;
+					String sla_uuid = null ;
+					String cust_uuid = null;
+
+					// Parse headers
+					try {
+						String message = new String(body, "UTF-8");
+						jmessage = new JSONObject(message);
+						System.out.println(jmessage);
+						
+						ns_uuid = jmessage.getString("serviceID");
+						alert_time = jmessage.getString("time");
+						alert_name = jmessage.getString("alertname");
+						alert_state = jmessage.getString("alertstate");
+
+						db_operations dbo = new db_operations();
+						dbo.connectPostgreSQL();
+						dbo.createTableViolations();
+						org.json.simple.JSONArray violated_sla = dbo.getViolatedSLA(ns_uuid);
+						sla_uuid = (String) violated_sla.get(0);
+						cust_uuid = (String) violated_sla.get(1);
+						dbo.insertRecordViolation(ns_uuid, sla_uuid, alert_time, alert_state, cust_uuid);
+
+
+					} catch (JSONException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+			};
+
+			channel.basicConsume(QUEUE_NAME_instance, true, consumer);
+			channel_monitoring.basicConsume(QUEUE_NAME_monitoring, true, consumer_monitoring);
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
