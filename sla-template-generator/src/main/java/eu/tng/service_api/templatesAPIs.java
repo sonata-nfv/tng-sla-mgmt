@@ -168,7 +168,11 @@ public class templatesAPIs {
 		JSONObject template = ct.createTemplate(nsd_uuid.get(0), templateName.get(0), expireDate.get(0), guarantees);
 
 		if (template == null) {
-			return Response.status(404).entity("NSD uuid not found").build();
+			String dr = "NSD uuid not found";
+			apiresponse = Response.ok(dr);
+			apiresponse.header("Content-Length", dr.length());
+			return apiresponse.status(404).build();
+						
 		} else {
 			Object createdTemplate = null;
 			try {
@@ -217,7 +221,10 @@ public class templatesAPIs {
 					return apiresponse.status(400).entity(con.getResponseMessage()).build();
 				}
 			} catch (Exception e) {
-				return Response.status(404).entity("Upload URL Not Found").build();
+				String dr = "Upload URL Not Found";
+				apiresponse = Response.ok(dr);
+				apiresponse.header("Content-Length", dr.length());
+				return apiresponse.status(404).build();
 			}
 		}
 
