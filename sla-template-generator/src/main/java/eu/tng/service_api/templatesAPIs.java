@@ -53,9 +53,9 @@ import javax.ws.rs.core.UriInfo;
 
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
+
 import eu.tng.template_gen.*;
-import eu.tng.correlations.ns_template_corr;
-import eu.tng.modify_sla_template.*;
+import eu.tng.correlations.*;
 
 @Path("/templates")
 @Consumes(MediaType.APPLICATION_JSON)
