@@ -100,7 +100,7 @@ public class db_operations {
 			String sql = "CREATE TABLE cust_sla" + "(ID  SERIAL PRIMARY KEY," + " NS_UUID TEXT NOT NULL, "
 					+ "NS_NAME TEXT NOT NULL," + "SLA_UUID  TEXT NOT NULL," + "SLA_NAME TEXT NOT NULL,"
 					+ "SLA_DATE TIMESTAMPTZ DEFAULT Now()," + "SLA_STATUS TEXT NOT NULL," + "CUST_EMAIL TEXT NOT NULL,"
-					+ "CUST_UUID  TEXT NOT NULL," + "INST_ID TEXT NOT NULL," + "INST_SATUS  TEXT NOT NULL )";
+					+ "CUST_UUID  TEXT NOT NULL," + "INST_ID TEXT NOT NULL," + "INST_STATUS  TEXT NOT NULL )";
 			stmt.executeUpdate(sql);
 			stmt.close();
 		} catch (Exception e) {
