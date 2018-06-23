@@ -63,7 +63,7 @@ public class RabbitMqConsumer implements ServletContextListener {
             Channel channel_violations = connection.createChannel();
 
            
-            channel.queueDeclare(QUEUE_NAME_instance, false, false, true, null);
+            channel.queueDeclare(QUEUE_NAME_instance, true, false, false, null);
            
             channel_monitoring.queueDeclare(QUEUE_NAME_monitoring, true, false, false, null);
 
