@@ -259,7 +259,8 @@ public class RabbitMqConsumer implements ServletContextListener {
             channel_violations.basicConsume(QUEUE_NAME_monitoring, true, consumer_violations);
 
         } catch (Exception e) {
-            System.out.println("SLA manager failed to Connect to Rabbitmq " + e.getMessage());
+            System.out.println("SLA manager failed to Connect to Rabbitmq ");
+            e.printStackTrace();
 
         }
     }

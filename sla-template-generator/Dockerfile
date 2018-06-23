@@ -30,7 +30,7 @@ ENV DATABASE_PORT 5432
 ENV CATALOGUES_URL http://tng-cat:4011/catalogues/api/v2/
 
 # Set MESSAGE BUS Environment Variables
-ENV MQSERVER_URL amqp://guest:guest@broker:5672
+ENV MQSERVER amqp://guest:guest@broker:5672
 
 # Make port 8080 available outside this container
 EXPOSE 8080
