@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
@@ -21,6 +22,7 @@ import com.rabbitmq.client.Consumer;
 import com.rabbitmq.client.DefaultConsumer;
 import com.rabbitmq.client.Envelope;
 
+
 import eu.tng.correlations.cust_sla_corr;
 import eu.tng.correlations.db_operations;
 
@@ -30,7 +32,10 @@ import eu.tng.correlations.db_operations;
  */
 public class RabbitMqConsumer implements ServletContextListener {
 
-    private final static String QUEUE_NAME_instance = "service.instances.create";
+    private final static UUID uuid =  UUID.randomUUID();
+    private final static String string_uuid = uuid.toString();
+    
+    private final static String QUEUE_NAME_instance = "sla.service.instances.create." + string_uuid;
     private final static String QUEUE_NAME_monitoring = "son.monitoring.SLA";
     private final static String QUEUE_NAME_violations = "tng.sla.violation";
 
@@ -62,9 +67,15 @@ public class RabbitMqConsumer implements ServletContextListener {
             Channel channel_monitoring = connection.createChannel();
             Channel channel_violations = connection.createChannel();
 
-           
+            /** Declare exchange **/
+            channel.exchangeDeclare(System.getenv("BROKER_EXCHANGE"), "topic");
+            
+            /** Creating Queue **/
             channel.queueDeclare(QUEUE_NAME_instance, true, false, false, null);
-           
+            
+            /** Binding Queue to the topic **/
+            channel.queueBind(QUEUE_NAME_instance, System.getenv("BROKER_EXCHANGE"), "service.instances.create");
+
             channel_monitoring.queueDeclare(QUEUE_NAME_monitoring, true, false, false, null);
 
             channel_violations.queueDeclare(QUEUE_NAME_violations, true, false, false, null);
