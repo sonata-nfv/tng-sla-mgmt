@@ -26,11 +26,13 @@ ENV GTK_DB_USER sonatatest
 ENV GTK_DB_PASS sonata
 ENV DATABASE_PORT 5432
 
+
 # Set Catalogue Environment Variables
 ENV CATALOGUES_URL http://tng-cat:4011/catalogues/api/v2/
 
 # Set MESSAGE BUS Environment Variables
 ENV MQSERVER amqp://guest:guest@broker:5672
+ENV BROKER_EXCHANGE son-kernel
 
 # Make port 8080 available outside this container
 EXPOSE 8080
