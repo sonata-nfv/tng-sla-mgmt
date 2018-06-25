@@ -30,7 +30,7 @@ import eu.tng.correlations.db_operations;
  */
 public class RabbitMqConsumer implements ServletContextListener {
 
-    private final static String QUEUE_NAME_instance = "service.instance.create";
+    private final static String QUEUE_NAME_instance = "service.instances.create";
     private final static String QUEUE_NAME_monitoring = "son.monitoring.SLA";
     private final static String QUEUE_NAME_violations = "tng.sla.violation";
 
