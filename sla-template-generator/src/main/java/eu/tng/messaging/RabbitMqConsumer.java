@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
@@ -31,7 +32,10 @@ import eu.tng.correlations.db_operations;
  */
 public class RabbitMqConsumer implements ServletContextListener {
 
-    private final static String QUEUE_NAME_instance = "sla.service.instances.create";
+    private final static UUID uuid =  UUID.randomUUID();
+    private final static String string_uuid = uuid.toString();
+    
+    private final static String QUEUE_NAME_instance = "sla.service.instances.create." + string_uuid;
     private final static String QUEUE_NAME_monitoring = "son.monitoring.SLA";
     private final static String QUEUE_NAME_violations = "tng.sla.violation";
 
@@ -63,6 +67,9 @@ public class RabbitMqConsumer implements ServletContextListener {
             Channel channel_monitoring = connection.createChannel();
             Channel channel_violations = connection.createChannel();
 
+            /** Declare exchange **/
+            channel.exchangeDeclare(System.getenv("BROKER_EXCHANGE"), "topic");
+            
             /** Creating Queue **/
             channel.queueDeclare(QUEUE_NAME_instance, true, false, false, null);
             
