@@ -1,8 +1,8 @@
 package eu.tng.messaging;
 
 
-import com.rabbitmq.client.Connection;
-import com.rabbitmq.client.ConnectionFactory;
+import com.rabbitmq.client.*;
+
 
 public class RabbitMqConnector {
 	
@@ -17,7 +17,8 @@ public class RabbitMqConnector {
 		ConnectionFactory factory = new ConnectionFactory();
 		try {
 		factory.setUri(connector_url);
-		factory.setConnectionTimeout(300000);
+		factory.setConnectionTimeout(60);
+		
 		connection = factory.newConnection();
 		
 		}catch (Exception e)
@@ -27,6 +28,8 @@ public class RabbitMqConnector {
 	
 		return connection;
 	}
+	
+	
 
 	/** RabbitMQ Close Connection **/
 	public boolean CloseConnection() {
