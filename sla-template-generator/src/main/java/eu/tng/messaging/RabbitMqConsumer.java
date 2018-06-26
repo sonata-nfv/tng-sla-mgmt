@@ -63,23 +63,27 @@ public class RabbitMqConsumer implements ServletContextListener {
             // TODO Auto-generated catch block
             System.out.println("ERROR!" + e.getMessage());
         }
-        String queueName1 = null;
-        String queueName2 = null;
-        String queueName3 = null;
+        String queueName_service_instance = null;
+        String queueName_son_sla = null;
+        String queueName_sla_violation = null;
+        String queueName_service_terminate = null;
 
         try {
-            queueName1 = channel.queueDeclare().getQueue();
-            queueName2 = channel.queueDeclare().getQueue();
-            queueName3 = channel.queueDeclare().getQueue();
+            queueName_service_instance = channel.queueDeclare().getQueue();
+            queueName_son_sla = channel.queueDeclare().getQueue();
+            queueName_sla_violation = channel.queueDeclare().getQueue();
+            queueName_service_terminate = channel.queueDeclare().getQueue();
         } catch (IOException e) {
             // TODO Auto-generated catch block
             System.out.println("ERROR!" + e.getMessage());
         }
 
         try {
-            channel.queueBind(queueName1, EXCHANGE_NAME, "service.instances.create");
-            channel.queueBind(queueName2, EXCHANGE_NAME, "son.monitoring.SLA");
-            channel.queueBind(queueName3, EXCHANGE_NAME, "tng.sla.violation");
+            channel.queueBind(queueName_service_instance, EXCHANGE_NAME, "service.instances.create");
+            channel.queueBind(queueName_son_sla, EXCHANGE_NAME, "son.monitoring.SLA");
+            channel.queueBind(queueName_sla_violation, EXCHANGE_NAME, "tng.sla.violation");
+            channel.queueBind(queueName_service_terminate, EXCHANGE_NAME, "service.instance.terminate");
+
         } catch (IOException e) {
             // TODO Auto-generated catch block
             System.out.println("ERROR!" + e.getMessage());
@@ -268,22 +272,38 @@ public class RabbitMqConsumer implements ServletContextListener {
                 }
             }
         };
+
+        Consumer consumer4 = new DefaultConsumer(channel) {
+            @Override
+            public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties,
+                    byte[] body) throws IOException {
+                String message = new String(body, "UTF-8");
+                System.out.println("TERMINATING MESSAGE RECIEVED" + message);
+            }
+        };
         try {
-            channel.basicConsume(queueName1, true, consumer);
+            channel.basicConsume(queueName_service_instance, true, consumer);
         } catch (IOException e) {
             // TODO Auto-generated catch block
             System.out.println("ERROR!" + e.getMessage());
         }
 
         try {
-            channel.basicConsume(queueName2, true, consumer2);
+            channel.basicConsume(queueName_son_sla, true, consumer2);
         } catch (IOException e) {
             // TODO Auto-generated catch block
             System.out.println("ERROR!" + e.getMessage());
         }
 
         try {
-            channel.basicConsume(queueName3, true, consumer3);
+            channel.basicConsume(queueName_sla_violation, true, consumer3);
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            System.out.println("ERROR!" + e.getMessage());
+        }
+
+        try {
+            channel.basicConsume(queueName_service_terminate, true, consumer4);
         } catch (IOException e) {
             // TODO Auto-generated catch block
             System.out.println("ERROR!" + e.getMessage());
