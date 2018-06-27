@@ -4,18 +4,17 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
-import org.codehaus.jettison.json.JSONException;
-import org.codehaus.jettison.json.JSONObject;
-import com.esotericsoftware.yamlbeans.YamlReader;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.yaml.snakeyaml.Yaml;
+
 import com.google.gson.Gson;
-import com.rabbitmq.client.AMQP;
-import com.rabbitmq.client.Channel;
-import com.rabbitmq.client.Connection;
-import com.rabbitmq.client.Consumer;
-import com.rabbitmq.client.DefaultConsumer;
-import com.rabbitmq.client.Envelope;
+import com.rabbitmq.client.*;
 
 import eu.tng.correlations.cust_sla_corr;
 import eu.tng.correlations.db_operations;
@@ -111,19 +110,19 @@ public class RabbitMqConsumer implements ServletContextListener {
 
                 // Parse message payload
                 String message = new String(body, "UTF-8");
-                System.out.println("Message received: ==> " + message);
 
                 try {
-                    YamlReader reader = new YamlReader(message);
-                    Object object = reader.read();
-                    Map map = (Map) object;
-                    // Construct a JSONObject from a Map.
-                    jmessage = new JSONObject(map);
+                    Yaml yaml = new Yaml();
+                    Map<String, Object> map = (Map<String, Object>) yaml.load(message);
+
+                    JSONObject jsonObject = new JSONObject(map);
+                    jmessage = jsonObject;
+
                 } catch (Exception e) {
                     System.out.print("Cannot Parse yml object " + e.getMessage());
                 }
 
-                // Get instntiation request status
+                // Get instantiation request status
                 try {
                     status = (String) jmessage.get("status");
                 } catch (Exception e) {
@@ -140,17 +139,14 @@ public class RabbitMqConsumer implements ServletContextListener {
                 }
 
                 // if message coming from the GK
-                if (status.equals("NEW")) {
+                if (status == null) {
                     System.out.println("Message from  GK received: " + jmessage);
 
                     // Get nsd data
                     try {
-                        Object nsd = jmessage.get("NSD");
-                        Gson gson = new Gson();
-                        String nsdInString = gson.toJson(nsd);
-                        JSONObject jsonNsd = new JSONObject(nsdInString);
-                        ns_name = (String) jsonNsd.get("name");
-                        ns_uuid = (String) jsonNsd.get("uuid");
+                        JSONObject nsd = (JSONObject) jmessage.get("NSD");
+                        ns_name = (String) nsd.get("name");
+                        ns_uuid = (String) nsd.get("uuid");
 
                         System.out.println(" NS NAME ==> " + ns_name);
                         System.out.println(" NS UUID ==> " + ns_uuid);
@@ -161,11 +157,9 @@ public class RabbitMqConsumer implements ServletContextListener {
 
                     // Parse customer data + sla uuid
                     try {
-                        Object user_data = jmessage.get("user_data");
-                        Gson gson = new Gson();
-                        String user_dataInString = gson.toJson(user_data);
-                        JSONObject jsonNsd = new JSONObject(user_dataInString);
-                        JSONObject customer = (JSONObject) jsonNsd.get("customer");
+                        JSONObject user_data = (JSONObject) jmessage.get("user_data");
+                        JSONObject customer = (JSONObject) user_data.get("customer");
+
                         cust_uuid = (String) customer.get("uuid");
                         cust_email = (String) customer.get("email");
                         sla_uuid = (String) customer.get("sla_id");
@@ -193,6 +187,7 @@ public class RabbitMqConsumer implements ServletContextListener {
                         db_operations.connectPostgreSQL();
                         cust_sla_corr.createCustSlaCorr(sla_uuid, sla_name, sla_status, ns_uuid, ns_name, cust_uuid,
                                 cust_email, inst_status, correlation_id);
+
                     }
 
                 }
@@ -200,9 +195,34 @@ public class RabbitMqConsumer implements ServletContextListener {
                 else if (status.equals("READY")) {
                     System.out.println("Message from  MANO received: " + jmessage);
                     System.out.println("status ==> " + status);
+
                     db_operations dbo = new db_operations();
                     db_operations.connectPostgreSQL();
                     db_operations.UpdateRecordAgreement(status, correlation_id);
+
+                    // get data for the monitoring rule
+                    // Get vnfrs
+                    try {
+
+                        JSONArray vnfrs = (JSONArray) jmessage.get("vnfrs");
+                        System.out.println(vnfrs);
+
+                        for (int i = 0; i < (vnfrs).length(); i++) {
+                            String vnf_id = (String) ((JSONObject) vnfrs.get(i)).get("id");
+                            System.out.println(" VNF ID (" + i + ") ==> " + vnf_id);
+
+                            JSONArray vdus = (JSONArray) ((JSONObject) vnfrs.get(i)).get("virtual_deployment_units");
+
+                            for (int j = 0; j < vdus.length(); j++) {
+                                String vdu_id = (String) ((JSONObject) vdus.get(j)).get("id");
+                                System.out.println(" vdu_id  ==> " + j + " " + vdu_id);
+                            }
+
+                        }
+
+                    } catch (Exception e) {
+                        System.out.println("ERROR: " + e.getMessage());
+                    }
 
                 } else if (status.equals("INSTANTIATING")) {
                     System.out.println("SERVICE STATUS IS: " + status);
@@ -235,7 +255,7 @@ public class RabbitMqConsumer implements ServletContextListener {
                     alert_time = jmessage.getString("time");
                     alert_name = jmessage.getString("alertname");
                     alert_state = jmessage.getString("alertstate");
-                    
+
                     db_operations dbo = new db_operations();
                     dbo.connectPostgreSQL();
                     dbo.createTableViolations();
@@ -243,7 +263,7 @@ public class RabbitMqConsumer implements ServletContextListener {
                     sla_uuid = (String) violated_sla.get(0);
                     cust_uuid = (String) violated_sla.get(1);
                     dbo.insertRecordViolation(ns_uuid, sla_uuid, alert_time, alert_state, cust_uuid);
-                        
+
                     try {
                         JSONObject violationMessage = ViolationsProducer.createViolationMessage(ns_uuid, sla_uuid,
                                 alert_time, alert_state, cust_uuid, connection);
@@ -264,7 +284,6 @@ public class RabbitMqConsumer implements ServletContextListener {
             public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties,
                     byte[] body) throws IOException {
 
-              
                 JSONObject jmessage = null;
 
                 // Parse headers
