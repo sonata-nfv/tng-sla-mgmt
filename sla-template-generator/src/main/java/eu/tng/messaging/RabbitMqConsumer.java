@@ -27,6 +27,7 @@ import eu.tng.correlations.db_operations;
 public class RabbitMqConsumer implements ServletContextListener {
 
     private static final String EXCHANGE_NAME = System.getenv("BROKER_EXCHANGE");
+    //private static final String EXCHANGE_NAME = "son-kernel";
 
     /**
      * Default constructor.
@@ -48,7 +49,7 @@ public class RabbitMqConsumer implements ServletContextListener {
     public void contextInitialized(ServletContextEvent arg0) {
 
         RabbitMqConnector connect = new RabbitMqConnector();
-        Connection connection = connect.MqConnector();
+        final Connection connection = connect.MqConnector();
         Channel channel = null;
         try {
             channel = connection.createChannel();
@@ -234,7 +235,8 @@ public class RabbitMqConsumer implements ServletContextListener {
                     alert_time = jmessage.getString("time");
                     alert_name = jmessage.getString("alertname");
                     alert_state = jmessage.getString("alertstate");
-
+                    
+                    /*
                     db_operations dbo = new db_operations();
                     dbo.connectPostgreSQL();
                     dbo.createTableViolations();
@@ -242,9 +244,15 @@ public class RabbitMqConsumer implements ServletContextListener {
                     sla_uuid = (String) violated_sla.get(0);
                     cust_uuid = (String) violated_sla.get(1);
                     dbo.insertRecordViolation(ns_uuid, sla_uuid, alert_time, alert_state, cust_uuid);
-                    JSONObject violationMessage = ViolationsProducer.createViolationMessage(ns_uuid, sla_uuid,
-                            alert_time, alert_state, cust_uuid);
-                    System.out.println(violationMessage);
+                    */
+                    
+                    try {
+                        JSONObject violationMessage = ViolationsProducer.createViolationMessage(ns_uuid, sla_uuid,
+                                alert_time, alert_state, cust_uuid, connection);
+                    } catch (Exception e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
 
                 } catch (JSONException e) {
                     // TODO Auto-generated catch block
@@ -258,6 +266,7 @@ public class RabbitMqConsumer implements ServletContextListener {
             public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties,
                     byte[] body) throws IOException {
 
+              
                 JSONObject jmessage = null;
 
                 // Parse headers
