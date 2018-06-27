@@ -9,7 +9,6 @@ The mechanisms included in the tng-sla-mgmt include:
 *  SLA Template Generator : creates initial and tailored SLA templates for the service provider, and the ﬁnal SLA itself
 *  SLA Mapping Mechanism:  mapping between the high-level requirements described by the end-user and the low-level requirements described by the service provider
 
-More details can be found on the [5GTANGO SLA Manager Wiki Page](https://github.com/sonata-nfv/tng-sla-mgmt/wiki)
 
 ## Prerequisites to run locally
 Before moving on, make sure you have also installed Apache Maven Project the latest and Apache Tomcat 8.5
@@ -38,13 +37,11 @@ Or, if you have docker and docker-compose installed, you can run:
 ```
 
 ## Usage
-The following shows how to run SLA management framework:
-* First, make sure there is a network service descriptor in the 5GTANGO Catalogue
-* Also there is a corresponding policy descriptor for the specific network service descriptor
-* For the generation of a SLA Template use the API call provided below
-* For editing a SLA Template use the API call provided below
-* For modifying a SLA Template use the API call provided below
 
+The following shows how to use SLA Manager: 
+
+* First, make sure there is a network service descriptor in the 5GTANGO Catalogue - More information on how to upload a Network Service in 5GTANGO Catalogue
+ can be found [here](https://github.com/sonata-nfv/tng-cat).
 
 ## API Documentation
 
@@ -64,7 +61,6 @@ The following shows how to run SLA management framework:
 | -------------------------- | ----------- | --------------------------------------- |  
 | Get existing Agreements| `GET`    | `curl -H "Content-type:application/json" http://localhost:8080/tng-sla-mgmt/api/slas/v1/agreements/` | 
 | Get specific Agreement details based on uuid | `GET`    | `curl -H "Content-type:application/json" http://localhost:8080/tng-sla-mgmt/api/slas/v1/agreements/{sla_uuid}` |   
-| Delete a SLA Agreement     | `DELETE` | `curl -X DELETE http://localhost:8080/tng-sla-mgmt/api/slas/v1/agreements/{sla_uuid}` |  
 | Get Agreements per (instatiated) NS   | `GET`    | `curl -H "Content-type:application/json" http://localhost:8080/tng-sla-mgmt/api/slas/v1/agreements/service/{ns_uuid}` |  
 | Get Agreement guarantee terms| `GET`  | `curl -H "Content-type:application/json" http://localhost:8080/tng-sla-mgmt/api/slas/v1/agreements/guarantee-terms/{sla_uuid}` |  
 
@@ -81,13 +77,26 @@ The following shows how to run SLA management framework:
 | Access a list with NS that do not have associated agreements yet| `GET` | `curl -H "Content-type:application/json" http://localhost:8080/tng-sla-mgmt/api/slas/v1/mgmt/services/agreements/false`|  
 
 
+Expected returned data for all the mentioned endpoint is:
+
+* `HTTP` code `200` (`Ok`) 
+* `HTTP` code `400` (`Bad Request`)
+* `HTTP` code `404` (`Not Found`)
+
+
 ## Development
 
 To contribute to the development of the 5GTANGO SLA Manager, you may use the very same development workflow as for any other 5GTANGO Github project. That is, you have to fork the repository and create pull requests. Moreover, all discussions regarding the 5GTANGO SLAs take place on GitHub, and NOT on the wiki.
 
 ### Contributing
 
-You may contribute to the SLA Manager similar to other 5GTANGO (sub-) projects, i.e. by creating pull requests.
+You may contribute to the SLA Manager you should:
+
+1. Fork [this repository](https://github.com/sonata-nfv/tng-sla-mgmt);
+2. Work on your proposed changes, preferably through submiting [issues](https://github.com/sonata-nfv/tng-sla-mgmt/issues);
+3. Push changes on your fork;
+3. Submit a Pull Request;
+4. Follow/answer related [issues](https://github.com/sonata-nfv/tng-sla-mgmt/issues) (see Feedback-Chanel, below).
 
 ### CI Integration
 
