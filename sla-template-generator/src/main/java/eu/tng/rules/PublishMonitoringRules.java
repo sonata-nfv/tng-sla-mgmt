@@ -28,17 +28,66 @@
 
 package eu.tng.rules;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
+import java.net.URL;
+
+import javax.ws.rs.core.Response;
+
 import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+
+import eu.tng.correlations.ns_template_corr;
 
 public class PublishMonitoringRules {
 
 	/**
 	 * Publish monitoring rules to the Monitoring Manager Y1 : Communication via
 	 * RestAPI
+	 * 
+	 * @param ns_id
 	 */
 
-	public JSONObject publishMonitroingRules() {
-	
+	public JSONObject publishMonitringRules(JSONObject body, String ns_id) {
+
+		System.out.println(body);
+		String service_id = ns_id;
+		System.out.println("NS ID" + ns_id);
+
+		try {
+
+			String url = "http://pre-int-sp-ath.5gtango.eu:8000/api/v1/slamng/rules/service/" + service_id
+					+ "/configuration ";
+			URL object = new URL(url);
+
+			HttpURLConnection con = (HttpURLConnection) object.openConnection();
+			con.setDoOutput(true);
+			con.setDoInput(true);
+			con.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+			con.setRequestProperty("Accept", "application/json");
+			con.setRequestMethod("POST");
+			
+			OutputStreamWriter wr = new OutputStreamWriter(con.getOutputStream());
+			wr.write(body.toString());
+			wr.flush();
+
+			StringBuilder sb = new StringBuilder();
+			int HttpResult = con.getResponseCode();
+
+			if (HttpResult == HttpURLConnection.HTTP_OK) {
+				System.out.println("SLA rules were send");
+				System.out.println(con.getResponseMessage());
+
+			} else {
+				// ERROR sending the monitoring rules 
+				System.out.println("ERROR sending the monitoring rules : " + con.getResponseMessage());
+			}
+		} catch (Exception e) {
+			System.out.println("ERROR connecting with monitoring api  : " + e.getMessage());
+		}
+
 		return null;
 	}
 
