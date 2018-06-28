@@ -47,7 +47,7 @@ public class MonitoringRules {
 	 * Create monitoring rules based on a instantiated NS and the selected SLA
 	 **/
 	public static JSONObject createMonitroingRules(String sla_uuid, ArrayList<String> vnfrs_list,
-			ArrayList<String> vdus_list) throws IOException {
+			ArrayList<String> vdus_list, String ns_id) throws IOException {
 
 		JSONObject root = new JSONObject();
 
@@ -109,11 +109,14 @@ public class MonitoringRules {
 			}
 			root.put("vnfs", vnfs);
 			System.out.println("monitoring body ==> " + root);
+			PublishMonitoringRules mr = new PublishMonitoringRules();
+			mr.publishMonitringRules(root, ns_id);
 
 		} else {
 			System.out.println("ERROR: Unable to create rules. SLA ID is null");
 		}
 
+			
 		return root;
 	}
 
@@ -136,11 +139,11 @@ public class MonitoringRules {
 
 		JSONObject slo_details = new JSONObject();
 
-		// String url =
-		// "http://pre-int-sp-ath.5gtango.eu:4011/catalogues/api/v2/slas/template-descriptors/"
-		// + sla_uuid;
+//		 String url =
+//		 "http://pre-int-sp-ath.5gtango.eu:4011/catalogues/api/v2/slas/template-descriptors/"
+//		 + sla_uuid;
 		try {
-			// URL object = new URL(url);
+			//URL object = new URL(url);
 			URL url = new URL(System.getenv("CATALOGUES_URL") + "slas/template-descriptors/" + sla_uuid);
 			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 			conn.setRequestProperty("Content-Type", "application/json");
@@ -191,7 +194,7 @@ public class MonitoringRules {
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
+		}	
 		return slo_details;
 
 	}

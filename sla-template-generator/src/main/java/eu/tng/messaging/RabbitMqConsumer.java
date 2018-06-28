@@ -204,12 +204,18 @@ public class RabbitMqConsumer implements ServletContextListener {
 					db_operations.UpdateRecordAgreement(status, correlation_id);
 
 					String sla_id = null;
+					String ns_id = null;
 					
 					// get data for the monitoring rules
 					try {
 						// Get sla_id
 						sla_id = (String) jmessage.get("sla_id");
 						System.out.println(" SLA ID " + sla_id);
+
+						// Get service uuid 
+						JSONObject nsr = (JSONObject) jmessage.get("nsr");
+						ns_id = (String)nsr.get("id");
+
 
 						// Get vnfrs
 						JSONArray vnfrs = (JSONArray) jmessage.get("vnfrs");
@@ -234,7 +240,7 @@ public class RabbitMqConsumer implements ServletContextListener {
 					
 					// call the create rules method
 					MonitoringRules mr = new MonitoringRules();
-					MonitoringRules.createMonitroingRules(sla_id, vnfrs_list, vdus_list);
+					MonitoringRules.createMonitroingRules(sla_id, vnfrs_list, vdus_list, ns_id);
 
 				} else if (status.equals("INSTANTIATING")) {
 					System.out.println("SERVICE STATUS IS: " + status);
