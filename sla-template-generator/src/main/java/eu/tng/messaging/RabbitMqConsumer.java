@@ -203,10 +203,12 @@ public class RabbitMqConsumer implements ServletContextListener {
 					db_operations.connectPostgreSQL();
 					db_operations.UpdateRecordAgreement(status, correlation_id);
 
+					String sla_id = null;
+					
 					// get data for the monitoring rules
 					try {
 						// Get sla_id
-						String sla_id = (String) jmessage.get("sla_id");
+						sla_id = (String) jmessage.get("sla_id");
 						System.out.println(" SLA ID " + sla_id);
 
 						// Get vnfrs
@@ -225,14 +227,14 @@ public class RabbitMqConsumer implements ServletContextListener {
 							}
 
 						}
-						
-						// call the create rules method
-						MonitoringRules mr = new MonitoringRules();
-						mr.createMonitroingRules(sla_id, vnfrs_list, vdus_list);
 
 					} catch (Exception e) {
-						System.out.println("ERROR: " + e.getMessage());
+						System.out.println("ERROR sto catc: " + e.getMessage());
 					}
+					
+					// call the create rules method
+					MonitoringRules mr = new MonitoringRules();
+					MonitoringRules.createMonitroingRules(sla_id, vnfrs_list, vdus_list);
 
 				} else if (status.equals("INSTANTIATING")) {
 					System.out.println("SERVICE STATUS IS: " + status);
@@ -321,21 +323,21 @@ public class RabbitMqConsumer implements ServletContextListener {
 			channel.basicConsume(queueName_service_instance, true, consumer);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			System.out.println("ERROR!" + e.getMessage());
+			System.out.println("ERROR 1!" + e.getMessage());
 		}
 
 		try {
 			channel.basicConsume(queueName_son_sla, true, consumer2);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			System.out.println("ERROR!" + e.getMessage());
+			System.out.println("ERROR 2!" + e.getMessage());
 		}
 
 		try {
 			channel.basicConsume(queueName_sla_violation, true, consumer3);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			System.out.println("ERROR!" + e.getMessage());
+			System.out.println("ERROR 3!" + e.getMessage());
 		}
 
 		try {
