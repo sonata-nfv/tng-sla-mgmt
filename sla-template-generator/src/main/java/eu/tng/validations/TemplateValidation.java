@@ -28,50 +28,57 @@
 
 package eu.tng.validations;
 
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.TimeZone;
 
 public class TemplateValidation {
-	
+
 	public static boolean checkExpireDate(String expireDate) {
-		
-		/** current date */		
+
+		boolean valid_expire_date = false;
+				
+		/** current date */
 		Date today = new Date();
-        
-        /** valid until date */
+
+		/** valid until date */
 		Date valid_until = null;
 		SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 		expireDate = "15/07/2020";
-        try {
-            valid_until = formatter.parse(expireDate);
+		try {
+			valid_until = formatter.parse(expireDate);
 
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
 
 		System.out.println(formatter.format(today));
 		System.out.println(expireDate);
-		
-		int today_day = today.getDate();
-		int today_month = today.getMonth();
-		int today_year = today.getYear();
-		
-		int expire_day = valid_until.getDate();
-		int expire_month = valid_until.getMonth();
-		int expire_year = valid_until.getYear();
 
-		return false;
+		/** check if expire date is after today **/
+		if (today.compareTo(valid_until) > 0) {
+			System.out.println("Today is after valid_until");
+			valid_expire_date = false;
+		} 
+		else if (today.compareTo(valid_until) < 0) {
+			System.out.println("Today is before valid_until");
+			valid_expire_date = true;
+		} 
+		else if (today.compareTo(valid_until) == 0) {
+			System.out.println("Today is equal to valid_until");
+			valid_expire_date = false;
+		} 
+		else {
+			System.out.println("Invalid dates");
+			valid_expire_date = false;
+		}
+
+		return valid_expire_date;
 
 	}
-	
-	
-	public static void main(String [] args)
-	{
-		checkExpireDate("2/07/2018");
+
+	public static void main(String[] args) {
+		//checkExpireDate("2/07/2018");
 	}
-	
 
 }
