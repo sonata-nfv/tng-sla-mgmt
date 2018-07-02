@@ -86,7 +86,7 @@ public class MonitoringRules {
 						String target_value = (String) ((JSONObject) slos.get(k)).get("target_value");
 
 						// call function getSlaDetails
-						ArrayList dc = createCondition(name, target_value);
+						ArrayList dc = createCondition(name, target_value,vdus_list.get(j));
 						String description = (String) dc.get(0);
 						String condition = (String) dc.get(1);
 
@@ -120,12 +120,13 @@ public class MonitoringRules {
 		return root;
 	}
 
-	private static ArrayList createCondition(String name, String target_value) {
+	private static ArrayList createCondition(String name, String target_value, String vdu_id) {
 		ArrayList<String> dc = new ArrayList<String>();
 		switch (name) {
 		case "Resilience":
 			String description = "Trigger events if VM is down more than " + target_value + " seconds.";
-			String condition = "vm_up{id=\"341f4d56-8e66-cfae-6fb3-1143fff11091\"} > " + target_value;
+			String id = "id="+vdu_id+"";
+			String condition = "vm_up{id="+id+"}> " + target_value;
 			dc.add(description);
 			dc.add(condition);
 			break;
