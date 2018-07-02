@@ -55,6 +55,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
 import eu.tng.template_gen.*;
+import eu.tng.validations.TemplateValidation;
 import eu.tng.correlations.*;
 
 @Path("/templates")
@@ -177,11 +178,20 @@ public class templatesAPIs {
 		if (template == null) {
 			String dr = null;
 			JSONObject error = new JSONObject();
-			error.put("ERROR: ", "while creating SLA Template");
+			error.put("ERROR: ", "NSD don't found");
 			apiresponse = Response.ok((Object) error);
 			apiresponse.header("Content-Length", error.toJSONString().length());
 			return apiresponse.status(404).build();
-		} else {
+		} 
+		else {
+			
+			TemplateValidation validation = new TemplateValidation();
+			
+			
+			
+			
+			
+			
 			Object createdTemplate = null;
 			try {
 				// String url =
