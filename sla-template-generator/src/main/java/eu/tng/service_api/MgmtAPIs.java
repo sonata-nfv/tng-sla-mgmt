@@ -111,24 +111,26 @@ public class MgmtAPIs {
 	public Response getGuarantees() {
 		JSONParser parser = new JSONParser();
 		JSONObject jsonObject = null;
-			
+
 		ResponseBuilder apiresponse = null;
 		try {
 			File testf = new File(this.getClass().getResource("/slos_list_release1.json").toURI());
 			jsonObject = (JSONObject) parser.parse(new FileReader(testf));
 			System.out.println(jsonObject.toJSONString().length());
-			
-					
+
 			apiresponse = Response.ok(jsonObject);
-			apiresponse.header("Content-Length", jsonObject.toJSONString().length()-2);
+			apiresponse.header("Content-Length", jsonObject.toJSONString().length() - 2);
 			return apiresponse.status(200).build();
-			
+
 		} catch (Exception e) {
-			return Response.status(404).entity("Guarantees List Not Found").build();
+			JSONObject error = new JSONObject();
+			error.put("ERROR: ", "Guarantees List Not Found");
+			apiresponse = Response.ok((Object) error);
+			apiresponse.header("Content-Length", error.toJSONString().length());
+			return apiresponse.status(404).build();
+
 		}
 	}
-	
-
 
 	/**
 	 * Get all ns with associated sla agreement
