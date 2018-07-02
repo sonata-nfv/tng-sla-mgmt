@@ -44,6 +44,8 @@ public class RabbitMqConsumer implements ServletContextListener {
 	}
 
 	/**
+	 * 
+	 * 
 	 * @see ServletContextListener#contextInitialized(ServletContextEvent)
 	 */
 	public void contextInitialized(ServletContextEvent arg0) {
