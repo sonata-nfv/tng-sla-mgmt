@@ -26,8 +26,8 @@ import eu.tng.rules.MonitoringRules;
  */
 public class RabbitMqConsumer implements ServletContextListener {
 
-	private static final String EXCHANGE_NAME = System.getenv("BROKER_EXCHANGE");
-	//private static final String EXCHANGE_NAME = "son-kernel";
+	//private static final String EXCHANGE_NAME = System.getenv("BROKER_EXCHANGE");
+	private static final String EXCHANGE_NAME = "son-kernel";
 
 	/**
 	 * Default constructor.
@@ -64,16 +64,22 @@ public class RabbitMqConsumer implements ServletContextListener {
 			// TODO Auto-generated catch block
 			System.out.println("ERROR!" + e.getMessage());
 		}
-		String queueName_service_instance = null;
-		String queueName_son_sla = null;
-		String queueName_sla_violation = null;
-		String queueName_service_terminate = null;
+		String queueName_service_instance = "slas.service.instances.create";
+		String queueName_son_sla = "slas.son.monitoring.SLA";
+		String queueName_sla_violation = "slas.tng.sla.violation";
+		String queueName_service_terminate = "slas.service.instance.terminate";
 
 		try {
+		    /*
 			queueName_service_instance = channel.queueDeclare().getQueue();
 			queueName_son_sla = channel.queueDeclare().getQueue();
 			queueName_sla_violation = channel.queueDeclare().getQueue();
 			queueName_service_terminate = channel.queueDeclare().getQueue();
+			*/
+		    channel.queueDeclare(queueName_service_instance, true, false, false, null);
+		    channel.queueDeclare(queueName_son_sla, true, false, false, null);
+		    channel.queueDeclare(queueName_sla_violation, true, false, false, null);
+		    channel.queueDeclare(queueName_service_terminate, true, false, false, null);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			System.out.println("ERROR!" + e.getMessage());
