@@ -97,7 +97,11 @@ public class templatesAPIs {
 			return apiresponse.status(200).build();
 
 		} catch (Exception e) {
-			return Response.status(404).entity("Not Found").build();
+			JSONObject error = new JSONObject();
+			error.put("ERROR: ", "Not Found");
+			apiresponse = Response.ok((Object) error);
+			apiresponse.header("Content-Length", error.toJSONString().length());
+			return apiresponse.status(404).build();
 		}
 
 	}
@@ -139,8 +143,11 @@ public class templatesAPIs {
 			return apiresponse.status(200).build();
 
 		} catch (Exception e) {
-
-			return Response.status(404).entity("Not Found").build();
+			JSONObject error = new JSONObject();
+			error.put("ERROR: ", "Not Found");
+			apiresponse = Response.ok((Object) error);
+			apiresponse.header("Content-Length", error.toJSONString().length());
+			return apiresponse.status(404).build();
 		}
 
 	}
@@ -169,10 +176,11 @@ public class templatesAPIs {
 
 		if (template == null) {
 			String dr = null;
-			apiresponse = Response.ok(dr);
-			apiresponse.header("Content-Length", 0);
+			JSONObject error = new JSONObject();
+			error.put("ERROR: ", "while creating SLA Template");
+			apiresponse = Response.ok((Object) error);
+			apiresponse.header("Content-Length", error.toJSONString().length());
 			return apiresponse.status(404).build();
-						
 		} else {
 			Object createdTemplate = null;
 			try {
@@ -218,12 +226,18 @@ public class templatesAPIs {
 				} else {
 					// conflict in uploading sla template to the catalogue
 					System.out.println(con.getResponseMessage());
-					return apiresponse.status(400).entity(con.getResponseMessage()).build();
+					JSONObject error = new JSONObject();
+					error.put("ERROR: ", con.getResponseMessage());
+					apiresponse = Response.ok((Object) error);
+					apiresponse.header("Content-Length", error.toJSONString().length());
+					return apiresponse.status(400).build();
 				}
 			} catch (Exception e) {
 				String dr = null;
-				apiresponse = Response.ok(dr);
-				apiresponse.header("Content-Length", 0);
+				JSONObject error = new JSONObject();
+				error.put("ERROR: ", "while uploding SLA Template");
+				apiresponse = Response.ok((Object) error);
+				apiresponse.header("Content-Length", error.toJSONString().length());
 				return apiresponse.status(404).build();
 			}
 		}
@@ -245,7 +259,9 @@ public class templatesAPIs {
 		URL url = null;
 
 		try {
-			//url = new URL("http://pre-int-sp-ath.5gtango.eu:4011/catalogues/api/v2/slas/template-descriptors/" + sla_uuid);
+			// url = new
+			// URL("http://pre-int-sp-ath.5gtango.eu:4011/catalogues/api/v2/slas/template-descriptors/"
+			// + sla_uuid);
 			url = new URL(System.getenv("CATALOGUES_URL") + "slas/template-descriptors/" + sla_uuid);
 
 			httpURLConnection = (HttpURLConnection) url.openConnection();
@@ -268,7 +284,12 @@ public class templatesAPIs {
 			}
 
 		} catch (Exception e) {
-			return Response.status(404).entity("URL Not Found").build();
+			JSONObject error = new JSONObject();
+			error.put("ERROR: ", "URL Not Found");
+			apiresponse = Response.ok((Object) error);
+			apiresponse.header("Content-Length", error.toJSONString().length());
+			return apiresponse.status(404).build();
+
 		}
 
 	}

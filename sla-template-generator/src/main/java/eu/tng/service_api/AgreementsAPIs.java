@@ -93,9 +93,12 @@ public class AgreementsAPIs {
 			return apiresponse.status(200).build();
 
 		} else {
-			apiresponse = Response.ok(null);
-			apiresponse.header("Content-Length", 0);
+			JSONObject error = new JSONObject();
+			error.put("ERROR: ", "connecting to database");
+			apiresponse = Response.ok((Object) error);
+			apiresponse.header("Content-Length", error.toJSONString().length());
 			return apiresponse.status(404).build();
+
 		}
 
 	}
@@ -121,18 +124,20 @@ public class AgreementsAPIs {
 			return apiresponse.status(200).build();
 
 		} else {
-			apiresponse = Response.ok(null);
-			apiresponse.header("Content-Length", 0);
+			JSONObject error = new JSONObject();
+			error.put("ERROR: ", "connecting to database");
+			apiresponse = Response.ok((Object) error);
+			apiresponse.header("Content-Length", error.toJSONString().length());
 			return apiresponse.status(404).build();
 		}
 
 	}
 
 	/**
-	 * api call in order to get a list with all the existing agreements per Customer
+	 * api call in order to get a specific sla agreement
 	 */
 	@GET
-	@Produces(MediaType.TEXT_PLAIN)
+	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/{sla_uuid}")
 	public Response getAgreementDetails(@PathParam("sla_uuid") String sla_uuid) {
 
@@ -167,10 +172,12 @@ public class AgreementsAPIs {
 			return apiresponse.status(200).build();
 
 		} catch (Exception e) {
-			String nf = "SLA Not Found";
-			apiresponse = Response.ok(nf);
-			apiresponse.header("Content-Length", nf.length());
-			return apiresponse.status(404).entity(nf).build();
+			
+			JSONObject error = new JSONObject();
+			error.put("ERROR: ", "SLA Not Found");
+			apiresponse = Response.ok((Object) error);
+			apiresponse.header("Content-Length", error.toJSONString().length());
+			return apiresponse.status(404).build();
 		}
 
 	}
@@ -182,24 +189,24 @@ public class AgreementsAPIs {
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("guarantee-terms/{sla_uuid}")
 	public Response getAgreementTerms(@PathParam("sla_uuid") String sla_uuid) {
-		
+
 		ResponseBuilder apiresponse = null;
-		
+
 		new cust_sla_corr();
 		JSONArray gt = cust_sla_corr.getGuaranteeTerms(sla_uuid);
-		if (gt !=null) {
+		if (gt != null) {
 			apiresponse = Response.ok(gt);
 			System.out.println(gt.toString().length());
-			
-			apiresponse.header("Content-Length", gt.toString().length()-1);
+			apiresponse.header("Content-Length", gt.toString().length() - 1);
 			return apiresponse.status(200).build();
-		} 
-		else {
-			apiresponse = Response.ok(null);
-			apiresponse.header("Content-Length", 0);
+		} else {
+			JSONObject error = new JSONObject();
+			error.put("ERROR: ", "guarantee terms are null");
+			apiresponse = Response.ok((Object) error);
+			apiresponse.header("Content-Length", error.toJSONString().length());
 			return apiresponse.status(404).build();
 		}
 
-}
+	}
 
 }
