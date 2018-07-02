@@ -1,263 +1,86 @@
 {
-  "created_at": "2018-03-22T15:49:46.817+00:00",
-  "md5": "76b414f98ca0c1766df3ef02093e9e67",
+  "updated_at": "2018-07-02T11:35:10.776+00:00",
   "signature": null,
+  "created_at": "2018-07-02T11:35:10.776+00:00",
   "slad": {
-    "vendor": "tango-sla-template",
+    "vendor": "tango-sla-mgmt",
     "author": "Evgenia Kapassa, Marios Touloupou",
-    "name": "Test2",
-    "description": "Testing Testing Testing",
+    "name": "Gold",
+    "description": "",
     "descriptor_schema": "https://raw.githubusercontent.com/sonata-nfv/tng-schema/master/service-descriptor/nsd-schema.yml",
-    "version": "0.5",
+    "version": "0.1",
     "sla_template": {
-      "offered_date": "22/03/2018",
-      "valid_until": "20/02/2020",
-      "service_provider_id": "sp001",
+      "offered_date": "2018-07-02T11:35:10Z",
+      "template_name": "Gold",
+      "valid_until": "2020-12-20T00:00:00Z",
       "ns": {
-        "description": "Example recursive network service reusing the sonata-demo NS and adding a vTC at the beginning.",
-        "objectives": [
+        "ns_description": "Example NS with one VNF",
+        "guaranteeTerms": [
           {
-            "slo_value": "",
-            "slo_name": "Bandwidth",
-            "metric": [
-              {
-                "metric_id": "mtr1",
-                "expression": {
-                  "expression_language": "ISO80000",
-                  "expression_statement": "vnf1.CPULoad\u003c70ANDvnf2.RAM\u003c8",
-                  "expression_unit": "",
-                  "parameters": [
-                    {
-                      "parameter_unit": "",
-                      "parameter_definition": "",
-                      "parameter_value": "85",
-                      "parameter_name": "vnf1.CPULoad",
-                      "parameter_id": "prmtr1"
-                    },
-                    {
-                      "parameter_unit": "",
-                      "parameter_definition": "",
-                      "parameter_value": "8",
-                      "parameter_name": "vnf2.RAM",
-                      "parameter_id": "prmtr2"
-                    }
-                  ]
-                },
-                "rate": {
-                  "sampleInterval": "",
-                  "parameterWindow": "10 m"
-                },
-                "metric_definition": "highTranscodingRateRule"
-              }
-            ],
-            "slo_id": "slo1",
-            "slo_definition": "Bandwidth Testing",
-            "slo_unit": "Mbps"
-          },
-          {
-            "slo_value": "",
-            "slo_name": "cpu_perc_usage",
-            "metric": [
-              {
-                "metric_id": "mtr2",
-                "expression": {
-                  "expression_language": "ISO80000",
-                  "expression_statement": "price\u003c3000ANDvnf1.CPULoad\u003c60ORvnf2.RAM\u003c8",
-                  "expression_unit": "",
-                  "parameters": [
-                    {
-                      "parameter_unit": "Euro",
-                      "parameter_definition": "Test Price",
-                      "parameter_value": "3000",
-                      "parameter_name": "price",
-                      "parameter_id": "prmtr3"
-                    },
-                    {
-                      "parameter_unit": "",
-                      "parameter_definition": "",
-                      "parameter_value": "60",
-                      "parameter_name": "vnf1.CPULoad",
-                      "parameter_id": "prmtr4"
-                    },
-                    {
-                      "parameter_unit": "",
-                      "parameter_definition": "",
-                      "parameter_value": "8",
-                      "parameter_name": "vnf2.RAM",
-                      "parameter_id": "prmtr5"
-                    }
-                  ]
-                },
-                "rate": {
-                  "sampleInterval": "",
-                  "parameterWindow": "10 m"
-                },
-                "metric_definition": "lowTranscodingRateRule"
-              }
-            ],
-            "slo_id": "slo2",
-            "slo_definition": "CPU Testing",
-            "slo_unit": "Ghz"
-          },
-          {
-            "slo_value": "Slo value testing",
-            "slo_name": "1",
-            "metric": [
-              {
-                "metric_id": "mtrNEW1",
-                "expression": {
-                  "expression_language": "ISO80000",
-                  "expression_statement": "7*5",
-                  "expression_unit": "%",
-                  "parameters": [
-                    {
-                      "parameter_unit": "%",
-                      "parameter_definition": "parameddef1",
-                      "parameter_value": "100",
-                      "parameter_name": "parameter1",
-                      "parameter_id": "prmtrNEW1"
-                    }
-                  ]
-                },
-                "rate": {
-                  "parameterWindow": "10mins"
-                },
-                "metric_definition": "test1"
-              }
-            ],
-            "slo_id": "sloNEW1",
-            "slo_definition": "20",
-            "slo_unit": "%"
-          },
-          {
-            "slo_value": "20",
-            "slo_name": "2",
-            "metric": [
-              {
-                "metric_id": "mtrNEW2",
-                "expression": {
-                  "expression_language": "ISO80000",
-                  "expression_statement": "expression2",
-                  "expression_unit": "%",
-                  "parameters": [
-                    {
-                      "parameter_unit": "%",
-                      "parameter_definition": "parameddef1",
-                      "parameter_value": "100",
-                      "parameter_name": "parameter1",
-                      "parameter_id": "prmtrNEW2"
-                    }
-                  ]
-                },
-                "rate": {
-                  "parameterWindow": "20min"
-                },
-                "metric_definition": "test2"
-              }
-            ],
-            "slo_id": "sloNEW2",
-            "slo_definition": "20",
-            "slo_unit": "%"
-          },
-          {
-            "slo_value": "20",
-            "slo_name": "1",
-            "metric": [
-              {
-                "metric_id": "mtrNEW1",
-                "expression": {
-                  "expression_language": "ISO80000",
-                  "expression_statement": "7*5",
-                  "expression_unit": "%",
-                  "parameters": [
-                    {
-                      "parameter_unit": "%",
-                      "parameter_definition": "parameddef1",
-                      "parameter_value": "100",
-                      "parameter_name": "parameter1",
-                      "parameter_id": "prmtrNEW1"
-                    }
-                  ]
-                },
-                "rate": {
-                  "parameterWindow": "10mins"
-                },
-                "metric_definition": "test1"
-              }
-            ],
-            "slo_id": "sloNEW1",
-            "slo_definition": "20",
-            "slo_unit": "%"
-          },
-          {
-            "slo_value": "20",
-            "slo_name": "2",
-            "metric": [
-              {
-                "metric_id": "mtrNEW2",
-                "expression": {
-                  "expression_language": "ISO80000",
-                  "expression_statement": "expression2",
-                  "expression_unit": "%",
-                  "parameters": [
-                    {
-                      "parameter_unit": "%",
-                      "parameter_definition": "parameddef1",
-                      "parameter_value": "100",
-                      "parameter_name": "parameter1",
-                      "parameter_id": "prmtrNEW2"
-                    }
-                  ]
-                },
-                "rate": {
-                  "parameterWindow": "20min"
-                },
-                "metric_definition": "test2"
-              }
-            ],
-            "slo_id": "sloNEW2",
-            "slo_definition": "20",
-            "slo_unit": "%"
-          },
-      {
-        "slo_value": "20",
-        "slo_name": "2",
-        "metric": [
-          {
-            "metric_id": "mtrNEW2",
-            "expression": {
-              "expression_language": "ISO80000",
-              "expression_statement": "expression2",
-              "expression_unit": "%",
-              "parameters": [
+            "unit": "mins",
+            "serviceLevelObjetive": {
+              "duration": "86400s",
+              "period": "Daily",
+              "target_value": "60",
+              "parameter": "Resilience",
+              "serviceLevel": "1min/24h",
+              "serviceLevelDetail": [
                 {
-                  "parameter_unit": "%",
-                  "parameter_definition": "parameddef1",
-                  "parameter_value": "100",
-                  "parameter_name": "parameter1",
-                  "parameter_id": "prmtrNEW2"
+                  "unit": "mins",
+                  "value": "1",
+                  "operator": "greater"
+                },
+                {
+                  "unit": "hours",
+                  "value": "24",
+                  "operator": "equal"
                 }
               ]
             },
-            "rate": {
-              "parameterWindow": "20min"
+            "name": "Resilience",
+            "definition": "Resilience is the persistence of dependability when facing changes",
+            "value": "1",
+            "operator": "greater",
+            "guaranteeID": "g1"
+          },
+          {
+            "unit": "mins",
+            "serviceLevelObjetive": {
+              "duration": "21600s",
+              "period": "Hours",
+              "target_value": "60",
+              "parameter": "Resilience",
+              "serviceLevel": "1min/6h",
+              "serviceLevelDetail": [
+                {
+                  "unit": "mins",
+                  "value": "1",
+                  "operator": "greater"
+                },
+                {
+                  "unit": "hours",
+                  "value": "6",
+                  "operator": "equal"
+                }
+              ]
             },
-            "metric_definition": "test2"
+            "name": "Resilience",
+            "definition": "Resilience is the persistence of dependability when facing changes",
+            "value": "1",
+            "operator": "greater",
+            "guaranteeID": "g2"
           }
         ],
-        "slo_id": "sloNEW2",
-        "slo_definition": "20",
-        "slo_unit": "%"
+        "ns_uuid": "072b618c-96e2-4d6b-bbfc-1ec5d0ce80f9",
+        "ns_name": "myns",
+        "ns_vendor": "eu.5gtango",
+        "ns_version": "0.1"
       }
-    ],
-    "ns_name": "recursive-sonata",
-    "nsd_uuid": "bdfb73d1-89a6-4bcf-bd4e-a1d8002546f3"
-  }
-}
-},
-"state": "unpublished",
-"status": "active",
-"updated_at": "2018-03-22T15:49:46.817+00:00",
-"username": null,
-"uuid": "a03e8ca7-ebe6-4cb4-ba78-cf9f36656faf"
+    }
+  },
+  "published": false,
+  "uuid": "cecf65e8-ea49-47a2-965f-47d976547632",
+  "md5": "b38af0e118fe8685637b4faea404b625",
+  "status": "active",
+  "username": null
 }
