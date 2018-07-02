@@ -26,8 +26,8 @@ import eu.tng.rules.MonitoringRules;
  */
 public class RabbitMqConsumer implements ServletContextListener {
 
-	//private static final String EXCHANGE_NAME = System.getenv("BROKER_EXCHANGE");
-	private static final String EXCHANGE_NAME = "son-kernel";
+	private static final String EXCHANGE_NAME = System.getenv("BROKER_EXCHANGE");
+	// private static final String EXCHANGE_NAME = "son-kernel";
 
 	/**
 	 * Default constructor.
@@ -70,16 +70,16 @@ public class RabbitMqConsumer implements ServletContextListener {
 		String queueName_service_terminate = "slas.service.instance.terminate";
 
 		try {
-		    /*
-			queueName_service_instance = channel.queueDeclare().getQueue();
-			queueName_son_sla = channel.queueDeclare().getQueue();
-			queueName_sla_violation = channel.queueDeclare().getQueue();
-			queueName_service_terminate = channel.queueDeclare().getQueue();
-			*/
-		    channel.queueDeclare(queueName_service_instance, true, false, false, null);
-		    channel.queueDeclare(queueName_son_sla, true, false, false, null);
-		    channel.queueDeclare(queueName_sla_violation, true, false, false, null);
-		    channel.queueDeclare(queueName_service_terminate, true, false, false, null);
+			/*
+			 * queueName_service_instance = channel.queueDeclare().getQueue();
+			 * queueName_son_sla = channel.queueDeclare().getQueue();
+			 * queueName_sla_violation = channel.queueDeclare().getQueue();
+			 * queueName_service_terminate = channel.queueDeclare().getQueue();
+			 */
+			channel.queueDeclare(queueName_service_instance, true, false, false, null);
+			channel.queueDeclare(queueName_son_sla, true, false, false, null);
+			channel.queueDeclare(queueName_sla_violation, true, false, false, null);
+			channel.queueDeclare(queueName_service_terminate, true, false, false, null);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			System.out.println("ERROR!" + e.getMessage());
@@ -98,7 +98,7 @@ public class RabbitMqConsumer implements ServletContextListener {
 
 		System.out.println(" [*] Waiting for messages. To exit press CTRL+C");
 
-		Consumer consumer = new DefaultConsumer(channel) {
+		Consumer consumer_service_instance = new DefaultConsumer(channel) {
 			@Override
 			public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties,
 					byte[] body) throws IOException {
@@ -211,17 +211,16 @@ public class RabbitMqConsumer implements ServletContextListener {
 
 					String sla_id = null;
 					String ns_id = null;
-					
+
 					// get data for the monitoring rules
 					try {
 						// Get sla_id
 						sla_id = (String) jmessage.get("sla_id");
 						System.out.println(" SLA ID " + sla_id);
 
-						// Get service uuid 
+						// Get service uuid
 						JSONObject nsr = (JSONObject) jmessage.get("nsr");
-						ns_id = (String)nsr.get("id");
-
+						ns_id = (String) nsr.get("id");
 
 						// Get vnfrs
 						JSONArray vnfrs = (JSONArray) jmessage.get("vnfrs");
@@ -243,7 +242,7 @@ public class RabbitMqConsumer implements ServletContextListener {
 					} catch (Exception e) {
 						System.out.println("ERROR sto catc: " + e.getMessage());
 					}
-					
+
 					// call the create rules method
 					MonitoringRules mr = new MonitoringRules();
 					MonitoringRules.createMonitroingRules(sla_id, vnfrs_list, vdus_list, ns_id);
@@ -256,7 +255,7 @@ public class RabbitMqConsumer implements ServletContextListener {
 			}
 		};
 
-		Consumer consumer2 = new DefaultConsumer(channel) {
+		Consumer consumer_monitoring_sla = new DefaultConsumer(channel) {
 			@Override
 			public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties,
 					byte[] body) throws IOException {
@@ -303,7 +302,7 @@ public class RabbitMqConsumer implements ServletContextListener {
 			}
 		};
 
-		Consumer consumer3 = new DefaultConsumer(channel) {
+		Consumer consumer_sla_violation = new DefaultConsumer(channel) {
 			@Override
 			public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties,
 					byte[] body) throws IOException {
@@ -323,7 +322,7 @@ public class RabbitMqConsumer implements ServletContextListener {
 			}
 		};
 
-		Consumer consumer4 = new DefaultConsumer(channel) {
+		Consumer consumer_service_terminate = new DefaultConsumer(channel) {
 			@Override
 			public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties,
 					byte[] body) throws IOException {
@@ -331,32 +330,33 @@ public class RabbitMqConsumer implements ServletContextListener {
 				System.out.println("TERMINATING MESSAGE RECIEVED" + message);
 			}
 		};
+
 		try {
-			channel.basicConsume(queueName_service_instance, true, consumer);
+			channel.basicConsume(queueName_service_instance, true, consumer_service_instance);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			System.out.println("ERROR 1!" + e.getMessage());
+			System.out.println("ERROR consumer_service_instance !" + e.getMessage());
 		}
 
 		try {
-			channel.basicConsume(queueName_son_sla, true, consumer2);
+			channel.basicConsume(queueName_son_sla, true, consumer_monitoring_sla);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			System.out.println("ERROR 2!" + e.getMessage());
+			System.out.println("ERROR consumer_monitoring_sla !" + e.getMessage());
 		}
 
 		try {
-			channel.basicConsume(queueName_sla_violation, true, consumer3);
+			channel.basicConsume(queueName_sla_violation, true, consumer_sla_violation);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			System.out.println("ERROR 3!" + e.getMessage());
+			System.out.println("ERROR consumer_sla_violation !" + e.getMessage());
 		}
 
 		try {
-			channel.basicConsume(queueName_service_terminate, true, consumer4);
+			channel.basicConsume(queueName_service_terminate, true, consumer_service_terminate);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			System.out.println("ERROR!" + e.getMessage());
+			System.out.println("ERROR consumer_service_terminate!" + e.getMessage());
 		}
 	}
 }
