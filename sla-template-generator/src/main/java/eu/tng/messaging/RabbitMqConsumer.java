@@ -27,7 +27,7 @@ import eu.tng.rules.MonitoringRules;
 public class RabbitMqConsumer implements ServletContextListener {
 
     private static final String EXCHANGE_NAME = System.getenv("BROKER_EXCHANGE");
-    // private static final String EXCHANGE_NAME = "son-kernel";
+    //private static final String EXCHANGE_NAME = "son-kernel";
 
     /**
      * Default constructor.
@@ -133,13 +133,11 @@ public class RabbitMqConsumer implements ServletContextListener {
                     System.out.print("Cannot Parse yml object " + e.getMessage());
                 }
 
-                // Get instantiation request status
-                try {
+                
+                if (jmessage.has("status")) {
                     status = (String) jmessage.get("status");
-                } catch (Exception e) {
-                    System.out.println("ERROR: " + e.getMessage());
                 }
-
+                
                 // Parse headers
                 HashMap<String, Object> headers = (HashMap<String, Object>) properties.getHeaders();
                 for (Map.Entry<String, Object> header : headers.entrySet()) {
@@ -150,7 +148,7 @@ public class RabbitMqConsumer implements ServletContextListener {
                 }
 
                 // if message coming from the GK
-                if (status == null) {
+                if (!jmessage.has("status")) {
                     System.out.println("Message from  GK received: " + jmessage);
 
                     // Get nsd data
@@ -184,6 +182,7 @@ public class RabbitMqConsumer implements ServletContextListener {
                     }
 
                     if (sla_uuid != null) {
+                        
                         cust_sla_corr cust_sla = new cust_sla_corr();
                         @SuppressWarnings("unchecked")
                         ArrayList<String> SLADetails = cust_sla.getSLAdetails(sla_uuid);
@@ -195,9 +194,11 @@ public class RabbitMqConsumer implements ServletContextListener {
 
                         String inst_status = "PENDING";
 
+                        
                         db_operations.connectPostgreSQL();
                         cust_sla_corr.createCustSlaCorr(sla_uuid, sla_name, sla_status, ns_uuid, ns_name, cust_uuid,
                                 cust_email, inst_status, correlation_id);
+                       
 
                     }
 
@@ -207,10 +208,11 @@ public class RabbitMqConsumer implements ServletContextListener {
                     System.out.println("Message from  MANO received: " + jmessage);
                     System.out.println("status ==> " + status);
 
+                    
                     db_operations dbo = new db_operations();
                     db_operations.connectPostgreSQL();
                     db_operations.UpdateRecordAgreement(status, correlation_id);
-
+                    
                     String sla_id = null;
                     String ns_id = null;
 
@@ -245,10 +247,11 @@ public class RabbitMqConsumer implements ServletContextListener {
                         System.out.println("ERROR sto catc: " + e.getMessage());
                     }
 
+                    
                     // call the create rules method
                     MonitoringRules mr = new MonitoringRules();
                     MonitoringRules.createMonitroingRules(sla_id, vnfrs_list, vdus_list, ns_id);
-
+                    
                 } else if (status.equals("INSTANTIATING")) {
                     System.out.println("SERVICE STATUS IS: " + status);
                 } else {
