@@ -77,24 +77,21 @@ pipeline {
           }
 	}
 	
-	stage('Promoting containers to integration env') {
-    when {
-       branch 'master'
-    }
-    parallel {
-        stage('Publishing containers to int') {
-            steps {
-            echo 'Promoting containers to integration'
-            }
-         }
-        stage('tng-sla-mgmt') {
-            steps {
-            sh 'docker tag registry.sonata-nfv.eu:5000/tng-sla-mgmt:latest registry.sonata-nfv.eu:5000/tng-sla-mgmt:int'
-            sh 'docker push  registry.sonata-nfv.eu:5000/tng-sla-mgmt:int'
-            }
+	stage('Promoting to integration') {
+      when{
+        branch 'master'
+      }      
+      steps {
+        sh 'docker tag registry.sonata-nfv.eu:5000/tng-sla-mgmt:latest registry.sonata-nfv.eu:5000/tng-sla-mgmt:int'
+        sh 'docker push registry.sonata-nfv.eu:5000/tng-sla-mgmt:int'
+        sh 'rm -rf tng-devops || true'
+        sh 'git clone https://github.com/sonata-nfv/tng-devops.git'
+        dir(path: 'tng-devops') {
+          sh 'ansible-playbook roles/sp.yml -i environments component=sla-management -e "target=int-sp"'
         }
+      }
     }
-	}
+
   }
   
   post {
