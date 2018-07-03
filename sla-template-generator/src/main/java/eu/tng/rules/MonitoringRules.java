@@ -94,6 +94,7 @@ public class MonitoringRules {
 						rule.put("duration", duration);
 						rule.put("description", description);
 						rule.put("condition", condition);
+						rule.put("summary", "");
 						JSONObject notification_type = new JSONObject();
 						notification_type.put("id", "2");
 						notification_type.put("type", "rabbitmq");
