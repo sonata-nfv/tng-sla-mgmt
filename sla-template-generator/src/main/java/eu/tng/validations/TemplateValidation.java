@@ -34,17 +34,22 @@ import java.util.Date;
 
 public class TemplateValidation {
 
+	/**
+	 * Validate if expireDate is a future date
+	 * 
+	 * @param expireDate
+	 * @return
+	 */
 	public static boolean checkExpireDate(String expireDate) {
 
 		boolean valid_expire_date = false;
-				
+
 		/** current date */
 		Date today = new Date();
 
 		/** valid until date */
 		Date valid_until = null;
 		SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-		expireDate = "15/07/2020";
 		try {
 			valid_until = formatter.parse(expireDate);
 
@@ -59,16 +64,13 @@ public class TemplateValidation {
 		if (today.compareTo(valid_until) > 0) {
 			System.out.println("Today is after valid_until");
 			valid_expire_date = false;
-		} 
-		else if (today.compareTo(valid_until) < 0) {
+		} else if (today.compareTo(valid_until) < 0) {
 			System.out.println("Today is before valid_until");
 			valid_expire_date = true;
-		} 
-		else if (today.compareTo(valid_until) == 0) {
+		} else if (today.compareTo(valid_until) == 0) {
 			System.out.println("Today is equal to valid_until");
 			valid_expire_date = false;
-		} 
-		else {
+		} else {
 			System.out.println("Invalid dates");
 			valid_expire_date = false;
 		}
@@ -77,8 +79,42 @@ public class TemplateValidation {
 
 	}
 
+	/**
+	 * Check if the date is valid
+	 * @param expireDate
+	 * @return
+	 */
+	public static boolean checkValidDate(String expireDate) {
+
+		boolean valid_date = false;
+
+		if (expireDate == null) {
+			valid_date = false;
+		}
+
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+		sdf.setLenient(false);
+
+		try {
+			// if not valid, it will throw ParseException
+			Date date = sdf.parse(expireDate);
+			System.out.println(date);
+			valid_date = true;
+
+		} catch (ParseException e) {
+
+			System.out.println("ERROR validating date..: " + e.getMessage());
+			valid_date = false;
+		}
+
+		System.out.println("Is expireDate valid? " + valid_date);
+		return valid_date;
+
+	}
+
 	public static void main(String[] args) {
-		//checkExpireDate("2/07/2018");
+		// checkExpireDate("2/07/2018");
+		//checkValidDate("40/15/9999");
 	}
 
 }
