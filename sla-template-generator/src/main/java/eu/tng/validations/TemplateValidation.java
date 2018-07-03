@@ -30,21 +30,29 @@ package eu.tng.validations;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 public class TemplateValidation {
 
+	/**
+	 * Validate if expireDate is a future date
+	 * 
+	 * @param expireDate
+	 * @return valid_expire_date
+	 */
 	public static boolean checkExpireDate(String expireDate) {
 
 		boolean valid_expire_date = false;
-				
+
 		/** current date */
 		Date today = new Date();
 
 		/** valid until date */
 		Date valid_until = null;
 		SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-		expireDate = "15/07/2020";
 		try {
 			valid_until = formatter.parse(expireDate);
 
@@ -59,16 +67,13 @@ public class TemplateValidation {
 		if (today.compareTo(valid_until) > 0) {
 			System.out.println("Today is after valid_until");
 			valid_expire_date = false;
-		} 
-		else if (today.compareTo(valid_until) < 0) {
+		} else if (today.compareTo(valid_until) < 0) {
 			System.out.println("Today is before valid_until");
 			valid_expire_date = true;
-		} 
-		else if (today.compareTo(valid_until) == 0) {
+		} else if (today.compareTo(valid_until) == 0) {
 			System.out.println("Today is equal to valid_until");
 			valid_expire_date = false;
-		} 
-		else {
+		} else {
 			System.out.println("Invalid dates");
 			valid_expire_date = false;
 		}
@@ -77,8 +82,118 @@ public class TemplateValidation {
 
 	}
 
-	public static void main(String[] args) {
-		//checkExpireDate("2/07/2018");
+	/**
+	 * Check if the date is valid
+	 * 
+	 * @param expireDate
+	 * @return valid_date
+	 */
+	public static boolean checkValidDate(String expireDate) {
+
+		boolean valid_date = false;
+
+		if (expireDate == null) {
+			valid_date = false;
+		}
+
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+		sdf.setLenient(false);
+
+		try {
+			/** if not valid, it will throw ParseException **/
+			Date date = sdf.parse(expireDate);
+			System.out.println(date);
+			valid_date = true;
+
+		} catch (ParseException e) {
+
+			System.out.println("ERROR validating date..: " + e.getMessage());
+			valid_date = false;
+		}
+
+		System.out.println("Is expireDate valid? " + valid_date);
+		return valid_date;
+
 	}
 
+	/**
+	 * Check if the date is valid
+	 * 
+	 * @param expireDate
+	 * @return valid_gt
+	 */
+	public static boolean checkGuaranteeTerms(ArrayList<String> guarantees) {
+
+		boolean valid_gt = false;
+
+		if (guarantees == null || guarantees.size() == 0) {
+			System.out.println("ERROR: You must select at least one guarantee term!");
+			valid_gt = false;
+		} else {
+			/** check for duplicated guarantee id **/
+			Set<String> gt_ids = new HashSet<String>();
+			for (int i = 0; i < guarantees.size(); i++) {
+				String gt_uuid_temp = guarantees.get(i);
+				if (gt_ids.contains(gt_uuid_temp)) {
+					System.out.println("ERROR: Duplicated guarantee id= " + gt_uuid_temp);
+					valid_gt = false;
+					continue;
+				} else {
+					valid_gt = true;
+					gt_ids.add(gt_uuid_temp);
+				}
+			}
+		}
+
+		System.out.println("Are guarantee terms valid? " + valid_gt);
+		return valid_gt;
+
+	}
+	
+	/**
+	 * 
+	 * @param templateName
+	 * @return valid_name
+	 */
+	public static boolean checkName(String templateName) {
+
+		boolean valid_name = false;
+		templateName = templateName.trim();
+		
+		if (templateName == null || templateName.isEmpty()) {
+			System.out.println("ERROR: Template name is empty.");
+			valid_name = false;
+		}
+		else {
+			valid_name = true;
+		}
+		
+		System.out.println("Is the template name valid? " + valid_name);
+		return valid_name;
+
+	}
+	
+	/**
+	 * Validate the creation of an SLA Template
+	 * @param templateName
+	 * @param expireDate
+	 * @param guarantees
+	 * @return valid_create_template
+	 */
+	public ArrayList<Boolean> validateCreateTemplate(String templateName, String expireDate, ArrayList<String> guarantees) {
+		ArrayList<Boolean> valid_create_template = new ArrayList<>();
+		
+		boolean checkValidDate = checkValidDate(expireDate);
+		boolean checkExpireDate = checkExpireDate(expireDate);
+		boolean checkGuaranteeTerms = checkGuaranteeTerms(guarantees);
+		boolean checkName = checkName(templateName);
+		
+		valid_create_template.add(checkValidDate);
+		valid_create_template.add(checkExpireDate);
+		valid_create_template.add(checkGuaranteeTerms);
+		valid_create_template.add(checkName);		
+		
+		return valid_create_template;
+		
+	}
 }
