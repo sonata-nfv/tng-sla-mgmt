@@ -172,4 +172,28 @@ public class TemplateValidation {
 		return valid_name;
 
 	}
+	
+	/**
+	 * Validate the creation of an SLA Template
+	 * @param templateName
+	 * @param expireDate
+	 * @param guarantees
+	 * @return valid_create_template
+	 */
+	public ArrayList<Boolean> validateCreateTemplate(String templateName, String expireDate, ArrayList<String> guarantees) {
+		ArrayList<Boolean> valid_create_template = new ArrayList<>();
+		
+		boolean checkValidDate = checkValidDate(expireDate);
+		boolean checkExpireDate = checkExpireDate(expireDate);
+		boolean checkGuaranteeTerms = checkGuaranteeTerms(guarantees);
+		boolean checkName = checkName(templateName);
+		
+		valid_create_template.add(checkValidDate);
+		valid_create_template.add(checkExpireDate);
+		valid_create_template.add(checkGuaranteeTerms);
+		valid_create_template.add(checkName);		
+		
+		return valid_create_template;
+		
+	}
 }

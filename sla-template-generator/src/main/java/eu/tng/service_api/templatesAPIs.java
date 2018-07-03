@@ -182,74 +182,111 @@ public class templatesAPIs {
 			apiresponse = Response.ok((Object) error);
 			apiresponse.header("Content-Length", error.toJSONString().length());
 			return apiresponse.status(404).build();
-		} 
-		else {
-			
+		} else {
+
+			// Make the validations
 			TemplateValidation validation = new TemplateValidation();
-			
-			
-			
-			
-			
-			
-			Object createdTemplate = null;
-			try {
-				// String url =
-				// "http://pre-int-sp-ath.5gtango.eu:4011/catalogues/api/v2/slas/template-descriptors";
-				String url = System.getenv("CATALOGUES_URL") + "slas/template-descriptors";
-				URL object = new URL(url);
+			ArrayList<Boolean> valid_create_template = validation.validateCreateTemplate(templateName.get(0),
+					expireDate.get(0), guarantees);
 
-				HttpURLConnection con = (HttpURLConnection) object.openConnection();
-				con.setDoOutput(true);
-				con.setDoInput(true);
-				con.setRequestProperty("Content-Type", "application/json");
-				con.setRequestProperty("Accept", "application/json");
-				con.setRequestMethod("POST");
-				OutputStreamWriter wr = new OutputStreamWriter(con.getOutputStream());
-				wr.write(template.toString());
-				wr.flush();
-
-				StringBuilder sb = new StringBuilder();
-				int HttpResult = con.getResponseCode();
-
-				if (HttpResult == HttpURLConnection.HTTP_CREATED) {
-					BufferedReader br = new BufferedReader(new InputStreamReader(con.getInputStream(), "utf-8"));
-					String line = null;
-					while ((line = br.readLine()) != null) {
-						sb.append(line + "\n");
-
-					}
-					// create correlation between ns and sla template
-					JSONParser parser = new JSONParser();
-					createdTemplate = parser.parse(sb.toString());
-					JSONObject responseSLA = (JSONObject) createdTemplate;
-					String sla_uuid = (String) responseSLA.get("uuid");
-					ns_template_corr nstemplcorr = new ns_template_corr();
-					nstemplcorr.createNsTempCorr(nsd_uuid.get(0), sla_uuid);
-
-					br.close();
-
-					apiresponse = Response.ok(responseSLA);
-					apiresponse.header("Content-Length", responseSLA.toString().length());
-					return apiresponse.status(201).build();
-
-				} else {
-					// conflict in uploading sla template to the catalogue
-					System.out.println(con.getResponseMessage());
-					JSONObject error = new JSONObject();
-					error.put("ERROR: ", con.getResponseMessage());
-					apiresponse = Response.ok((Object) error);
-					apiresponse.header("Content-Length", error.toJSONString().length());
-					return apiresponse.status(400).build();
-				}
-			} catch (Exception e) {
+			if (valid_create_template.get(0) == false) {
+				// invalid date format
 				String dr = null;
 				JSONObject error = new JSONObject();
-				error.put("ERROR: ", "while uploding SLA Template");
+				error.put("ERROR: ", "Invalid expire date format. The format should be dd/mm/YYY");
 				apiresponse = Response.ok((Object) error);
-				apiresponse.header("Content-Length", error.toJSONString().length());
-				return apiresponse.status(404).build();
+				apiresponse.header("Content-Length", error.toJSONString().length()-2);
+				return apiresponse.status(400).build();
+
+			} else if (valid_create_template.get(1) == false) {
+				// invalid expire date
+				String dr = null;
+				JSONObject error = new JSONObject();
+				error.put("ERROR: ", "The expire date is not a future date.");
+				apiresponse = Response.ok((Object) error);
+				apiresponse.header("Content-Length", error.toJSONString().length()-2);
+				return apiresponse.status(400).build();
+				
+			} else if (valid_create_template.get(2) == false) {
+				// invalid guarantee terms	
+				String dr = null;
+				JSONObject error = new JSONObject();
+				error.put("ERROR: ", "There is a problem with the guarantee terms. You should select at least one guarantee id, and avoid duplicates.");
+				apiresponse = Response.ok((Object) error);
+				apiresponse.header("Content-Length", error.toJSONString().length()-2);
+				return apiresponse.status(400).build();
+			} else if (valid_create_template.get(3) == false) {
+				// invalid template name
+				String dr = null;
+				JSONObject error = new JSONObject();
+				error.put("ERROR: ", "Define a SLA Template Name");
+				apiresponse = Response.ok((Object) error);
+				apiresponse.header("Content-Length", error.toJSONString().length()-2);
+				return apiresponse.status(400).build();
+			} else {
+				/**
+				 * If all the parameters are valid - continue to the creation of the template
+				 **/
+				Object createdTemplate = null;
+				try {
+					// String url =
+					// "http://pre-int-sp-ath.5gtango.eu:4011/catalogues/api/v2/slas/template-descriptors";
+					String url = System.getenv("CATALOGUES_URL") + "slas/template-descriptors";
+					URL object = new URL(url);
+
+					HttpURLConnection con = (HttpURLConnection) object.openConnection();
+					con.setDoOutput(true);
+					con.setDoInput(true);
+					con.setRequestProperty("Content-Type", "application/json");
+					con.setRequestProperty("Accept", "application/json");
+					con.setRequestMethod("POST");
+					OutputStreamWriter wr = new OutputStreamWriter(con.getOutputStream());
+					wr.write(template.toString());
+					wr.flush();
+
+					StringBuilder sb = new StringBuilder();
+					int HttpResult = con.getResponseCode();
+
+					if (HttpResult == HttpURLConnection.HTTP_CREATED) {
+						BufferedReader br = new BufferedReader(new InputStreamReader(con.getInputStream(), "utf-8"));
+						String line = null;
+						while ((line = br.readLine()) != null) {
+							sb.append(line + "\n");
+
+						}
+						// create correlation between ns and sla template
+						JSONParser parser = new JSONParser();
+						createdTemplate = parser.parse(sb.toString());
+						JSONObject responseSLA = (JSONObject) createdTemplate;
+						String sla_uuid = (String) responseSLA.get("uuid");
+						ns_template_corr nstemplcorr = new ns_template_corr();
+						nstemplcorr.createNsTempCorr(nsd_uuid.get(0), sla_uuid);
+
+						br.close();
+
+						apiresponse = Response.ok(responseSLA);
+						apiresponse.header("Content-Length", responseSLA.toString().length());
+						return apiresponse.status(201).build();
+
+					} else {
+						// conflict in uploading sla template to the catalogue
+						System.out.println(con.getResponseMessage());
+						JSONObject error = new JSONObject();
+						error.put("ERROR: ", con.getResponseMessage());
+						apiresponse = Response.ok((Object) error);
+						apiresponse.header("Content-Length", error.toJSONString().length());
+						return apiresponse.status(400).build();
+					}
+				} catch (Exception e) {
+					String dr = null;
+					JSONObject error = new JSONObject();
+					error.put("ERROR: ", "while uploding SLA Template");
+					apiresponse = Response.ok((Object) error);
+					apiresponse.header("Content-Length", error.toJSONString().length());
+					return apiresponse.status(404).build();
+				}
 			}
+
 		}
 
 	}
