@@ -232,7 +232,8 @@ public class templatesAPIs {
 				 **/
 				Object createdTemplate = null;
 				try {
-					//String url = "http://pre-int-sp-ath.5gtango.eu:4011/catalogues/api/v2/slas/template-descriptors";
+					// String url =
+					// "http://pre-int-sp-ath.5gtango.eu:4011/catalogues/api/v2/slas/template-descriptors";
 					String url = System.getenv("CATALOGUES_URL") + "slas/template-descriptors";
 					URL object = new URL(url);
 
@@ -311,37 +312,50 @@ public class templatesAPIs {
 		HttpURLConnection httpURLConnection = null;
 		URL url = null;
 
-		try {
-			// url = new
-			// URL("http://pre-int-sp-ath.5gtango.eu:4011/catalogues/api/v2/slas/template-descriptors/"
-			// + sla_uuid);
-			url = new URL(System.getenv("CATALOGUES_URL") + "slas/template-descriptors/" + sla_uuid);
+		db_operations dbo = new db_operations();
+		dbo.connectPostgreSQL();
+		int counter = dbo.countAgreementCorrelationPeriD(sla_uuid);
 
-			httpURLConnection = (HttpURLConnection) url.openConnection();
-			httpURLConnection.setRequestProperty("Content-Type", "application/json");
-			httpURLConnection.setRequestMethod("DELETE");
-			System.out.println(httpURLConnection.getResponseCode());
+		if (counter != 0) {
+			dr = ("ERROR: SLA Template cannot be deleted because it is associated with an instantiated NS.");
+			apiresponse = Response.ok();
+			apiresponse.header("Content-Length", (dr.length()));
+			return apiresponse.status(400).entity(dr).build();
+		} 
+		else {
+			try {
+				 url = new
+				 URL("http://pre-int-sp-ath.5gtango.eu:4011/catalogues/api/v2/slas/template-descriptors/"
+				 + sla_uuid);
+				//url = new URL(System.getenv("CATALOGUES_URL") + "slas/template-descriptors/" + sla_uuid);
 
-			if (httpURLConnection.getResponseCode() == 404) {
-				return Response.status(404).entity("SLA uuid Not Found").build();
+				httpURLConnection = (HttpURLConnection) url.openConnection();
+				httpURLConnection.setRequestProperty("Content-Type", "application/json");
+				httpURLConnection.setRequestMethod("DELETE");
+				System.out.println(httpURLConnection.getResponseCode());
 
-			} else {
-				// delete all correlations with the deleted sla template from postgreSQL table
-				ns_template_corr nstemplcorr = new ns_template_corr();
-				nstemplcorr.deleteNsTempCorr(sla_uuid);
-				dr = ("SLA: " + sla_uuid + " deleted succesfully");
-				apiresponse = Response.ok();
-				apiresponse.header("Content-Length", (dr.length()));
-				return apiresponse.status(200).entity(dr).build();
+				if (httpURLConnection.getResponseCode() == 404) {
+					return Response.status(404).entity("SLA uuid Not Found").build();
+
+				} else {
+					// delete all correlations with the deleted sla template from postgreSQL table
+					ns_template_corr nstemplcorr = new ns_template_corr();
+					nstemplcorr.deleteNsTempCorr(sla_uuid);
+					dr = ("SLA: " + sla_uuid + " deleted succesfully");
+					apiresponse = Response.ok();
+					apiresponse.header("Content-Length", (dr.length()));
+					return apiresponse.status(200).entity(dr).build();
+
+				}
+
+			} catch (Exception e) {
+				JSONObject error = new JSONObject();
+				error.put("ERROR: ", "URL Not Found");
+				apiresponse = Response.ok((Object) error);
+				apiresponse.header("Content-Length", error.toJSONString().length());
+				return apiresponse.status(404).build();
 
 			}
-
-		} catch (Exception e) {
-			JSONObject error = new JSONObject();
-			error.put("ERROR: ", "URL Not Found");
-			apiresponse = Response.ok((Object) error);
-			apiresponse.header("Content-Length", error.toJSONString().length());
-			return apiresponse.status(404).build();
 
 		}
 
