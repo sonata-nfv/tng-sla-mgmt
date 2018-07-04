@@ -265,7 +265,7 @@ public class templatesAPIs {
 						br.close();
 
 						apiresponse = Response.ok(responseSLA);
-						apiresponse.header("Content-Length", responseSLA.toString().length());
+						apiresponse.header("Content-Length", responseSLA.toString().length()-9);
 						return apiresponse.status(201).build();
 
 					} else {
