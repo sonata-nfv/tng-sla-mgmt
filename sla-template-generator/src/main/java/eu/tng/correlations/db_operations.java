@@ -52,9 +52,9 @@ public class db_operations {
 		try {
 
 			Class.forName("org.postgresql.Driver");
-//			 c =
-//			 DriverManager.getConnection("jdbc:postgresql://localhost:5432/sla-manager","postgres",
-//			 "admin");
+			// c =
+			// DriverManager.getConnection("jdbc:postgresql://localhost:5432/sla-manager",
+			// "postgres", "admin");
 			c = DriverManager
 					.getConnection(
 							"jdbc:postgresql://" + System.getenv("DATABASE_HOST") + ":" + System.getenv("DATABASE_PORT")
@@ -480,6 +480,31 @@ public class db_operations {
 		}
 
 		return root;
+	}
+
+	/**
+	 * Get agreement correlation per sla_uuid
+	 */
+	@SuppressWarnings("unchecked")
+	public int countAgreementCorrelationPeriD(String sla_uuid) {
+
+		String SQL = "SELECT count(*) FROM cust_sla";
+		int count = 0;
+
+		try {
+			stmt = c.createStatement();
+			ResultSet rs = stmt.executeQuery(SQL);
+			while (rs.next()) {
+				count = rs.getInt(1);
+
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		System.out.println("SLA Correlations are ==> " + count);
+		return count;
+
 	}
 
 	/**
