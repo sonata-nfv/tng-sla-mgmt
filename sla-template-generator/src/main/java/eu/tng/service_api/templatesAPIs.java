@@ -54,6 +54,8 @@ import javax.ws.rs.core.UriInfo;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
+import com.sun.jersey.core.util.Base64;
+
 import eu.tng.template_gen.*;
 import eu.tng.validations.TemplateValidation;
 import eu.tng.correlations.*;
@@ -195,7 +197,7 @@ public class templatesAPIs {
 				JSONObject error = new JSONObject();
 				error.put("ERROR: ", "Invalid expire date format. The format should be dd/mm/YYY");
 				apiresponse = Response.ok((Object) error);
-				apiresponse.header("Content-Length", error.toJSONString().length()-2);
+				apiresponse.header("Content-Length", error.toJSONString().length() - 2);
 				return apiresponse.status(400).build();
 
 			} else if (valid_create_template.get(1) == false) {
@@ -204,16 +206,17 @@ public class templatesAPIs {
 				JSONObject error = new JSONObject();
 				error.put("ERROR: ", "The expire date is not a future date.");
 				apiresponse = Response.ok((Object) error);
-				apiresponse.header("Content-Length", error.toJSONString().length()-2);
+				apiresponse.header("Content-Length", error.toJSONString().length() - 2);
 				return apiresponse.status(400).build();
-				
+
 			} else if (valid_create_template.get(2) == false) {
-				// invalid guarantee terms	
+				// invalid guarantee terms
 				String dr = null;
 				JSONObject error = new JSONObject();
-				error.put("ERROR: ", "There is a problem with the guarantee terms. You should select at least one guarantee id, and avoid duplicates.");
+				error.put("ERROR: ",
+						"There is a problem with the guarantee terms. You should select at least one guarantee id, and avoid duplicates.");
 				apiresponse = Response.ok((Object) error);
-				apiresponse.header("Content-Length", error.toJSONString().length()-2);
+				apiresponse.header("Content-Length", error.toJSONString().length() - 2);
 				return apiresponse.status(400).build();
 			} else if (valid_create_template.get(3) == false) {
 				// invalid template name
@@ -221,7 +224,7 @@ public class templatesAPIs {
 				JSONObject error = new JSONObject();
 				error.put("ERROR: ", "Define a SLA Template Name");
 				apiresponse = Response.ok((Object) error);
-				apiresponse.header("Content-Length", error.toJSONString().length()-2);
+				apiresponse.header("Content-Length", error.toJSONString().length() - 2);
 				return apiresponse.status(400).build();
 			} else {
 				/**
@@ -229,8 +232,7 @@ public class templatesAPIs {
 				 **/
 				Object createdTemplate = null;
 				try {
-					// String url =
-					// "http://pre-int-sp-ath.5gtango.eu:4011/catalogues/api/v2/slas/template-descriptors";
+					//String url = "http://pre-int-sp-ath.5gtango.eu:4011/catalogues/api/v2/slas/template-descriptors";
 					String url = System.getenv("CATALOGUES_URL") + "slas/template-descriptors";
 					URL object = new URL(url);
 
@@ -238,9 +240,10 @@ public class templatesAPIs {
 					con.setDoOutput(true);
 					con.setDoInput(true);
 					con.setRequestProperty("Content-Type", "application/json");
-					con.setRequestProperty("Accept", "application/json");
+					con.setRequestProperty("Accept", "application/json; charset=utf-8");
 					con.setRequestMethod("POST");
 					OutputStreamWriter wr = new OutputStreamWriter(con.getOutputStream());
+
 					wr.write(template.toString());
 					wr.flush();
 
@@ -249,23 +252,26 @@ public class templatesAPIs {
 
 					if (HttpResult == HttpURLConnection.HTTP_CREATED) {
 						BufferedReader br = new BufferedReader(new InputStreamReader(con.getInputStream(), "utf-8"));
+						int response_length = con.getInputStream().available();
 						String line = null;
 						while ((line = br.readLine()) != null) {
 							sb.append(line + "\n");
 
 						}
+
 						// create correlation between ns and sla template
 						JSONParser parser = new JSONParser();
 						createdTemplate = parser.parse(sb.toString());
 						JSONObject responseSLA = (JSONObject) createdTemplate;
 						String sla_uuid = (String) responseSLA.get("uuid");
+
 						ns_template_corr nstemplcorr = new ns_template_corr();
 						nstemplcorr.createNsTempCorr(nsd_uuid.get(0), sla_uuid);
 
 						br.close();
 
 						apiresponse = Response.ok(responseSLA);
-						apiresponse.header("Content-Length", responseSLA.toString().length()-9);
+						apiresponse.header("Content-Length", response_length);
 						return apiresponse.status(201).build();
 
 					} else {
