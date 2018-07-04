@@ -1,321 +1,1305 @@
 {
-  "swagger": "2.0",
-  "info": {
-    "description": "An H2020 5GTANGO project",
-    "version": "0.0.1",
-    "title": "5GTANGO SLA Manager REST API",
-    "termsOfService": "https://5gtango.eu/",
-    "license": {
-      "name": "H2020 5GTANGO Copyright",
-      "url": "https://github.com/sonata-nfv/tng-sla-mgmt/blob/master/LICENSE"
-    }
-  },
-  "host": "tng-sla-mgmt:8080",
-  "basePath": "/tng-sla-mgmt",
-  "tags": [
-    {
-      "name": "default",
-      "description": "Default namespace"
-    },
-    {
-      "name": "v1",
-      "description": "sla-mgmt API"
-    }
-  ],
-  "paths": {
-    "/api/slas/v1/templates": {
-      "post": {
-        "responses": {
-          "201": {
-            "description": "Created"
-          },
-          "404": {
-            "description": "Not Found: NS not found."
-          }
-        },
-        "operationId": "create_template",
-        "parameters": [
-          {
-            "name": "nsd_uuid",
-            "in": "formData",
-            "required": true,
-            "type": "string",
-            "description": "Network Service UUID"
-          },
-          {
-            "name": "templateName",
-            "in": "formData",
-            "required": true,
-            "type": "string",
-            "description": "Name of the SLA template"
-          },
-          {
-            "name": "expireDate",
-            "in": "formData",
-            "required": true,
-            "type": "string",
-            "description": "Expire date of the SLA"
-          },
-          {
-            "name": "guaranteeID",
-            "in": "formData",
-            "required": true,
-            "type": "string",
-            "description": "The ID of the SLO"
-          }
-        ],
-        "consumes": [
-          "multipart/form-data"
-        ],
-        "tags": [
-          "v1"
-        ]
-      }
-    },
-    "/api/slas/v1/templates/{sla_uuid}": {
-      "parameters": [
-        {
-          "name": "sla_uuid",
-          "in": "formData",
-          "type": "string",
-          "description": "SLA uuid"
-        }
-      ],
-      "delete": {
-        "responses": {
-          "200": {
-            "description": "Success"
-          },
-          "400": {
-            "description": "Bad request: HTTP bad request"
-          }
-        },
-        "operationId": "delete_sla_template",
-        "tags": [
-          "v1"
-        ]
-      },
-      "get": {
-        "responses": {
-          "200": {
-            "description": "Success"
-          },
-          "404": {
-            "description": "Not Found: SLA Not found"
-          }
-        },
-        "operationId": "get_sla_by_uuid",
-        "tags": [
-          "v1"
-        ]
-      }
-    },
-    "/api/slas/v1/templates/": {
-      "get": {
-        "responses": {
-          "200": {
-            "description": "Success"
-          },
-          "400": {
-            "description": "Bad request: HTTP bad request"
-          }
-        },
-        "operationId": "get_all_sla_templates",
-        "tags": [
-          "v1"
-        ]
-      }
-    },
-    "/api/slas/v1/mgmt/guaranteesList": {
-      "get": {
-        "responses": {
-          "200": {
-            "description": "Success"
-          },
-          "400": {
-            "description": "Bad request: HTTP bad request"
-          }
-        },
-        "operationId": "get_guarantee_list",
-        "parameters": [],
-        "tags": [
-          "v1"
-        ]
-      }
-    },
-    "/api/slas/v1/mgmt/services/templates/": {
-      "get": {
-        "responses": {
-          "200": {
-            "description": "Success"
-          },
-          "400": {
-            "description": "Bad request: HTTP bad request"
-          }
-        },
-        "operationId": "get_correlated_sla_ns",
-        "parameters": [],
-        "tags": [
-          "v1"
-        ]
-      }
-    },
-    "/api/slas/v1/mgmt/services/templates/true": {
-      "get": {
-        "responses": {
-          "200": {
-            "description": "Success"
-          },
-          "400": {
-            "description": "Bad request: HTTP bad request"
-          }
-        },
-        "operationId": "get_ns_assosiated_Slas",
-        "parameters": [],
-        "tags": [
-          "v1"
-        ]
-      }
-    },
-    "/api/slas/v1/mgmt/services/templates/false": {
-      "get": {
-        "responses": {
-          "200": {
-            "description": "Success"
-          },
-          "400": {
-            "description": "Bad request: HTTP bad request"
-          }
-        },
-        "operationId": "get_ns_withno_slas",
-        "parameters": [],
-        "tags": [
-          "v1"
-        ]
-      }
-    },
-    "/api/slas/v1/mgmt/services/agreementes/true": {
-      "get": {
-        "responses": {
-          "200": {
-            "description": "Success"
-          },
-          "400": {
-            "description": "Bad request: HTTP bad request"
-          }
-        },
-        "operationId": "get_ns_with_agreements",
-        "parameters": [],
-        "tags": [
-          "v1"
-        ]
-      }
-    },
-    "/api/slas/v1/mgmt/services/agreementes/false": {
-      "get": {
-        "responses": {
-          "200": {
-            "description": "Success"
-          },
-          "400": {
-            "description": "Bad request: HTTP bad request"
-          }
-        },
-        "operationId": "get_ns_with_no_agreements",
-        "parameters": [],
-        "tags": [
-          "v1"
-        ]
-      }
-    },
-    "/api/slas/v1/mgmt/services/agreementes": {
-      "get": {
-        "responses": {
-          "200": {
-            "description": "Success"
-          },
-          "400": {
-            "description": "Bad request: HTTP bad request"
-          }
-        },
-        "operationId": "get_agreements",
-        "parameters": [],
-        "tags": [
-          "v1"
-        ]
-      }
-    },
-    "/api/slas/v1/agreements/{sla_uuid}": {
-      "parameters": [
-        {
-          "name": "sla_uuid",
-          "in": "formData",
-          "type": "string",
-          "description": "SLA uuid"
-        }
-      ],
-      "delete": {
-        "responses": {
-          "200": {
-            "description": "Success"
-          },
-          "404": {
-            "description": "NOT Found: SLA not found"
-          }
-        },
-        "operationId": "delete_agreement",
-        "tags": [
-          "v1"
-        ]
-      }
-    },
-    "/api/slas/v1/agreements/service/{ns_uuid}": {
-      "parameters": [
-        {
-          "name": "ns_uuid",
-          "in": "formData",
-          "type": "string",
-          "description": "NS uuid"
-        }
-      ],
-      "get": {
-        "responses": {
-          "200": {
-            "description": "Success"
-          },
-          "404": {
-            "description": "NOT Found: NS not found"
-          }
-        },
-        "operationId": "agreements_per_InsNs",
-        "tags": [
-          "v1"
-        ]
-      }
-    },
-    "/api/slas/v1/agreements/guarantee-terms/{sla_uuid}": {
-      "parameters": [
-        {
-          "name": "sla_uuid",
-          "in": "formData",
-          "type": "string",
-          "description": "NS uuid"
-        }
-      ],
-      "get": {
-        "responses": {
-          "200": {
-            "description": "Success"
-          },
-          "404": {
-            "description": "NOT Found: SLA not found"
-          }
-        },
-        "operationId": "guarantees_per_sla",
-        "tags": [
-          "v1"
-        ]
-      }
-    }
-  }
+	"swagger": "2.0",
+	"info": {
+		"description": "An H2020 5GTANGO project",
+		"version": "0.0.1",
+		"title": "5GTANGO SLA Manager REST API",
+		"termsOfService": "https://5gtango.eu/",
+		"license": {
+			"name": "H2020 5GTANGO Copyright",
+			"url": "https://github.com/sonata-nfv/tng-sla-mgmt/blob/master/LICENSE"
+		}
+	},
+	"host": "tng-sla-mgmt:8080",
+	"basePath": "/tng-sla-mgmt/api/slas/v1",
+	"tags": [
+		{
+			"name": "SLA-Templates-v1",
+			"description": "SLA Templates APIs"
+		},
+		{
+			"name": "SLA-Agreements-v1",
+			"description": "SLA Agreements APIs"
+		},
+		{
+			"name": "SLA-Management-v1",
+			"description": "SLA Managements APIs"
+		}
+	],
+	"paths": {
+		"/templates": {
+			"post": {
+				"responses": {
+					"201": {
+						"description": "Created",
+						"headers": {
+							"Content-Type": {
+								"description": "The MIME type of the body of the response (\"application/json\").",
+								"type": "string",
+								"maximum": 1,
+								"minimum": 1
+							}
+						},
+						"schema": {
+							"type": "object",
+							"properties": {
+								"descriptor_schema": {
+									"description": "The descriptor schema the template follows",
+									"type": "string"
+								},
+								"name": {
+									"description": "The name of the sla template",
+									"type": "string"
+								},
+								"vendor": {
+									"description": "The vendor of the sla template",
+									"type": "string"
+								},
+								"version": {
+									"description": "The version of the sla template",
+									"type": "string"
+								},
+								"author": {
+									"description": "The author/s of the sla template",
+									"type": "string"
+								},
+								"description": {
+									"description": "A simple description of the sla template",
+									"type": "string"
+								},
+								"sla_template": {
+									"type": "object",
+									"properties": {
+										"template_name": {
+											"description": "The user defined sla template name",
+											"type": "string"
+										},
+										"offered_date": {
+											"description": "The sla template offered date",
+											"type": "string"
+										},
+										"valid_until": {
+											"description": "The sla template expiration date",
+											"type": "string"
+										},
+										"ns": {
+											"type": "object",
+											"properties": {
+												"ns_uuid": {
+													"description": "The accosiated ns uuid",
+													"type": "string"
+												},
+												"ns_vendor": {
+													"description": "The accosiated ns vendor",
+													"type": "string"
+												},
+												"ns_version": {
+													"description": "The accosiated ns version",
+													"type": "string"
+												},
+												"ns_description": {
+													"description": "The accosiated ns description",
+													"type": "string"
+												},
+												"guaranteeTerms": {
+													"type": "array",
+													"items": {
+														"type": "object",
+														"properties": {
+															"guaranteeID": {
+																"description": "The id of the selected guarantee term",
+																"type": "string"
+															},
+															"name": {
+																"description": "The name of the selected guarantee term",
+																"type": "string"
+															},
+															"definition": {
+																"description": "A short definition of the selected guarantee term",
+																"type": "string"
+															},
+															"value": {
+																"description": "The value of the selected guarantee term",
+																"type": "string"
+															},
+															"operator": {
+																"description": "The operator describing the expression of the selected guarantee term",
+																"type": "string"
+															},
+															"unit": {
+																"description": "The unit describing the selected guarantee term",
+																"type": "string"
+															},
+															"serviceLevelObjetive": {
+																"type": "object",
+																"properties": {
+																	"period": {
+																		"description": "The period that the guarantee term will be calculated",
+																		"type": "string"
+																	},
+																	"parameter": {
+																		"description": "The service level objective that is going to be guaranteed",
+																		"type": "string"
+																	},
+																	"serviceLevel": {
+																		"description": "The unit describing the selected guarantee term",
+																		"type": "string"
+																	},
+																	"duration": {
+																		"description": "The monitoring duration of the guarantee",
+																		"type": "string"
+																	},
+																	"target_value": {
+																		"description": "The monitoring target_value of the guarantee",
+																		"type": "string"
+																	},
+																	"serviceLevelDetail": {
+																		"type": "array",
+																		"items": {
+																			"type": "object",
+																			"properties": {
+																				"unit": {
+																					"description": "The unit of the guarantee term",
+																					"type": "string"
+																				},
+																				"value": {
+																					"description": "The value of the guarantee term",
+																					"type": "string"
+																				},
+																				"operator": {
+																					"description": "The operator describing the expression of the guarantee term",
+																					"type": "string"
+																				}
+																			}
+																		}
+																	}
+																}
+															}
+														}
+													}
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad request: HTTP bad request"
+					},
+					"404": {
+						"description": "Not Found: NS not found."
+					}
+				},
+				"operationId": "create_template",
+				"parameters": [
+					{
+						"name": "nsd_uuid",
+						"in": "formData",
+						"required": true,
+						"type": "string",
+						"description": "Network Service UUID"
+					},
+					{
+						"name": "templateName",
+						"in": "formData",
+						"required": true,
+						"type": "string",
+						"description": "Name of the SLA template"
+					},
+					{
+						"name": "expireDate",
+						"in": "formData",
+						"required": true,
+						"type": "string",
+						"description": "Expire date of the SLA"
+					},
+					{
+						"name": "guaranteeID",
+						"in": "formData",
+						"required": true,
+						"type": "string",
+						"description": "The ID of the SLO"
+					}
+				],
+				"consumes": [
+					"multipart/form-data"
+				],
+				"tags": [
+					"SLA-Templates-v1"
+				]
+			}
+		},
+		"/templates/{sla_uuid}": {
+			"parameters": [
+				{
+					"name": "sla_uuid",
+					"in": "path",
+					"type": "string",
+					"required": true,
+					"description": "SLA uuid"
+				}
+			],
+			"delete": {
+				"responses": {
+					"200": {
+						"description": "Success: SLA {sla_uuid} deleted!"
+					},
+					"404": {
+						"description": "ERROR: sla_uuid Not Found"
+					}
+				},
+				"operationId": "delete_sla_template",
+				"tags": [
+					"SLA-Templates-v1"
+				]
+			},
+			"get": {
+				"responses": {
+					"200": {
+						"description": "Success",
+						"headers": {
+							"Content-Type": {
+								"description": "The MIME type of the body of the response (\"application/json\").",
+								"type": "string",
+								"maximum": 1,
+								"minimum": 1
+							}
+						},
+						"schema": {
+							"type": "object",
+							"properties": {
+								"descriptor_schema": {
+									"description": "The descriptor schema the template follows",
+									"type": "string"
+								},
+								"name": {
+									"description": "The name of the sla template",
+									"type": "string"
+								},
+								"vendor": {
+									"description": "The vendor of the sla template",
+									"type": "string"
+								},
+								"version": {
+									"description": "The version of the sla template",
+									"type": "string"
+								},
+								"author": {
+									"description": "The author/s of the sla template",
+									"type": "string"
+								},
+								"description": {
+									"description": "A simple description of the sla template",
+									"type": "string"
+								},
+								"sla_template": {
+									"type": "object",
+									"properties": {
+										"template_name": {
+											"description": "The user defined sla template name",
+											"type": "string"
+										},
+										"offered_date": {
+											"description": "The sla template offered date",
+											"type": "string"
+										},
+										"valid_until": {
+											"description": "The sla template expiration date",
+											"type": "string"
+										},
+										"ns": {
+											"type": "object",
+											"properties": {
+												"ns_uuid": {
+													"description": "The accosiated ns uuid",
+													"type": "string"
+												},
+												"ns_vendor": {
+													"description": "The accosiated ns vendor",
+													"type": "string"
+												},
+												"ns_version": {
+													"description": "The accosiated ns version",
+													"type": "string"
+												},
+												"ns_description": {
+													"description": "The accosiated ns description",
+													"type": "string"
+												},
+												"guaranteeTerms": {
+													"type": "array",
+													"items": {
+														"type": "object",
+														"properties": {
+															"guaranteeID": {
+																"description": "The id of the selected guarantee term",
+																"type": "string"
+															},
+															"name": {
+																"description": "The name of the selected guarantee term",
+																"type": "string"
+															},
+															"definition": {
+																"description": "A short definition of the selected guarantee term",
+																"type": "string"
+															},
+															"value": {
+																"description": "The value of the selected guarantee term",
+																"type": "string"
+															},
+															"operator": {
+																"description": "The operator describing the expression of the selected guarantee term",
+																"type": "string"
+															},
+															"unit": {
+																"description": "The unit describing the selected guarantee term",
+																"type": "string"
+															},
+															"serviceLevelObjetive": {
+																"type": "object",
+																"properties": {
+																	"period": {
+																		"description": "The period that the guarantee term will be calculated",
+																		"type": "string"
+																	},
+																	"parameter": {
+																		"description": "The service level objective that is going to be guaranteed",
+																		"type": "string"
+																	},
+																	"serviceLevel": {
+																		"description": "The unit describing the selected guarantee term",
+																		"type": "string"
+																	},
+																	"duration": {
+																		"description": "The monitoring duration of the guarantee",
+																		"type": "string"
+																	},
+																	"target_value": {
+																		"description": "The monitoring target_value of the guarantee",
+																		"type": "string"
+																	},
+																	"serviceLevelDetail": {
+																		"type": "array",
+																		"items": {
+																			"type": "object",
+																			"properties": {
+																				"unit": {
+																					"description": "The unit of the guarantee term",
+																					"type": "string"
+																				},
+																				"value": {
+																					"description": "The value of the guarantee term",
+																					"type": "string"
+																				},
+																				"operator": {
+																					"description": "The operator describing the expression of the guarantee term",
+																					"type": "string"
+																				}
+																			}
+																		}
+																	}
+																}
+															}
+														}
+													}
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "ERROR: SLA Not Found"
+					}
+				},
+				"operationId": "get_sla_by_uuid",
+				"tags": [
+					"SLA-Templates-v1"
+				]
+			}
+		},
+		"/templates/": {
+			"get": {
+				"responses": {
+					"200": {
+						"description": "Success",
+						"headers": {
+							"Content-Type": {
+								"description": "The MIME type of the body of the response (\"application/json\").",
+								"type": "string",
+								"maximum": 1,
+								"minimum": 1
+							}
+						},
+						"schema": {
+							"type": "array",
+							"items": {
+								"type": "object",
+								"properties": {
+									"descriptor_schema": {
+										"description": "The descriptor schema the template follows",
+										"type": "string"
+									},
+									"name": {
+										"description": "The name of the sla template",
+										"type": "string"
+									},
+									"vendor": {
+										"description": "The vendor of the sla template",
+										"type": "string"
+									},
+									"version": {
+										"description": "The version of the sla template",
+										"type": "string"
+									},
+									"author": {
+										"description": "The author/s of the sla template",
+										"type": "string"
+									},
+									"description": {
+										"description": "A simple description of the sla template",
+										"type": "string"
+									},
+									"sla_template": {
+										"type": "object",
+										"properties": {
+											"template_name": {
+												"description": "The user defined sla template name",
+												"type": "string"
+											},
+											"offered_date": {
+												"description": "The sla template offered date",
+												"type": "string"
+											},
+											"valid_until": {
+												"description": "The sla template expiration date",
+												"type": "string"
+											},
+											"ns": {
+												"type": "object",
+												"properties": {
+													"ns_uuid": {
+														"description": "The accosiated ns uuid",
+														"type": "string"
+													},
+													"ns_vendor": {
+														"description": "The accosiated ns vendor",
+														"type": "string"
+													},
+													"ns_version": {
+														"description": "The accosiated ns version",
+														"type": "string"
+													},
+													"ns_description": {
+														"description": "The accosiated ns description",
+														"type": "string"
+													},
+													"guaranteeTerms": {
+														"type": "array",
+														"items": {
+															"type": "object",
+															"properties": {
+																"guaranteeID": {
+																	"description": "The id of the selected guarantee term",
+																	"type": "string"
+																},
+																"name": {
+																	"description": "The name of the selected guarantee term",
+																	"type": "string"
+																},
+																"definition": {
+																	"description": "A short definition of the selected guarantee term",
+																	"type": "string"
+																},
+																"value": {
+																	"description": "The value of the selected guarantee term",
+																	"type": "string"
+																},
+																"operator": {
+																	"description": "The operator describing the expression of the selected guarantee term",
+																	"type": "string"
+																},
+																"unit": {
+																	"description": "The unit describing the selected guarantee term",
+																	"type": "string"
+																},
+																"serviceLevelObjetive": {
+																	"type": "object",
+																	"properties": {
+																		"period": {
+																			"description": "The period that the guarantee term will be calculated",
+																			"type": "string"
+																		},
+																		"parameter": {
+																			"description": "The service level objective that is going to be guaranteed",
+																			"type": "string"
+																		},
+																		"serviceLevel": {
+																			"description": "The unit describing the selected guarantee term",
+																			"type": "string"
+																		},
+																		"duration": {
+																			"description": "The monitoring duration of the guarantee",
+																			"type": "string"
+																		},
+																		"target_value": {
+																			"description": "The monitoring target_value of the guarantee",
+																			"type": "string"
+																		},
+																		"serviceLevelDetail": {
+																			"type": "array",
+																			"items": {
+																				"type": "object",
+																				"properties": {
+																					"unit": {
+																						"description": "The unit of the guarantee term",
+																						"type": "string"
+																					},
+																					"value": {
+																						"description": "The value of the guarantee term",
+																						"type": "string"
+																					},
+																					"operator": {
+																						"description": "The operator describing the expression of the guarantee term",
+																						"type": "string"
+																					}
+																				}
+																			}
+																		}
+																	}
+																}
+															}
+														}
+													}
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad request: HTTP bad request"
+					}
+				},
+				"operationId": "get_all_sla_templates",
+				"tags": [
+					"SLA-Templates-v1"
+				]
+			}
+		},
+		"/mgmt/guaranteesList": {
+			"get": {
+				"responses": {
+					"200": {
+						"description": "Success",
+						"headers": {
+							"Content-Type": {
+								"description": "The MIME type of the body of the response (\"application/json\").",
+								"type": "string",
+								"maximum": 1,
+								"minimum": 1
+							}
+						},
+						"schema": {
+							"type": "object",
+							"properties": {
+								"guaranteeTerms": {
+									"type": "array",
+									"items": {
+										"type": "object",
+										"properties": {
+											"guaranteeID": {
+												"description": "The id of the selected guarantee term",
+												"type": "string"
+											},
+											"name": {
+												"description": "The name of the selected guarantee term",
+												"type": "string"
+											},
+											"definition": {
+												"description": "A short definition of the selected guarantee term",
+												"type": "string"
+											},
+											"value": {
+												"description": "The value of the selected guarantee term",
+												"type": "string"
+											},
+											"operator": {
+												"description": "The operator describing the expression of the selected guarantee term",
+												"type": "string"
+											},
+											"unit": {
+												"description": "The unit describing the selected guarantee term",
+												"type": "string"
+											},
+											"serviceLevelObjetive": {
+												"type": "object",
+												"properties": {
+													"period": {
+														"description": "The period that the guarantee term will be calculated",
+														"type": "string"
+													},
+													"parameter": {
+														"description": "The service level objective that is going to be guaranteed",
+														"type": "string"
+													},
+													"serviceLevel": {
+														"description": "The unit describing the selected guarantee term",
+														"type": "string"
+													},
+													"duration": {
+														"description": "The monitoring duration of the guarantee",
+														"type": "string"
+													},
+													"target_value": {
+														"description": "The monitoring target_value of the guarantee",
+														"type": "string"
+													},
+													"serviceLevelDetail": {
+														"type": "array",
+														"items": {
+															"type": "object",
+															"properties": {
+																"unit": {
+																	"description": "The unit of the guarantee term",
+																	"type": "string"
+																},
+																"value": {
+																	"description": "The value of the guarantee term",
+																	"type": "string"
+																},
+																"operator": {
+																	"description": "The operator describing the expression of the guarantee term",
+																	"type": "string"
+																}
+															}
+														}
+													}
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "ERROR: Guarantees List Not Found"
+					}
+				},
+				"operationId": "get_guarantee_list",
+				"parameters": [],
+				"tags": [
+					"SLA-Management-v1"
+				]
+			}
+		},
+		"/mgmt/services/templates/": {
+			"get": {
+				"responses": {
+					"200": {
+						"description": "Success",
+						"headers": {
+							"Content-Type": {
+								"description": "The MIME type of the body of the response (\"application/json\").",
+								"type": "string",
+								"maximum": 1,
+								"minimum": 1
+							}
+						},
+						"schema": {
+							"type": "object",
+							"properties": {
+								"ns_template": {
+									"type": "array",
+									"items": {
+										"type": "object",
+										"properties": {
+											"ns_uuid": {
+												"description": "The ns_uuid",
+												"type": "string"
+											},
+											"sla_uuid": {
+												"description": "The sla_uuid",
+												"type": "string"
+											}
+										}
+									}
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad request: HTTP bad request"
+					}
+				},
+				"operationId": "get_correlated_sla_ns",
+				"parameters": [],
+				"tags": [
+					"SLA-Management-v1"
+				]
+			}
+		},
+		"/mgmt/services/templates/true": {
+			"get": {
+				"responses": {
+					"200": {
+						"description": "Success",
+						"headers": {
+							"Content-Type": {
+								"description": "The MIME type of the body of the response (\"application/json\").",
+								"type": "string",
+								"maximum": 1,
+								"minimum": 1
+							}
+						},
+						"schema": {
+							"type": "array",
+							"items": {
+								"type": "object",
+								"properties": {
+									"ns_uuid": {
+										"description": "The sla_uuid",
+										"type": "string"
+									}
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad request: HTTP bad request"
+					}
+				},
+				"operationId": "get_ns_assosiated_Slas",
+				"parameters": [],
+				"tags": [
+					"SLA-Management-v1"
+				]
+			}
+		},
+		"/mgmt/services/templates/false": {
+			"get": {
+				"responses": {
+					"200": {
+						"description": "Success",
+						"headers": {
+							"Content-Type": {
+								"description": "The MIME type of the body of the response (\"application/json\").",
+								"type": "string",
+								"maximum": 1,
+								"minimum": 1
+							}
+						},
+						"schema": {
+							"type": "array",
+							"items": {
+								"type": "object",
+								"properties": {
+									"ns_uuid": {
+										"description": "The sla_uuid",
+										"type": "string"
+									}
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad request: HTTP bad request"
+					}
+				},
+				"operationId": "get_ns_withno_slas",
+				"parameters": [],
+				"tags": [
+					"SLA-Management-v1"
+				]
+			}
+		},
+		"/mgmt/services/agreements/true": {
+			"get": {
+				"responses": {
+					"200": {
+						"description": "Success",
+						"headers": {
+							"Content-Type": {
+								"description": "The MIME type of the body of the response (\"application/json\").",
+								"type": "string",
+								"maximum": 1,
+								"minimum": 1
+							}
+						},
+						"schema": {
+							"type": "array",
+							"items": {
+								"type": "object",
+								"properties": {
+									"ns_uuid": {
+										"description": "The sla_uuid",
+										"type": "string"
+									}
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad request: HTTP bad request"
+					}
+				},
+				"operationId": "get_ns_with_agreements",
+				"parameters": [],
+				"tags": [
+					"SLA-Management-v1"
+				]
+			}
+		},
+		"/mgmt/services/agreements/false": {
+			"get": {
+				"responses": {
+					"200": {
+						"description": "Success",
+						"headers": {
+							"Content-Type": {
+								"description": "The MIME type of the body of the response (\"application/json\").",
+								"type": "string",
+								"maximum": 1,
+								"minimum": 1
+							}
+						},
+						"schema": {
+							"type": "array",
+							"items": {
+								"type": "object",
+								"properties": {
+									"ns_uuid": {
+										"description": "The sla_uuid",
+										"type": "string"
+									}
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad request: HTTP bad request"
+					}
+				},
+				"operationId": "get_ns_with_no_agreements",
+				"parameters": [],
+				"tags": [
+					"SLA-Management-v1"
+				]
+			}
+		},
+		"/agreements/{sla_uuid}": {
+			"parameters": [
+				{
+						"name": "sla_uuid",
+						"in": "path",
+						"required": true,
+						"type": "string",
+						"description": "The ID of the SLA"
+				}
+			],
+			"get": {
+				"responses": {
+					"200": {
+						"description": "Success",
+						"headers": {
+							"Content-Type": {
+								"description": "The MIME type of the body of the response (\"application/json\").",
+								"type": "string",
+								"maximum": 1,
+								"minimum": 1
+							}
+						},
+						"schema": {
+							"type": "object",
+							"properties": {
+								"descriptor_schema": {
+									"description": "The descriptor schema the template follows",
+									"type": "string"
+								},
+								"name": {
+									"description": "The name of the sla template",
+									"type": "string"
+								},
+								"vendor": {
+									"description": "The vendor of the sla template",
+									"type": "string"
+								},
+								"version": {
+									"description": "The version of the sla template",
+									"type": "string"
+								},
+								"author": {
+									"description": "The author/s of the sla template",
+									"type": "string"
+								},
+								"description": {
+									"description": "A simple description of the sla template",
+									"type": "string"
+								},
+								"sla_template": {
+									"type": "object",
+									"properties": {
+										"template_name": {
+											"description": "The user defined sla template name",
+											"type": "string"
+										},
+										"offered_date": {
+											"description": "The sla template offered date",
+											"type": "string"
+										},
+										"valid_until": {
+											"description": "The sla template expiration date",
+											"type": "string"
+										},
+										"ns": {
+											"type": "object",
+											"properties": {
+												"ns_uuid": {
+													"description": "The accosiated ns uuid",
+													"type": "string"
+												},
+												"ns_vendor": {
+													"description": "The accosiated ns vendor",
+													"type": "string"
+												},
+												"ns_version": {
+													"description": "The accosiated ns version",
+													"type": "string"
+												},
+												"ns_description": {
+													"description": "The accosiated ns description",
+													"type": "string"
+												},
+												"guaranteeTerms": {
+													"type": "array",
+													"items": {
+														"type": "object",
+														"properties": {
+															"guaranteeID": {
+																"description": "The id of the selected guarantee term",
+																"type": "string"
+															},
+															"name": {
+																"description": "The name of the selected guarantee term",
+																"type": "string"
+															},
+															"definition": {
+																"description": "A short definition of the selected guarantee term",
+																"type": "string"
+															},
+															"value": {
+																"description": "The value of the selected guarantee term",
+																"type": "string"
+															},
+															"operator": {
+																"description": "The operator describing the expression of the selected guarantee term",
+																"type": "string"
+															},
+															"unit": {
+																"description": "The unit describing the selected guarantee term",
+																"type": "string"
+															},
+															"serviceLevelObjetive": {
+																"type": "object",
+																"properties": {
+																	"period": {
+																		"description": "The period that the guarantee term will be calculated",
+																		"type": "string"
+																	},
+																	"parameter": {
+																		"description": "The service level objective that is going to be guaranteed",
+																		"type": "string"
+																	},
+																	"serviceLevel": {
+																		"description": "The unit describing the selected guarantee term",
+																		"type": "string"
+																	},
+																	"duration": {
+																		"description": "The monitoring duration of the guarantee",
+																		"type": "string"
+																	},
+																	"target_value": {
+																		"description": "The monitoring target_value of the guarantee",
+																		"type": "string"
+																	},
+																	"serviceLevelDetail": {
+																		"type": "array",
+																		"items": {
+																			"type": "object",
+																			"properties": {
+																				"unit": {
+																					"description": "The unit of the guarantee term",
+																					"type": "string"
+																				},
+																				"value": {
+																					"description": "The value of the guarantee term",
+																					"type": "string"
+																				},
+																				"operator": {
+																					"description": "The operator describing the expression of the guarantee term",
+																					"type": "string"
+																				}
+																			}
+																		}
+																	}
+																}
+															}
+														}
+													}
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "ERROR: SLA not found"
+					}
+				},
+				"operationId": "delete_agreement",
+				"tags": [
+					"SLA-Agreements-v1"
+				]
+			}
+		},
+		"/agreements/service/{ns_uuid}": {
+			"parameters": [
+				{
+					"name": "ns_uuid",
+					"in": "path",
+					"type": "string",
+					"description": "NS uuid"
+				}
+			],
+			"get": {
+				"responses": {
+					"200": {
+						"description": "Success",
+						"headers": {
+							"Content-Type": {
+								"description": "The MIME type of the body of the response (\"application/json\").",
+								"type": "string",
+								"maximum": 1,
+								"minimum": 1
+							}
+						},
+						"schema": {
+							"type": "object",
+							"properties": {
+								"cust_sla": {
+									"type": "array",
+									"items": {
+										"type": "object",
+										"properties": {
+											"ns_uuid": {
+												"description": "The ns_uuid",
+												"type": "string"
+											},
+											"sla_uuid": {
+												"description": "The sla_uuid",
+												"type": "string"
+											},
+											"cust_uuid": {
+												"description": "The sla_uuid",
+												"type": "string"
+											}
+										}
+									}
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "NOT Found: NS not found"
+					}
+				},
+				"operationId": "agreements_per_InsNs",
+				"tags": [
+					"SLA-Agreements-v1"
+				]
+			}
+		},
+		"/agreements/guarantee-terms/{sla_uuid}": {
+			"parameters": [
+				{
+					"name": "sla_uuid",
+					"in": "path",
+					"type": "string",
+					"description": "SLA uuid"
+				}
+			],
+			"get": {
+				"responses": {
+					"200": {
+						"description": "Success",
+						"headers": {
+							"Content-Type": {
+								"description": "The MIME type of the body of the response (\"application/json\").",
+								"type": "string",
+								"maximum": 1,
+								"minimum": 1
+							}
+						},
+						"schema": {
+							"type": "array",
+							"items": {
+								"type": "object",
+								"properties": {
+									"guaranteeID": {
+										"description": "The id of the selected guarantee term",
+										"type": "string"
+									},
+									"name": {
+										"description": "The name of the selected guarantee term",
+										"type": "string"
+									},
+									"definition": {
+										"description": "A short definition of the selected guarantee term",
+										"type": "string"
+									},
+									"value": {
+										"description": "The value of the selected guarantee term",
+										"type": "string"
+									},
+									"operator": {
+										"description": "The operator describing the expression of the selected guarantee term",
+										"type": "string"
+									},
+									"unit": {
+										"description": "The unit describing the selected guarantee term",
+										"type": "string"
+									},
+									"serviceLevelObjetive": {
+										"type": "object",
+										"properties": {
+											"period": {
+												"description": "The period that the guarantee term will be calculated",
+												"type": "string"
+											},
+											"parameter": {
+												"description": "The service level objective that is going to be guaranteed",
+												"type": "string"
+											},
+											"serviceLevel": {
+												"description": "The unit describing the selected guarantee term",
+												"type": "string"
+											},
+											"duration": {
+												"description": "The monitoring duration of the guarantee",
+												"type": "string"
+											},
+											"target_value": {
+												"description": "The monitoring target_value of the guarantee",
+												"type": "string"
+											},
+											"serviceLevelDetail": {
+												"type": "array",
+												"items": {
+													"type": "object",
+													"properties": {
+														"unit": {
+															"description": "The unit of the guarantee term",
+															"type": "string"
+														},
+														"value": {
+															"description": "The value of the guarantee term",
+															"type": "string"
+														},
+														"operator": {
+															"description": "The operator describing the expression of the guarantee term",
+															"type": "string"
+														}
+													}
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "ERROR: Not Found!"
+					}
+				},
+				"operationId": "guarantees_per_sla",
+				"tags": [
+					"SLA-Agreements-v1"
+				]
+			}
+		},
+		"/agreements": {
+			"get": {
+				"responses": {
+					"200": {
+						"description": "Success",
+						"headers": {
+							"Content-Type": {
+								"description": "The MIME type of the body of the response (\"application/json\").",
+								"type": "string",
+								"maximum": 1,
+								"minimum": 1
+							}
+						},
+						"schema": {
+							"type": "array",
+							"items": {
+								"type": "object",
+								"properties": {
+									"ns_uuid": {
+										"description": "The uuid of the accosiated NS",
+										"type": "string"
+									},
+									"ns_name": {
+										"description": "The name of the  accosiated NS",
+										"type": "string"
+									},
+									"sla_uuid": {
+										"description": "The uuid of the accosiated NS",
+										"type": "string"
+									},
+									"sla_name": {
+										"description": "The name of the accosiated NS",
+										"type": "string"
+									},
+									"sla_date": {
+										"description": "The date when the agreement was created",
+										"type": "string"
+									},
+									"sla_status": {
+										"description": "The status of the agreement.",
+										"type": "string"
+									},
+									"cust_uuid": {
+										"description": "The uuid of the customer who signed the aqgreement",
+										"type": "string"
+									},
+									"cust_email": {
+										"description": "The email of the customer who signed the aqgreement",
+										"type": "string"
+									}
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad request: HTTP bad request"
+					}
+				},
+				"operationId": "all-agreements",
+				"tags": [
+					"SLA-Agreements-v1"
+				]
+			}
+		}
+	}
 }
