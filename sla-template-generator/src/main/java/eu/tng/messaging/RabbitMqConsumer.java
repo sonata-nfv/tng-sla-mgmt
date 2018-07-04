@@ -106,7 +106,7 @@ public class RabbitMqConsumer implements ServletContextListener {
                     byte[] body) throws IOException {
 
                 // Initialize variables
-                String sla_uuid = null;
+                String sla_uuid = "";
                 String ns_uuid = null;
                 String ns_name = null;
                 String cust_uuid = null;
@@ -181,7 +181,7 @@ public class RabbitMqConsumer implements ServletContextListener {
                         System.out.println("ERROR: " + e.getMessage());
                     }
 
-                    if (sla_uuid != null) {
+                    if (sla_uuid != null && !sla_uuid.isEmpty() ) {
                         
                         cust_sla_corr cust_sla = new cust_sla_corr();
                         @SuppressWarnings("unchecked")
@@ -194,27 +194,22 @@ public class RabbitMqConsumer implements ServletContextListener {
 
                         String inst_status = "PENDING";
 
-                        
                         db_operations.connectPostgreSQL();
                         cust_sla_corr.createCustSlaCorr(sla_uuid, sla_name, sla_status, ns_uuid, ns_name, cust_uuid,
-                                cust_email, inst_status, correlation_id);
-                       
-
+                                cust_email, inst_status, correlation_id);                     
                     }
-
                 }
                 // if message coming from the MANO
                 else if (status.equals("READY")) {
                     System.out.println("Message from  MANO received: " + jmessage);
                     System.out.println("status ==> " + status);
 
-                    
                     db_operations dbo = new db_operations();
                     db_operations.connectPostgreSQL();
                     db_operations.UpdateRecordAgreement(status, correlation_id);
                     
-                    String sla_id = null;
-                    String ns_id = null;
+                    String sla_id = "";
+                    String ns_id = "";
 
                     // get data for the monitoring rules
                     try {
