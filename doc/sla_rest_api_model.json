@@ -1077,7 +1077,9 @@
 					"name": "ns_uuid",
 					"in": "path",
 					"type": "string",
-					"description": "NS uuid"
+					"description": "NS uuid",
+					"required":true
+
 				}
 			],
 			"get": {
@@ -1134,7 +1136,8 @@
 					"name": "sla_uuid",
 					"in": "path",
 					"type": "string",
-					"description": "SLA uuid"
+					"description": "SLA uuid",
+					"required":true
 				}
 			],
 			"get": {
