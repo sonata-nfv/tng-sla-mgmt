@@ -30,11 +30,15 @@ package eu.tng.service_api;
 
 import java.io.File;
 import java.io.FileReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -167,6 +171,28 @@ public class MgmtAPIs {
 		apiresponse.header("Content-Length", correlatedNS.toString().length());
 		return apiresponse.status(200).build();
 
+	}
+	
+	/**
+	 * delete cust-ns-sla correlation based on sla uuid
+	 */
+
+	@SuppressWarnings("static-access")
+	@Path("/agreements/{sla_uuid}")
+	@Produces(MediaType.TEXT_PLAIN)
+	@DELETE
+	public Response deletecCustSlaCorrelation(@PathParam("sla_uuid") String sla_uuid) {
+		ResponseBuilder apiresponse = null;
+		
+		String response = "Record deleted Succesfully";
+		db_operations db = new db_operations();
+		
+		db.connectPostgreSQL();
+		
+		db.deleteRecord("cust_sla", sla_uuid);
+		apiresponse = Response.ok((response));
+		apiresponse.header("Content-Length", response.length());
+		return apiresponse.status(200).build();
 	}
 
 }
