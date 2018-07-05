@@ -52,9 +52,9 @@ public class db_operations {
 		try {
 
 			Class.forName("org.postgresql.Driver");
-			// c =
-			// DriverManager.getConnection("jdbc:postgresql://localhost:5432/sla-manager",
-			// "postgres", "admin");
+//			 c =
+//			 DriverManager.getConnection("jdbc:postgresql://localhost:5432/sla-manager",
+//			 "postgres", "admin");
 			c = DriverManager
 					.getConnection(
 							"jdbc:postgresql://" + System.getenv("DATABASE_HOST") + ":" + System.getenv("DATABASE_PORT")
