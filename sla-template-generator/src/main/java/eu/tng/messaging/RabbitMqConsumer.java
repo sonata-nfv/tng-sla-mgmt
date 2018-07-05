@@ -123,20 +123,21 @@ public class RabbitMqConsumer implements ServletContextListener {
                 String message = new String(body, "UTF-8");
                 System.out.println("Message Received:" + message);
                 
-
+                
                 try {
                     Yaml yaml = new Yaml();
                     Map<String, Object> map = (Map<String, Object>) yaml.load(message);
-
+                     
                     JSONObject jsonObject = new JSONObject(map);
                     jmessage = jsonObject;
-
+                    System.out.print("MPIKE STO TRY PARSE YML");
                 } catch (Exception e) {
                     System.out.print("Cannot Parse yml object " + e.getMessage());
                 }
 
                 
                 if (jmessage.has("status")) {
+                    System.out.print("MPIKE IF HAS STATUS GET STATUS");
                     status = (String) jmessage.get("status");
                 }
                 
@@ -144,6 +145,7 @@ public class RabbitMqConsumer implements ServletContextListener {
                 HashMap<String, Object> headers = (HashMap<String, Object>) properties.getHeaders();
                 for (Map.Entry<String, Object> header : headers.entrySet()) {
                     if (header.getKey().equals("correlation_id")) {
+                        System.out.print("MPIKE STO PARSE HEADERS");
                         correlation_id = header.getValue().toString();
                         System.out.println("correlation_id ==> " + correlation_id);
                     }
@@ -151,6 +153,7 @@ public class RabbitMqConsumer implements ServletContextListener {
 
                 // if message coming from the GK
                 if (!jmessage.has("status")) {
+                    System.out.print("MPIKE STO IF AN DEN EXEI STATUS");
                     System.out.println("Message from  GK received: " + jmessage);
 
                     // Get nsd data
