@@ -138,15 +138,15 @@ public class AgreementsAPIs {
 	 */
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	@Path("/{sla_uuid}")
-	public Response getAgreementDetails(@PathParam("sla_uuid") String sla_uuid) {
+	@Path("/{sla_uuid}/{ns_uuid}")
+	public Response getAgreementDetails(@PathParam("sla_uuid") String sla_uuid, @PathParam("ns_uuid") String ns_uuid) {
 
 		ResponseBuilder apiresponse = null;
 		try {
-			String url = System.getenv("CATALOGUES_URL") + "slas/template-descriptors/" + sla_uuid;
-			// String url =
-			// "http://pre-int-sp-ath.5gtango.eu:4011/catalogues/api/v2/slas/template-descriptors/"
-			// + sla_uuid;
+			//String url = System.getenv("CATALOGUES_URL") + "slas/template-descriptors/" + sla_uuid;
+			 String url =
+			 "http://pre-int-sp-ath.5gtango.eu:4011/catalogues/api/v2/slas/template-descriptors/"
+			 + sla_uuid;
 			URL object = new URL(url);
 
 			HttpURLConnection con = (HttpURLConnection) object.openConnection();
@@ -165,8 +165,39 @@ public class AgreementsAPIs {
 				response.append(inputLine);
 			}
 			in.close();
+			
+			//  get the core sla from the catalogue
 			JSONParser parser = new JSONParser();
 			Object existingTemplates = parser.parse(response.toString());
+			JSONObject agreement =  (JSONObject) parser.parse(response.toString());
+			
+			// get customer details from db
+			db_operations dbo = new db_operations();
+			dbo.connectPostgreSQL();
+			db_operations.createTableCustSla();
+			JSONObject agrPerSlaNs = dbo.selectAgreementPerSlaNs(sla_uuid, ns_uuid);
+			
+			String cust_uuid = (String) agrPerSlaNs.get("cust_uuid");
+			String cust_email = (String) agrPerSlaNs.get("cust_email");
+			String sla_date = (String) agrPerSlaNs.get("sla_date");
+
+			// update the template with the necessary customer info - convert it to agreement
+			JSONObject slad = (JSONObject) agreement.get("slad");
+			JSONObject sla_template = (JSONObject) slad.get("sla_template");
+			
+			/** change the offered date to the date the agreement was created */
+			sla_template.put("offered_date", sla_date);
+			
+			/** add the customer information */
+			JSONObject customer_info = new JSONObject();
+			customer_info.put("cust_uuid", cust_uuid);
+			customer_info.put("cust_email", cust_email);
+			customer_info.put("sla_date", sla_date);
+			sla_template.put("customer_info", customer_info);		
+			
+			System.out.println(agreement);
+			existingTemplates = agreement;
+			
 			apiresponse = Response.ok((Object) existingTemplates);
 			apiresponse.header("Content-Length", response.length());
 			return apiresponse.status(200).build();
