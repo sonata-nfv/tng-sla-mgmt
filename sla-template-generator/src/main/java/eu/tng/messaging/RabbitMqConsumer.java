@@ -29,6 +29,13 @@ public class RabbitMqConsumer implements ServletContextListener {
 	public void contextDestroyed(ServletContextEvent arg0) {
 		System.out.println("Server stopped");
 	}
+	
+    /**
+     * Default constructor.
+     */
+    public RabbitMqConsumer() {
+        // TODO Auto-generated constructor stub
+    }
 
 	/**
 	 * 
@@ -98,6 +105,12 @@ public class RabbitMqConsumer implements ServletContextListener {
 				}
 
 			};
+			
+			// consumer
+			channel_service_instance.basicConsume(queueName_service_instance, true, consumer_service_instance);
+
+			
+			
 
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
