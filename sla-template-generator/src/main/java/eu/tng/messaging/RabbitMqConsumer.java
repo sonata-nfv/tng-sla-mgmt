@@ -27,7 +27,7 @@ import eu.tng.rules.MonitoringRules;
 public class RabbitMqConsumer implements ServletContextListener {
 
     private static final String EXCHANGE_NAME = System.getenv("BROKER_EXCHANGE");
-    //private static final String EXCHANGE_NAME = "son-kernel";
+    // private static final String EXCHANGE_NAME = "son-kernel";
 
     /**
      * Default constructor.
@@ -72,12 +72,6 @@ public class RabbitMqConsumer implements ServletContextListener {
         String queueName_service_terminate = "slas.service.instance.terminate";
 
         try {
-            /*
-             * queueName_service_instance = channel.queueDeclare().getQueue();
-             * queueName_son_sla = channel.queueDeclare().getQueue();
-             * queueName_sla_violation = channel.queueDeclare().getQueue();
-             * queueName_service_terminate = channel.queueDeclare().getQueue();
-             */
             channel.queueDeclare(queueName_service_instance, true, false, false, null);
             channel.queueDeclare(queueName_son_sla, true, false, false, null);
             channel.queueDeclare(queueName_sla_violation, true, false, false, null);
@@ -101,6 +95,7 @@ public class RabbitMqConsumer implements ServletContextListener {
         System.out.println(" [*] Waiting for messages. To exit press CTRL+C");
 
         Consumer consumer_service_instance = new DefaultConsumer(channel) {
+            @SuppressWarnings("unchecked")
             @Override
             public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties,
                     byte[] body) throws IOException {
@@ -118,34 +113,21 @@ public class RabbitMqConsumer implements ServletContextListener {
                 JSONObject jmessage = null;
                 ArrayList<String> vnfrs_list = new ArrayList<String>();
                 ArrayList<String> vdus_list = new ArrayList<String>();
-
+                
                 // Parse message payload
                 String message = new String(body, "UTF-8");
-                System.out.print("Message Received:" + message);
-                
-                
-                try {
-                    Yaml yaml = new Yaml();
-                    Map<String, Object> map = (Map<String, Object>) yaml.load(message);
-                     
-                    JSONObject jsonObject = new JSONObject(map);
-                    jmessage = jsonObject;
-                    System.out.print("MPIKE STO TRY PARSE YML");
-                } catch (Exception e) {
-                    System.out.print("Cannot Parse yml object " + e.getMessage());
-                }
 
+
+                jmessage = convertToJson(message);
                 
                 if (jmessage.has("status")) {
-                    System.out.print("MPIKE IF HAS STATUS GET STATUS");
                     status = (String) jmessage.get("status");
                 }
-                
+
                 // Parse headers
                 HashMap<String, Object> headers = (HashMap<String, Object>) properties.getHeaders();
                 for (Map.Entry<String, Object> header : headers.entrySet()) {
                     if (header.getKey().equals("correlation_id")) {
-                        System.out.print("MPIKE STO PARSE HEADERS");
                         correlation_id = header.getValue().toString();
                         System.out.println("correlation_id ==> " + correlation_id);
                     }
@@ -153,7 +135,6 @@ public class RabbitMqConsumer implements ServletContextListener {
 
                 // if message coming from the GK
                 if (!jmessage.has("status")) {
-                    System.out.print("MPIKE STO IF AN DEN EXEI STATUS");
                     System.out.println("Message from  GK received: " + jmessage);
 
                     // Get nsd data
@@ -186,8 +167,8 @@ public class RabbitMqConsumer implements ServletContextListener {
                         System.out.println("ERROR: " + e.getMessage());
                     }
 
-                    if (sla_uuid != null && !sla_uuid.isEmpty() ) {
-                        
+                    if (sla_uuid != null && !sla_uuid.isEmpty()) {
+
                         cust_sla_corr cust_sla = new cust_sla_corr();
                         @SuppressWarnings("unchecked")
                         ArrayList<String> SLADetails = cust_sla.getSLAdetails(sla_uuid);
@@ -201,7 +182,7 @@ public class RabbitMqConsumer implements ServletContextListener {
 
                         db_operations.connectPostgreSQL();
                         cust_sla_corr.createCustSlaCorr(sla_uuid, sla_name, sla_status, ns_uuid, ns_name, cust_uuid,
-                                cust_email, inst_status, correlation_id);                     
+                                cust_email, inst_status, correlation_id);
                     }
                 }
                 // if message coming from the MANO
@@ -212,7 +193,7 @@ public class RabbitMqConsumer implements ServletContextListener {
                     db_operations dbo = new db_operations();
                     db_operations.connectPostgreSQL();
                     db_operations.UpdateRecordAgreement(status, correlation_id);
-                    
+
                     String sla_id = "";
                     String ns_id = "";
 
@@ -247,11 +228,10 @@ public class RabbitMqConsumer implements ServletContextListener {
                         System.out.println("ERROR sto catc: " + e.getMessage());
                     }
 
-                    
                     // call the create rules method
                     MonitoringRules mr = new MonitoringRules();
                     MonitoringRules.createMonitroingRules(sla_id, vnfrs_list, vdus_list, ns_id);
-                    
+
                 } else if (status.equals("INSTANTIATING")) {
                     System.out.println("SERVICE STATUS IS: " + status);
                 } else {
@@ -363,5 +343,14 @@ public class RabbitMqConsumer implements ServletContextListener {
             // TODO Auto-generated catch block
             System.out.println("ERROR consumer_service_terminate!" + e.getMessage());
         }
+    }
+    
+    @SuppressWarnings({ "unused", "unchecked" })
+    private static JSONObject convertToJson(String yamlString) {
+        Yaml yaml= new Yaml();
+        Map<String,Object> map= (Map<String, Object>) yaml.load(yamlString);
+
+        JSONObject jsonObject=new JSONObject(map);
+        return jsonObject;
     }
 }
