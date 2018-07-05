@@ -150,7 +150,7 @@ public class db_operations {
 			e.printStackTrace();
 		}
 
-		System.out.println("Records created successfully? " + result);
+		System.out.println("Records ns-template saved successfully? " + result);
 
 		return result;
 	}
@@ -173,7 +173,7 @@ public class db_operations {
 			stmt.executeUpdate(sql);
 			stmt.close();
 			c.commit();
-			System.out.println("Records created successfully");
+			System.out.println("Records  cust-sla saved successfully");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -181,7 +181,7 @@ public class db_operations {
 	}
 
 	/**
-	 * Insert Record cust-sla correlation
+	 * Insert Record violations
 	 * 
 	 */
 	public void insertRecordViolation(String ns_uuid, String sla_uuid, String violation_time, String alert_state,
@@ -488,7 +488,7 @@ public class db_operations {
 	@SuppressWarnings("unchecked")
 	public int countAgreementCorrelationPeriD(String sla_uuid) {
 
-		String SQL = "SELECT count(*) FROM cust_sla";
+		String SQL = "SELECT count(*) FROM cust_sla where sla_uuid = '"+ sla_uuid +"' AND inst_status='READY'";
 		int count = 0;
 
 		try {
