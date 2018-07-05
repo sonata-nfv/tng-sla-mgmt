@@ -143,10 +143,10 @@ public class AgreementsAPIs {
 
 		ResponseBuilder apiresponse = null;
 		try {
-			//String url = System.getenv("CATALOGUES_URL") + "slas/template-descriptors/" + sla_uuid;
-			 String url =
-			 "http://pre-int-sp-ath.5gtango.eu:4011/catalogues/api/v2/slas/template-descriptors/"
-			 + sla_uuid;
+			String url = System.getenv("CATALOGUES_URL") + "slas/template-descriptors/" + sla_uuid;
+//			 String url =
+//			 "http://pre-int-sp-ath.5gtango.eu:4011/catalogues/api/v2/slas/template-descriptors/"
+//			 + sla_uuid;
 			URL object = new URL(url);
 
 			HttpURLConnection con = (HttpURLConnection) object.openConnection();
@@ -192,14 +192,13 @@ public class AgreementsAPIs {
 			JSONObject customer_info = new JSONObject();
 			customer_info.put("cust_uuid", cust_uuid);
 			customer_info.put("cust_email", cust_email);
-			customer_info.put("sla_date", sla_date);
 			sla_template.put("customer_info", customer_info);		
 			
 			System.out.println(agreement);
 			existingTemplates = agreement;
 			
 			apiresponse = Response.ok((Object) existingTemplates);
-			apiresponse.header("Content-Length", response.length());
+			apiresponse.header("Content-Length", agreement.toJSONString().length());
 			return apiresponse.status(200).build();
 
 		} catch (Exception e) {
