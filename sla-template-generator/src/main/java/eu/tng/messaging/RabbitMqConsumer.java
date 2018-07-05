@@ -121,6 +121,8 @@ public class RabbitMqConsumer implements ServletContextListener {
 
                 // Parse message payload
                 String message = new String(body, "UTF-8");
+                System.out.println("Message Received:" + message);
+                
 
                 try {
                     Yaml yaml = new Yaml();
