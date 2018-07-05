@@ -197,7 +197,7 @@ public class templatesAPIs {
 				JSONObject error = new JSONObject();
 				error.put("ERROR: ", "Invalid expire date format. The format should be dd/mm/YYY");
 				apiresponse = Response.ok((Object) error);
-				apiresponse.header("Content-Length", error.toJSONString().length() - 2);
+				apiresponse.header("Content-Length", error.toJSONString().length());
 				return apiresponse.status(400).build();
 
 			} else if (valid_create_template.get(1) == false) {
@@ -206,7 +206,7 @@ public class templatesAPIs {
 				JSONObject error = new JSONObject();
 				error.put("ERROR: ", "The expire date is not a future date.");
 				apiresponse = Response.ok((Object) error);
-				apiresponse.header("Content-Length", error.toJSONString().length() - 2);
+				apiresponse.header("Content-Length", error.toJSONString().length());
 				return apiresponse.status(400).build();
 
 			} else if (valid_create_template.get(2) == false) {
