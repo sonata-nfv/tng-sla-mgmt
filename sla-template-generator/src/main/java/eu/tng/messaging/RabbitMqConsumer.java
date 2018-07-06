@@ -68,6 +68,7 @@ public class RabbitMqConsumer implements ServletContextListener {
 					JSONObject jsonObjectMessage = null;
 					ArrayList<String> vnfrs_list = new ArrayList<String>();
 					ArrayList<String> vdus_list = new ArrayList<String>();
+					String correlation_id = null;
 
 					// Parse message payload
 					String message = new String(body, "UTF-8");
@@ -75,6 +76,15 @@ public class RabbitMqConsumer implements ServletContextListener {
 					Yaml yaml = new Yaml();
 					Map<String, Object> map = (Map<String, Object>) yaml.load(message);
 					jsonObjectMessage = new JSONObject(map);
+
+					// Parse headers
+					HashMap<String, Object> headers = (HashMap<String, Object>) properties.getHeaders();
+					for (Map.Entry<String, Object> header : headers.entrySet()) {
+						if (header.getKey().equals("correlation_id")) {
+							correlation_id = header.getValue().toString();
+							System.out.println("correlation_id ==> " + correlation_id);
+						}
+					}
 
 					// if message coming from the MANO - contain status key
 					if (jsonObjectMessage.has("status")) {
@@ -119,21 +129,22 @@ public class RabbitMqConsumer implements ServletContextListener {
 							System.out.println("Cust email  ==> " + cust_email);
 							System.out.println("SLA uuid  ==> " + sla_uuid);
 
-//							if (sla_uuid != null && !sla_uuid.isEmpty()) {
-//
-//								cust_sla_corr cust_sla = new cust_sla_corr();
-//								@SuppressWarnings("unchecked")
-//								ArrayList<String> SLADetails = cust_sla.getSLAdetails(sla_uuid);
-//								sla_name = (String) SLADetails.get(1);
-//								sla_status = (String) SLADetails.get(0);
-//								System.out.println("SLA name  ==> " + sla_name);
-//								System.out.println("SLA status  ==> " + sla_status);
-//								String inst_status = "PENDING";
-//
-//								db_operations.connectPostgreSQL();
-//								cust_sla_corr.createCustSlaCorr(sla_uuid, sla_name, sla_status, ns_uuid, ns_name,
-//										cust_uuid, cust_email, inst_status, correlation_id);
-//							}
+							// if sla exists create record in database
+							if (sla_uuid != null && !sla_uuid.isEmpty()) {
+
+								cust_sla_corr cust_sla = new cust_sla_corr();
+								@SuppressWarnings("unchecked")
+								ArrayList<String> SLADetails = cust_sla.getSLAdetails(sla_uuid);
+								sla_name = (String) SLADetails.get(1);
+								sla_status = (String) SLADetails.get(0);
+								System.out.println("SLA name  ==> " + sla_name);
+								System.out.println("SLA status  ==> " + sla_status);
+								String inst_status = "PENDING";
+
+								db_operations.connectPostgreSQL();
+								cust_sla_corr.createCustSlaCorr(sla_uuid, sla_name, sla_status, ns_uuid, ns_name,
+										cust_uuid, cust_email, inst_status, "test_correlation");
+							}
 
 						} catch (Exception e) {
 							System.out.println(" ERROR GET PARSING GK MESSAGE  ==> " + e.getMessage());
