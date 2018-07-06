@@ -51,8 +51,7 @@ public class RabbitMqConsumer implements ServletContextListener {
 
 		try {
 			RabbitMqConnector connect = new RabbitMqConnector();
-			connect.MqConnector();
-			connection = connect.getconnection();
+			connection = RabbitMqConnector.MqConnector();
 
 			channel_service_instance = connection.createChannel();
 			channel_service_instance.exchangeDeclare(EXCHANGE_NAME, "topic");
