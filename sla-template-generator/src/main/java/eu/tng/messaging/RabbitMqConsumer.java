@@ -56,7 +56,7 @@ public class RabbitMqConsumer implements ServletContextListener {
 			channel_service_instance = connection.createChannel();
 			channel_service_instance.exchangeDeclare(EXCHANGE_NAME, "topic");
 			queueName_service_instance = "slas.service.instances.create";
-			channel_service_instance.queueDeclare(queueName_service_instance, false, false, false, null);
+			channel_service_instance.queueDeclare(queueName_service_instance, true, false, false, null);
 			System.out.println(" [*]  Binding queue to topics...");
 			channel_service_instance.queueBind(queueName_service_instance, EXCHANGE_NAME, "service.instances.create");
 			System.out.println(" [*] Bound to topic \"service.instances.create\"");
