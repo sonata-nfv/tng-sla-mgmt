@@ -171,9 +171,10 @@ public class RabbitMqConsumer implements ServletContextListener {
 							System.out.println("SLA status  ==> " + sla_status);
 							String inst_status = "PENDING";
 
+							
 							db_operations.connectPostgreSQL();
 							cust_sla_corr.createCustSlaCorr(sla_uuid, sla_name, sla_status, ns_uuid, ns_name, cust_uuid,
-									cust_email, inst_status, "test_correlation");
+									cust_email, inst_status, correlation_id);
 						}
 
 					}
