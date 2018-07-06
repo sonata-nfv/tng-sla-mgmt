@@ -259,26 +259,6 @@ public class db_operations {
 		
 		System.out.println("Set status READY? " + result);
 
-
-		// try {
-		// c.setAutoCommit(false);
-		// Statement stmt = c.createStatement();
-		// System.out.println(correlation_id);
-		//
-		// String sql = "UPDATE cust_sla SET inst_status = '" + inst_status + "' where
-		// inst_id = '" + correlation_id
-		// + "' ; ";
-		// stmt.executeUpdate(sql);
-		// stmt.close();
-		//
-		// c.commit();
-		// System.out.println("[*] Update was succesfull - Agreement record set to
-		// READY");
-		//
-		// } catch (Exception e) {
-		// e.printStackTrace();
-		// }
-
 	}
 
 	/**
@@ -389,9 +369,7 @@ public class db_operations {
 		try {
 			c.setAutoCommit(false);
 			stmt = c.createStatement();
-			// ResultSet rs = stmt.executeQuery("SELECT * FROM cust_sla WHERE
-			// inst_status='READY';");
-			ResultSet rs = stmt.executeQuery("SELECT * FROM cust_sla;");
+			 ResultSet rs = stmt.executeQuery("SELECT * FROM cust_sla WHERE inst_status='READY';");
 			while (rs.next()) {
 				String ns_uuid = rs.getString("ns_uuid");
 				String ns_name = rs.getString("ns_name");
