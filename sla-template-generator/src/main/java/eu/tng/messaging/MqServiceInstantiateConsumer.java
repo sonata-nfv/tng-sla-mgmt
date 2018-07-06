@@ -19,7 +19,7 @@ import eu.tng.correlations.cust_sla_corr;
 import eu.tng.correlations.db_operations;
 import eu.tng.rules.MonitoringRules;
 
-public class RabbitMqConsumer implements ServletContextListener {
+public class MqServiceInstantiateConsumer implements ServletContextListener {
 
 	// private static final String EXCHANGE_NAME = System.getenv("BROKER_EXCHANGE");
 	private static final String EXCHANGE_NAME = "son-kernel";
@@ -34,7 +34,7 @@ public class RabbitMqConsumer implements ServletContextListener {
 	/**
 	 * Default constructor.
 	 */
-	public RabbitMqConsumer() {}
+	public MqServiceInstantiateConsumer() {}
 
 	/**
 	 * 
