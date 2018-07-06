@@ -11,7 +11,10 @@ import javax.servlet.ServletContextListener;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.yaml.snakeyaml.Yaml;
+
+import com.rabbitmq.client.AMQP.BasicProperties;
 import com.rabbitmq.client.*;
+
 import eu.tng.correlations.cust_sla_corr;
 import eu.tng.correlations.db_operations;
 import eu.tng.rules.MonitoringRules;
@@ -78,18 +81,21 @@ public class RabbitMqConsumer implements ServletContextListener {
 					Map<String, Object> map = (Map<String, Object>) yaml.load(message);
 					jsonObjectMessage = new JSONObject(map);
 
-					System.out.println("START READING HEADERS FROM MESSAGE.....");
+					System.out.println("START READING HEADERS FROM MESSAGE.....");			
 					// The map for the headers.
 					Map<String, Object> headers = new HashMap<String, Object>();
 					headers = properties.getHeaders();
-					for (Map.Entry<String, Object> header : headers.entrySet()) {
-						System.out.println("Map for headers created ..... ==> " + headers);
-						if (header.getKey().equals("correlation_id")) {
-							correlation_id = header.getValue().toString();
-							System.out.println(" [*] Correlation_id ==> " + correlation_id);
-						}
-
-					}
+					
+					correlation_id = (String) headers.get("correlation_id");
+					System.out.println(" [*] Correlation_id ==> " + correlation_id);
+					
+//					for (Map.Entry<String, Object> header : headers.entrySet()) {
+//						System.out.println("Map for headers created ..... ==> " + headers);
+//						if (header.getKey().equals("correlation_id")) {
+//							correlation_id = header.getValue().toString();
+//							System.out.println(" [*] Correlation_id ==> " + correlation_id);
+//						}
+//					}
 
 					/** if message coming from the MANO - contain status key **/
 					if (jsonObjectMessage.has("status")) {
