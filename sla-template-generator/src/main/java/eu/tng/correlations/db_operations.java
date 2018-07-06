@@ -252,7 +252,7 @@ public class db_operations {
 			stmt.close();
 
 			c.commit();
-			System.out.println("Update done successfully");
+			System.out.println("[*] Update was succesfull - Agreement record set to READY");
 
 		} catch (Exception e) {
 			e.printStackTrace();

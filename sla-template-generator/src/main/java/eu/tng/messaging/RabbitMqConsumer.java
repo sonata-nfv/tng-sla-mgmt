@@ -8,6 +8,7 @@ import java.util.logging.Logger;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.yaml.snakeyaml.Yaml;
 import com.rabbitmq.client.*;
@@ -82,23 +83,59 @@ public class RabbitMqConsumer implements ServletContextListener {
 					Map<String, Object> headers = new HashMap<String, Object>();
 					headers = properties.getHeaders();
 					for (Map.Entry<String, Object> header : headers.entrySet()) {
-						System.out.println("Map for headers created ..... ==> "  + headers);
+						System.out.println("Map for headers created ..... ==> " + headers);
 						if (header.getKey().equals("correlation_id")) {
 							correlation_id = header.getValue().toString();
-							System.out.println("correlation_id ==> " + correlation_id);
+							System.out.println(" [*] Correlation_id ==> " + correlation_id);
 						}
 
 					}
 
-					// if message coming from the MANO - contain status key
+					/** if message coming from the MANO - contain status key **/
 					if (jsonObjectMessage.has("status")) {
 						System.out.println(" [*] Message coming from MANO.....");
 						System.out.println(" [*] Message as JSONObject ==> " + jsonObjectMessage);
 						status = (String) jsonObjectMessage.get("status");
 						System.out.println(" [*] STATUS ==> " + status);
 
+//						if (status.equals("READY")) {
+//							db_operations dbo = new db_operations();
+//							db_operations.connectPostgreSQL();
+//							db_operations.UpdateRecordAgreement(status, correlation_id);
+//
+//							// get info for the monitoring metrics
+//							String sla_id = "";
+//							String ns_id = "";
+//							// Get sla_id
+//							sla_id = (String) jsonObjectMessage.get("sla_id");
+//							// Get service uuid
+//							JSONObject nsr = (JSONObject) jsonObjectMessage.getJSONObject("nsr");
+//							ns_id = (String) nsr.get("id");
+//							// Get vnfrs
+//							JSONArray vnfrs = (JSONArray) jsonObjectMessage.getJSONArray("vnfrs");
+//							for (int i = 0; i < (vnfrs).length(); i++) {
+//								String vnf_id = (String) ((JSONObject) vnfrs.getJSONObject(i)).get("id");
+//								vnfrs_list.add(vnf_id);
+//								System.out.println("[*] VNfrs List from MANO message ==> " + vnfrs_list);
+//								// Get vdus foreach vnfr
+//								JSONArray vdus = (JSONArray) ((JSONObject) vnfrs.getJSONObject(i))
+//										.getJSONArray("virtual_deployment_units");
+//								for (int j = 0; j < vdus.length(); j++) {
+//									String vdu_id = (String) ((JSONObject) vdus.getJSONObject(j)).get("id");
+//									vdus_list.add(vdu_id);
+//									System.out.println(" [*] VDUs List from MANO message ==> " + vdus_list);
+//								}
+//
+//							}
+//							
+//							// call the create rules method
+//							MonitoringRules mr = new MonitoringRules();
+//							MonitoringRules.createMonitroingRules(sla_id, vnfrs_list, vdus_list, ns_id);
+//
+//						}
+
 					}
-					// if message coming from the GK - doesn't contain status key
+					/** if message coming from the GK - doesn't contain status key **/
 					else {
 						System.out.println(" [*] Message coming from Gatekeeper.....");
 						System.out.println(" [*] Message as JSONObject ==> " + jsonObjectMessage);
@@ -164,7 +201,7 @@ public class RabbitMqConsumer implements ServletContextListener {
 
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			System.out.println("ERROR Connecting to MQ!" + e.getMessage());
+			System.out.println(" [*] ERROR Connecting to MQ!" + e.getMessage());
 		}
 
 	}
