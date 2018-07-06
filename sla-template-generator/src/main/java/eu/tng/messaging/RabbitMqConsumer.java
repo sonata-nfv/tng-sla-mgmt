@@ -29,13 +29,13 @@ public class RabbitMqConsumer implements ServletContextListener {
 	public void contextDestroyed(ServletContextEvent arg0) {
 		System.out.println("Server stopped");
 	}
-	
-    /**
-     * Default constructor.
-     */
-    public RabbitMqConsumer() {
-        // TODO Auto-generated constructor stub
-    }
+
+	/**
+	 * Default constructor.
+	 */
+	public RabbitMqConsumer() {
+		// TODO Auto-generated constructor stub
+	}
 
 	/**
 	 * 
@@ -51,7 +51,9 @@ public class RabbitMqConsumer implements ServletContextListener {
 
 		try {
 			RabbitMqConnector connect = new RabbitMqConnector();
-			connection = connect.MqConnector();
+			connect.MqConnector();
+			connection = connect.getconnection();
+
 			channel_service_instance = connection.createChannel();
 			channel_service_instance.exchangeDeclare(EXCHANGE_NAME, "topic");
 			queueName_service_instance = "slas.service.instances.create";
@@ -62,60 +64,105 @@ public class RabbitMqConsumer implements ServletContextListener {
 			System.out.println(" [*] Waiting for messages.");
 
 			Consumer consumer_service_instance = new DefaultConsumer(channel_service_instance) {
-				
-				public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties,byte[] body) throws IOException {
+
+				public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties,
+						byte[] body) throws IOException {
 					// Initialize variables
-					String sla_uuid = "";
-					String ns_uuid = null;
-					String ns_name = null;
-					String cust_uuid = null;
-					String cust_email = null;
-					String sla_name = null;
-					String sla_status = null;
-					String correlation_id = null;
 					String status = null;
-					JSONObject jsonObjectMessage  = null;
+					JSONObject jsonObjectMessage = null;
 					ArrayList<String> vnfrs_list = new ArrayList<String>();
 					ArrayList<String> vdus_list = new ArrayList<String>();
-					
-					
+
 					// Parse message payload
-	                String message = new String(body, "UTF-8");
-	                // parse the yaml and convert it to json
-	                Yaml yaml= new Yaml();
-	                Map<String,Object> map= (Map<String, Object>) yaml.load(message);
-	                jsonObjectMessage = new JSONObject(map);
-	    			System.out.println(" [*] Message as JSONObject ==> " + jsonObjectMessage);
+					String message = new String(body, "UTF-8");
+					// parse the yaml and convert it to json
+					Yaml yaml = new Yaml();
+					Map<String, Object> map = (Map<String, Object>) yaml.load(message);
+					jsonObjectMessage = new JSONObject(map);
 
-	                // if message coming from the MANO - contain status key
-	    			if (jsonObjectMessage.containsKey("status")){
-		    			System.out.println(" [*] Message coming from MANO.....");
+					// if message coming from the MANO - contain status key
+					if (jsonObjectMessage.containsKey("status")) {
+						System.out.println(" [*] Message coming from MANO.....");
+						System.out.println(" [*] Message as JSONObject ==> " + jsonObjectMessage);
+						status = (String) jsonObjectMessage.get("status");
+						System.out.println(" [*] STATUS ==> " + status);
+						// Call Mano Function
+						messageFromMano(status, jsonObjectMessage);
 
-	                    status = (String) jsonObjectMessage.get("status");
-		    			System.out.println(" [*] STATUS ==> " + status);
+					}
+					// if message coming from the GK - doesn't contain status key
+					else {
+						System.out.println(" [*] Message coming from Gatekeeper.....");
+						System.out.println(" [*] Message as JSONObject ==> " + jsonObjectMessage);
+						status = (String) jsonObjectMessage.get("status");
+						System.out.println(" [*] STATUS ==> " + status);
 
-	                }
-	                // if message coming from the GK - doesn't contain status key
-	    			else {
-		    			System.out.println(" [*] Message coming from Gatekeeper.....");
-		    			System.out.println(" [*] STATUS ==> " + status);
+						// Call GK Function
+						messageFromGK(status, jsonObjectMessage);
 
-	    			}
+					}
 
 				}
 
 			};
-			
+
 			// consumer
 			channel_service_instance.basicConsume(queueName_service_instance, true, consumer_service_instance);
-
-			
-			
 
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			System.out.println("ERROR Connecting to MQ!" + e.getMessage());
 		}
+
+	}
+
+	protected void messageFromGK(String status, JSONObject jsonObjectMessage) {
+		// Initialize valiables
+		String sla_uuid = "";
+		String ns_uuid = null;
+		String ns_name = null;
+		String cust_uuid = null;
+		String cust_email = null;
+		String sla_name = null;
+		String sla_status = null;
+		String correlation_id = null;
+
+		// Get nsd data
+		JSONObject nsd = (JSONObject) jsonObjectMessage.get("NSD");
+		ns_name = (String) nsd.get("name");
+		ns_uuid = (String) nsd.get("uuid");
+		System.out.println(" NS NAME ==> " + ns_name);
+		System.out.println(" NS UUID ==> " + ns_uuid);
+
+		// Parse customer data + sla uuid
+		JSONObject user_data = (JSONObject) jsonObjectMessage.get("user_data");
+		JSONObject customer = (JSONObject) user_data.get("customer");
+		cust_uuid = (String) customer.get("uuid");
+		cust_email = (String) customer.get("email");
+		sla_uuid = (String) customer.get("sla_id");
+		System.out.println(" Cust id  ==> " + cust_uuid);
+		System.out.println("Cust email  ==> " + cust_email);
+		System.out.println("SLA uuid  ==> " + sla_uuid);
+
+		if (sla_uuid != null && !sla_uuid.isEmpty()) {
+
+			cust_sla_corr cust_sla = new cust_sla_corr();
+			@SuppressWarnings("unchecked")
+			ArrayList<String> SLADetails = cust_sla.getSLAdetails(sla_uuid);
+			sla_name = (String) SLADetails.get(1);
+			sla_status = (String) SLADetails.get(0);
+			System.out.println("SLA name  ==> " + sla_name);
+			System.out.println("SLA status  ==> " + sla_status);
+			String inst_status = "PENDING";
+
+			db_operations.connectPostgreSQL();
+			cust_sla_corr.createCustSlaCorr(sla_uuid, sla_name, sla_status, ns_uuid, ns_name, cust_uuid, cust_email,
+					inst_status, correlation_id);
+		}
+
+	}
+
+	protected void messageFromMano(String status, JSONObject jsonObjectMessage) {
 
 	}
 
