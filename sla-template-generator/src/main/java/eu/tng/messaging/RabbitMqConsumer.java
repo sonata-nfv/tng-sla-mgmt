@@ -68,7 +68,7 @@ public class RabbitMqConsumer implements ServletContextListener {
 				public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties,
 						byte[] body) throws IOException {
 					// Initialize variables
-					String status = null;
+					String status = "test";
 					JSONObject jsonObjectMessage = null;
 					ArrayList<String> vnfrs_list = new ArrayList<String>();
 					ArrayList<String> vdus_list = new ArrayList<String>();
@@ -94,13 +94,8 @@ public class RabbitMqConsumer implements ServletContextListener {
 					else {
 						System.out.println(" [*] Message coming from Gatekeeper.....");
 						System.out.println(" [*] Message as JSONObject ==> " + jsonObjectMessage);
-						status = (String) jsonObjectMessage.get("status");
-						System.out.println(" [*] STATUS ==> " + status);
-
-						// Call GK Function
-						//messageFromGK(status, jsonObjectMessage);
-						
-						
+						//status = (String) jsonObjectMessage.get("status");
+						System.out.println(" [*] STATUS ==> " + status);						
 						
 						// Initialize valiables
 						String sla_uuid = null;
