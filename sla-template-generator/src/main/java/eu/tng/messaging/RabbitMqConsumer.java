@@ -57,7 +57,7 @@ public class RabbitMqConsumer implements ServletContextListener {
 			channel_service_instance = connection.createChannel();
 			channel_service_instance.exchangeDeclare(EXCHANGE_NAME, "topic");
 			queueName_service_instance = "slas.service.instances.create";
-			channel_service_instance.queueDeclare(queueName_service_instance, true, false, false, null);
+			channel_service_instance.queueDeclare(queueName_service_instance, false, false, false, null);
 			System.out.println(" [*]  Binding queue to topics...");
 			channel_service_instance.queueBind(queueName_service_instance, EXCHANGE_NAME, "service.instances.create");
 			System.out.println(" [*] Bound to topic \"service.instances.create\"");
@@ -79,6 +79,7 @@ public class RabbitMqConsumer implements ServletContextListener {
 					Yaml yaml = new Yaml();
 					Map<String, Object> map = (Map<String, Object>) yaml.load(message);
 					jsonObjectMessage = new JSONObject(map);
+					
 
 					// if message coming from the MANO - contain status key
 					if (jsonObjectMessage.containsKey("status")) {
@@ -107,10 +108,15 @@ public class RabbitMqConsumer implements ServletContextListener {
 						String sla_status = null;
 						String correlation_id = null;
 
-						// Get nsd data
-						JSONObject nsd = (JSONObject) jsonObjectMessage.get("NSD");
-						ns_name = (String) nsd.get("name");
-						ns_uuid = (String) nsd.get("uuid");
+						try {
+							// Get nsd data
+							JSONObject nsd = (JSONObject) jsonObjectMessage.get("NSD");
+							ns_name = (String) nsd.get("name");
+							ns_uuid = (String) nsd.get("uuid");
+						} catch (Exception e) {
+							System.out.println(" ERROR GET NSD FROM GK MESSAGE  ==> " + e.getMessage());						
+						}
+						
 						System.out.println(" NS NAME ==> " + ns_name);
 						System.out.println(" NS UUID ==> " + ns_uuid);
 
