@@ -81,12 +81,8 @@ public class RabbitMqConsumer implements ServletContextListener {
 					Map<String, Object> map = (Map<String, Object>) yaml.load(message);
 					jsonObjectMessage = new JSONObject(map);
 
-					System.out.println("START READING HEADERS FROM MESSAGE.....");			
-					// The map for the headers.
-					Map<String, Object> headers = new HashMap<String, Object>();
-					headers = properties.getHeaders();
-					
-					correlation_id = (String) headers.get("correlation_id");
+					System.out.println("START READING HEADERS FROM MESSAGE.....");								
+					correlation_id = (String) properties.getCorrelationId();
 					System.out.println(" [*] Correlation_id ==> " + correlation_id);
 					
 //					for (Map.Entry<String, Object> header : headers.entrySet()) {
