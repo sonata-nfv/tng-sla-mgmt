@@ -34,9 +34,7 @@ public class RabbitMqConsumer implements ServletContextListener {
 	/**
 	 * Default constructor.
 	 */
-	public RabbitMqConsumer() {
-		// TODO Auto-generated constructor stub
-	}
+	public RabbitMqConsumer() {}
 
 	/**
 	 * 
@@ -48,7 +46,6 @@ public class RabbitMqConsumer implements ServletContextListener {
 		Channel channel_service_instance;
 		Connection connection;
 		String queueName_service_instance;
-		String exchangeName;
 
 		try {
 			RabbitMqConnector connect = new RabbitMqConnector();
@@ -81,10 +78,9 @@ public class RabbitMqConsumer implements ServletContextListener {
 					Map<String, Object> map = (Map<String, Object>) yaml.load(message);
 					jsonObjectMessage = new JSONObject(map);
 
-					System.out.println("START READING HEADERS FROM MESSAGE.....");								
+					System.out.println("START READING HEADERS FROM MESSAGE.....");
 					correlation_id = (String) properties.getCorrelationId();
 					System.out.println(" [*] Correlation_id ==> " + correlation_id);
-					
 
 					/** if message coming from the MANO - contain status key **/
 					if (jsonObjectMessage.has("status")) {
@@ -122,7 +118,7 @@ public class RabbitMqConsumer implements ServletContextListener {
 								}
 
 							}
-							
+
 							// call the create rules method
 							MonitoringRules mr = new MonitoringRules();
 							MonitoringRules.createMonitroingRules(sla_id, vnfrs_list, vdus_list, ns_id);
@@ -146,43 +142,38 @@ public class RabbitMqConsumer implements ServletContextListener {
 						String sla_name = null;
 						String sla_status = null;
 
-						try {
-							// Get nsd data
-							JSONObject nsd = jsonObjectMessage.getJSONObject("NSD");
-							ns_name = (String) nsd.get("name");
-							ns_uuid = (String) nsd.get("uuid");
-							System.out.println(" NS NAME ==> " + ns_name);
-							System.out.println(" NS UUID ==> " + ns_uuid);
+						// Get nsd data
+						JSONObject nsd = jsonObjectMessage.getJSONObject("NSD");
+						ns_name = (String) nsd.get("name");
+						ns_uuid = (String) nsd.get("uuid");
+						System.out.println(" NS NAME ==> " + ns_name);
+						System.out.println(" NS UUID ==> " + ns_uuid);
 
-							// Parse customer data + sla uuid
-							JSONObject user_data = (JSONObject) jsonObjectMessage.getJSONObject("user_data");
-							JSONObject customer = (JSONObject) user_data.getJSONObject("customer");
-							cust_uuid = (String) customer.get("uuid");
-							cust_email = (String) customer.get("email");
-							sla_uuid = (String) customer.get("sla_id");
-							System.out.println(" Cust id  ==> " + cust_uuid);
-							System.out.println("Cust email  ==> " + cust_email);
-							System.out.println("SLA uuid  ==> " + sla_uuid);
+						// Parse customer data + sla uuid
+						JSONObject user_data = (JSONObject) jsonObjectMessage.getJSONObject("user_data");
+						JSONObject customer = (JSONObject) user_data.getJSONObject("customer");
+						cust_uuid = (String) customer.get("uuid");
+						cust_email = (String) customer.get("email");
+						sla_uuid = (String) customer.get("sla_id");
+						System.out.println(" Cust id  ==> " + cust_uuid);
+						System.out.println("Cust email  ==> " + cust_email);
+						System.out.println("SLA uuid  ==> " + sla_uuid);
 
-							// if sla exists create record in database
-							if (sla_uuid != null && !sla_uuid.isEmpty()) {
+						// if sla exists create record in database
+						if (sla_uuid != null && !sla_uuid.isEmpty()) {
 
-								cust_sla_corr cust_sla = new cust_sla_corr();
-								@SuppressWarnings("unchecked")
-								ArrayList<String> SLADetails = cust_sla.getSLAdetails(sla_uuid);
-								sla_name = (String) SLADetails.get(1);
-								sla_status = (String) SLADetails.get(0);
-								System.out.println("SLA name  ==> " + sla_name);
-								System.out.println("SLA status  ==> " + sla_status);
-								String inst_status = "PENDING";
+							cust_sla_corr cust_sla = new cust_sla_corr();
+							@SuppressWarnings("unchecked")
+							ArrayList<String> SLADetails = cust_sla.getSLAdetails(sla_uuid);
+							sla_name = (String) SLADetails.get(1);
+							sla_status = (String) SLADetails.get(0);
+							System.out.println("SLA name  ==> " + sla_name);
+							System.out.println("SLA status  ==> " + sla_status);
+							String inst_status = "PENDING";
 
-								db_operations.connectPostgreSQL();
-								cust_sla_corr.createCustSlaCorr(sla_uuid, sla_name, sla_status, ns_uuid, ns_name,
-										cust_uuid, cust_email, inst_status, "test_correlation");
-							}
-
-						} catch (Exception e) {
-							System.out.println(" ERROR GET PARSING GK MESSAGE  ==> " + e.getMessage());
+							db_operations.connectPostgreSQL();
+							cust_sla_corr.createCustSlaCorr(sla_uuid, sla_name, sla_status, ns_uuid, ns_name, cust_uuid,
+									cust_email, inst_status, "test_correlation");
 						}
 
 					}
@@ -191,7 +182,7 @@ public class RabbitMqConsumer implements ServletContextListener {
 
 			};
 
-			// consumer
+			// service instantiation consumer
 			channel_service_instance.basicConsume(queueName_service_instance, true, consumer_service_instance);
 
 		} catch (IOException e) {
