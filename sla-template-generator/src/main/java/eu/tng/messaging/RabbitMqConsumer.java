@@ -5,23 +5,20 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
-
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
-import org.json.simple.JSONObject;
+import org.json.JSONObject;
 import org.yaml.snakeyaml.Yaml;
-
 import com.rabbitmq.client.*;
-
 import eu.tng.correlations.cust_sla_corr;
 import eu.tng.correlations.db_operations;
 import eu.tng.rules.MonitoringRules;
 
 public class RabbitMqConsumer implements ServletContextListener {
 
-	private static final String EXCHANGE_NAME = System.getenv("BROKER_EXCHANGE");
-	// private static final String EXCHANGE_NAME = "son-kernel";
+	// private static final String EXCHANGE_NAME = System.getenv("BROKER_EXCHANGE");
+	private static final String EXCHANGE_NAME = "son-kernel";
 
 	/**
 	 * @see ServletContextListener#contextDestroyed(ServletContextEvent)
@@ -56,7 +53,7 @@ public class RabbitMqConsumer implements ServletContextListener {
 			channel_service_instance = connection.createChannel();
 			channel_service_instance.exchangeDeclare(EXCHANGE_NAME, "topic");
 			queueName_service_instance = "slas.service.instances.create";
-			channel_service_instance.queueDeclare(queueName_service_instance, true, false, false, null);
+			channel_service_instance.queueDeclare(queueName_service_instance, false, false, false, null);
 			System.out.println(" [*]  Binding queue to topics...");
 			channel_service_instance.queueBind(queueName_service_instance, EXCHANGE_NAME, "service.instances.create");
 			System.out.println(" [*] Bound to topic \"service.instances.create\"");
@@ -78,25 +75,22 @@ public class RabbitMqConsumer implements ServletContextListener {
 					Yaml yaml = new Yaml();
 					Map<String, Object> map = (Map<String, Object>) yaml.load(message);
 					jsonObjectMessage = new JSONObject(map);
-					
 
 					// if message coming from the MANO - contain status key
-					if (jsonObjectMessage.containsKey("status")) {
+					if (jsonObjectMessage.has("status")) {
 						System.out.println(" [*] Message coming from MANO.....");
 						System.out.println(" [*] Message as JSONObject ==> " + jsonObjectMessage);
 						status = (String) jsonObjectMessage.get("status");
 						System.out.println(" [*] STATUS ==> " + status);
-						// Call Mano Function
-						//messageFromMano(status, jsonObjectMessage);
 
 					}
 					// if message coming from the GK - doesn't contain status key
 					else {
 						System.out.println(" [*] Message coming from Gatekeeper.....");
 						System.out.println(" [*] Message as JSONObject ==> " + jsonObjectMessage);
-						//status = (String) jsonObjectMessage.get("status");
-						System.out.println(" [*] STATUS ==> " + status);						
-						
+						// status = (String) jsonObjectMessage.get("status");
+						System.out.println(" [*] STATUS ==> " + status);
+
 						// Initialize valiables
 						String sla_uuid = null;
 						String ns_uuid = null;
@@ -109,40 +103,40 @@ public class RabbitMqConsumer implements ServletContextListener {
 
 						try {
 							// Get nsd data
-							JSONObject nsd = (JSONObject) jsonObjectMessage.get("NSD");
+							JSONObject nsd = jsonObjectMessage.getJSONObject("NSD");
 							ns_name = (String) nsd.get("name");
 							ns_uuid = (String) nsd.get("uuid");
+							System.out.println(" NS NAME ==> " + ns_name);
+							System.out.println(" NS UUID ==> " + ns_uuid);
+
+							// Parse customer data + sla uuid
+							JSONObject user_data = (JSONObject) jsonObjectMessage.getJSONObject("user_data");
+							JSONObject customer = (JSONObject) user_data.getJSONObject("customer");
+							cust_uuid = (String) customer.get("uuid");
+							cust_email = (String) customer.get("email");
+							sla_uuid = (String) customer.get("sla_id");
+							System.out.println(" Cust id  ==> " + cust_uuid);
+							System.out.println("Cust email  ==> " + cust_email);
+							System.out.println("SLA uuid  ==> " + sla_uuid);
+
+//							if (sla_uuid != null && !sla_uuid.isEmpty()) {
+//
+//								cust_sla_corr cust_sla = new cust_sla_corr();
+//								@SuppressWarnings("unchecked")
+//								ArrayList<String> SLADetails = cust_sla.getSLAdetails(sla_uuid);
+//								sla_name = (String) SLADetails.get(1);
+//								sla_status = (String) SLADetails.get(0);
+//								System.out.println("SLA name  ==> " + sla_name);
+//								System.out.println("SLA status  ==> " + sla_status);
+//								String inst_status = "PENDING";
+//
+//								db_operations.connectPostgreSQL();
+//								cust_sla_corr.createCustSlaCorr(sla_uuid, sla_name, sla_status, ns_uuid, ns_name,
+//										cust_uuid, cust_email, inst_status, correlation_id);
+//							}
+
 						} catch (Exception e) {
-							System.out.println(" ERROR GET NSD FROM GK MESSAGE  ==> " + e.getMessage());						
-						}
-						
-						System.out.println(" NS NAME ==> " + ns_name);
-						System.out.println(" NS UUID ==> " + ns_uuid);
-
-						// Parse customer data + sla uuid
-						JSONObject user_data = (JSONObject) jsonObjectMessage.get("user_data");
-						JSONObject customer = (JSONObject) user_data.get("customer");
-						cust_uuid = (String) customer.get("uuid");
-						cust_email = (String) customer.get("email");
-						sla_uuid = (String) customer.get("sla_id");
-						System.out.println(" Cust id  ==> " + cust_uuid);
-						System.out.println("Cust email  ==> " + cust_email);
-						System.out.println("SLA uuid  ==> " + sla_uuid);
-
-						if (sla_uuid != null && !sla_uuid.isEmpty()) {
-
-							cust_sla_corr cust_sla = new cust_sla_corr();
-							@SuppressWarnings("unchecked")
-							ArrayList<String> SLADetails = cust_sla.getSLAdetails(sla_uuid);
-							sla_name = (String) SLADetails.get(1);
-							sla_status = (String) SLADetails.get(0);
-							System.out.println("SLA name  ==> " + sla_name);
-							System.out.println("SLA status  ==> " + sla_status);
-							String inst_status = "PENDING";
-
-							db_operations.connectPostgreSQL();
-							cust_sla_corr.createCustSlaCorr(sla_uuid, sla_name, sla_status, ns_uuid, ns_name, cust_uuid, cust_email,
-									inst_status, correlation_id);
+							System.out.println(" ERROR GET PARSING GK MESSAGE  ==> " + e.getMessage());
 						}
 
 					}
@@ -153,19 +147,11 @@ public class RabbitMqConsumer implements ServletContextListener {
 
 			// consumer
 			channel_service_instance.basicConsume(queueName_service_instance, true, consumer_service_instance);
-			
-				
 
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			System.out.println("ERROR Connecting to MQ!" + e.getMessage());
 		}
-
-	}
-
-
-
-	protected void messageFromMano(String status, JSONObject jsonObjectMessage) {
 
 	}
 
