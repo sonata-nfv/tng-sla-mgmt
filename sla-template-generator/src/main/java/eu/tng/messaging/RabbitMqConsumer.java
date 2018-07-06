@@ -99,6 +99,8 @@ public class RabbitMqConsumer implements ServletContextListener {
 							String ns_id = "";
 							// Get sla_id
 							sla_id = (String) jsonObjectMessage.get("sla_id");
+							
+							if (sla_id != null && !sla_id.isEmpty()) {
 							// Get service uuid
 							JSONObject nsr = (JSONObject) jsonObjectMessage.getJSONObject("nsr");
 							ns_id = (String) nsr.get("id");
@@ -122,6 +124,7 @@ public class RabbitMqConsumer implements ServletContextListener {
 							// call the create rules method
 							MonitoringRules mr = new MonitoringRules();
 							MonitoringRules.createMonitroingRules(sla_id, vnfrs_list, vdus_list, ns_id);
+							}
 
 						}
 
