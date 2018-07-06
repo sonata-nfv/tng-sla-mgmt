@@ -18,4 +18,8 @@
   <listener>
     <listener-class>eu.tng.messaging.MqServiceInstantiateConsumer</listener-class>
   </listener>
+  <listener>
+    <listener-class>eu.tng.messaging.MqServiceTerminateConsumer</listener-class>
+  </listener>
+  
 </web-app>
