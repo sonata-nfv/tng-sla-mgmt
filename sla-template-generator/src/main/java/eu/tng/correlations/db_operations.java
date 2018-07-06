@@ -379,6 +379,8 @@ public class db_operations {
 				String sla_status = rs.getString("sla_status");
 				String cust_email = rs.getString("cust_email");
 				String cust_uuid = rs.getString("cust_uuid");
+				String inst_status = rs.getString("inst_status");
+
 
 				JSONObject obj = new JSONObject();
 				obj.put("ns_uuid", ns_uuid);
@@ -389,6 +391,8 @@ public class db_operations {
 				obj.put("sla_uuid", sla_uuid);
 				obj.put("cust_email", cust_email);
 				obj.put("cust_uuid", cust_uuid);
+				obj.put("inst_status", inst_status);
+
 
 				agreements.add(obj);
 			}
