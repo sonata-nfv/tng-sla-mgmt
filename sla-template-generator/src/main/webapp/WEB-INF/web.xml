@@ -16,6 +16,6 @@
     <url-pattern>/tng-sla-mgmt/api/slas/v1/*</url-pattern>
   </servlet-mapping>
   <listener>
-    <listener-class>eu.tng.messaging.RabbitMqConsumer</listener-class>
+    <listener-class>eu.tng.messaging.MqServiceInstantiateConsumer</listener-class>
   </listener>
 </web-app>
