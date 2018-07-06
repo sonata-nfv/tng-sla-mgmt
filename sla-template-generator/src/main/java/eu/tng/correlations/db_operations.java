@@ -30,6 +30,7 @@ package eu.tng.correlations;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashMap;
@@ -52,9 +53,9 @@ public class db_operations {
 		try {
 
 			Class.forName("org.postgresql.Driver");
-//			 c =
-//			 DriverManager.getConnection("jdbc:postgresql://localhost:5432/sla-manager",
-//			 "postgres", "admin");
+			// c =
+			// DriverManager.getConnection("jdbc:postgresql://localhost:5432/sla-manager",
+			// "postgres", "admin");
 			c = DriverManager
 					.getConnection(
 							"jdbc:postgresql://" + System.getenv("DATABASE_HOST") + ":" + System.getenv("DATABASE_PORT")
@@ -241,22 +242,42 @@ public class db_operations {
 	 */
 	public static void UpdateRecordAgreement(String inst_status, String correlation_id) {
 
+		String SQL = "UPDATE cust_sla " + "SET inst_status = ? " + "WHERE inst_id = ?";
+		boolean result = false;
+		int affectedrows = 0;
+
 		try {
-			c.setAutoCommit(false);
-			Statement stmt = c.createStatement();
-			System.out.println(correlation_id);
-
-			String sql = "UPDATE cust_sla set inst_status = '" + inst_status + "' where inst_id = '" + correlation_id
-					+ "' ; ";
-			stmt.executeUpdate(sql);
-			stmt.close();
-
-			c.commit();
-			System.out.println("[*] Update was succesfull - Agreement record set to READY");
-
-		} catch (Exception e) {
+			PreparedStatement pstmt = c.prepareStatement(SQL);
+			pstmt.setString(1, inst_status);
+			pstmt.setString(2, correlation_id);
+			affectedrows = pstmt.executeUpdate();
+			result = true;
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+		System.out.println("Set status READY? " + result);
+
+
+		// try {
+		// c.setAutoCommit(false);
+		// Statement stmt = c.createStatement();
+		// System.out.println(correlation_id);
+		//
+		// String sql = "UPDATE cust_sla SET inst_status = '" + inst_status + "' where
+		// inst_id = '" + correlation_id
+		// + "' ; ";
+		// stmt.executeUpdate(sql);
+		// stmt.close();
+		//
+		// c.commit();
+		// System.out.println("[*] Update was succesfull - Agreement record set to
+		// READY");
+		//
+		// } catch (Exception e) {
+		// e.printStackTrace();
+		// }
 
 	}
 
@@ -368,7 +389,8 @@ public class db_operations {
 		try {
 			c.setAutoCommit(false);
 			stmt = c.createStatement();
-			//ResultSet rs = stmt.executeQuery("SELECT * FROM cust_sla WHERE inst_status='READY';");
+			// ResultSet rs = stmt.executeQuery("SELECT * FROM cust_sla WHERE
+			// inst_status='READY';");
 			ResultSet rs = stmt.executeQuery("SELECT * FROM cust_sla;");
 			while (rs.next()) {
 				String ns_uuid = rs.getString("ns_uuid");
@@ -380,7 +402,7 @@ public class db_operations {
 				String cust_email = rs.getString("cust_email");
 				String cust_uuid = rs.getString("cust_uuid");
 				String inst_status = rs.getString("inst_status");
-
+				String inst_id = rs.getString("inst_id");
 
 				JSONObject obj = new JSONObject();
 				obj.put("ns_uuid", ns_uuid);
@@ -392,7 +414,7 @@ public class db_operations {
 				obj.put("cust_email", cust_email);
 				obj.put("cust_uuid", cust_uuid);
 				obj.put("inst_status", inst_status);
-
+				obj.put("correlation_id", inst_id);
 
 				agreements.add(obj);
 			}
@@ -486,7 +508,7 @@ public class db_operations {
 
 		return root;
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public JSONObject selectAgreementPerSlaNs(String sla_uuid, String ns_uuid) {
 
@@ -521,7 +543,6 @@ public class db_operations {
 
 		return root;
 	}
-	
 
 	/**
 	 * Get agreement correlation per sla_uuid
@@ -529,7 +550,7 @@ public class db_operations {
 	@SuppressWarnings("unchecked")
 	public int countAgreementCorrelationPeriD(String sla_uuid) {
 
-		String SQL = "SELECT count(*) FROM cust_sla where sla_uuid = '"+ sla_uuid +"' AND inst_status='READY'";
+		String SQL = "SELECT count(*) FROM cust_sla where sla_uuid = '" + sla_uuid + "' AND inst_status='READY'";
 		int count = 0;
 
 		try {
