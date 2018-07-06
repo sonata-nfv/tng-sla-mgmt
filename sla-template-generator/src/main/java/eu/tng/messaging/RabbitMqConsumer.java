@@ -81,18 +81,14 @@ public class RabbitMqConsumer implements ServletContextListener {
 					// The map for the headers.
 					Map<String, Object> headers = new HashMap<String, Object>();
 					headers = properties.getHeaders();
-					System.out.println("Map for headers created ..... ==> "  + headers);
+					for (Map.Entry<String, Object> header : headers.entrySet()) {
+						System.out.println("Map for headers created ..... ==> "  + headers);
+						if (header.getKey().equals("correlation_id")) {
+							correlation_id = header.getValue().toString();
+							System.out.println("correlation_id ==> " + correlation_id);
+						}
 
-
-					// // Parse headers
-					// HashMap<String, Object> headers = (HashMap<String, Object>)
-					// properties.getHeaders();
-					// for (Map.Entry<String, Object> header : headers.entrySet()) {
-					// if (header.getKey().equals("correlation_id")) {
-					// correlation_id = header.getValue().toString();
-					// System.out.println("correlation_id ==> " + correlation_id);
-					// }
-					// }
+					}
 
 					// if message coming from the MANO - contain status key
 					if (jsonObjectMessage.has("status")) {
