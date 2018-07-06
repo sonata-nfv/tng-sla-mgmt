@@ -77,14 +77,22 @@ public class RabbitMqConsumer implements ServletContextListener {
 					Map<String, Object> map = (Map<String, Object>) yaml.load(message);
 					jsonObjectMessage = new JSONObject(map);
 
-					// Parse headers
-					HashMap<String, Object> headers = (HashMap<String, Object>) properties.getHeaders();
-					for (Map.Entry<String, Object> header : headers.entrySet()) {
-						if (header.getKey().equals("correlation_id")) {
-							correlation_id = header.getValue().toString();
-							System.out.println("correlation_id ==> " + correlation_id);
-						}
-					}
+					System.out.println("START READING HEADERS FROM MESSAGE.....");
+					// The map for the headers.
+					Map<String, Object> headers = new HashMap<String, Object>();
+					headers = properties.getHeaders();
+					System.out.println("Map for headers created ..... ==> "  + headers);
+
+
+					// // Parse headers
+					// HashMap<String, Object> headers = (HashMap<String, Object>)
+					// properties.getHeaders();
+					// for (Map.Entry<String, Object> header : headers.entrySet()) {
+					// if (header.getKey().equals("correlation_id")) {
+					// correlation_id = header.getValue().toString();
+					// System.out.println("correlation_id ==> " + correlation_id);
+					// }
+					// }
 
 					// if message coming from the MANO - contain status key
 					if (jsonObjectMessage.has("status")) {
@@ -109,7 +117,7 @@ public class RabbitMqConsumer implements ServletContextListener {
 						String cust_email = null;
 						String sla_name = null;
 						String sla_status = null;
-						
+
 						try {
 							// Get nsd data
 							JSONObject nsd = jsonObjectMessage.getJSONObject("NSD");
