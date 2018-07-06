@@ -109,8 +109,7 @@ public class RabbitMqConsumer implements ServletContextListener {
 						String cust_email = null;
 						String sla_name = null;
 						String sla_status = null;
-						String correlation_id = null;
-
+						
 						try {
 							// Get nsd data
 							JSONObject nsd = jsonObjectMessage.getJSONObject("NSD");
