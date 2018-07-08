@@ -159,6 +159,7 @@ public class AgreementsAPIs {
 			@SuppressWarnings("unused")
 			int responseCode = con.getResponseCode();
 			BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
+			int response_length = con.getInputStream().available();
 			String inputLine;
 			StringBuffer response = new StringBuffer();
 			while ((inputLine = in.readLine()) != null) {
@@ -194,11 +195,13 @@ public class AgreementsAPIs {
 			customer_info.put("cust_email", cust_email);
 			sla_template.put("customer_info", customer_info);		
 			
+			int cust_info_length = customer_info.toString().length();
+			
 			System.out.println(agreement);
 			existingTemplates = agreement;
 			
 			apiresponse = Response.ok((Object) existingTemplates);
-			apiresponse.header("Content-Length", agreement.toJSONString().length());
+			apiresponse.header("Content-Length", cust_info_length + response_length);
 			return apiresponse.status(200).build();
 
 		} catch (Exception e) {
