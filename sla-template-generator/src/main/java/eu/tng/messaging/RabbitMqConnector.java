@@ -10,7 +10,7 @@ public class RabbitMqConnector {
 	public static Connection MqConnector() {
 
 		String connector_url = System.getenv("MQSERVER");
-		// String connector_url = "amqp://guest:guest@83.212.238.159:5672";
+		//String connector_url = "amqp://guest:guest@83.212.238.159:5672";
 
 		ConnectionFactory factory = new ConnectionFactory();
 		try {

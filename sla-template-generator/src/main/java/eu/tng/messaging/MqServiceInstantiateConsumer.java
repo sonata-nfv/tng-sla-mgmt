@@ -21,8 +21,8 @@ import eu.tng.rules.MonitoringRules;
 
 public class MqServiceInstantiateConsumer implements ServletContextListener {
 
-	// private static final String EXCHANGE_NAME = System.getenv("BROKER_EXCHANGE");
-	private static final String EXCHANGE_NAME = "son-kernel";
+	private static final String EXCHANGE_NAME = System.getenv("BROKER_EXCHANGE");
+	//private static final String EXCHANGE_NAME = "son-kernel";
 
 	/**
 	 * @see ServletContextListener#contextDestroyed(ServletContextEvent)
