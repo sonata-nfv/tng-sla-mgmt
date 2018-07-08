@@ -276,6 +276,43 @@ public class db_operations {
 		return violation;
 	}
 	/**
+	 * 
+	 * @return  All Violation data for all SLAs-NS instances
+	 */
+	@SuppressWarnings({ "unchecked", "null" })
+	public static JSONObject getAllViolationData() {
+
+		JSONObject violation_data = new JSONObject();
+		Statement stmt = null;
+
+		
+		try {
+			c.setAutoCommit(false);
+			stmt = c.createStatement();
+			ResultSet rs = stmt
+					.executeQuery("SELECT * FROM sla_violations;");
+			while (rs.next()) {
+				String violation_time = rs.getString("violation_time");
+				String alert_state = rs.getString("alert_state");
+				String cust_uuid = rs.getString("cust_uuid");
+				String ns_uuid = rs.getString("ns_uuid");
+				String sla_uuid = rs.getString("sla_uuid");
+				
+				violation_data.put("violation_time", violation_time);
+				violation_data.put("alert_state", alert_state);
+				violation_data.put("cust_uuid", cust_uuid);
+				violation_data.put("ns_uuid", ns_uuid);
+				violation_data.put("sla_uuid", sla_uuid);
+			}
+			System.out.println("VIOLATIONS FROM DB OPERATIONS CLASS ==> " + violation_data);
+			rs.close();
+			stmt.close();
+		} catch (Exception e) {
+			System.err.println(e.getClass().getName() + ": " + e.getMessage());
+		}
+		return violation_data;
+	}
+	/**
 	 * Update Record cust-sla correlation
 	 * 
 	 */

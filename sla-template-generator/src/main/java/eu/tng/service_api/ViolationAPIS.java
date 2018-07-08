@@ -49,5 +49,33 @@ public class ViolationAPIS {
 
 		}
 	}
+	
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getAllViolationData() {
+
+		ResponseBuilder apiresponse = null;
+		
+		db_operations dbo = new db_operations();
+		boolean connect = db_operations.connectPostgreSQL();
+		if (connect == true) {
+			db_operations.createTableViolations();
+			JSONObject violations = db_operations.getAllViolationData();
+			System.out.println("VIOLATIONS FROM VIOLATION API CLASS ==> " + violations);
+			
+			dbo.closePostgreSQL();
+			apiresponse = Response.ok(violations);
+			apiresponse.header("Content-Length", violations.toString().length());
+			return apiresponse.status(200).build();
+
+		} else {
+			JSONObject error = new JSONObject();
+			error.put("ERROR: ", "connecting to database");
+			apiresponse = Response.ok((Object) error);
+			apiresponse.header("Content-Length", error.toJSONString().length());
+			return apiresponse.status(404).build();
+
+		}
+	}
 
 }
