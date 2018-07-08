@@ -10,7 +10,7 @@ import com.rabbitmq.client.Channel;
 
 public class ViolationsProducer {
 
-      private static final String EXCHANGE_NAME = System.getenv("BROKER_EXCHANGE");
+    private static final String EXCHANGE_NAME = System.getenv("BROKER_EXCHANGE");
     //private static final String EXCHANGE_NAME = "son-kernel";
 
     public static void publishViolationMessage(JSONObject payload, Connection connection) throws Exception {

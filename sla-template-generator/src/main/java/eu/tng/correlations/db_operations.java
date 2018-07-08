@@ -42,596 +42,595 @@ import java.sql.ResultSet;
 
 public class db_operations {
 
-	static Connection c = null;
-	static Statement stmt = null;
-
-	/**
-	 * Connect to PostgreSQL
-	 */
-	public static boolean connectPostgreSQL() {
-		boolean connect = false;
-		try {
-
-			Class.forName("org.postgresql.Driver");
-			// c =
-			// DriverManager.getConnection("jdbc:postgresql://localhost:5432/sla-manager",
-			// "postgres", "admin");
-			c = DriverManager
-					.getConnection(
-							"jdbc:postgresql://" + System.getenv("DATABASE_HOST") + ":" + System.getenv("DATABASE_PORT")
-									+ "/" + System.getenv("GTK_DB_NAME"),
-							System.getenv("GTK_DB_USER"), System.getenv("GTK_DB_PASS"));
-			connect = true;
-			System.out.println("Opened sla-manager database successfully");
-
-		} catch (Exception e) {
-			e.printStackTrace();
-			System.err.println(e.getClass().getName() + ": " + e.getMessage());
-			connect = false;
-		}
-		return connect;
-	}
-
-	/**
-	 * Create table if not exist - ns-template correlation
-	 */
-	public boolean createTableNSTemplate() {
-		boolean result = false;
-		try {
-			stmt = c.createStatement();
-			String sql = "CREATE TABLE IF NOT EXISTS ns_template" + "(ID  SERIAL PRIMARY KEY,"
-					+ " NS_UUID TEXT NOT NULL, " + "SLA_UUID  TEXT NOT NULL )";
-			stmt.executeUpdate(sql);
-			stmt.close();
-			result = true;
-		} catch (Exception e) {
-			System.err.println(e.getClass().getName() + ": " + e.getMessage());
-		}
-
-		System.out.println("Table Created? " + result);
-		return result;
-	}
-
-	/**
-	 * Create table if not exist - customer-sla correlation
-	 */
-	public static void createTableCustSla() {
-		try {
-			stmt = c.createStatement();
-			String sql = "CREATE TABLE IF NOT EXISTS cust_sla" + "(ID  SERIAL PRIMARY KEY," + " NS_UUID TEXT NOT NULL, "
-					+ "NS_NAME TEXT NOT NULL," + "SLA_UUID  TEXT NOT NULL," + "SLA_NAME TEXT NOT NULL,"
-					+ "SLA_DATE TIMESTAMPTZ DEFAULT Now()," + "SLA_STATUS TEXT NOT NULL," + "CUST_EMAIL TEXT NOT NULL,"
-					+ "CUST_UUID  TEXT NOT NULL," + "INST_ID TEXT NOT NULL," + "INST_STATUS  TEXT NOT NULL )";
-			stmt.executeUpdate(sql);
-			stmt.close();
-		} catch (Exception e) {
-			System.err.println(e.getClass().getName() + ": " + e.getMessage());
-		}
-		System.out.println("Table cust_sla created successfully");
-
-	}
-
-	/**
-	 * Create table if not exist - sla_violations
-	 */
-	public static void createTableViolations() {
-		try {
-			stmt = c.createStatement();
-			String sql = "CREATE TABLE IF NOT EXISTS sla_violations" + "(ID  SERIAL PRIMARY KEY," + " NS_UUID TEXT NOT NULL, "
-					+ "SLA_UUID TEXT NOT NULL," + "VIOLATION_TIME TEXT NOT NULL," + "ALERT_STATE TEXT NOT NULL,"
-					+ "CUST_UUID  TEXT NOT NULL )";
-			stmt.executeUpdate(sql);
-			stmt.close();
-			System.out.println("Table sla_violations created successfully");
-
-		} catch (Exception e) {
-			System.err.println(e.getClass().getName() + ": " + e.getMessage());
-			System.out.println("Error creating sla violations table or already exists");
-
-		}
-
-	}
-
-	/**
-	 * Insert Record ns-template correlation
-	 */
-	public boolean insertRecord(String tablename, String ns_uuid, String sla_uuid) {
-		boolean result = false;
-		try {
-			c.setAutoCommit(false);
-			Statement stmt = c.createStatement();
-			String sql = "INSERT INTO " + tablename + " (ns_uuid,sla_uuid) " + "VALUES ('" + ns_uuid + "','" + sla_uuid
-					+ "');";
-			stmt.executeUpdate(sql);
-			stmt.close();
-			c.commit();
-			result = true;
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-		System.out.println("Records ns-template saved successfully? " + result);
-
-		return result;
-	}
-
-	/**
-	 * Insert Record cust-sla correlation
-	 * 
-	 */
-	public void insertRecordAgreement(String ns_uuid, String ns_name, String sla_uuid, String sla_name,
-			String sla_status, String cust_name, String cust_uuid, String inst_status, String correlation_id) {
-
-		try {
-			c.setAutoCommit(false);
-			Statement stmt = c.createStatement();
-			String sql = "INSERT INTO cust_sla "
-					+ " (ns_uuid, ns_name, sla_uuid, sla_name, sla_status, cust_email, cust_uuid, inst_status, inst_id) "
-					+ "VALUES ('" + ns_uuid + "','" + ns_name + "','" + sla_uuid + "' ,'" + sla_name + "' ,'"
-					+ sla_status + "','" + cust_name + "','" + cust_uuid + "', '" + inst_status + "' , '"
-					+ correlation_id + "');";
-			stmt.executeUpdate(sql);
-			stmt.close();
-			c.commit();
-			System.out.println("Records  cust-sla saved successfully");
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-	}
-
-	/**
-	 * Insert Record violations
-	 * 
-	 */
-	public void insertRecordViolation(String ns_uuid, String sla_uuid, String violation_time, String alert_state,
-			String cust_uuid) {
-
-		try {
-			c.setAutoCommit(false);
-			Statement stmt = c.createStatement();
-			String sql = "INSERT INTO sla_violations  (ns_uuid, sla_uuid,violation_time, alert_state, cust_uuid ) VALUES ('"
-					+ ns_uuid + "', '" + sla_uuid + "', '" + violation_time + "','" + alert_state + "', '" + cust_uuid
-					+ "');  ";
-			stmt.executeUpdate(sql);
-			stmt.close();
-			c.commit();
-			System.out.println("Violation record created successfully");
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-	}
-
-	@SuppressWarnings("unchecked")
-	public JSONArray getViolatedSLA(String ns_uuid) {
-
-		Statement stmt = null;
-
-		String sla_uuid = null;
-		String cust_uuid = null;
-		JSONArray violated_sla = new JSONArray();
-
-		try {
-			c.setAutoCommit(false);
-			stmt = c.createStatement();
-			ResultSet rs = stmt
-					.executeQuery("SELECT * FROM cust_sla WHERE ns_uuid='" + ns_uuid + "' AND inst_status='READY';");
-			while (rs.next()) {
-				sla_uuid = rs.getString("sla_uuid");
-				cust_uuid = rs.getString("cust_uuid");
-				System.out.println("sla_uuid = " + sla_uuid);
-				System.out.println("cust_uuid = " + cust_uuid);
-
-				violated_sla.add(sla_uuid);
-				violated_sla.add(cust_uuid);
-
-			}
-			rs.close();
-			stmt.close();
-		} catch (Exception e) {
-			System.err.println(e.getClass().getName() + ": " + e.getMessage());
-		}
-		return violated_sla;
-	}
-	
-	
-
-	/**
-	 * 
-	 * @param ns_uuid
-	 * @param sla_uuid
-	 * @return Get violation data per SLA - Service Instance
-	 */
-	@SuppressWarnings({ "unchecked", "null" })
-	public static JSONObject getViolationData(String ns_uuid, String sla_uuid) {
-
-		JSONObject violation = new JSONObject();
-		Statement stmt = null;
-
-		
-		try {
-			c.setAutoCommit(false);
-			stmt = c.createStatement();
-			ResultSet rs = stmt
-					.executeQuery("SELECT * FROM sla_violations WHERE ns_uuid='" + ns_uuid + "' AND sla_uuid='" + sla_uuid +"';");
-			while (rs.next()) {
-				String violation_time = rs.getString("violation_time");
-				String alert_state = rs.getString("alert_state");
-				String cust_uuid = rs.getString("cust_uuid");
-				
-				violation.put("violation_time", violation_time);
-				violation.put("alert_state", alert_state);
-				violation.put("cust_uuid", cust_uuid);
-				violation.put("ns_uuid", ns_uuid);
-				violation.put("sla_uuid", sla_uuid);
-			}
-			System.out.println("VIOLATIONS FROM DB OPERATIONS CLASS ==> " + violation);
-			rs.close();
-			stmt.close();
-		} catch (Exception e) {
-			System.err.println(e.getClass().getName() + ": " + e.getMessage());
-		}
-		return violation;
-	}
-	/**
-	 * 
-	 * @return  All Violation data for all SLAs-NS instances
-	 */
-	@SuppressWarnings({ "unchecked", "null" })
-	public static JSONObject getAllViolationData() {
-
-		JSONObject violation_data = new JSONObject();
-		Statement stmt = null;
-
-		
-		try {
-			c.setAutoCommit(false);
-			stmt = c.createStatement();
-			ResultSet rs = stmt
-					.executeQuery("SELECT * FROM sla_violations;");
-			while (rs.next()) {
-				String violation_time = rs.getString("violation_time");
-				String alert_state = rs.getString("alert_state");
-				String cust_uuid = rs.getString("cust_uuid");
-				String ns_uuid = rs.getString("ns_uuid");
-				String sla_uuid = rs.getString("sla_uuid");
-				
-				violation_data.put("violation_time", violation_time);
-				violation_data.put("alert_state", alert_state);
-				violation_data.put("cust_uuid", cust_uuid);
-				violation_data.put("ns_uuid", ns_uuid);
-				violation_data.put("sla_uuid", sla_uuid);
-			}
-			System.out.println("VIOLATIONS FROM DB OPERATIONS CLASS ==> " + violation_data);
-			rs.close();
-			stmt.close();
-		} catch (Exception e) {
-			System.err.println(e.getClass().getName() + ": " + e.getMessage());
-		}
-		return violation_data;
-	}
-	/**
-	 * Update Record cust-sla correlation
-	 * 
-	 */
-	public static void UpdateRecordAgreement(String inst_status, String correlation_id) {
-
-		String SQL = "UPDATE cust_sla " + "SET inst_status = ? " + "WHERE inst_id = ?";
-		boolean result = false;
-		int affectedrows = 0;
-
-		try {
-			PreparedStatement pstmt = c.prepareStatement(SQL);
-			pstmt.setString(1, inst_status);
-			pstmt.setString(2, correlation_id);
-			affectedrows = pstmt.executeUpdate();
-			result = true;
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		System.out.println("Set status READY? " + result);
-
-	}
-
-	/**
-	 * Delete Record
-	 */
-	public boolean deleteRecord(String tablename, String sla_uuid) {
-		Statement stmt = null;
-		boolean result = false;
-		try {
-			c.setAutoCommit(false);
-			stmt = c.createStatement();
-			String sql = "DELETE from " + tablename + " where SLA_UUID='" + sla_uuid + "';";
-			stmt.executeUpdate(sql);
-			c.commit();
-			stmt.close();
-			result = true;
-		} catch (Exception e) {
-			System.err.println(e.getClass().getName() + ": " + e.getMessage());
-		}
-		System.out.println("Records with deleted? " + result);
-
-		return result;
-	}
-
-	/**
-	 * Select all records
-	 * 
-	 * @return
-	 */
-	@SuppressWarnings("unchecked")
-	public JSONObject selectAllRecords(String tablename) {
-		Statement stmt = null;
-
-		JSONObject root = new JSONObject();
-		JSONArray ns_template = new JSONArray();
-		JSONArray cust_sla = new JSONArray();
-
-		System.out.println(tablename);
-		if (tablename == "ns_template") {
-
-			try {
-				c.setAutoCommit(false);
-				stmt = c.createStatement();
-				ResultSet rs = stmt.executeQuery("SELECT * FROM " + tablename + ";");
-				while (rs.next()) {
-					String ns_uuid = rs.getString("ns_uuid");
-					String sla_uuid = rs.getString("sla_uuid");
-					JSONObject obj = new JSONObject();
-					obj.put("ns_uuid", ns_uuid);
-					obj.put("sla_uuid", sla_uuid);
-					ns_template.add(obj);
-				}
-
-				root.put("ns_template", ns_template);
-
-				rs.close();
-				stmt.close();
-			} catch (Exception e) {
-				System.err.println(e.getClass().getName() + ": " + e.getMessage());
-			}
-
-		} else if (tablename == "cust_sla") {
-
-			try {
-				c.setAutoCommit(false);
-				stmt = c.createStatement();
-				ResultSet rs = stmt.executeQuery("SELECT * FROM " + tablename + ";");
-
-				while (rs.next()) {
-					String ns_uuid = rs.getString("ns_uuid");
-					String sla_uuid = rs.getString("sla_uuid");
-					String cust_uuid = rs.getString("cust_uuid");
-
-					JSONObject obj = new JSONObject();
-					obj.put("ns_uuid", ns_uuid);
-					obj.put("sla_uuid", sla_uuid);
-					obj.put("cust_uuid", cust_uuid);
-					cust_sla.add(obj);
-				}
-
-				root.put("cust_sla", cust_sla);
-
-				rs.close();
-				stmt.close();
-
-			} catch (Exception e) {
-				System.err.println(e.getClass().getName() + ": " + e.getMessage());
-			}
-
-		}
-
-		return root;
-	}
-
-	/**
-	 * Select all records
-	 * 
-	 * @return
-	 */
-	@SuppressWarnings("unchecked")
-	public static JSONObject getAgreements() {
-		Statement stmt = null;
-
-		JSONObject root = new JSONObject();
-		// JSONArray ns_template = new JSONArray();
-		JSONArray agreements = new JSONArray();
-
-		try {
-			c.setAutoCommit(false);
-			stmt = c.createStatement();
-			 ResultSet rs = stmt.executeQuery("SELECT * FROM cust_sla WHERE inst_status='READY';");
-			while (rs.next()) {
-				String ns_uuid = rs.getString("ns_uuid");
-				String ns_name = rs.getString("ns_name");
-				String sla_uuid = rs.getString("sla_uuid");
-				String sla_name = rs.getString("sla_name");
-				String sla_date = rs.getString("sla_date");
-				String sla_status = rs.getString("sla_status");
-				String cust_email = rs.getString("cust_email");
-				String cust_uuid = rs.getString("cust_uuid");
-				String inst_status = rs.getString("inst_status");
-				String inst_id = rs.getString("inst_id");
-
-				JSONObject obj = new JSONObject();
-				obj.put("ns_uuid", ns_uuid);
-				obj.put("ns_name", ns_name);
-				obj.put("sla_name", sla_name);
-				obj.put("sla_date", sla_date);
-				obj.put("sla_status", sla_status);
-				obj.put("sla_uuid", sla_uuid);
-				obj.put("cust_email", cust_email);
-				obj.put("cust_uuid", cust_uuid);
-				obj.put("inst_status", inst_status);
-				obj.put("correlation_id", inst_id);
-
-				agreements.add(obj);
-			}
-
-			root.put("agreements", agreements);
-
-			rs.close();
-			stmt.close();
-		} catch (Exception e) {
-			System.err.println(e.getClass().getName() + ": " + e.getMessage());
-		}
-		System.out.println(root);
-		return root;
-	}
-
-	/**
-	 * Get agreement per NS uuid
-	 */
-	@SuppressWarnings("unchecked")
-	public JSONObject selectAgreementPerNS(String nsuuid) {
-
-		Statement stmt = null;
-		JSONObject root = new JSONObject();
-		JSONArray cust_sla = new JSONArray();
-
-		nsuuid = nsuuid.trim();
-
-		try {
-			c.setAutoCommit(false);
-			stmt = c.createStatement();
-			ResultSet rs = stmt
-					.executeQuery("SELECT * FROM cust_sla WHERE ns_uuid = '" + nsuuid + "' AND inst_status='READY'; ");
-			while (rs.next()) {
-				String ns_uuid = rs.getString("ns_uuid");
-				String sla_uuid = rs.getString("sla_uuid");
-				String cust_uuid = rs.getString("cust_uuid");
-
-				JSONObject obj = new JSONObject();
-				obj.put("ns_uuid", ns_uuid);
-				obj.put("sla_uuid", sla_uuid);
-				obj.put("cust_uuid", cust_uuid);
-				cust_sla.add(obj);
-			}
-			root.put("cust_sla", cust_sla);
-			rs.close();
-			stmt.close();
-		} catch (Exception e) {
-			System.err.println(e.getClass().getName() + ": " + e.getMessage());
-		}
-
-		return root;
-	}
-
-	/**
-	 * Get agreement per customer
-	 */
-	@SuppressWarnings("unchecked")
-	public JSONObject selectAgreementPerCustomer(String custuuid) {
-
-		Statement stmt = null;
-		JSONObject root = new JSONObject();
-		JSONArray cust_sla = new JSONArray();
-
-		custuuid = custuuid.trim();
-
-		try {
-			c.setAutoCommit(false);
-			stmt = c.createStatement();
-			ResultSet rs = stmt.executeQuery(
-					"SELECT * FROM cust_sla WHERE cust_uuid = '" + custuuid + "' AND inst_status='READY';");
-
-			while (rs.next()) {
-				String ns_uuid = rs.getString("ns_uuid");
-				String sla_uuid = rs.getString("sla_uuid");
-				String cust_uuid = rs.getString("cust_uuid");
-
-				JSONObject obj = new JSONObject();
-				obj.put("ns_uuid", ns_uuid);
-				obj.put("sla_uuid", sla_uuid);
-				obj.put("cust_uuid", cust_uuid);
-				cust_sla.add(obj);
-			}
-
-			root.put("cust_sla", cust_sla);
-
-			rs.close();
-			stmt.close();
-		} catch (Exception e) {
-			System.err.println(e.getClass().getName() + ": " + e.getMessage());
-		}
-
-		return root;
-	}
-
-	@SuppressWarnings("unchecked")
-	public JSONObject selectAgreementPerSlaNs(String sla_uuid, String ns_uuid) {
-
-		Statement stmt = null;
-		JSONObject root = new JSONObject();
-
-		sla_uuid = sla_uuid.trim();
-		ns_uuid = ns_uuid.trim();
-
-		try {
-			c.setAutoCommit(false);
-			stmt = c.createStatement();
-			ResultSet rs = stmt.executeQuery("SELECT * FROM cust_sla WHERE sla_uuid = '" + sla_uuid + "' AND ns_uuid='"
-					+ ns_uuid + "' AND  inst_status='READY';");
-
-			while (rs.next()) {
-				String cust_uuid = rs.getString("cust_uuid");
-				String cust_email = rs.getString("cust_email");
-				String sla_date = rs.getString("sla_date");
-
-				JSONObject obj = new JSONObject();
-				root.put("cust_uuid", cust_uuid);
-				root.put("cust_email", cust_email);
-				root.put("sla_date", sla_date);
-			}
-
-			rs.close();
-			stmt.close();
-		} catch (Exception e) {
-			System.err.println(e.getClass().getName() + ": " + e.getMessage());
-		}
-
-		return root;
-	}
-
-	/**
-	 * Get agreement correlation per sla_uuid
-	 */
-	@SuppressWarnings("unchecked")
-	public int countAgreementCorrelationPeriD(String sla_uuid) {
-
-		String SQL = "SELECT count(*) FROM cust_sla where sla_uuid = '" + sla_uuid + "' AND inst_status='READY'";
-		int count = 0;
-
-		try {
-			stmt = c.createStatement();
-			ResultSet rs = stmt.executeQuery(SQL);
-			while (rs.next()) {
-				count = rs.getInt(1);
-
-			}
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		System.out.println("SLA Correlations are ==> " + count);
-		return count;
-
-	}
-
-	/**
-	 * Close connection with PostgreSQL
-	 */
-	public void closePostgreSQL() {
-		try {
-			c.close();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-	}
+    static Connection c = null;
+    static Statement stmt = null;
+
+    /**
+     * Connect to PostgreSQL
+     */
+    public static boolean connectPostgreSQL() {
+        boolean connect = false;
+        try {
+
+            Class.forName("org.postgresql.Driver");
+//             c =
+//             DriverManager.getConnection("jdbc:postgresql://localhost:5432/sla-manager","postgres",
+//             "admin");
+            
+            c = DriverManager
+                    .getConnection(
+                            "jdbc:postgresql://" + System.getenv("DATABASE_HOST") + ":" + System.getenv("DATABASE_PORT")
+                                    + "/" + System.getenv("GTK_DB_NAME"),
+                            System.getenv("GTK_DB_USER"), System.getenv("GTK_DB_PASS"));
+            connect = true;
+            System.out.println("Opened sla-manager database successfully");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.err.println(e.getClass().getName() + ": " + e.getMessage());
+            connect = false;
+        }
+        return connect;
+    }
+
+    /**
+     * Create table if not exist - ns-template correlation
+     */
+    public boolean createTableNSTemplate() {
+        boolean result = false;
+        try {
+            stmt = c.createStatement();
+            String sql = "CREATE TABLE IF NOT EXISTS ns_template" + "(ID  SERIAL PRIMARY KEY,"
+                    + " NS_UUID TEXT NOT NULL, " + "SLA_UUID  TEXT NOT NULL )";
+            stmt.executeUpdate(sql);
+            stmt.close();
+            result = true;
+        } catch (Exception e) {
+            System.err.println(e.getClass().getName() + ": " + e.getMessage());
+        }
+
+        System.out.println("Table Created? " + result);
+        return result;
+    }
+
+    /**
+     * Create table if not exist - customer-sla correlation
+     */
+    public static void createTableCustSla() {
+        try {
+            stmt = c.createStatement();
+            String sql = "CREATE TABLE IF NOT EXISTS cust_sla" + "(ID  SERIAL PRIMARY KEY," + " NS_UUID TEXT NOT NULL, "
+                    + "NS_NAME TEXT NOT NULL," + "SLA_UUID  TEXT NOT NULL," + "SLA_NAME TEXT NOT NULL,"
+                    + "SLA_DATE TIMESTAMPTZ DEFAULT Now()," + "SLA_STATUS TEXT NOT NULL," + "CUST_EMAIL TEXT NOT NULL,"
+                    + "CUST_UUID  TEXT NOT NULL," + "INST_ID TEXT NOT NULL," + "INST_STATUS  TEXT NOT NULL )";
+            stmt.executeUpdate(sql);
+            stmt.close();
+        } catch (Exception e) {
+            System.err.println(e.getClass().getName() + ": " + e.getMessage());
+        }
+        System.out.println("Table cust_sla created successfully");
+
+    }
+
+    /**
+     * Create table if not exist - sla_violations
+     */
+    public static void createTableViolations() {
+        try {
+            stmt = c.createStatement();
+            String sql = "CREATE TABLE IF NOT EXISTS sla_violations" + "(ID  SERIAL PRIMARY KEY,"
+                    + " NS_UUID TEXT NOT NULL, " + "SLA_UUID TEXT NOT NULL," + "VIOLATION_TIME TEXT NOT NULL,"
+                    + "ALERT_STATE TEXT NOT NULL," + "CUST_UUID  TEXT NOT NULL )";
+            stmt.executeUpdate(sql);
+            stmt.close();
+            System.out.println("Table sla_violations created successfully");
+
+        } catch (Exception e) {
+            System.err.println(e.getClass().getName() + ": " + e.getMessage());
+            System.out.println("Error creating sla violations table or already exists");
+
+        }
+
+    }
+
+    /**
+     * Insert Record ns-template correlation
+     */
+    public boolean insertRecord(String tablename, String ns_uuid, String sla_uuid) {
+        boolean result = false;
+        try {
+            c.setAutoCommit(false);
+            Statement stmt = c.createStatement();
+            String sql = "INSERT INTO " + tablename + " (ns_uuid,sla_uuid) " + "VALUES ('" + ns_uuid + "','" + sla_uuid
+                    + "');";
+            stmt.executeUpdate(sql);
+            stmt.close();
+            c.commit();
+            result = true;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        System.out.println("Records ns-template saved successfully? " + result);
+
+        return result;
+    }
+
+    /**
+     * Insert Record cust-sla correlation
+     * 
+     */
+    public void insertRecordAgreement(String ns_uuid, String ns_name, String sla_uuid, String sla_name,
+            String sla_status, String cust_name, String cust_uuid, String inst_status, String correlation_id) {
+
+        try {
+            c.setAutoCommit(false);
+            Statement stmt = c.createStatement();
+            String sql = "INSERT INTO cust_sla "
+                    + " (ns_uuid, ns_name, sla_uuid, sla_name, sla_status, cust_email, cust_uuid, inst_status, inst_id) "
+                    + "VALUES ('" + ns_uuid + "','" + ns_name + "','" + sla_uuid + "' ,'" + sla_name + "' ,'"
+                    + sla_status + "','" + cust_name + "','" + cust_uuid + "', '" + inst_status + "' , '"
+                    + correlation_id + "');";
+            stmt.executeUpdate(sql);
+            stmt.close();
+            c.commit();
+            System.out.println("Records  cust-sla saved successfully");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    /**
+     * Insert Record violations
+     * 
+     */
+    public static void insertRecordViolation(String ns_uuid, String sla_uuid, String violation_time, String alert_state,
+            String cust_uuid) {
+
+        try {
+            c.setAutoCommit(false);
+            Statement stmt = c.createStatement();
+            String sql = "INSERT INTO sla_violations  (ns_uuid, sla_uuid,violation_time, alert_state, cust_uuid ) VALUES ('"
+                    + ns_uuid + "', '" + sla_uuid + "', '" + violation_time + "','" + alert_state + "', '" + cust_uuid
+                    + "');  ";
+            stmt.executeUpdate(sql);
+            stmt.close();
+            c.commit();
+            System.out.println("Violation record created successfully");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    @SuppressWarnings("unchecked")
+    public JSONObject getViolatedSLA(String ns_uuid) {
+
+        Statement stmt = null;
+
+        String sla_uuid = null;
+        String cust_uuid = null;
+        JSONObject violated_sla = new JSONObject();
+
+        try {
+            c.setAutoCommit(false);
+            stmt = c.createStatement();
+            ResultSet rs = stmt.executeQuery("SELECT * FROM cust_sla;");
+            while (rs.next()) {
+                sla_uuid = rs.getString("sla_uuid");
+                cust_uuid = rs.getString("cust_uuid");
+                System.out.println("sla_uuid = " + sla_uuid);
+                System.out.println("cust_uuid = " + cust_uuid);
+
+                violated_sla.put("sla_uuid", sla_uuid);
+                violated_sla.put("cust_uuid", cust_uuid);
+
+            }
+            System.out.println("Get violated sla ==>" + violated_sla);
+
+            rs.close();
+            stmt.close();
+        } catch (Exception e) {
+            System.err.println(e.getClass().getName() + ": " + e.getMessage());
+        }
+        return violated_sla;
+    }
+
+    /**
+     * 
+     * @param ns_uuid
+     * @param sla_uuid
+     * @return Get violation data per SLA - Service Instance
+     */
+    @SuppressWarnings({ "unchecked", "null" })
+    public static JSONObject getViolationData(String ns_uuid, String sla_uuid) {
+
+        JSONObject violation = new JSONObject();
+        Statement stmt = null;
+
+        try {
+            c.setAutoCommit(false);
+            stmt = c.createStatement();
+            ResultSet rs = stmt.executeQuery(
+                    "SELECT * FROM sla_violations WHERE ns_uuid='" + ns_uuid + "' AND sla_uuid='" + sla_uuid + "';");
+            while (rs.next()) {
+                String violation_time = rs.getString("violation_time");
+                String alert_state = rs.getString("alert_state");
+                String cust_uuid = rs.getString("cust_uuid");
+
+                violation.put("violation_time", violation_time);
+                violation.put("alert_state", alert_state);
+                violation.put("cust_uuid", cust_uuid);
+                violation.put("ns_uuid", ns_uuid);
+                violation.put("sla_uuid", sla_uuid);
+            }
+            System.out.println("VIOLATIONS FROM DB OPERATIONS CLASS ==> " + violation);
+            rs.close();
+            stmt.close();
+        } catch (Exception e) {
+            System.err.println(e.getClass().getName() + ": " + e.getMessage());
+        }
+        return violation;
+    }
+
+    /**
+     * 
+     * @return All Violation data for all SLAs-NS instances
+     */
+    @SuppressWarnings({ "unchecked", "null" })
+    public static JSONObject getAllViolationData() {
+
+        JSONObject violation_data = new JSONObject();
+        Statement stmt = null;
+
+        try {
+            c.setAutoCommit(false);
+            stmt = c.createStatement();
+            ResultSet rs = stmt.executeQuery("SELECT * FROM sla_violations;");
+            while (rs.next()) {
+                String violation_time = rs.getString("violation_time");
+                String alert_state = rs.getString("alert_state");
+                String cust_uuid = rs.getString("cust_uuid");
+                String ns_uuid = rs.getString("ns_uuid");
+                String sla_uuid = rs.getString("sla_uuid");
+
+                violation_data.put("violation_time", violation_time);
+                violation_data.put("alert_state", alert_state);
+                violation_data.put("cust_uuid", cust_uuid);
+                violation_data.put("ns_uuid", ns_uuid);
+                violation_data.put("sla_uuid", sla_uuid);
+            }
+            System.out.println("VIOLATIONS FROM DB OPERATIONS CLASS ==> " + violation_data);
+            rs.close();
+            stmt.close();
+        } catch (Exception e) {
+            System.err.println(e.getClass().getName() + ": " + e.getMessage());
+        }
+        return violation_data;
+    }
+
+    /**
+     * Update Record cust-sla correlation
+     * 
+     */
+    public static void UpdateRecordAgreement(String inst_status, String correlation_id) {
+
+        String SQL = "UPDATE cust_sla " + "SET inst_status = ? " + "WHERE inst_id = ?";
+        boolean result = false;
+        int affectedrows = 0;
+
+        try {
+            PreparedStatement pstmt = c.prepareStatement(SQL);
+            pstmt.setString(1, inst_status);
+            pstmt.setString(2, correlation_id);
+            affectedrows = pstmt.executeUpdate();
+            result = true;
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+        System.out.println("Set status READY? " + result);
+
+    }
+
+    /**
+     * Delete Record
+     */
+    public boolean deleteRecord(String tablename, String sla_uuid) {
+        Statement stmt = null;
+        boolean result = false;
+        try {
+            c.setAutoCommit(false);
+            stmt = c.createStatement();
+            String sql = "DELETE from " + tablename + " where SLA_UUID='" + sla_uuid + "';";
+            stmt.executeUpdate(sql);
+            c.commit();
+            stmt.close();
+            result = true;
+        } catch (Exception e) {
+            System.err.println(e.getClass().getName() + ": " + e.getMessage());
+        }
+        System.out.println("Records with deleted? " + result);
+
+        return result;
+    }
+
+    /**
+     * Select all records
+     * 
+     * @return
+     */
+    @SuppressWarnings("unchecked")
+    public JSONObject selectAllRecords(String tablename) {
+        Statement stmt = null;
+
+        JSONObject root = new JSONObject();
+        JSONArray ns_template = new JSONArray();
+        JSONArray cust_sla = new JSONArray();
+
+        System.out.println(tablename);
+        if (tablename == "ns_template") {
+
+            try {
+                c.setAutoCommit(false);
+                stmt = c.createStatement();
+                ResultSet rs = stmt.executeQuery("SELECT * FROM " + tablename + ";");
+                while (rs.next()) {
+                    String ns_uuid = rs.getString("ns_uuid");
+                    String sla_uuid = rs.getString("sla_uuid");
+                    JSONObject obj = new JSONObject();
+                    obj.put("ns_uuid", ns_uuid);
+                    obj.put("sla_uuid", sla_uuid);
+                    ns_template.add(obj);
+                }
+
+                root.put("ns_template", ns_template);
+
+                rs.close();
+                stmt.close();
+            } catch (Exception e) {
+                System.err.println(e.getClass().getName() + ": " + e.getMessage());
+            }
+
+        } else if (tablename == "cust_sla") {
+
+            try {
+                c.setAutoCommit(false);
+                stmt = c.createStatement();
+                ResultSet rs = stmt.executeQuery("SELECT * FROM " + tablename + ";");
+
+                while (rs.next()) {
+                    String ns_uuid = rs.getString("ns_uuid");
+                    String sla_uuid = rs.getString("sla_uuid");
+                    String cust_uuid = rs.getString("cust_uuid");
+
+                    JSONObject obj = new JSONObject();
+                    obj.put("ns_uuid", ns_uuid);
+                    obj.put("sla_uuid", sla_uuid);
+                    obj.put("cust_uuid", cust_uuid);
+                    cust_sla.add(obj);
+                }
+
+                root.put("cust_sla", cust_sla);
+
+                rs.close();
+                stmt.close();
+
+            } catch (Exception e) {
+                System.err.println(e.getClass().getName() + ": " + e.getMessage());
+            }
+
+        }
+
+        return root;
+    }
+
+    /**
+     * Select all records
+     * 
+     * @return
+     */
+    @SuppressWarnings("unchecked")
+    public static JSONObject getAgreements() {
+        Statement stmt = null;
+
+        JSONObject root = new JSONObject();
+        // JSONArray ns_template = new JSONArray();
+        JSONArray agreements = new JSONArray();
+
+        try {
+            c.setAutoCommit(false);
+            stmt = c.createStatement();
+            ResultSet rs = stmt.executeQuery("SELECT * FROM cust_sla WHERE inst_status='READY';");
+            while (rs.next()) {
+                String ns_uuid = rs.getString("ns_uuid");
+                String ns_name = rs.getString("ns_name");
+                String sla_uuid = rs.getString("sla_uuid");
+                String sla_name = rs.getString("sla_name");
+                String sla_date = rs.getString("sla_date");
+                String sla_status = rs.getString("sla_status");
+                String cust_email = rs.getString("cust_email");
+                String cust_uuid = rs.getString("cust_uuid");
+                String inst_status = rs.getString("inst_status");
+                String inst_id = rs.getString("inst_id");
+
+                JSONObject obj = new JSONObject();
+                obj.put("ns_uuid", ns_uuid);
+                obj.put("ns_name", ns_name);
+                obj.put("sla_name", sla_name);
+                obj.put("sla_date", sla_date);
+                obj.put("sla_status", sla_status);
+                obj.put("sla_uuid", sla_uuid);
+                obj.put("cust_email", cust_email);
+                obj.put("cust_uuid", cust_uuid);
+                obj.put("inst_status", inst_status);
+                obj.put("correlation_id", inst_id);
+
+                agreements.add(obj);
+            }
+
+            root.put("agreements", agreements);
+
+            rs.close();
+            stmt.close();
+        } catch (Exception e) {
+            System.err.println(e.getClass().getName() + ": " + e.getMessage());
+        }
+        System.out.println(root);
+        return root;
+    }
+
+    /**
+     * Get agreement per NS uuid
+     */
+    @SuppressWarnings("unchecked")
+    public JSONObject selectAgreementPerNS(String nsuuid) {
+
+        Statement stmt = null;
+        JSONObject root = new JSONObject();
+        JSONArray cust_sla = new JSONArray();
+
+        nsuuid = nsuuid.trim();
+
+        try {
+            c.setAutoCommit(false);
+            stmt = c.createStatement();
+            ResultSet rs = stmt
+                    .executeQuery("SELECT * FROM cust_sla WHERE ns_uuid = '" + nsuuid + "' AND inst_status='READY'; ");
+            while (rs.next()) {
+                String ns_uuid = rs.getString("ns_uuid");
+                String sla_uuid = rs.getString("sla_uuid");
+                String cust_uuid = rs.getString("cust_uuid");
+
+                JSONObject obj = new JSONObject();
+                obj.put("ns_uuid", ns_uuid);
+                obj.put("sla_uuid", sla_uuid);
+                obj.put("cust_uuid", cust_uuid);
+                cust_sla.add(obj);
+            }
+            root.put("cust_sla", cust_sla);
+            rs.close();
+            stmt.close();
+        } catch (Exception e) {
+            System.err.println(e.getClass().getName() + ": " + e.getMessage());
+        }
+
+        return root;
+    }
+
+    /**
+     * Get agreement per customer
+     */
+    @SuppressWarnings("unchecked")
+    public JSONObject selectAgreementPerCustomer(String custuuid) {
+
+        Statement stmt = null;
+        JSONObject root = new JSONObject();
+        JSONArray cust_sla = new JSONArray();
+
+        custuuid = custuuid.trim();
+
+        try {
+            c.setAutoCommit(false);
+            stmt = c.createStatement();
+            ResultSet rs = stmt.executeQuery(
+                    "SELECT * FROM cust_sla WHERE cust_uuid = '" + custuuid + "' AND inst_status='READY';");
+
+            while (rs.next()) {
+                String ns_uuid = rs.getString("ns_uuid");
+                String sla_uuid = rs.getString("sla_uuid");
+                String cust_uuid = rs.getString("cust_uuid");
+
+                JSONObject obj = new JSONObject();
+                obj.put("ns_uuid", ns_uuid);
+                obj.put("sla_uuid", sla_uuid);
+                obj.put("cust_uuid", cust_uuid);
+                cust_sla.add(obj);
+            }
+
+            root.put("cust_sla", cust_sla);
+
+            rs.close();
+            stmt.close();
+        } catch (Exception e) {
+            System.err.println(e.getClass().getName() + ": " + e.getMessage());
+        }
+
+        return root;
+    }
+
+    @SuppressWarnings("unchecked")
+    public JSONObject selectAgreementPerSlaNs(String sla_uuid, String ns_uuid) {
+
+        Statement stmt = null;
+        JSONObject root = new JSONObject();
+
+        sla_uuid = sla_uuid.trim();
+        ns_uuid = ns_uuid.trim();
+
+        try {
+            c.setAutoCommit(false);
+            stmt = c.createStatement();
+            ResultSet rs = stmt.executeQuery("SELECT * FROM cust_sla WHERE sla_uuid = '" + sla_uuid + "' AND ns_uuid='"
+                    + ns_uuid + "' AND  inst_status='READY';");
+
+            while (rs.next()) {
+                String cust_uuid = rs.getString("cust_uuid");
+                String cust_email = rs.getString("cust_email");
+                String sla_date = rs.getString("sla_date");
+
+                JSONObject obj = new JSONObject();
+                root.put("cust_uuid", cust_uuid);
+                root.put("cust_email", cust_email);
+                root.put("sla_date", sla_date);
+            }
+
+            rs.close();
+            stmt.close();
+        } catch (Exception e) {
+            System.err.println(e.getClass().getName() + ": " + e.getMessage());
+        }
+
+        return root;
+    }
+
+    /**
+     * Get agreement correlation per sla_uuid
+     */
+    @SuppressWarnings("unchecked")
+    public int countAgreementCorrelationPeriD(String sla_uuid) {
+
+        String SQL = "SELECT count(*) FROM cust_sla where sla_uuid = '" + sla_uuid + "' AND inst_status='READY'";
+        int count = 0;
+
+        try {
+            stmt = c.createStatement();
+            ResultSet rs = stmt.executeQuery(SQL);
+            while (rs.next()) {
+                count = rs.getInt(1);
+
+            }
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        System.out.println("SLA Correlations are ==> " + count);
+        return count;
+
+    }
+
+    /**
+     * Close connection with PostgreSQL
+     */
+    public void closePostgreSQL() {
+        try {
+            c.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 
 }

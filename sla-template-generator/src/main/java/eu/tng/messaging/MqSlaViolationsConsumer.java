@@ -17,8 +17,8 @@ import com.rabbitmq.client.Envelope;
 
 public class MqSlaViolationsConsumer implements ServletContextListener {
 
-    // private static final String EXCHANGE_NAME = System.getenv("BROKER_EXCHANGE");
-    private static final String EXCHANGE_NAME = "son-kernel";
+    private static final String EXCHANGE_NAME = System.getenv("BROKER_EXCHANGE");
+    //private static final String EXCHANGE_NAME = "son-kernel";
 
     @Override
     public void contextDestroyed(ServletContextEvent arg0) {

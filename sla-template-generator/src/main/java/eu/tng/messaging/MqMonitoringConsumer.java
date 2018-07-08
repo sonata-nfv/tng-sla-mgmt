@@ -17,10 +17,10 @@ import com.rabbitmq.client.Envelope;
 
 import eu.tng.correlations.db_operations;
 
-public class MqMonitoringConsumer  implements ServletContextListener {
+public class MqMonitoringConsumer implements ServletContextListener {
 
-    // private static final String EXCHANGE_NAME = System.getenv("BROKER_EXCHANGE");
-    private static final String EXCHANGE_NAME = "son-kernel";
+    private static final String EXCHANGE_NAME = System.getenv("BROKER_EXCHANGE");
+    //private static final String EXCHANGE_NAME = "son-kernel";
 
     @Override
     public void contextDestroyed(ServletContextEvent arg0) {
@@ -51,7 +51,7 @@ public class MqMonitoringConsumer  implements ServletContextListener {
                 public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties,
                         byte[] body) throws IOException {
 
-                 // Initialize variables
+                    // Initialize variables
                     JSONObject jmessage = null;
                     String ns_uuid = null;
                     String alert_time = null;
@@ -72,12 +72,14 @@ public class MqMonitoringConsumer  implements ServletContextListener {
                         alert_state = jmessage.getString("alertstate");
 
                         db_operations dbo = new db_operations();
-                        dbo.connectPostgreSQL();
-                        dbo.createTableViolations();
-                        org.json.simple.JSONArray violated_sla = dbo.getViolatedSLA(ns_uuid);
-                        sla_uuid = (String) violated_sla.get(0);
-                        cust_uuid = (String) violated_sla.get(1);
-                        dbo.insertRecordViolation(ns_uuid, sla_uuid, alert_time, alert_state, cust_uuid);
+                        db_operations.connectPostgreSQL();
+                        db_operations.createTableViolations();
+
+                        org.json.simple.JSONObject violated_sla = dbo.getViolatedSLA(ns_uuid);
+                        sla_uuid = (String) violated_sla.get("sla_uuid");
+                        cust_uuid = (String) violated_sla.get("cust_uuid");
+
+                        db_operations.insertRecordViolation(ns_uuid, sla_uuid, alert_time, alert_state, cust_uuid);
 
                         try {
                             JSONObject violationMessage = ViolationsProducer.createViolationMessage(ns_uuid, sla_uuid,
