@@ -45,6 +45,11 @@
 &nbsp;&nbsp;Method: GET<br>
 &nbsp;&nbsp;Purpose: Get a list with the existing sla agreements<br>
 
+<h3>Get specific Agreement (by uuid)</h3>
+<p> - URI: /api/slas/v1/agreements/{sla_uuid}/{ns_uuid} <br>
+&nbsp;&nbsp;Method: GET<br>
+&nbsp;&nbsp;Purpose: List agreement using the UUID and the corresponding ns_uuid to get all its details<br>
+
 <h3>Get Get Agreements per ns</h3>
 - URI: /api/slas/v1/agreements/service/{ns_uuid} <br>
 &nbsp;&nbsp;Method: GET<br>

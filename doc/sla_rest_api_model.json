@@ -894,7 +894,7 @@
 				]
 			}
 		},
-		"/agreements/{sla_uuid}": {
+		"/agreements/{sla_uuid}/{ns_uuid}": {
 			"parameters": [
 				{
 						"name": "sla_uuid",
@@ -902,6 +902,13 @@
 						"required": true,
 						"type": "string",
 						"description": "The ID of the SLA"
+				},
+				{
+						"name": "ns_uuid",
+						"in": "path",
+						"required": true,
+						"type": "string",
+						"description": "The ID of the corresponding NS - the instantiated NS"
 				}
 			],
 			"get": {
