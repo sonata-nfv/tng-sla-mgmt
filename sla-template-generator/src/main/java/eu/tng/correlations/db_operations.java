@@ -247,7 +247,7 @@ public class db_operations {
 	@SuppressWarnings({ "unchecked", "null" })
 	public static JSONObject getViolationData(String ns_uuid, String sla_uuid) {
 
-		JSONObject violation = null;
+		JSONObject violation = new JSONObject();
 		Statement stmt = null;
 
 		
