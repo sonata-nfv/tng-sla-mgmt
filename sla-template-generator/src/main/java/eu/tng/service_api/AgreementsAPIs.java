@@ -191,13 +191,19 @@ public class AgreementsAPIs {
 			JSONObject slad = (JSONObject) agreement.get("slad");
 			JSONObject sla_template = (JSONObject) slad.get("sla_template");
 
+			Date offered_date = null;
 			/** change the offered date to the date the agreement was created */
-			TimeZone tz = TimeZone.getTimeZone("UTC");
-			DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'"); // iso date format yyyy-MM-dd'T'HH:mm'Z'
-			df.setTimeZone(tz);
-			/** current date */
-			Date offered_date = df.parse(sla_date);
-			// String offered_date = df.format(date);
+			try {
+				TimeZone tz = TimeZone.getTimeZone("UTC");
+				DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'"); // iso date format yyyy-MM-dd'T'HH:mm'Z'
+				df.setTimeZone(tz);
+				/** current date */
+				offered_date = df.parse(sla_date + ":00");
+				// String offered_date = df.format(date);
+			}catch(Exception e)
+			{
+				System.out.print(e.getMessage());
+			}
 			sla_template.put("offered_date", offered_date.toString());
 
 			/** add the customer information */
