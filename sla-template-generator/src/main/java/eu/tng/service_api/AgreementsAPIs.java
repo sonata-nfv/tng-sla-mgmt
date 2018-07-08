@@ -198,10 +198,10 @@ public class AgreementsAPIs {
 			int cust_info_length = customer_info.toString().length();
 
 			System.out.println(agreement);
-			existingTemplates = agreement;
+			//existingTemplates = agreement;
 			
-			apiresponse = Response.ok((Object) existingTemplates);
-			apiresponse.header("Content-Length", response_length);
+			apiresponse = Response.ok((JSONObject) agreement);
+			apiresponse.header("Content-Length", agreement.toJSONString().length());
 			return apiresponse.status(200).build();
 
 		} catch (Exception e) {
