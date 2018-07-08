@@ -267,6 +267,7 @@ public class db_operations {
 				violation.put("ns_uuid", ns_uuid);
 				violation.put("sla_uuid", sla_uuid);
 			}
+			System.out.println("VIOLATIONS FROM DB OPERATIONS CLASS ==> " + violation);
 			rs.close();
 			stmt.close();
 		} catch (Exception e) {
