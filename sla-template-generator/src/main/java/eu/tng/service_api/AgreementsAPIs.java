@@ -4,10 +4,6 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.TimeZone;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -148,9 +144,9 @@ public class AgreementsAPIs {
 		ResponseBuilder apiresponse = null;
 		try {
 			String url = System.getenv("CATALOGUES_URL") + "slas/template-descriptors/" + sla_uuid;
-			// String url =
-			// "http://pre-int-sp-ath.5gtango.eu:4011/catalogues/api/v2/slas/template-descriptors/"
-			// + sla_uuid;
+//			 String url =
+//			 "http://pre-int-sp-ath.5gtango.eu:4011/catalogues/api/v2/slas/template-descriptors/"
+//			 + sla_uuid;
 			URL object = new URL(url);
 
 			HttpURLConnection con = (HttpURLConnection) object.openConnection();
@@ -163,66 +159,50 @@ public class AgreementsAPIs {
 			@SuppressWarnings("unused")
 			int responseCode = con.getResponseCode();
 			BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
-			int response_length = con.getInputStream().available();
 			String inputLine;
 			StringBuffer response = new StringBuffer();
 			while ((inputLine = in.readLine()) != null) {
 				response.append(inputLine);
 			}
 			in.close();
-
-			// get the core sla from the catalogue
+			
+			//  get the core sla from the catalogue
 			JSONParser parser = new JSONParser();
 			Object existingTemplates = parser.parse(response.toString());
-			JSONObject agreement = (JSONObject) parser.parse(response.toString());
-
+			JSONObject agreement =  (JSONObject) parser.parse(response.toString());
+			
 			// get customer details from db
 			db_operations dbo = new db_operations();
 			dbo.connectPostgreSQL();
 			db_operations.createTableCustSla();
 			JSONObject agrPerSlaNs = dbo.selectAgreementPerSlaNs(sla_uuid, ns_uuid);
-
+			
 			String cust_uuid = (String) agrPerSlaNs.get("cust_uuid");
 			String cust_email = (String) agrPerSlaNs.get("cust_email");
 			String sla_date = (String) agrPerSlaNs.get("sla_date");
 
-			// update the template with the necessary customer info - convert it to
-			// agreement
+			// update the template with the necessary customer info - convert it to agreement
 			JSONObject slad = (JSONObject) agreement.get("slad");
 			JSONObject sla_template = (JSONObject) slad.get("sla_template");
-
-			Date offered_date = null;
+			
 			/** change the offered date to the date the agreement was created */
-			try {
-				TimeZone tz = TimeZone.getTimeZone("UTC");
-				DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'"); // iso date format yyyy-MM-dd'T'HH:mm'Z'
-				df.setTimeZone(tz);
-				/** current date */
-				offered_date = df.parse(sla_date + ":00");
-				// String offered_date = df.format(date);
-			}catch(Exception e)
-			{
-				System.out.print(e.getMessage());
-			}
-			sla_template.put("offered_date", offered_date.toString());
-
+			sla_template.put("offered_date", sla_date);
+			
 			/** add the customer information */
 			JSONObject customer_info = new JSONObject();
 			customer_info.put("cust_uuid", cust_uuid);
 			customer_info.put("cust_email", cust_email);
-			sla_template.put("customer_info", customer_info);
-
-			int cust_info_length = customer_info.toString().length();
-
+			sla_template.put("customer_info", customer_info);		
+			
 			System.out.println(agreement);
-			// existingTemplates = agreement;
-
-			apiresponse = Response.ok((JSONObject) agreement);
-			apiresponse.header("Content-Length", agreement.toJSONString().length());
+			existingTemplates = agreement;
+			
+			apiresponse = Response.ok((Object) existingTemplates);
+			apiresponse.header("Content-Length", agreement.toJSONString().length() - 8);
 			return apiresponse.status(200).build();
 
 		} catch (Exception e) {
-
+			
 			JSONObject error = new JSONObject();
 			error.put("ERROR: ", "SLA Not Found");
 			apiresponse = Response.ok((Object) error);
