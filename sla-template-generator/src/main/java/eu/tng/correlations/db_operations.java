@@ -98,7 +98,7 @@ public class db_operations {
 	public static void createTableCustSla() {
 		try {
 			stmt = c.createStatement();
-			String sql = "CREATE TABLE cust_sla" + "(ID  SERIAL PRIMARY KEY," + " NS_UUID TEXT NOT NULL, "
+			String sql = "CREATE TABLE IF NOT EXISTS cust_sla" + "(ID  SERIAL PRIMARY KEY," + " NS_UUID TEXT NOT NULL, "
 					+ "NS_NAME TEXT NOT NULL," + "SLA_UUID  TEXT NOT NULL," + "SLA_NAME TEXT NOT NULL,"
 					+ "SLA_DATE TIMESTAMPTZ DEFAULT Now()," + "SLA_STATUS TEXT NOT NULL," + "CUST_EMAIL TEXT NOT NULL,"
 					+ "CUST_UUID  TEXT NOT NULL," + "INST_ID TEXT NOT NULL," + "INST_STATUS  TEXT NOT NULL )";
@@ -114,10 +114,10 @@ public class db_operations {
 	/**
 	 * Create table if not exist - sla_violations
 	 */
-	public void createTableViolations() {
+	public static void createTableViolations() {
 		try {
 			stmt = c.createStatement();
-			String sql = "CREATE TABLE sla_violations" + "(ID  SERIAL PRIMARY KEY," + " NS_UUID TEXT NOT NULL, "
+			String sql = "CREATE TABLE IF NOT EXISTS sla_violations" + "(ID  SERIAL PRIMARY KEY," + " NS_UUID TEXT NOT NULL, "
 					+ "SLA_UUID TEXT NOT NULL," + "VIOLATION_TIME TEXT NOT NULL," + "ALERT_STATE TEXT NOT NULL,"
 					+ "CUST_UUID  TEXT NOT NULL )";
 			stmt.executeUpdate(sql);
@@ -235,7 +235,46 @@ public class db_operations {
 		}
 		return violated_sla;
 	}
+	
+	
 
+	/**
+	 * 
+	 * @param ns_uuid
+	 * @param sla_uuid
+	 * @return Get violation data per SLA - Service Instance
+	 */
+	@SuppressWarnings({ "unchecked", "null" })
+	public static JSONObject getViolationData(String ns_uuid, String sla_uuid) {
+
+		JSONObject violation = new JSONObject();
+		Statement stmt = null;
+
+		
+		try {
+			c.setAutoCommit(false);
+			stmt = c.createStatement();
+			ResultSet rs = stmt
+					.executeQuery("SELECT * FROM sla_violations WHERE ns_uuid='" + ns_uuid + "' AND sla_uuid='" + sla_uuid +"';");
+			while (rs.next()) {
+				String violation_time = rs.getString("violation_time");
+				String alert_state = rs.getString("alert_state");
+				String cust_uuid = rs.getString("cust_uuid");
+				
+				violation.put("violation_time", violation_time);
+				violation.put("alert_state", alert_state);
+				violation.put("cust_uuid", cust_uuid);
+				violation.put("ns_uuid", ns_uuid);
+				violation.put("sla_uuid", sla_uuid);
+			}
+			System.out.println("VIOLATIONS FROM DB OPERATIONS CLASS ==> " + violation);
+			rs.close();
+			stmt.close();
+		} catch (Exception e) {
+			System.err.println(e.getClass().getName() + ": " + e.getMessage());
+		}
+		return violation;
+	}
 	/**
 	 * Update Record cust-sla correlation
 	 * 
