@@ -16,27 +16,36 @@ import eu.tng.correlations.db_operations;
 @Path("/violations")
 @Consumes(MediaType.APPLICATION_JSON)
 public class ViolationAPIS {
-	
-	
+
 	/**
-	 * api call in order to get a JSONObject with violations per agreement-service-instance
+	 * api call in order to get a JSONObject with violations per
+	 * agreement-service-instance
 	 */
+	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/{ns_uuid}/{sla_uuid}")
-	@GET
-	public Response getAgreements(@PathParam("ns_uuid") String ns_uuid,@PathParam("sla_uuid") String sla_uuid) {
+	public Response getViolation(@PathParam("ns_uuid") String ns_uuid, @PathParam("sla_uuid") String sla_uuid) {
 
 		ResponseBuilder apiresponse = null;
 
 		db_operations dbo = new db_operations();
-		db_operations.connectPostgreSQL();
-		db_operations.createTableViolations();
-		JSONObject violations = db_operations.getViolationData(ns_uuid, sla_uuid);
-		dbo.closePostgreSQL();
+		boolean connect = db_operations.connectPostgreSQL();
+		if (connect == true) {
+			db_operations.createTableViolations();
+			JSONObject violations = db_operations.getViolationData(ns_uuid, sla_uuid);
+			dbo.closePostgreSQL();
+			apiresponse = Response.ok(violations);
+			apiresponse.header("Content-Length", violations.toString().length());
+			return apiresponse.status(200).build();
 
-		apiresponse = Response.ok((Object) violations);
-		apiresponse.header("Content-Length", violations.toString().length());
-		return apiresponse.status(200).build();
+		} else {
+			JSONObject error = new JSONObject();
+			error.put("ERROR: ", "connecting to database");
+			apiresponse = Response.ok((Object) error);
+			apiresponse.header("Content-Length", error.toJSONString().length());
+			return apiresponse.status(404).build();
+
+		}
 	}
 
 }
