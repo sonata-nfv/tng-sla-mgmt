@@ -78,10 +78,10 @@ The following shows how to use SLA Manager:
 
 |           Action          | HTTP Method |                  Endpoint            |  
 | --------------------------| ----------- | --------------------------------------- |  
-| Generate a SLA Template |    `POST`   | `curl -X POST -H "Content-type:application/x-www-form-urlencoded" -d "nsd_uuid=<>&guaranteeId=<>&expireDate=<>&templateName=<>" http://<you_machine_ip>:8080tng-sla-mgmt/api/slas/v1/templates` |  
-| Get all SLA Templates |    `GET`    | `curl -H "Content-type:application/json" http://<you_machine_ip>:8080/tng-sla-mgmt/api/slas/v1/templates/` |  
-| Get SLA Template by it's uuid | `GET`    | `curl -H "Content-type:application/json" http://<you_machine_ip>:8080/tng-sla-mgmt/api/slas/v1/templates/{sla_uuid}` |  
-| Delete a SLA Template by it's uuid    |    `DELETE` | `curl -X DELETE http://<you_machine_ip>:8080/tng-sla-mgmt/api/slas/v1/templates/{sla_uuid}` |  
+| Generate a SLA Template |    `POST`   | `curl -X POST -H "Content-type:application/x-www-form-urlencoded" -d "nsd_uuid=<>&guaranteeId=<>&expireDate=<>&templateName=<>" http://<your_machine_ip>:8080tng-sla-mgmt/api/slas/v1/templates` |  
+| Get all SLA Templates |    `GET`    | `curl -H "Content-type:application/json" http://<your_machine_ip>:8080/tng-sla-mgmt/api/slas/v1/templates/` |  
+| Get SLA Template by it's uuid | `GET`    | `curl -H "Content-type:application/json" http://<your_machine_ip>:8080/tng-sla-mgmt/api/slas/v1/templates/{sla_uuid}` |  
+| Delete a SLA Template by it's uuid    |    `DELETE` | `curl -X DELETE http://<your_machine_ip>:8080/tng-sla-mgmt/api/slas/v1/templates/{sla_uuid}` |  
 
 
 ### SLA Agreements
@@ -89,21 +89,21 @@ The following shows how to use SLA Manager:
 |           Action           | HTTP Method |                  Endpoint            |  
 | -------------------------- | ----------- | --------------------------------------- |  
 | Get existing Agreements| `GET`    | `curl -H "Content-type:application/json" http://<you_machine_ip>:8080/tng-sla-mgmt/api/slas/v1/agreements/` | 
-| Get specific Agreement details by it's uuid | `GET`    | `curl -H "Content-type:application/json" http://<you_machine_ip>:8080/tng-sla-mgmt/api/slas/v1/agreements/{sla_uuid}` |   
-| Get Agreements per (instatiated) NS   | `GET`    | `curl -H "Content-type:application/json" http://<you_machine_ip>:8080/tng-sla-mgmt/api/slas/v1/agreements/service/{ns_uuid}` |  
-| Get Agreement's guarantee terms - SLOs| `GET`  | `curl -H "Content-type:application/json" http://<you_machine_ip>:8080/tng-sla-mgmt/api/slas/v1/agreements/guarantee-terms/{sla_uuid}` |  
+| Get specific Agreement details by it's uuid | `GET`    | `curl -H "Content-type:application/json" http://<your_machine_ip>:8080/tng-sla-mgmt/api/slas/v1/agreements/{sla_uuid}/{ns_uuid}` |   
+| Get Agreements per (instatiated) NS   | `GET`    | `curl -H "Content-type:application/json" http://<your_machine_ip>:8080/tng-sla-mgmt/api/slas/v1/agreements/service/{ns_uuid}` |  
+| Get Agreement's guarantee terms - SLOs| `GET`  | `curl -H "Content-type:application/json" http://<your_machine_ip>:8080/tng-sla-mgmt/api/slas/v1/agreements/guarantee-terms/{sla_uuid}` |  
 
 
 ### SLA Management
 
 |           Action          | HTTP Method |                  Endpoint              |  
 | --------------------------| ----------- | --------------------------------------- |  
-| GET a predefined list of Service Guarantees (SLOs)| `GET` | `curl -H "Content-type:application/json" http://<you_machine_ip>:8080/tng-sla-mgmt/api/slas/v1/mgmt/guaranteesList` |  
-| GET the list with correlated NSs-Templates | `GET`  | `curl -H "Content-type:application/json" http://<you_machine_ip>:8080/tng-sla-mgmt/api/slas/v1/mgmt/services/templates/` |  
-| GET a list with NSs that have associated templates | `GET` | `curl -H "Content-type:application/json" http://<you_machine_ip>:8080/tng-sla-mgmt/api/slas/v1/mgmt/services/templates/true` |  
-| GET a list with NS that do not have associated templates yet| `GET` | `curl -H "Content-type:application/json" http://<you_machine_ip>:8080/tng-sla-mgmt/api/slas/v1/mgmt/services/templates/false` |  
-| GET a list with NS that have associated agreements| `GET`   | `curl -H "Content-type:application/json" http://<you_machine_ip>:8080/tng-sla-mgmt/api/slas/v1/mgmt/services/agreements/true` |  
-| GET a list with NS that do not have associated agreements yet| `GET` | `curl -H "Content-type:application/json" http://<you_machine_ip>:8080/tng-sla-mgmt/api/slas/v1/mgmt/services/agreements/false`|  
+| GET a predefined list of Service Guarantees (SLOs)| `GET` | `curl -H "Content-type:application/json" http://<your_machine_ip>:8080/tng-sla-mgmt/api/slas/v1/mgmt/guaranteesList` |  
+| GET the list with correlated NSs-Templates | `GET`  | `curl -H "Content-type:application/json" http://<your_machine_ip>:8080/tng-sla-mgmt/api/slas/v1/mgmt/services/templates/` |  
+| GET a list with NSs that have associated templates | `GET` | `curl -H "Content-type:application/json" http://<your_machine_ip>:8080/tng-sla-mgmt/api/slas/v1/mgmt/services/templates/true` |  
+| GET a list with NS that do not have associated templates yet| `GET` | `curl -H "Content-type:application/json" http://<your_machine_ip>:8080/tng-sla-mgmt/api/slas/v1/mgmt/services/templates/false` |  
+| GET a list with NS that have associated agreements| `GET`   | `curl -H "Content-type:application/json" http://<your_machine_ip>:8080/tng-sla-mgmt/api/slas/v1/mgmt/services/agreements/true` |  
+| GET a list with NS that do not have associated agreements yet| `GET` | `curl -H "Content-type:application/json" http://<your_machine_ip>:8080/tng-sla-mgmt/api/slas/v1/mgmt/services/agreements/false`|  
 
 
 Expected returned Codes:
