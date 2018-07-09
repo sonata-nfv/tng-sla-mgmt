@@ -22,6 +22,10 @@
 			"description": "SLA Agreements APIs"
 		},
 		{
+			"name": "SLA-Violations-v1",
+			"description": "SLA  Violations APIs"
+		}
+		{
 			"name": "SLA-Management-v1",
 			"description": "SLA Managements APIs"
 		}
@@ -897,18 +901,18 @@
 		"/agreements/{sla_uuid}/{ns_uuid}": {
 			"parameters": [
 				{
-						"name": "sla_uuid",
-						"in": "path",
-						"required": true,
-						"type": "string",
-						"description": "The ID of the SLA"
+					"name": "sla_uuid",
+					"in": "path",
+					"required": true,
+					"type": "string",
+					"description": "The ID of the SLA"
 				},
 				{
-						"name": "ns_uuid",
-						"in": "path",
-						"required": true,
-						"type": "string",
-						"description": "The ID of the corresponding NS - the instantiated NS"
+					"name": "ns_uuid",
+					"in": "path",
+					"required": true,
+					"type": "string",
+					"description": "The ID of the corresponding NS - the instantiated NS"
 				}
 			],
 			"get": {
@@ -1085,8 +1089,7 @@
 					"in": "path",
 					"type": "string",
 					"description": "NS uuid",
-					"required":true
-
+					"required": true
 				}
 			],
 			"get": {
@@ -1144,7 +1147,7 @@
 					"in": "path",
 					"type": "string",
 					"description": "SLA uuid",
-					"required":true
+					"required": true
 				}
 			],
 			"get": {
@@ -1308,6 +1311,120 @@
 				"operationId": "all-agreements",
 				"tags": [
 					"SLA-Agreements-v1"
+				]
+			}
+		},
+		"/violations": {
+			"get": {
+				"responses": {
+					"200": {
+						"description": "Success",
+						"headers": {
+							"Content-Type": {
+								"description": "The MIME type of the body of the response (\"application/json\").",
+								"type": "string",
+								"maximum": 1,
+								"minimum": 1
+							}
+						},
+						"schema": {
+							"type": "object",
+							"properties": {
+								"violation_time": {
+									"description": "The SLA Violation time",
+									"type": "string"
+								},
+								"cust_uuid": {
+									"description": "The customer uuid who selected this SLA durng the NS instantiation process",
+									"type": "string"
+								},
+								"ns_uuid": {
+									"description": "The ns_uuid which is instantiated with this SLA",
+									"type": "string"
+								},
+								"alert_state": {
+									"description": "The alert_state of the violation alert",
+									"type": "string"
+								},
+								"sla_uuid": {
+									"description": "The sla_uuid of the violated SLA",
+									"type": "string"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad request: HTTP bad request"
+					}
+				},
+				"operationId": "all-violations",
+				"tags": [
+					"SLA-Violations-v1"
+				]
+			}
+		},
+		"/violations/{ns_uuid}/{sla_uuid}": {
+			"parameters": [
+				{
+					"ns_uuid": "ns_uuid",
+					"in": "path",
+					"type": "string",
+					"required": true,
+					"description": "Instantiated NS uuid"
+				},
+				{
+					"sla_uuid": "sla_uuid",
+					"in": "path",
+					"type": "string",
+					"required": true,
+					"description": "SLA uuid"
+				}
+			],
+			"get": {
+				"responses": {
+					"200": {
+						"description": "Success",
+						"headers": {
+							"Content-Type": {
+								"description": "The MIME type of the body of the response (\"application/json\").",
+								"type": "string",
+								"maximum": 1,
+								"minimum": 1
+							}
+						},
+						"schema": {
+							"type": "object",
+							"properties": {
+								"violation_time": {
+									"description": "The SLA Violation time",
+									"type": "string"
+								},
+								"cust_uuid": {
+									"description": "The customer uuid who selected this SLA durng the NS instantiation process",
+									"type": "string"
+								},
+								"ns_uuid": {
+									"description": "The ns_uuid which is instantiated with this SLA",
+									"type": "string"
+								},
+								"alert_state": {
+									"description": "The alert_state of the violation alert",
+									"type": "string"
+								},
+								"sla_uuid": {
+									"description": "The sla_uuid of the violated SLA",
+									"type": "string"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad request: HTTP bad request"
+					}
+				},
+				"operationId": "specific-violation",
+				"tags": [
+					"SLA-Violations-v1"
 				]
 			}
 		}
