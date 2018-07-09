@@ -24,7 +24,7 @@
 		{
 			"name": "SLA-Violations-v1",
 			"description": "SLA  Violations APIs"
-		}
+		},
 		{
 			"name": "SLA-Management-v1",
 			"description": "SLA Managements APIs"
@@ -1363,21 +1363,21 @@
 				]
 			}
 		},
-		"/violations/{ns_uuid}/{sla_uuid}": {
+		"/Violations/{ns_uuid}/{sla_uuid}": {
 			"parameters": [
 				{
-					"ns_uuid": "ns_uuid",
+					"name": "sla_uuid",
 					"in": "path",
-					"type": "string",
 					"required": true,
-					"description": "Instantiated NS uuid"
+					"type": "string",
+					"description": "The ID of the SLA"
 				},
 				{
-					"sla_uuid": "sla_uuid",
+					"name": "ns_uuid",
 					"in": "path",
-					"type": "string",
 					"required": true,
-					"description": "SLA uuid"
+					"type": "string",
+					"description": "The ID of the corresponding NS - the instantiated NS"
 				}
 			],
 			"get": {
@@ -1419,14 +1419,15 @@
 						}
 					},
 					"400": {
-						"description": "Bad request: HTTP bad request"
-					}
+						"description": "Bad HTTP request"
+					},
 				},
 				"operationId": "specific-violation",
 				"tags": [
 					"SLA-Violations-v1"
 				]
 			}
-		}
+		}	
+
 	}
 }
