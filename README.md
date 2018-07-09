@@ -93,6 +93,13 @@ The following shows how to use SLA Manager:
 | Get Agreements per (instatiated) NS   | `GET`    | `curl -H "Content-type:application/json" http://<your_machine_ip>:8080/tng-sla-mgmt/api/slas/v1/agreements/service/{ns_uuid}` |  
 | Get Agreement's guarantee terms - SLOs| `GET`  | `curl -H "Content-type:application/json" http://<your_machine_ip>:8080/tng-sla-mgmt/api/slas/v1/agreements/guarantee-terms/{sla_uuid}` |  
 
+### SLA Violations
+
+|           Action           | HTTP Method |                  Endpoint            |  
+| -------------------------- | ----------- | --------------------------------------- |  
+| Get existing Violations| `GET`    | `curl -H "Content-type:application/json" http://<you_machine_ip>:8080/tng-sla-mgmt/api/slas/v1/vioaltions/` | 
+| Get specific Violation by sla and ns | `GET`    | `curl -H "Content-type:application/json" http://<your_machine_ip>:8080/tng-sla-mgmt/api/slas/v1/vioaltions/{ns_uuid}/{sla_uuid}/` |   
+
 
 ### SLA Management
 

@@ -75,6 +75,17 @@
 
 ------------------------------------------------------------------
 
+<h3>Get all Violations</h3>
+- URI: api/slas/v1/violations <br>
+&nbsp;&nbsp;Method: GET<br>
+&nbsp;&nbsp;Purpose: Get all sla violations
+
+<h3>Get specific Violations</h3>
+- URI: api/slas/v1/violations/{ns_uuid}/{sla_uuid} <br>
+&nbsp;&nbsp;Method: GET<br>
+&nbsp;&nbsp;Purpose: Get a specific sla violation baased on sla_uuid and ns_uuid
+
+------------------------------------------------------------------
 
 <h3>Get Guarantees List</h3>
 - URI: api/slas/v1/mgmt/guaranteesList <br>
