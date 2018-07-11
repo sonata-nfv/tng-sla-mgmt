@@ -335,6 +335,32 @@ public class db_operations {
         System.out.println("Set status READY? " + result);
 
     }
+    
+    /**
+     * Update Record cust-sla correlation
+     * 
+     */
+    public static void UpdateAgreementStatus(String nsi_uuid, String agreemet_status) {
+
+        String SQL = "UPDATE cust_sla " + "SET inst_status = ? " + "WHERE nsi_uuid = ?";
+        boolean result = false;
+        int affectedrows = 0;
+
+        try {
+            PreparedStatement pstmt = c.prepareStatement(SQL);
+            pstmt.setString(1, agreemet_status);
+            pstmt.setString(2, nsi_uuid);
+            affectedrows = pstmt.executeUpdate();
+            result = true;
+            System.out.println("The Agreement status was set to ==> " + agreemet_status);
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+        System.out.println("nnSLA syatus updated? " + result);
+
+    }
 
     /**
      * Delete Record
