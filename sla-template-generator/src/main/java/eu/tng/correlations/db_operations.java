@@ -317,7 +317,7 @@ public class db_operations {
      */
     public static void UpdateRecordAgreement(String inst_status, String correlation_id, String nsi_uuid) {
 
-        String SQL = "UPDATE cust_sla " + "SET inst_status = ? AND ns_uuid = ?" + "WHERE inst_id = ?";
+        String SQL = "UPDATE cust_sla " + "SET inst_status = ?, ns_uuid = ?" + "WHERE inst_id = ?";
         boolean result = false;
         int affectedrows = 0;
 
