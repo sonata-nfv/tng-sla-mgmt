@@ -90,9 +90,7 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 						System.out.println(" [*] STATUS ==> " + status);
 
 						if (status.equals("READY")) {
-							db_operations dbo = new db_operations();
-							db_operations.connectPostgreSQL();
-							db_operations.UpdateRecordAgreement(status, correlation_id);
+							
 
 							// get info for the monitoring metrics
 							String sla_id = "";
@@ -121,6 +119,11 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 
 							}
 
+							// Update NSI Records
+							db_operations dbo = new db_operations();
+                            db_operations.connectPostgreSQL();
+                            db_operations.UpdateRecordAgreement(status, correlation_id, ns_id);
+							
 							// call the create rules method
 							MonitoringRules mr = new MonitoringRules();
 							MonitoringRules.createMonitroingRules(sla_id, vnfrs_list, vdus_list, ns_id);

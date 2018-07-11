@@ -315,16 +315,17 @@ public class db_operations {
      * Update Record cust-sla correlation
      * 
      */
-    public static void UpdateRecordAgreement(String inst_status, String correlation_id) {
+    public static void UpdateRecordAgreement(String inst_status, String correlation_id, String nsi_uuid) {
 
-        String SQL = "UPDATE cust_sla " + "SET inst_status = ? " + "WHERE inst_id = ?";
+        String SQL = "UPDATE cust_sla " + "SET inst_status = ?, ns_uuid = ?" + "WHERE inst_id = ?";
         boolean result = false;
         int affectedrows = 0;
 
         try {
             PreparedStatement pstmt = c.prepareStatement(SQL);
             pstmt.setString(1, inst_status);
-            pstmt.setString(2, correlation_id);
+            pstmt.setString(2, nsi_uuid);
+            pstmt.setString(3, correlation_id);
             affectedrows = pstmt.executeUpdate();
             result = true;
         } catch (SQLException e) {
