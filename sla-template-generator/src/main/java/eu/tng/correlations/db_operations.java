@@ -51,8 +51,11 @@ public class db_operations {
     public static boolean connectPostgreSQL() {
         boolean connect = false;
         try {
-               /*
+               
             Class.forName("org.postgresql.Driver");
+            
+           
+            /*
              c =
              DriverManager.getConnection("jdbc:postgresql://localhost:5432/sla-manager","postgres",
              "admin");
