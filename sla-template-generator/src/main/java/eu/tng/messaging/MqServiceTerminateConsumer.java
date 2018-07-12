@@ -57,7 +57,7 @@ public class MqServiceTerminateConsumer implements ServletContextListener {
 					JSONObject jsonObjectMessage = null;
 					String correlation_id = null;
 					String status = null;
-					String instance_id = null;
+					String nsi_uuid = null;
 
 					// Parse message payload
 					String message = new String(body, "UTF-8");
@@ -90,14 +90,16 @@ public class MqServiceTerminateConsumer implements ServletContextListener {
 
 						System.out.println(" [*] Message coming from Gatekeeper.....");
 						System.out.println(" [*] Message as JSONObject ==> " + jsonObjectMessage);
-						instance_id = (String) jsonObjectMessage.get("instance_id");
-						System.out.println(" [*] instance_id  ==> " + instance_id);
+						nsi_uuid = (String) jsonObjectMessage.get("instance_id");
+						System.out.println(" [*] instance_id  ==> " + nsi_uuid);
 						
 						
 						// make the agreement status 'TERMINATED'
 						db_operations dbo = new db_operations();
 						db_operations.connectPostgreSQL();
-						db_operations.UpdateAgreementStatus(nsi_uuid, agreemet_status);
+						// make update record to change the correlation id  -  the correlation id of the termination messaging
+						db_operations.UpdateCorrelationID(nsi_uuid, correlation_id);
+				
 					}
 
 				}
