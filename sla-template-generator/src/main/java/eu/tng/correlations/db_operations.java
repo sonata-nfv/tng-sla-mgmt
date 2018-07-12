@@ -347,51 +347,38 @@ public class db_operations {
      */
     public static void UpdateAgreementStatus(String nsi_uuid) {
 
-
-        String SQL = "UPDATE cust_sla " + "SET inst_status = ?" + "WHERE nsi_uuid = ?";
+        Statement stmt = null;
         boolean result = false;
-        int affectedrows = 0;
-
         try {
-            PreparedStatement pstmt = c.prepareStatement(SQL);
-            pstmt.setString(1, "VIOLATED");
-            pstmt.setString(2, nsi_uuid);
-            affectedrows = pstmt.executeUpdate();
+            c.setAutoCommit(false);
+            stmt = c.createStatement();
+            String sql = "UPDATE cust_sla SET inst_status='VIOLATED' WHERE nsi_uuid='"+nsi_uuid+"';";
+            stmt.executeUpdate(sql);
+            c.commit();
+            stmt.close();
             result = true;
-        } catch (SQLException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+        } catch (Exception e) {
+            System.err.println(e.getClass().getName() + ": " + e.getMessage());
         }
-
-        System.out.println("Set status violated? " + result);
-   
+        System.out.println("Records with deleted? " + result);
         
-//        //String SQL = "UPDATE cust_sla SET inst_status = 'VIOLATED' WHERE nsi_uuid = ?";
-//    	String new_status ="VIOLATED";
-//    	System.out.println("NSI UUID ======= " + nsi_uuid);
-//    	
-//    	
-//        String SQL = "UPDATE cust_sla SET inst_status = ? WHERE nsi_uuid = ?";
-//        
-//        
+//        String SQL = "UPDATE cust_sla " + "SET inst_status = ?" + "WHERE nsi_uuid = ?";
 //        boolean result = false;
 //        int affectedrows = 0;
 //
 //        try {
 //            PreparedStatement pstmt = c.prepareStatement(SQL);
-//            pstmt.setString(1, new_status);
+//            pstmt.setString(1, "VIOLATED");
 //            pstmt.setString(2, nsi_uuid);
-//            
-//            System.out.println("SQL QUERY:  " + pstmt.toString());
 //            affectedrows = pstmt.executeUpdate();
 //            result = true;
-//            System.out.println("The Agreement status was set to ==> VIOLATED and affected rows: " + affectedrows);
 //        } catch (SQLException e) {
 //            // TODO Auto-generated catch block
 //            e.printStackTrace();
 //        }
-//
-//        System.out.println("SLA status updated? " + result);
+
+        System.out.println("Set status violated? " + result);
+   
 
     }
 
