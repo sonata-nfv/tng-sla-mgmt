@@ -51,8 +51,10 @@ public class db_operations {
     public static boolean connectPostgreSQL() {
         boolean connect = false;
         try {
-               /*
+            
             Class.forName("org.postgresql.Driver");
+            
+            /*
              c =
              DriverManager.getConnection("jdbc:postgresql://localhost:5432/sla-manager","postgres",
              "admin");
@@ -349,32 +351,51 @@ public class db_operations {
      */
     public static void UpdateAgreementStatus(String nsi_uuid) {
 
-        //String SQL = "UPDATE cust_sla SET inst_status = 'VIOLATED' WHERE nsi_uuid = ?";
-    	String new_status ="VIOLATED";
-    	System.out.println("NSI UUID ======= " + nsi_uuid);
-    	
-    	
-        String SQL = "UPDATE cust_sla SET inst_status = ? WHERE nsi_uuid = ?";
-        
-        
+
+        String SQL = "UPDATE cust_sla " + "SET inst_status = ?" + "WHERE nsi_uuid = ?";
         boolean result = false;
         int affectedrows = 0;
 
         try {
             PreparedStatement pstmt = c.prepareStatement(SQL);
-            pstmt.setString(1, new_status);
+            pstmt.setString(1, "VIOLATED");
             pstmt.setString(2, nsi_uuid);
-            
-            System.out.println("SQL QUERY:  " + pstmt.toString());
             affectedrows = pstmt.executeUpdate();
             result = true;
-            System.out.println("The Agreement status was set to ==> VIOLATED and affected rows: " + affectedrows);
         } catch (SQLException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
 
-        System.out.println("SLA status updated? " + result);
+        System.out.println("Set status READY? " + result);
+   
+        
+//        //String SQL = "UPDATE cust_sla SET inst_status = 'VIOLATED' WHERE nsi_uuid = ?";
+//    	String new_status ="VIOLATED";
+//    	System.out.println("NSI UUID ======= " + nsi_uuid);
+//    	
+//    	
+//        String SQL = "UPDATE cust_sla SET inst_status = ? WHERE nsi_uuid = ?";
+//        
+//        
+//        boolean result = false;
+//        int affectedrows = 0;
+//
+//        try {
+//            PreparedStatement pstmt = c.prepareStatement(SQL);
+//            pstmt.setString(1, new_status);
+//            pstmt.setString(2, nsi_uuid);
+//            
+//            System.out.println("SQL QUERY:  " + pstmt.toString());
+//            affectedrows = pstmt.executeUpdate();
+//            result = true;
+//            System.out.println("The Agreement status was set to ==> VIOLATED and affected rows: " + affectedrows);
+//        } catch (SQLException e) {
+//            // TODO Auto-generated catch block
+//            e.printStackTrace();
+//        }
+//
+//        System.out.println("SLA status updated? " + result);
 
     }
 
