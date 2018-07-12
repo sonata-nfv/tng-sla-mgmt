@@ -51,17 +51,19 @@ public class db_operations {
     public static boolean connectPostgreSQL() {
         boolean connect = false;
         try {
-
+               /*
             Class.forName("org.postgresql.Driver");
-//             c =
-//             DriverManager.getConnection("jdbc:postgresql://localhost:5432/sla-manager","postgres",
-//             "admin");
+             c =
+             DriverManager.getConnection("jdbc:postgresql://localhost:5432/sla-manager","postgres",
+             "admin");
+            */
             
             c = DriverManager
                     .getConnection(
                             "jdbc:postgresql://" + System.getenv("DATABASE_HOST") + ":" + System.getenv("DATABASE_PORT")
                                     + "/" + System.getenv("GTK_DB_NAME"),
                             System.getenv("GTK_DB_USER"), System.getenv("GTK_DB_PASS"));
+            
             connect = true;
             System.out.println("Opened sla-manager database successfully");
 
@@ -280,9 +282,10 @@ public class db_operations {
      * @return All Violation data for all SLAs-NS instances
      */
     @SuppressWarnings({ "unchecked", "null" })
-    public static JSONObject getAllViolationData() {
+    public static JSONArray getAllViolationData() {
 
         JSONObject violation_data = new JSONObject();
+        JSONArray violations = new JSONArray();
         Statement stmt = null;
 
         try {
@@ -296,11 +299,14 @@ public class db_operations {
                 String ns_uuid = rs.getString("ns_uuid");
                 String sla_uuid = rs.getString("sla_uuid");
 
-                violation_data.put("violation_time", violation_time);
-                violation_data.put("alert_state", alert_state);
-                violation_data.put("cust_uuid", cust_uuid);
-                violation_data.put("ns_uuid", ns_uuid);
-                violation_data.put("sla_uuid", sla_uuid);
+                JSONObject obj = new JSONObject();
+                obj.put("violation_time", violation_time);
+                obj.put("alert_state", alert_state);
+                obj.put("cust_uuid", cust_uuid);
+                obj.put("ns_uuid", ns_uuid);
+                obj.put("sla_uuid", sla_uuid);
+                violations.add(obj);
+                
             }
             System.out.println("VIOLATIONS FROM DB OPERATIONS CLASS ==> " + violation_data);
             rs.close();
@@ -308,7 +314,7 @@ public class db_operations {
         } catch (Exception e) {
             System.err.println(e.getClass().getName() + ": " + e.getMessage());
         }
-        return violation_data;
+        return violations;
     }
 
     /**
@@ -358,9 +364,11 @@ public class db_operations {
             PreparedStatement pstmt = c.prepareStatement(SQL);
             pstmt.setString(1, new_status);
             pstmt.setString(2, nsi_uuid);
+            
+            System.out.println("SQL QUERY:  " + pstmt.toString());
             affectedrows = pstmt.executeUpdate();
             result = true;
-            System.out.println("The Agreement status was set to ==> VIOLATED");
+            System.out.println("The Agreement status was set to ==> VIOLATED and affected rows: " + affectedrows);
         } catch (SQLException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -478,7 +486,7 @@ public class db_operations {
         try {
             c.setAutoCommit(false);
             stmt = c.createStatement();
-            ResultSet rs = stmt.executeQuery("SELECT * FROM cust_sla WHERE inst_status='READY';");
+            ResultSet rs = stmt.executeQuery("SELECT * FROM cust_sla WHERE inst_status = 'READY';");
             while (rs.next()) {
                 String ns_uuid = rs.getString("ns_uuid");
                 String ns_name = rs.getString("ns_name");
@@ -489,6 +497,7 @@ public class db_operations {
                 String cust_email = rs.getString("cust_email");
                 String cust_uuid = rs.getString("cust_uuid");
                 String inst_status = rs.getString("inst_status");
+                System.out.print("STATUS ======" + inst_status);
                 String inst_id = rs.getString("inst_id");
                 String nsi_uuid = rs.getString("nsi_uuid");
 

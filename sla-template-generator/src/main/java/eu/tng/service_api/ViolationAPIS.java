@@ -60,7 +60,7 @@ public class ViolationAPIS {
 		boolean connect = db_operations.connectPostgreSQL();
 		if (connect == true) {
 			db_operations.createTableViolations();
-			JSONObject violations = db_operations.getAllViolationData();
+			org.json.simple.JSONArray violations = db_operations.getAllViolationData();
 			System.out.println("VIOLATIONS FROM VIOLATION API CLASS ==> " + violations);
 			
 			dbo.closePostgreSQL();

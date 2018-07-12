@@ -168,11 +168,13 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 						// if sla exists create record in database
 						if (sla_uuid != null && !sla_uuid.isEmpty()) {
 
+						    
 							cust_sla_corr cust_sla = new cust_sla_corr();
 							@SuppressWarnings("unchecked")
 							ArrayList<String> SLADetails = cust_sla.getSLAdetails(sla_uuid);
 							sla_name = (String) SLADetails.get(1);
 							sla_status = (String) SLADetails.get(0);
+							
 							System.out.println("SLA name  ==> " + sla_name);
 							System.out.println("SLA status  ==> " + sla_status);
 							String inst_status = "PENDING";
