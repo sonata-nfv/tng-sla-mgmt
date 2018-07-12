@@ -53,7 +53,7 @@ public class MqMonitoringConsumer implements ServletContextListener {
 
                     // Initialize variables
                     JSONObject jmessage = null;
-                    String ns_uuid = null;
+                    String nsi_uuid = null;
                     String alert_time = null;
                     String alert_name = null;
                     String alert_state = null;
@@ -66,7 +66,7 @@ public class MqMonitoringConsumer implements ServletContextListener {
                         jmessage = new JSONObject(message);
                         System.out.println(jmessage);
 
-                        ns_uuid = jmessage.getString("serviceID"); // this is the service instantce id
+                        nsi_uuid = jmessage.getString("serviceID"); // this is the service instance id
                         alert_time = jmessage.getString("time");
                         alert_name = jmessage.getString("alertname");
                         alert_state = jmessage.getString("alertstate");
@@ -75,16 +75,16 @@ public class MqMonitoringConsumer implements ServletContextListener {
                         db_operations.connectPostgreSQL();
                         db_operations.createTableViolations();
 
-                        org.json.simple.JSONObject violated_sla = dbo.getViolatedSLA(ns_uuid);
+                        org.json.simple.JSONObject violated_sla = dbo.getViolatedSLA(nsi_uuid);
                         sla_uuid = (String) violated_sla.get("sla_uuid");
                         cust_uuid = (String) violated_sla.get("cust_uuid");
 
                         // insert the violation in the violation database
-                        db_operations.insertRecordViolation(ns_uuid, sla_uuid, alert_time, alert_state, cust_uuid);
+                        db_operations.insertRecordViolation(nsi_uuid, sla_uuid, alert_time, alert_state, cust_uuid);
                         // update the agreement status to 'violated'
-                        db_operations.UpdateAgreementStatus(ns_uuid, "VIOLATED");
+                        db_operations.UpdateAgreementStatus(nsi_uuid);
                         try {
-                            JSONObject violationMessage = ViolationsProducer.createViolationMessage(ns_uuid, sla_uuid,
+                            JSONObject violationMessage = ViolationsProducer.createViolationMessage(nsi_uuid, sla_uuid,
                                     alert_time, alert_state, cust_uuid, connection);
                         } catch (Exception e) {
                             // TODO Auto-generated catch block
