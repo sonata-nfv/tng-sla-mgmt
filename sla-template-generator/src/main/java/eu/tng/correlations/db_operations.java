@@ -361,6 +361,32 @@ public class db_operations {
         System.out.println("nnSLA syatus updated? " + result);
 
     }
+    
+    /**
+     * Update Record cust-sla correlation to terminate an agreement 
+     * 
+     */
+    public static void TerminateAgreement(String agreement_status, String correlation_id) {
+    	
+        String SQL = "UPDATE cust_sla " + "SET inst_status = ? " + "WHERE inst_id = ?";
+        boolean result = false;
+        int affectedrows = 0;
+
+        try {
+            PreparedStatement pstmt = c.prepareStatement(SQL);
+            pstmt.setString(1, agreement_status);
+            pstmt.setString(2, correlation_id);
+            affectedrows = pstmt.executeUpdate();
+            result = true;
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+        System.out.println("Set status TERMINATED? " + result);
+
+    }
+    
 
     /**
      * Delete Record
