@@ -58,11 +58,8 @@ public class db_operations {
              "admin");
             */
             
-            c = DriverManager
-                    .getConnection(
-                            "jdbc:postgresql://" + System.getenv("DATABASE_HOST") + ":" + System.getenv("DATABASE_PORT")
-                                    + "/" + System.getenv("GTK_DB_NAME"),
-                            System.getenv("GTK_DB_USER"), System.getenv("GTK_DB_PASS"));
+            c = DriverManager.getConnection("jdbc:postgresql://" + System.getenv("DATABASE_HOST") + ":" + System.getenv("DATABASE_PORT")
+                            + "/" + System.getenv("GTK_DB_NAME"),System.getenv("GTK_DB_USER"), System.getenv("GTK_DB_PASS"));
             
             connect = true;
             System.out.println("Opened sla-manager database successfully");
