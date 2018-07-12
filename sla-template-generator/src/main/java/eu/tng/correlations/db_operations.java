@@ -343,7 +343,13 @@ public class db_operations {
      */
     public static void UpdateAgreementStatus(String nsi_uuid) {
 
-        String SQL = "UPDATE cust_sla SET inst_status = 'VIOLATED' WHERE nsi_uuid = ?";
+        //String SQL = "UPDATE cust_sla SET inst_status = 'VIOLATED' WHERE nsi_uuid = ?";
+    	System.out.println("NSI UUID ======= " + nsi_uuid);
+    	
+    	
+        String SQL = "UPDATE cust_sla " + "SET inst_status = 'VIOLATED'" + "WHERE nsi_uuid = ?";
+        
+        
         boolean result = false;
         int affectedrows = 0;
 
