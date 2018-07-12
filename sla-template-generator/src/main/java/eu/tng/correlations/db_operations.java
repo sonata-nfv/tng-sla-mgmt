@@ -100,7 +100,7 @@ public class db_operations {
         try {
             stmt = c.createStatement();
             String sql = "CREATE TABLE IF NOT EXISTS cust_sla" + "(ID  SERIAL PRIMARY KEY," + " NS_UUID TEXT NOT NULL, "
-                    + "NS_NAME TEXT NOT NULL," + "SLA_UUID  TEXT NOT NULL," + "SLA_NAME TEXT NOT NULL,"
+            		+ "NSI_UUID TEXT NULL" + "NS_NAME TEXT NOT NULL," + "SLA_UUID  TEXT NOT NULL," + "SLA_NAME TEXT NOT NULL,"
                     + "SLA_DATE TIMESTAMPTZ DEFAULT Now()," + "SLA_STATUS TEXT NOT NULL," + "CUST_EMAIL TEXT NOT NULL,"
                     + "CUST_UUID  TEXT NOT NULL," + "INST_ID TEXT NOT NULL," + "INST_STATUS  TEXT NOT NULL )";
             stmt.executeUpdate(sql);
@@ -317,7 +317,7 @@ public class db_operations {
      */
     public static void UpdateRecordAgreement(String inst_status, String correlation_id, String nsi_uuid) {
 
-        String SQL = "UPDATE cust_sla " + "SET inst_status = ?, ns_uuid = ?" + "WHERE inst_id = ?";
+        String SQL = "UPDATE cust_sla " + "SET inst_status = ?, nsi_uuid = ?" + "WHERE inst_id = ?";
         boolean result = false;
         int affectedrows = 0;
 
