@@ -474,7 +474,7 @@ public class db_operations {
         try {
             c.setAutoCommit(false);
             stmt = c.createStatement();
-            ResultSet rs = stmt.executeQuery("SELECT * FROM cust_sla WHERE inst_status = 'READY' AND inst_status='VIOLATED';");
+            ResultSet rs = stmt.executeQuery("SELECT * FROM cust_sla WHERE inst_status = 'READY' OR inst_status='VIOLATED';");
             while (rs.next()) {
                 String ns_uuid = rs.getString("ns_uuid");
                 String ns_name = rs.getString("ns_name");
