@@ -206,7 +206,7 @@ public class db_operations {
     }
 
     @SuppressWarnings("unchecked")
-    public JSONObject getViolatedSLA(String ns_uuid) {
+    public JSONObject getViolatedSLA(String nsi_uuid) {
 
         Statement stmt = null;
 
@@ -217,7 +217,7 @@ public class db_operations {
         try {
             c.setAutoCommit(false);
             stmt = c.createStatement();
-            ResultSet rs = stmt.executeQuery("SELECT * FROM cust_sla;");
+            ResultSet rs = stmt.executeQuery("SELECT * FROM cust_sla WHERE nsi_uuid = '"+ nsi_uuid +"' AND inst_status = 'VIOLATED';");
             while (rs.next()) {
                 sla_uuid = rs.getString("sla_uuid");
                 cust_uuid = rs.getString("cust_uuid");
@@ -516,19 +516,19 @@ public class db_operations {
      * Get agreement per NS uuid
      */
     @SuppressWarnings("unchecked")
-    public JSONObject selectAgreementPerNS(String nsuuid) {
+    public JSONObject selectAgreementPerNSI(String nsi_uuid) {
 
         Statement stmt = null;
         JSONObject root = new JSONObject();
         JSONArray cust_sla = new JSONArray();
 
-        nsuuid = nsuuid.trim();
+        nsi_uuid = nsi_uuid.trim();
 
         try {
             c.setAutoCommit(false);
             stmt = c.createStatement();
             ResultSet rs = stmt
-                    .executeQuery("SELECT * FROM cust_sla WHERE ns_uuid = '" + nsuuid + "' AND inst_status='READY'; ");
+                    .executeQuery("SELECT * FROM cust_sla WHERE nsi_uuid = '" + nsi_uuid + "' AND inst_status='READY'; ");
             while (rs.next()) {
                 String ns_uuid = rs.getString("ns_uuid");
                 String sla_uuid = rs.getString("sla_uuid");
@@ -536,6 +536,7 @@ public class db_operations {
 
                 JSONObject obj = new JSONObject();
                 obj.put("ns_uuid", ns_uuid);
+                obj.put("nsi_uuid", nsi_uuid);
                 obj.put("sla_uuid", sla_uuid);
                 obj.put("cust_uuid", cust_uuid);
                 cust_sla.add(obj);

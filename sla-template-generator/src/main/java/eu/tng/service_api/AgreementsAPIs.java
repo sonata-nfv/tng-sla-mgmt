@@ -73,12 +73,12 @@ public class AgreementsAPIs {
 	}
 
 	/**
-	 * api call in order to get a list with all the existing agreements per NS
+	 * api call in order to get a list with all the existing agreements per NSI
 	 */
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	@Path("service/{ns_uuid}")
-	public Response getAgreementsPerNS(@PathParam("ns_uuid") String ns_uuid) {
+	@Path("service/{nsi_uuid}")
+	public Response getAgreementsPerNS(@PathParam("nsi_uuid") String nsi_uuid) {
 
 		ResponseBuilder apiresponse = null;
 
@@ -86,7 +86,7 @@ public class AgreementsAPIs {
 		boolean connect = db_operations.connectPostgreSQL();
 		if (connect == true) {
 			db_operations.createTableCustSla();
-			JSONObject agrPerNs = dbo.selectAgreementPerNS(ns_uuid);
+			JSONObject agrPerNs = dbo.selectAgreementPerNSI(nsi_uuid);
 			dbo.closePostgreSQL();
 			apiresponse = Response.ok(agrPerNs);
 			apiresponse.header("Content-Length", agrPerNs.toString().length());
