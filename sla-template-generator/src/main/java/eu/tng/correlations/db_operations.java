@@ -51,16 +51,8 @@ public class db_operations {
     public static boolean connectPostgreSQL() {
         boolean connect = false;
         try {
-<<<<<<< HEAD
-            
-            Class.forName("org.postgresql.Driver");
-            
-=======
-               
-            Class.forName("org.postgresql.Driver");
-            
            
->>>>>>> e866e71835f6b41fcec9b8b73302e5d155afaf77
+            Class.forName("org.postgresql.Driver");
             /*
              c =
              DriverManager.getConnection("jdbc:postgresql://localhost:5432/sla-manager","postgres",
@@ -371,7 +363,7 @@ public class db_operations {
             e.printStackTrace();
         }
 
-        System.out.println("Set status READY? " + result);
+        System.out.println("Set status violated? " + result);
    
         
 //        //String SQL = "UPDATE cust_sla SET inst_status = 'VIOLATED' WHERE nsi_uuid = ?";
