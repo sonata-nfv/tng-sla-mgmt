@@ -67,6 +67,7 @@ public class MqMonitoringConsumer implements ServletContextListener {
                         System.out.println(jmessage);
 
                         nsi_uuid = jmessage.getString("serviceID"); // this is the service instance id
+                        System.out.println("NSI ID FROM MONITORING ALERT ===> "+ nsi_uuid);
                         alert_time = jmessage.getString("time");
                         alert_name = jmessage.getString("alertname");
                         alert_state = jmessage.getString("alertstate");
@@ -81,8 +82,8 @@ public class MqMonitoringConsumer implements ServletContextListener {
                         
                         // insert the violation in the violation database
                         db_operations.insertRecordViolation(nsi_uuid, sla_uuid, alert_time, alert_state, cust_uuid);
-                        // update the agreement status to 'violated'
                         db_operations.UpdateAgreementStatus(nsi_uuid);
+
                         try {
                             JSONObject violationMessage = ViolationsProducer.createViolationMessage(nsi_uuid, sla_uuid,
                                     alert_time, alert_state, cust_uuid, connection);
