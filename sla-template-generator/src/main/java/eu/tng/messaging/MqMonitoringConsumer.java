@@ -78,11 +78,15 @@ public class MqMonitoringConsumer implements ServletContextListener {
                         org.json.simple.JSONObject violated_sla = dbo.getViolatedSLA(nsi_uuid);
                         sla_uuid = (String) violated_sla.get("sla_uuid");
                         cust_uuid = (String) violated_sla.get("cust_uuid");
-
+                        
                         // insert the violation in the violation database
                         db_operations.insertRecordViolation(nsi_uuid, sla_uuid, alert_time, alert_state, cust_uuid);
                         // update the agreement status to 'violated'
+<<<<<<< HEAD
                         db_operations.UpdateAgreementStatus(nsi_uuid, "VIOLATED");
+=======
+                        db_operations.UpdateAgreementStatus(nsi_uuid);
+>>>>>>> e866e71835f6b41fcec9b8b73302e5d155afaf77
                         try {
                             JSONObject violationMessage = ViolationsProducer.createViolationMessage(nsi_uuid, sla_uuid,
                                     alert_time, alert_state, cust_uuid, connection);
