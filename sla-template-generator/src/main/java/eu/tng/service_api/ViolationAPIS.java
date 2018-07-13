@@ -23,8 +23,8 @@ public class ViolationAPIS {
 	 */
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	@Path("/{ns_uuid}/{sla_uuid}")
-	public Response getViolation(@PathParam("ns_uuid") String ns_uuid, @PathParam("sla_uuid") String sla_uuid) {
+	@Path("/{nsi_uuid}/{sla_uuid}")
+	public Response getViolation(@PathParam("nsi_uuid") String nsi_uuid, @PathParam("sla_uuid") String sla_uuid) {
 
 		ResponseBuilder apiresponse = null;
 		
@@ -32,7 +32,7 @@ public class ViolationAPIS {
 		boolean connect = db_operations.connectPostgreSQL();
 		if (connect == true) {
 			db_operations.createTableViolations();
-			JSONObject violations = db_operations.getViolationData(ns_uuid, sla_uuid);
+			JSONObject violations = db_operations.getViolationData(nsi_uuid, sla_uuid);
 			System.out.println("VIOLATIONS FROM VIOLATION API CLASS ==> " + violations);
 			
 			dbo.closePostgreSQL();

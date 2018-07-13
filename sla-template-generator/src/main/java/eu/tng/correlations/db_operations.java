@@ -51,10 +51,8 @@ public class db_operations {
     public static boolean connectPostgreSQL() {
         boolean connect = false;
         try {
-               
-            Class.forName("org.postgresql.Driver");
-            
            
+            Class.forName("org.postgresql.Driver");
             /*
              c =
              DriverManager.getConnection("jdbc:postgresql://localhost:5432/sla-manager","postgres",
@@ -188,14 +186,14 @@ public class db_operations {
      * Insert Record violations
      * 
      */
-    public static void insertRecordViolation(String ns_uuid, String sla_uuid, String violation_time, String alert_state,
+    public static void insertRecordViolation(String nsi_uuid, String sla_uuid, String violation_time, String alert_state,
             String cust_uuid) {
 
         try {
             c.setAutoCommit(false);
             Statement stmt = c.createStatement();
             String sql = "INSERT INTO sla_violations  (ns_uuid, sla_uuid,violation_time, alert_state, cust_uuid ) VALUES ('"
-                    + ns_uuid + "', '" + sla_uuid + "', '" + violation_time + "','" + alert_state + "', '" + cust_uuid
+                    + nsi_uuid + "', '" + sla_uuid + "', '" + violation_time + "','" + alert_state + "', '" + cust_uuid
                     + "');  ";
             stmt.executeUpdate(sql);
             stmt.close();
@@ -242,12 +240,12 @@ public class db_operations {
 
     /**
      * 
-     * @param ns_uuid
+     * @param nsi_uuid
      * @param sla_uuid
      * @return Get violation data per SLA - Service Instance
      */
     @SuppressWarnings({ "unchecked", "null" })
-    public static JSONObject getViolationData(String ns_uuid, String sla_uuid) {
+    public static JSONObject getViolationData(String nsi_uuid, String sla_uuid) {
 
         JSONObject violation = new JSONObject();
         Statement stmt = null;
@@ -256,7 +254,7 @@ public class db_operations {
             c.setAutoCommit(false);
             stmt = c.createStatement();
             ResultSet rs = stmt.executeQuery(
-                    "SELECT * FROM sla_violations WHERE ns_uuid='" + ns_uuid + "' AND sla_uuid='" + sla_uuid + "';");
+                    "SELECT * FROM sla_violations WHERE nsi_uuid='" + nsi_uuid + "' AND sla_uuid='" + sla_uuid + "';");
             while (rs.next()) {
                 String violation_time = rs.getString("violation_time");
                 String alert_state = rs.getString("alert_state");
@@ -265,8 +263,9 @@ public class db_operations {
                 violation.put("violation_time", violation_time);
                 violation.put("alert_state", alert_state);
                 violation.put("cust_uuid", cust_uuid);
-                violation.put("ns_uuid", ns_uuid);
+                violation.put("ns_uuid", nsi_uuid);
                 violation.put("sla_uuid", sla_uuid);
+                
             }
             System.out.println("VIOLATIONS FROM DB OPERATIONS CLASS ==> " + violation);
             rs.close();
@@ -296,14 +295,14 @@ public class db_operations {
                 String violation_time = rs.getString("violation_time");
                 String alert_state = rs.getString("alert_state");
                 String cust_uuid = rs.getString("cust_uuid");
-                String ns_uuid = rs.getString("ns_uuid");
+                String nsi_uuid = rs.getString("ns_uuid");
                 String sla_uuid = rs.getString("sla_uuid");
 
                 JSONObject obj = new JSONObject();
                 obj.put("violation_time", violation_time);
                 obj.put("alert_state", alert_state);
                 obj.put("cust_uuid", cust_uuid);
-                obj.put("ns_uuid", ns_uuid);
+                obj.put("nsi_uuid", nsi_uuid);
                 obj.put("sla_uuid", sla_uuid);
                 violations.add(obj);
                 
@@ -349,32 +348,21 @@ public class db_operations {
      */
     public static void UpdateAgreementStatus(String nsi_uuid) {
 
-        //String SQL = "UPDATE cust_sla SET inst_status = 'VIOLATED' WHERE nsi_uuid = ?";
-    	String new_status ="VIOLATED";
-    	System.out.println("NSI UUID ======= " + nsi_uuid);
-    	
-    	
-        String SQL = "UPDATE cust_sla SET inst_status = ? WHERE nsi_uuid = ?";
-        
-        
+        Statement stmt = null;
         boolean result = false;
-        int affectedrows = 0;
-
         try {
-            PreparedStatement pstmt = c.prepareStatement(SQL);
-            pstmt.setString(1, new_status);
-            pstmt.setString(2, nsi_uuid);
-            
-            System.out.println("SQL QUERY:  " + pstmt.toString());
-            affectedrows = pstmt.executeUpdate();
+            c.setAutoCommit(false);
+            stmt = c.createStatement();
+            String sql = "UPDATE cust_sla SET inst_status='VIOLATED' WHERE nsi_uuid='"+nsi_uuid+"';";
+            stmt.executeUpdate(sql);
+            c.commit();
+            stmt.close();
             result = true;
-            System.out.println("The Agreement status was set to ==> VIOLATED and affected rows: " + affectedrows);
-        } catch (SQLException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+        } catch (Exception e) {
+            System.err.println(e.getClass().getName() + ": " + e.getMessage());
         }
-
-        System.out.println("SLA status updated? " + result);
+        System.out.println("Set status violated? " + result);
+   
 
     }
     
@@ -539,7 +527,7 @@ public class db_operations {
         try {
             c.setAutoCommit(false);
             stmt = c.createStatement();
-            ResultSet rs = stmt.executeQuery("SELECT * FROM cust_sla WHERE inst_status = 'READY';");
+            ResultSet rs = stmt.executeQuery("SELECT * FROM cust_sla WHERE inst_status = 'READY' OR inst_status='VIOLATED';");
             while (rs.next()) {
                 String ns_uuid = rs.getString("ns_uuid");
                 String ns_name = rs.getString("ns_name");
@@ -642,9 +630,12 @@ public class db_operations {
                 String ns_uuid = rs.getString("ns_uuid");
                 String sla_uuid = rs.getString("sla_uuid");
                 String cust_uuid = rs.getString("cust_uuid");
+                String nsi_uuid = rs.getString("nsi_uuid");
+
 
                 JSONObject obj = new JSONObject();
                 obj.put("ns_uuid", ns_uuid);
+                obj.put("nsi_uuid", nsi_uuid);
                 obj.put("sla_uuid", sla_uuid);
                 obj.put("cust_uuid", cust_uuid);
                 cust_sla.add(obj);
