@@ -76,7 +76,6 @@ public class AgreementsAPIs {
 		db_operations.connectPostgreSQL();
 		db_operations.createTableCustSla();
 		JSONObject correlations = db_operations.getAgreements();
-		dbo.closePostgreSQL();
 
 		apiresponse = Response.ok((Object) correlations);
 		apiresponse.header("Content-Length", correlations.toString().length());
@@ -123,7 +122,7 @@ public class AgreementsAPIs {
 		if (connect == true) {
 			db_operations.createTableCustSla();
 			JSONObject agrPerNs = dbo.selectAgreementPerNSI(nsi_uuid);
-			dbo.closePostgreSQL();
+			
 			apiresponse = Response.ok(agrPerNs);
 			apiresponse.header("Content-Length", agrPerNs.toString().length());
 			return apiresponse.status(200).build();
@@ -154,7 +153,7 @@ public class AgreementsAPIs {
 		if (connect == true) {
 			db_operations.createTableCustSla();
 			JSONObject agrPerNs = dbo.selectAgreementPerCustomer(cust_uuid);
-			dbo.closePostgreSQL();
+			
 			apiresponse = Response.ok(agrPerNs);
 			apiresponse.header("Content-Length", agrPerNs.toString().length());
 			return apiresponse.status(200).build();
