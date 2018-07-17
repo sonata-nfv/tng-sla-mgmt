@@ -80,7 +80,6 @@ Follow the installation guide from the official website:
 Make sure you set the correct environment variables in the DockerFile of the "sla-template-generator" directory
 ```
 
-
 ### Building
 
 Finally, install the sla-manager
@@ -104,9 +103,18 @@ In the future we can maybe use [SemVer](http://semver.org/) for versioning.
 
 ## Configuration
 
-``TODO``    
-Here you should write what are all of the configurations a user can enter when
-using the project.
+The following configurations are definied into the Dockerfile [here](https://github.com/sonata-nfv/tng-sla-mgmt/blob/master/sla-template-generator/Dockerfile)
+*  PostgreSQL 
+    *  Specify database host
+	*  Specify databse name
+	*  Specify authentication
+	    *  database username
+		*  database password
+*  RabbitMQ
+    *  Specify RabbitMQ server
+	*  Specify the RabbitMQ exchange topic
+	
+*  5GTANGO Catalogue - Specify the 5GTANGO Catalogue base url
 
 ## Tests
 
