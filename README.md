@@ -143,6 +143,8 @@ The following shows how to use SLA Manager:
 
 ### API Reference
 
+The SLA Manager API  Reference can be found [here](https://sonata-nfv.github.io/tng-doc/?urls.primaryName=5GTANGO%20SLA%20Manager%20v1)
+
 #### SLA Templates
 
 |           Action          | HTTP Method |                  Endpoint            |  
