@@ -1,3 +1,7 @@
+[![Build Status](https://jenkins.sonata-nfv.eu/buildStatus/icon?job=tng-sla-mgmt/master)](https://jenkins.sonata-nfv.eu/job/tng-sla-mgmt/master)
+[![Join the chat at https://gitter.im/sonata-nfv/5gtango-sp](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/sonata-nfv/5gtango-sp)
+
+
 <p align="center"><img src="https://github.com/sonata-nfv/tng-api-gtw/wiki/images/sonata-5gtango-logo-500px.png" /></p>
 
 # tng-sla-mgmt
@@ -11,6 +15,30 @@ The mechanisms included in the tng-sla-mgmt include:
 *  SLA Template Generator : Creates initial and tailored SLA templates for the service provider, and the ﬁnal SLA itself
 *  SLA Mapping Mechanism:  Mapping between the high-level requirements described by the end-user towards low-level resources needed by the Service Provider
 
+## Built With
+
+### Programming Language
+The first release of the SLA Manager has been programmed using JAVA. Jersey RESTful Web Services framework is extensively used for the SLA Manager API programming.
+
+### Framework
+*  Jersey - RESTful Web Services in Java - Version 1.19
+    *  jersey-servlet : 1.19
+	*  jersey-json : 1.19
+	*  jersey-client : 1.19
+*  Apache MAVEN
+    *  maven-compiler-plugin : 2.3.2
+	*  maven-checkstyle-plugin : 2.13
+*  Apache Tomcat  - Version 8.5
+	
+### Libraries
+*  javax.servlet-api : 3.0.1
+*  genson : 0.99
+*  org.json : 20180130
+*  snakeyaml : 1.21
+*  yamlbeans : 1.13
+*  httpclient : 4.5.5
+*  postgresql : 9.1-901.jdbc4
+*  amqp-client :  5.2.0
 
 ## Prerequisites to run locally
 
@@ -18,7 +46,7 @@ The mechanisms included in the tng-sla-mgmt include:
 	git clone https://github.com/sonata-nfv/tng-sla-mgmt
 ```
 
-Before moving on, make sure you have also installed Apache Maven Project the latest, Apache Tomcat 8.5, RabbitMQ, PostgreSQL, 5GTANGO Catalogue and Docker
+### Setting up Dev
 
 Install Apache Maven Project
 ```sh
@@ -52,6 +80,9 @@ Follow the installation guide from the official website:
 Make sure you set the correct environment variables in the DockerFile of the "sla-template-generator" directory
 ```
 
+
+### Building
+
 Finally, install the sla-manager
 ```
 You can either import the maven project into a Java IDE (Eclipse is the prefered one)
@@ -65,6 +96,35 @@ You can then access the SLA manager visiting http://<you_machine_ip>:8080
 
 ```
 
+## Versioning
+
+The first release of the SLA Manager does not support versioning.
+In the future we can maybe use [SemVer](http://semver.org/) for versioning. 
+
+
+## Configuration
+
+``TODO``    
+Here you should write what are all of the configurations a user can enter when
+using the project.
+
+## Tests
+
+``TODO``    
+
+Describe and show how to run the tests with code examples.
+Explain what these tests test and why.
+
+```shell
+Give an example
+```
+
+## Style guide
+
+``TODO``    
+
+Explain your code style and show how to check it.
+
 ## Usage
 
 The following shows how to use SLA Manager: 
@@ -72,9 +132,9 @@ The following shows how to use SLA Manager:
 * First, make sure there is a network service descriptor in the 5GTANGO Catalogue - More information on how to upload a Network Service in 5GTANGO Catalogue
  can be found [here](https://github.com/sonata-nfv/tng-cat).
 
-## API Documentation
+### Api Reference
 
-### SLA Templates
+#### SLA Templates
 
 |           Action          | HTTP Method |                  Endpoint            |  
 | --------------------------| ----------- | --------------------------------------- |  
@@ -84,7 +144,7 @@ The following shows how to use SLA Manager:
 | Delete a SLA Template by it's uuid    |    `DELETE` | `curl -X DELETE http://<your_machine_ip>:8080/tng-sla-mgmt/api/slas/v1/templates/{sla_uuid}` |  
 
 
-### SLA Agreements
+#### SLA Agreements
 
 |           Action           | HTTP Method |                  Endpoint            |  
 | -------------------------- | ----------- | --------------------------------------- |  
@@ -93,7 +153,7 @@ The following shows how to use SLA Manager:
 | Get Agreements per (instatiated) NS   | `GET`    | `curl -H "Content-type:application/json" http://<your_machine_ip>:8080/tng-sla-mgmt/api/slas/v1/agreements/service/{ns_uuid}` |  
 | Get Agreement's guarantee terms - SLOs| `GET`  | `curl -H "Content-type:application/json" http://<your_machine_ip>:8080/tng-sla-mgmt/api/slas/v1/agreements/guarantee-terms/{sla_uuid}` |  
 
-### SLA Violations
+#### SLA Violations
 
 |           Action           | HTTP Method |                  Endpoint            |  
 | -------------------------- | ----------- | --------------------------------------- |  
@@ -101,7 +161,7 @@ The following shows how to use SLA Manager:
 | Get specific Violation by sla and ns | `GET`    | `curl -H "Content-type:application/json" http://<your_machine_ip>:8080/tng-sla-mgmt/api/slas/v1/vioaltions/{ns_uuid}/{sla_uuid}/` |   
 
 
-### SLA Management
+#### SLA Management
 
 |           Action          | HTTP Method |                  Endpoint              |  
 | --------------------------| ----------- | --------------------------------------- |  
@@ -119,6 +179,13 @@ Expected returned Codes:
 * `HTTP` code `201` (`Created`)
 * `HTTP` code `400` (`Bad Request`)
 * `HTTP` code `404` (`Not Found`)
+
+### Database
+
+`` todo ``    
+
+Explaining what database (and version) has been used. Provide download links.
+Documents your database design and schemas, relations etc... 
 
 
 ## Development
@@ -139,16 +206,16 @@ You may contribute to the SLA Manager you should:
 
 All pull requests are automatically tested by Jenkins and will only be accepted if no test is broken.
 
-# License
+## License
 All tng-sla-mgmt components are published under Apache 2.0 license. Please see the LICENSE file for more details.
 
-#### Lead Developers
+## Lead Developers
 
 The following lead developers are responsible for this repository and have admin rights. They can, for example, merge pull requests.
 *  Evgenia Kapassa (@ekapassa)
 *  Marios Touloupou (@mtouloup)
 
-####  Feedback-Chanel
+## Feedback-Chanel
 
 * You may use the mailing list tango-5g-wp5@lists.atosresearch.eu   
 * GitHub issues
