@@ -62,21 +62,16 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 	/**
 	 * @see ServletContextListener#contextDestroyed(ServletContextEvent)
 	 */
-	public void contextDestroyed(ServletContextEvent arg0) {
-		System.out.println("Server stopped");
+	public void contextDestroyed(ServletContextEvent event) {
+		System.out.println("Listener Service Instances Create stopped");
+		System.out.println("Listener restarting");
+		contextInitialized(event);
 	}
 
 	/**
-	 * Default constructor.
-	 */
-	public MqServiceInstantiateConsumer() {}
-
-	/**
-	 * 
-	 * 
 	 * @see ServletContextListener#contextInitialized(ServletContextEvent)
 	 */
-	public void contextInitialized(ServletContextEvent arg0) {
+	public void contextInitialized(ServletContextEvent event) {
 
 		Channel channel_service_instance;
 		Connection connection;

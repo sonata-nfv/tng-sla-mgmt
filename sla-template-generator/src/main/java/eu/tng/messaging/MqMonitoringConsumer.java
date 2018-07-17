@@ -59,7 +59,8 @@ public class MqMonitoringConsumer implements ServletContextListener {
 
     @Override
     public void contextDestroyed(ServletContextEvent arg0) {
-        System.out.println("Server stopped");
+        System.out.println("Listener Monitoring Consumer stopped");
+        
     }
 
     @Override
