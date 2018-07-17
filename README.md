@@ -5,15 +5,16 @@
 <p align="center"><img src="https://github.com/sonata-nfv/tng-api-gtw/wiki/images/sonata-5gtango-logo-500px.png" /></p>
 
 # tng-sla-mgmt
-The 5GTANGO Service Platform's (SP) SLA Management repository.  
+The 5GTANGO Service Platform's (SP) SLA Manager Repository.  
 
 The SLA Management repository includes the SLAs descriptors examples and schemas, as well as all mechanisms that need to be implemented. 
    
 The schema files are written in JSON-Schema      
    
-The mechanisms included in the tng-sla-mgmt include:
-*  SLA Template Generator : Creates initial and tailored SLA templates for the service provider, and the ﬁnal SLA itself
-*  SLA Mapping Mechanism:  Mapping between the high-level requirements described by the end-user towards low-level resources needed by the Service Provider
+The mechanisms included in the tng-sla-mgmt for the first release include the `SLA Template Generator`. The purpose is to create
+initial and tailored SLA templates from the operator. The SLA Templates are available to the Customers,in order to select the 
+desired one during the NS instantiation process. Agreements are also available to both operator and customer, in 
+order to manage the accordingly, as well as the violation of them.
 
 ## Built With
 
@@ -43,7 +44,7 @@ The first release of the SLA Manager has been programmed using JAVA. Jersey REST
 ## Prerequisites to run locally
 
 ```
-	git clone https://github.com/sonata-nfv/tng-sla-mgmt
+git clone https://github.com/sonata-nfv/tng-sla-mgmt
 ```
 
 ### Setting up Dev
@@ -140,7 +141,7 @@ The following shows how to use SLA Manager:
 * First, make sure there is a network service descriptor in the 5GTANGO Catalogue - More information on how to upload a Network Service in 5GTANGO Catalogue
  can be found [here](https://github.com/sonata-nfv/tng-cat).
 
-### Api Reference
+### API Reference
 
 #### SLA Templates
 
@@ -183,18 +184,18 @@ The following shows how to use SLA Manager:
 
 Expected returned Codes:
 
-* `HTTP` code `200` (`Ok`) 
+* `HTTP` code `200` (`OK`) 
 * `HTTP` code `201` (`Created`)
 * `HTTP` code `400` (`Bad Request`)
 * `HTTP` code `404` (`Not Found`)
 
 ### Database
 
-`` todo ``    
-
-Explaining what database (and version) has been used. Provide download links.
-Documents your database design and schemas, relations etc... 
-
+The SLA Manager is using [PosgreSQL](https://www.postgresql.org/) as internal database.  
+The databse includes the following tables:     
+*  `ns_template` - store and manage correlations between sla templates and network services.
+*  `cust_sla - store` and manage correlations between slas, instatiated network services and the customers. it is also used to manage the Agreements informations.
+*  `sla_violations` - store and manage all the SLA violations information.
 
 ## Development
 
@@ -215,7 +216,7 @@ You may contribute to the SLA Manager you should:
 All pull requests are automatically tested by Jenkins and will only be accepted if no test is broken.
 
 ## License
-All tng-sla-mgmt components are published under Apache 2.0 license. Please see the LICENSE file for more details.
+All tng-sla-mgmt components are published under Apache 2.0 license. Please see the LICENSE file [here](https://github.com/ekapassa/tng-sla-mgmt/blob/master/LICENSE) for more details.
 
 ## Lead Developers
 
