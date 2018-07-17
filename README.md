@@ -19,24 +19,23 @@ order to manage the accordingly, as well as the violation of them.
 The first release of the SLA Manager has been programmed using JAVA. Jersey RESTful Web Services framework is extensively used for the SLA Manager API programming.
 
 ### Framework
-*  Jersey - RESTful Web Services in Java - Version 1.19
+*  Jersey - RESTful Web Services in Java - Version 1.19 (CDDL, XXXXX )
     *  jersey-servlet : 1.19
 	*  jersey-json : 1.19
 	*  jersey-client : 1.19
-*  Apache MAVEN
+*  Apache MAVEN  (Apache 2.0)
     *  maven-compiler-plugin : 2.3.2
 	*  maven-checkstyle-plugin : 2.13
-*  Apache Tomcat  - Version 8.5
+*  Apache Tomcat - Version 8.5  (Apache 2.0)
 	
 ### Libraries
-*  javax.servlet-api : 3.0.1
-*  genson : 0.99
-*  org.json : 20180130
-*  snakeyaml : 1.21
-*  yamlbeans : 1.13
-*  httpclient : 4.5.5
-*  postgresql : 9.1-901.jdbc4
-*  amqp-client :  5.2.0
+*  genson : 0.99 (Apache 2.0)
+*  org.json : 20180130 (The JSON License)
+*  snakeyaml : 1.21 (Apache 2.0)
+*  yamlbeans : 1.13 (MIT)
+*  httpclient : 4.5.5 (Apache 2.0)
+*  postgresql : 9.1-901.jdbc4 (PostgreSQL Licence)
+*  amqp-client :  5.2.0 (Apache 2.0, GPL 2.0, Mozilla Public License)
 
 ## Prerequisites to run locally
 
@@ -114,22 +113,6 @@ The following configurations are definied into the Dockerfile [here](https://git
 	
 *  5GTANGO Catalogue - Specify the 5GTANGO Catalogue base url
 
-## Tests
-
-``TODO``    
-
-Describe and show how to run the tests with code examples.
-Explain what these tests test and why.
-
-```shell
-Give an example
-```
-
-## Style guide
-
-``TODO``    
-
-Explain your code style and show how to check it.
 
 ## Usage
 
@@ -193,7 +176,7 @@ Expected returned Codes:
 The SLA Manager is using [PosgreSQL](https://www.postgresql.org/) as internal database.  
 The databse includes the following tables:     
 *  `ns_template` - store and manage correlations between sla templates and network services.
-*  `cust_sla - store` and manage correlations between slas, instatiated network services and the customers. it is also used to manage the Agreements informations.
+*  `cust_sla` - store and manage correlations between slas, instatiated network services and the customers. it is also used to manage the Agreements informations.
 *  `sla_violations` - store and manage all the SLA violations information.
 
 ## Development
