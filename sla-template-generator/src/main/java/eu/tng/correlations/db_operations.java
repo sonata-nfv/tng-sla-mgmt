@@ -100,7 +100,6 @@ public class db_operations {
         }
 
         System.out.println("Table Created? " + result);
-        closePostgreSQL();
         return result;
     }
 
@@ -121,8 +120,6 @@ public class db_operations {
             System.err.println(e.getClass().getName() + ": " + e.getMessage());
         }
         System.out.println("Table cust_sla created successfully");
-        closePostgreSQL();
-
     }
 
     /**
@@ -143,7 +140,6 @@ public class db_operations {
             System.out.println("Error creating sla violations table or already exists");
 
         }
-        closePostgreSQL();
     }
 
     /**
@@ -166,7 +162,6 @@ public class db_operations {
         }
 
         System.out.println("Records ns-template saved successfully? " + result);
-        closePostgreSQL();
         return result;
     }
 
@@ -192,7 +187,6 @@ public class db_operations {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        closePostgreSQL();
     }
 
     /**
@@ -215,7 +209,6 @@ public class db_operations {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        closePostgreSQL();
     }
 
     @SuppressWarnings("unchecked")
@@ -249,7 +242,6 @@ public class db_operations {
         } catch (Exception e) {
             System.err.println(e.getClass().getName() + ": " + e.getMessage());
         }
-        closePostgreSQL();
         return violated_sla;
 
     }
@@ -289,7 +281,6 @@ public class db_operations {
         } catch (Exception e) {
             System.err.println(e.getClass().getName() + ": " + e.getMessage());
         }
-        closePostgreSQL();
         return violation;
     }
 
@@ -330,7 +321,6 @@ public class db_operations {
         } catch (Exception e) {
             System.err.println(e.getClass().getName() + ": " + e.getMessage());
         }
-        closePostgreSQL();
         return violations;
     }
 
@@ -357,7 +347,6 @@ public class db_operations {
         }
 
         System.out.println("Set status READY? " + result);
-        closePostgreSQL();
     }
 
     /**
@@ -380,8 +369,6 @@ public class db_operations {
             System.err.println(e.getClass().getName() + ": " + e.getMessage());
         }
         System.out.println("Set status violated? " + result);
-        closePostgreSQL();
-
     }
 
     /**
@@ -408,8 +395,6 @@ public class db_operations {
         }
 
         System.out.println("Correlation id updated?  " + result);
-        closePostgreSQL();
-
     }
 
     /**
@@ -434,7 +419,6 @@ public class db_operations {
         }
 
         System.out.println("Set status TERMINATED? " + result);
-        closePostgreSQL();
     }
 
     /**
@@ -455,7 +439,6 @@ public class db_operations {
             System.err.println(e.getClass().getName() + ": " + e.getMessage());
         }
         System.out.println("Records with deleted? " + result);
-        closePostgreSQL();
         return result;
     }
 
@@ -525,7 +508,6 @@ public class db_operations {
             }
 
         }
-        closePostgreSQL();
         return root;
     }
 
@@ -585,7 +567,6 @@ public class db_operations {
             System.err.println(e.getClass().getName() + ": " + e.getMessage());
         }
         System.out.println(root);
-        closePostgreSQL();
         return root;
     }
 
@@ -624,7 +605,6 @@ public class db_operations {
         } catch (Exception e) {
             System.err.println(e.getClass().getName() + ": " + e.getMessage());
         }
-        closePostgreSQL();
         return root;
     }
 
@@ -667,7 +647,6 @@ public class db_operations {
         } catch (Exception e) {
             System.err.println(e.getClass().getName() + ": " + e.getMessage());
         }
-        closePostgreSQL();
         return root;
     }
 
@@ -702,7 +681,6 @@ public class db_operations {
         } catch (Exception e) {
             System.err.println(e.getClass().getName() + ": " + e.getMessage());
         }
-        closePostgreSQL();
         return root;
     }
 
@@ -727,7 +705,6 @@ public class db_operations {
             e.printStackTrace();
         }
         System.out.println("SLA Correlations are ==> " + count);
-        closePostgreSQL();
         return count;
 
     }

@@ -120,6 +120,9 @@ public class MqMonitoringConsumer implements ServletContextListener {
                         db_operations.insertRecordViolation(nsi_uuid, sla_uuid, alert_time, alert_state, cust_uuid);
 
                         db_operations.UpdateAgreementStatus(nsi_uuid);
+                        
+                        db_operations.closePostgreSQL();
+
                         try {
                             JSONObject violationMessage = ViolationsProducer.createViolationMessage(nsi_uuid, sla_uuid,
                                     alert_time, alert_state, cust_uuid, connection);
@@ -127,6 +130,7 @@ public class MqMonitoringConsumer implements ServletContextListener {
                             // TODO Auto-generated catch block
                             e.printStackTrace();
                         }
+                        
 
                     } catch (JSONException e) {
                         // TODO Auto-generated catch block
@@ -136,6 +140,7 @@ public class MqMonitoringConsumer implements ServletContextListener {
 
             };
 
+            
             // consumer
             channel_monitor.basicConsume(queueName_monitor, true, consumer_monitor);
 

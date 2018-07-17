@@ -51,7 +51,6 @@ public class RabbitMqConnector {
 		try {
 			factory.setUri(connector_url);
 			factory.setConnectionTimeout(60);
-
 			factory.setAutomaticRecoveryEnabled(true);
 
 			connection = factory.newConnection();
