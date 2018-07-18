@@ -45,53 +45,10 @@ git clone https://github.com/sonata-nfv/tng-sla-mgmt
 
 ### Setting up Dev
 
-Install Apache Maven Project
+Install SLA Management Framework locally along with it's dependencies using Docker Compose
 ```sh
-  apt-cache search maven
-  sudo apt-get install maven
+  docker-compose up
 ```
-
-Install Apache Tomcat
-You can use this tutorial here:
-```sh
-  https://www.digitalocean.com/community/tutorials/how-to-install-apache-tomcat-8-on-ubuntu-16-04
-```
-
-Install 5GTANGO Catalogue
-Follow the installation guide of the following repository:
-```sh
-  https://github.com/sonata-nfv/tng-cat
-```
-
-Install RabbitMq as a meesage bus
-Follow the installation guide from the official website:
-```sh
-  https://www.rabbitmq.com/
-  Also, you have to create an "Exchange" in the message broker. You can use any name you want, but then set it's inside the DockerFile at the ENV variable "BROKER_EXCHANGE"
-```
-
-Install PostgreSQL database
-Follow the installation guide from the official website:
-```sh
-  https://www.postgresql.org/
-Make sure you set the correct environment variables in the DockerFile of the "sla-template-generator" directory
-```
-
-### Building
-
-Finally, install the sla-manager
-```
-You can either import the maven project into a Java IDE (Eclipse is the prefered one)
-or
-Build it and run in Docker Container mode
-
-1) docker build -t tng-sla-mgmt -f sla-template-generator/Dockerfile .
-2) docker run tng-sla-mgmt -p 8080:8080
-
-You can then access the SLA manager visiting http://<you_machine_ip>:8080
-
-```
-
 
 ## Configuration
 
