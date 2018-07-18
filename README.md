@@ -92,11 +92,6 @@ You can then access the SLA manager visiting http://<you_machine_ip>:8080
 
 ```
 
-## Versioning
-
-The first release of the SLA Manager does not support versioning.
-In the future we can maybe use [SemVer](http://semver.org/) for versioning. 
-
 
 ## Configuration
 
@@ -146,6 +141,10 @@ Our style guide is really simple:
 *  Checkstyle Tests are triggered automatically when building the project, and are defined in the [SLA Manager's Checkstyle folder](https://github.com/ekapassa/tng-sla-mgmt/tree/master/sla-template-generator/src/main/resources/Checkstyle).
 *  Wider scope (integration and functional) tests involving this micro-service are defined in tng-tests.
 
+
+## Versioning
+*  The first release of the SLA Manager does not support versioning reagrding the code. In the future we can maybe use [SemVer](http://semver.org/) for this kind of versioning.
+*  The most up-to-date container version is v4. For the container versions available, see the [link to tags on this repository](https://github.com/sonata-nfv/tng-sla-mgmt/releases).
 	
 ## Development
 
