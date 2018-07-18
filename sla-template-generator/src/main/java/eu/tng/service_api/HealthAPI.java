@@ -111,7 +111,7 @@ public class HealthAPI {
 			System.out.print("SLAM alive since = " + sdf.format(resultdate));
 			
 			
-			response.put("OK: ", "SLA Manager is available since: " + alive );
+			response.put("OK: ", "SLA Manager is available since: " + sdf.format(resultdate) );
 			apiresponse = Response.ok((Object) response);
 			apiresponse.header("Content-Length", response.toJSONString().length());
 			return apiresponse.status(200).build();
