@@ -141,6 +141,11 @@ Our style guide is really simple:
 *  We try to follow a Clean Code philosophy in as much as possible, i.e., classes and methods should do one thing only, have the least number of parameters possible, etc.;
 *  we use one (1) Tab for identation.
 
+## Tests
+*  Unit Tests are triggered automatically when building the project, and are defined in the [SLA Manager's test folder](https://github.com/ekapassa/tng-sla-mgmt/tree/master/sla-template-generator/src/test/java/eu/tng).
+*  Checkstyle Tests are triggered automatically when building the project, and are defined in the [SLA Manager's Checkstyle folder](https://github.com/ekapassa/tng-sla-mgmt/tree/master/sla-template-generator/src/main/resources/Checkstyle).
+*  Wider scope (integration and functional) tests involving this micro-service are defined in tng-tests.
+
 	
 ## Development
 
