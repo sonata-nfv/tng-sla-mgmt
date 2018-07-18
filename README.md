@@ -134,6 +134,14 @@ The databse includes the following tables:
 *  `cust_sla` - store and manage correlations between slas, instatiated network services and the customers. it is also used to manage the Agreements informations.
 *  `sla_violations` - store and manage all the SLA violations information.
 
+
+## Style guide
+
+Our style guide is really simple:
+*  We try to follow a Clean Code philosophy in as much as possible, i.e., classes and methods should do one thing only, have the least number of parameters possible, etc.;
+*  we use one (1) Tab for identation.
+
+	
 ## Development
 
 To contribute to the development of the 5GTANGO SLA Manager, you may use the very same development workflow as for any other 5GTANGO Github project. That is, you have to fork the repository and create pull requests. Moreover, all discussions regarding the 5GTANGO SLAs take place on GitHub, and NOT on the wiki.
@@ -162,6 +170,5 @@ The following lead developers are responsible for this repository and have admin
 *  Marios Touloupou (@mtouloup)
 
 ## Feedback-Chanel
-
 * GitHub issues
 
