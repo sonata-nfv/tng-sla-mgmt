@@ -70,12 +70,15 @@ public class ViolationAPIS {
 			db_operations.createTableViolations();
 			JSONObject violations = db_operations.getViolationData(nsi_uuid, sla_uuid);
 			System.out.println("VIOLATIONS FROM VIOLATION API CLASS ==> " + violations);
-			
+			dbo.closePostgreSQL();
+
 			apiresponse = Response.ok(violations);
 			apiresponse.header("Content-Length", violations.toString().length());
 			return apiresponse.status(200).build();
 
 		} else {
+			dbo.closePostgreSQL();
+			
 			JSONObject error = new JSONObject();
 			error.put("ERROR: ", "connecting to database");
 			apiresponse = Response.ok((Object) error);
@@ -97,12 +100,15 @@ public class ViolationAPIS {
 			db_operations.createTableViolations();
 			org.json.simple.JSONArray violations = db_operations.getAllViolationData();
 			System.out.println("VIOLATIONS FROM VIOLATION API CLASS ==> " + violations);
-			
+			dbo.closePostgreSQL();
+
 			apiresponse = Response.ok(violations);
 			apiresponse.header("Content-Length", violations.toString().length());
 			return apiresponse.status(200).build();
 
 		} else {
+			dbo.closePostgreSQL();
+
 			JSONObject error = new JSONObject();
 			error.put("ERROR: ", "connecting to database");
 			apiresponse = Response.ok((Object) error);

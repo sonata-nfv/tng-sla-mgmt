@@ -76,6 +76,7 @@ public class AgreementsAPIs {
 		db_operations.connectPostgreSQL();
 		db_operations.createTableCustSla();
 		JSONObject correlations = db_operations.getAgreements();
+		dbo.closePostgreSQL();
 
 		apiresponse = Response.ok((Object) correlations);
 		apiresponse.header("Content-Length", correlations.toString().length());
@@ -121,13 +122,16 @@ public class AgreementsAPIs {
 		boolean connect = db_operations.connectPostgreSQL();
 		if (connect == true) {
 			db_operations.createTableCustSla();
-			JSONObject agrPerNs = dbo.selectAgreementPerNSI(nsi_uuid);
-			
+			JSONObject agrPerNs = dbo.selectAgreementPerNSI(nsi_uuid);			
+			dbo.closePostgreSQL();
+
 			apiresponse = Response.ok(agrPerNs);
 			apiresponse.header("Content-Length", agrPerNs.toString().length());
 			return apiresponse.status(200).build();
 
 		} else {
+			dbo.closePostgreSQL();
+
 			JSONObject error = new JSONObject();
 			error.put("ERROR: ", "connecting to database");
 			apiresponse = Response.ok((Object) error);
@@ -153,12 +157,15 @@ public class AgreementsAPIs {
 		if (connect == true) {
 			db_operations.createTableCustSla();
 			JSONObject agrPerNs = dbo.selectAgreementPerCustomer(cust_uuid);
-			
+			dbo.closePostgreSQL();
+
 			apiresponse = Response.ok(agrPerNs);
 			apiresponse.header("Content-Length", agrPerNs.toString().length());
 			return apiresponse.status(200).build();
 
 		} else {
+			dbo.closePostgreSQL();
+
 			JSONObject error = new JSONObject();
 			error.put("ERROR: ", "connecting to database");
 			apiresponse = Response.ok((Object) error);
@@ -211,6 +218,7 @@ public class AgreementsAPIs {
 			dbo.connectPostgreSQL();
 			db_operations.createTableCustSla();
 			JSONObject agrPerSlaNs = dbo.selectAgreementPerSlaNs(sla_uuid, nsi_uuid);
+			dbo.closePostgreSQL();
 			
 			String cust_uuid = (String) agrPerSlaNs.get("cust_uuid");
 			String cust_email = (String) agrPerSlaNs.get("cust_email");

@@ -322,7 +322,8 @@ public class templatesAPIs {
 		db_operations dbo = new db_operations();
 		dbo.connectPostgreSQL();
 		int counter = dbo.countAgreementCorrelationPeriD(sla_uuid);
-
+		dbo.closePostgreSQL();
+		
 		if (counter != 0) {
 			dr = ("ERROR: SLA Template cannot be deleted because it is associated with an instantiated NS.");
 			apiresponse = Response.ok();
