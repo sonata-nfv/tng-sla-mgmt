@@ -29,7 +29,7 @@ import com.rabbitmq.client.Connection;
 import eu.tng.correlations.db_operations;
 import eu.tng.messaging.RabbitMqConnector;
 
-@Path("/pings")
+@Path("/ping")
 @Consumes(MediaType.APPLICATION_JSON)
 public class HealthAPI {
 	
