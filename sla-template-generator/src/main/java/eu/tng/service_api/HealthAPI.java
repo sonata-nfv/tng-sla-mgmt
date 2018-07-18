@@ -8,6 +8,7 @@ import java.lang.management.RuntimeMXBean;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import javax.servlet.ServletContext;
@@ -29,21 +30,22 @@ import com.rabbitmq.client.Connection;
 import eu.tng.correlations.db_operations;
 import eu.tng.messaging.RabbitMqConnector;
 
-@Path("/pings")
+@Path("/ping")
 @Consumes(MediaType.APPLICATION_JSON)
 public class HealthAPI {
-	
+
 	/**
 	 * Check SLAM availability in terms of micro-services's health
+	 * 
 	 * @return
-	 * @throws InterruptedException 
+	 * @throws InterruptedException
 	 */
 	@Produces(MediaType.APPLICATION_JSON)
 	@GET
 	public Response getTemplates() throws InterruptedException {
 		ResponseBuilder apiresponse = null;
 		boolean postgresqlOK = false;
-		boolean rabbitmqOK = false;		
+		boolean rabbitmqOK = false;
 		boolean serverOK = false;
 		boolean catalogueOK = false;
 
@@ -52,7 +54,7 @@ public class HealthAPI {
 		postgresqlOK = db_operations.connectPostgreSQL();
 		db_operations.closePostgreSQL();
 		System.out.println("OK. PostgreSQL is connected!");
-	
+
 		// check RabbitMQ connectivity
 		RabbitMqConnector connect = new RabbitMqConnector();
 		Connection connection = RabbitMqConnector.MqConnector();
@@ -60,7 +62,7 @@ public class HealthAPI {
 			rabbitmqOK = true;
 			System.out.println("OK. RabbitMQ is connected!");
 		}
-		
+
 		// check Catalogue connectivity
 		try {
 			String url = System.getenv("CATALOGUES_URL") + "ping";
@@ -73,7 +75,7 @@ public class HealthAPI {
 			con.setDoInput(true);
 			con.setRequestProperty("Content-Type", "application/json");
 			con.setRequestProperty("Accept", "application/json");
-			con.setRequestMethod("GET");			
+			con.setRequestMethod("GET");
 			int HttpResult = con.getResponseCode();
 			if (HttpResult == HttpURLConnection.HTTP_OK) {
 				catalogueOK = true;
@@ -87,20 +89,29 @@ public class HealthAPI {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 		// check server connectivity
 		RuntimeMXBean rb = ManagementFactory.getRuntimeMXBean();
 		long uptime_one = rb.getUptime();
-        Thread.sleep(1000 * 10); // wait a little to see if actually running
+		Thread.sleep(1000 * 1); // wait a little to see if actually running
 		long uptime_two = rb.getUptime();
-		long up = uptime_two - uptime_one ;
-		if (up > 0 ) {
+		long up = uptime_two - uptime_one;
+		if (up > 0) {
 			serverOK = true;
 			System.out.println("OK. SLAM server is up!");
-		}		
+		}
 		JSONObject response = new JSONObject();
 		if (rabbitmqOK == true & postgresqlOK == true && catalogueOK == true && serverOK == true) {
-			response.put("OK: ", "SLA Manager is available. Up time:" + rb.getUptime() + " ms");
+			// returns the current time in milliseconds
+			long curentTimeInMS = System.currentTimeMillis();
+			System.out.print("Current Time in milliseconds = " + curentTimeInMS);
+			long alive = curentTimeInMS - rb.getUptime();
+			SimpleDateFormat sdf = new SimpleDateFormat("MMM dd,yyyy HH:mm");    
+			Date resultdate = new Date(alive);
+			System.out.print("SLAM alive since = " + sdf.format(resultdate));
+			
+			
+			response.put("OK: ", "SLA Manager is available since: " + sdf.format(resultdate) );
 			apiresponse = Response.ok((Object) response);
 			apiresponse.header("Content-Length", response.toJSONString().length());
 			return apiresponse.status(200).build();
@@ -110,8 +121,7 @@ public class HealthAPI {
 			apiresponse.header("Content-Length", response.toJSONString().length());
 			return apiresponse.status(400).build();
 		}
-		
-	}
 
+	}
 
 }
