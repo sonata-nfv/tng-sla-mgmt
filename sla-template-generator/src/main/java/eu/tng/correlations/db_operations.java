@@ -224,7 +224,7 @@ public class db_operations {
             c.setAutoCommit(false);
             stmt = c.createStatement();
             ResultSet rs = stmt.executeQuery(
-                    "SELECT * FROM cust_sla WHERE nsi_uuid = '" + nsi_uuid + "' AND inst_status = 'VIOLATED';");
+                    "SELECT * FROM cust_sla WHERE nsi_uuid = '" + nsi_uuid + "' AND sla_status = 'VIOLATED';");
             while (rs.next()) {
                 sla_uuid = rs.getString("sla_uuid");
                 cust_uuid = rs.getString("cust_uuid");
@@ -360,7 +360,7 @@ public class db_operations {
         try {
             c.setAutoCommit(false);
             stmt = c.createStatement();
-            String sql = "UPDATE cust_sla SET inst_status='VIOLATED' WHERE nsi_uuid='" + nsi_uuid + "';";
+            String sql = "UPDATE cust_sla SET sla_status='VIOLATED' WHERE nsi_uuid='" + nsi_uuid + "';";
             stmt.executeUpdate(sql);
             c.commit();
             stmt.close();
@@ -399,26 +399,26 @@ public class db_operations {
 
     /**
      * Update Record cust-sla correlation to terminate an agreement
+     * @return 
      * 
      */
-    public static void TerminateAgreement(String agreement_status, String correlation_id) {
+    public static boolean TerminateAgreement(String agreement_status, String correlation_id) {
 
-        String SQL = "UPDATE cust_sla " + "SET inst_status = ? " + "WHERE inst_id = ?";
-        boolean result = false;
-        int affectedrows = 0;
-
-        try {
-            PreparedStatement pstmt = c.prepareStatement(SQL);
-            pstmt.setString(1, agreement_status);
-            pstmt.setString(2, correlation_id);
-            affectedrows = pstmt.executeUpdate();
-            result = true;
-        } catch (SQLException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-
-        System.out.println("Set status TERMINATED? " + result);
+    	  Statement stmt = null;
+          boolean result = false;
+          try {
+              c.setAutoCommit(false);
+              stmt = c.createStatement();
+              String sql = "UPDATE cust_sla SET inst_status='" + agreement_status + "' WHERE inst_id='" + correlation_id + "';";
+              stmt.executeUpdate(sql);
+              c.commit();
+              stmt.close();
+              result = true;
+          } catch (Exception e) {
+              System.err.println(e.getClass().getName() + ": " + e.getMessage());
+          }
+          System.out.println("Set status TERMINATED? " + result);
+          return result;
     }
 
     /**
@@ -528,7 +528,7 @@ public class db_operations {
             c.setAutoCommit(false);
             stmt = c.createStatement();
             ResultSet rs = stmt
-                    .executeQuery("SELECT * FROM cust_sla WHERE inst_status = 'READY' OR inst_status='VIOLATED';");
+                    .executeQuery("SELECT * FROM cust_sla WHERE inst_status = 'READY' OR inst_status = 'TERMINATED';");
             while (rs.next()) {
                 String ns_uuid = rs.getString("ns_uuid");
                 String ns_name = rs.getString("ns_name");
