@@ -8,6 +8,7 @@ import java.lang.management.RuntimeMXBean;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import javax.servlet.ServletContext;
@@ -92,7 +93,7 @@ public class HealthAPI {
 		// check server connectivity
 		RuntimeMXBean rb = ManagementFactory.getRuntimeMXBean();
 		long uptime_one = rb.getUptime();
-		Thread.sleep(1000 * 2); // wait a little to see if actually running
+		Thread.sleep(1000 * 1); // wait a little to see if actually running
 		long uptime_two = rb.getUptime();
 		long up = uptime_two - uptime_one;
 		if (up > 0) {
@@ -105,7 +106,11 @@ public class HealthAPI {
 			long curentTimeInMS = System.currentTimeMillis();
 			System.out.print("Current Time in milliseconds = " + curentTimeInMS);
 			long alive = curentTimeInMS - rb.getUptime();
-			System.out.print("SLAM alive since = " + alive);
+			SimpleDateFormat sdf = new SimpleDateFormat("MMM dd,yyyy HH:mm");    
+			Date resultdate = new Date(alive);
+			System.out.print("SLAM alive since = " + sdf.format(resultdate));
+			
+			
 			response.put("OK: ", "SLA Manager is available since: " + alive );
 			apiresponse = Response.ok((Object) response);
 			apiresponse.header("Content-Length", response.toJSONString().length());
