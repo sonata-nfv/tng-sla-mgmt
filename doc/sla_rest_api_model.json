@@ -898,7 +898,7 @@
 				]
 			}
 		},
-		"/agreements/{sla_uuid}/{ns_uuid}": {
+		"/agreements/{sla_uuid}/{nsi_uuid}": {
 			"parameters": [
 				{
 					"name": "sla_uuid",
@@ -908,7 +908,7 @@
 					"description": "The ID of the SLA"
 				},
 				{
-					"name": "ns_uuid",
+					"name": "nsi_uuid",
 					"in": "path",
 					"required": true,
 					"type": "string",
@@ -1082,13 +1082,13 @@
 				]
 			}
 		},
-		"/agreements/service/{ns_uuid}": {
+		"/agreements/service/{nsi_uuid}": {
 			"parameters": [
 				{
-					"name": "ns_uuid",
+					"name": "nsi_uuid",
 					"in": "path",
 					"type": "string",
-					"description": "NS uuid",
+					"description": "NSI uuid",
 					"required": true
 				}
 			],
@@ -1134,7 +1134,7 @@
 						"description": "NOT Found: NS not found"
 					}
 				},
-				"operationId": "agreements_per_InsNs",
+        "operationId": "agreements_per_InsNs",
 				"tags": [
 					"SLA-Agreements-v1"
 				]
@@ -1363,7 +1363,7 @@
 				]
 			}
 		},
-		"/Violations/{ns_uuid}/{sla_uuid}": {
+		"/violations/{ns_uuid}/{sla_uuid}": {
 			"parameters": [
 				{
 					"name": "sla_uuid",
@@ -1427,7 +1427,39 @@
 					"SLA-Violations-v1"
 				]
 			}
-		}	
-
+		},
+		"/ping": {
+			"get": {
+				"responses": {
+					"200": {
+						"description": "Success",
+						"headers": {
+							"Content-Type": {
+								"description": "The MIME type of the body of the response (\"application/json\").",
+								"type": "string",
+								"maximum": 1,
+								"minimum": 1
+							}
+						},
+						"schema": {
+							"type": "object",
+							"properties": {
+								"OK:": {
+									"description": "SLA Manager is available since 2018-07-17 10:13:22",
+									"type": "string"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad HTTP request"
+					},
+				},
+				"operationId": "slam-health",
+				"tags": [
+					"SLA-Management-v1"
+				]
+			}
+		}
 	}
 }

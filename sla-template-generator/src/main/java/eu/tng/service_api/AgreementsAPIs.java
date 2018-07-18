@@ -173,8 +173,8 @@ public class AgreementsAPIs {
 	 */
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	@Path("/{sla_uuid}/{ns_uuid}")
-	public Response getAgreementDetails(@PathParam("sla_uuid") String sla_uuid, @PathParam("ns_uuid") String ns_uuid) {
+	@Path("/{sla_uuid}/{nsi_uuid}")
+	public Response getAgreementDetails(@PathParam("sla_uuid") String sla_uuid, @PathParam("nsi_uuid") String nsi_uuid) {
 
 		ResponseBuilder apiresponse = null;
 		try {
@@ -210,7 +210,7 @@ public class AgreementsAPIs {
 			db_operations dbo = new db_operations();
 			dbo.connectPostgreSQL();
 			db_operations.createTableCustSla();
-			JSONObject agrPerSlaNs = dbo.selectAgreementPerSlaNs(sla_uuid, ns_uuid);
+			JSONObject agrPerSlaNs = dbo.selectAgreementPerSlaNs(sla_uuid, nsi_uuid);
 			
 			String cust_uuid = (String) agrPerSlaNs.get("cust_uuid");
 			String cust_email = (String) agrPerSlaNs.get("cust_email");

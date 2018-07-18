@@ -651,19 +651,19 @@ public class db_operations {
     }
 
     @SuppressWarnings("unchecked")
-    public JSONObject selectAgreementPerSlaNs(String sla_uuid, String ns_uuid) {
+    public JSONObject selectAgreementPerSlaNs(String sla_uuid, String nsi_uuid) {
 
         Statement stmt = null;
         JSONObject root = new JSONObject();
 
         sla_uuid = sla_uuid.trim();
-        ns_uuid = ns_uuid.trim();
+        nsi_uuid = nsi_uuid.trim();
 
         try {
             c.setAutoCommit(false);
             stmt = c.createStatement();
-            ResultSet rs = stmt.executeQuery("SELECT * FROM cust_sla WHERE sla_uuid = '" + sla_uuid + "' AND ns_uuid='"
-                    + ns_uuid + "' AND  inst_status='READY';");
+            ResultSet rs = stmt.executeQuery("SELECT * FROM cust_sla WHERE sla_uuid = '" + sla_uuid + "' AND nsi_uuid='"
+                    + nsi_uuid + "' AND  inst_status='READY';");
 
             while (rs.next()) {
                 String cust_uuid = rs.getString("cust_uuid");
