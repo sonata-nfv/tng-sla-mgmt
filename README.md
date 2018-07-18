@@ -92,11 +92,6 @@ You can then access the SLA manager visiting http://<you_machine_ip>:8080
 
 ```
 
-## Versioning
-
-The first release of the SLA Manager does not support versioning.
-In the future we can maybe use [SemVer](http://semver.org/) for versioning. 
-
 
 ## Configuration
 
@@ -123,53 +118,8 @@ The following shows how to use SLA Manager:
 
 ### API Reference
 
-The SLA Manager API  Reference can be found [here](https://sonata-nfv.github.io/tng-doc/?urls.primaryName=5GTANGO%20SLA%20Manager%20v1)
-
-#### SLA Templates
-
-|           Action          | HTTP Method |                  Endpoint            |  
-| --------------------------| ----------- | --------------------------------------- |  
-| Generate a SLA Template |    `POST`   | `curl -X POST -H "Content-type:application/x-www-form-urlencoded" -d "nsd_uuid=<>&guaranteeId=<>&expireDate=<>&templateName=<>" http://<your_machine_ip>:8080tng-sla-mgmt/api/slas/v1/templates` |  
-| Get all SLA Templates |    `GET`    | `curl -H "Content-type:application/json" http://<your_machine_ip>:8080/tng-sla-mgmt/api/slas/v1/templates/` |  
-| Get SLA Template by it's uuid | `GET`    | `curl -H "Content-type:application/json" http://<your_machine_ip>:8080/tng-sla-mgmt/api/slas/v1/templates/{sla_uuid}` |  
-| Delete a SLA Template by it's uuid    |    `DELETE` | `curl -X DELETE http://<your_machine_ip>:8080/tng-sla-mgmt/api/slas/v1/templates/{sla_uuid}` |  
-
-
-#### SLA Agreements
-
-|           Action           | HTTP Method |                  Endpoint            |  
-| -------------------------- | ----------- | --------------------------------------- |  
-| Get existing Agreements| `GET`    | `curl -H "Content-type:application/json" http://<you_machine_ip>:8080/tng-sla-mgmt/api/slas/v1/agreements/` | 
-| Get specific Agreement details by it's uuid | `GET`    | `curl -H "Content-type:application/json" http://<your_machine_ip>:8080/tng-sla-mgmt/api/slas/v1/agreements/{sla_uuid}/{ns_uuid}` |   
-| Get Agreements per (instatiated) NS   | `GET`    | `curl -H "Content-type:application/json" http://<your_machine_ip>:8080/tng-sla-mgmt/api/slas/v1/agreements/service/{ns_uuid}` |  
-| Get Agreement's guarantee terms - SLOs| `GET`  | `curl -H "Content-type:application/json" http://<your_machine_ip>:8080/tng-sla-mgmt/api/slas/v1/agreements/guarantee-terms/{sla_uuid}` |  
-
-#### SLA Violations
-
-|           Action           | HTTP Method |                  Endpoint            |  
-| -------------------------- | ----------- | --------------------------------------- |  
-| Get existing Violations| `GET`    | `curl -H "Content-type:application/json" http://<you_machine_ip>:8080/tng-sla-mgmt/api/slas/v1/vioaltions/` | 
-| Get specific Violation by sla and ns | `GET`    | `curl -H "Content-type:application/json" http://<your_machine_ip>:8080/tng-sla-mgmt/api/slas/v1/vioaltions/{ns_uuid}/{sla_uuid}/` |   
-
-
-#### SLA Management
-
-|           Action          | HTTP Method |                  Endpoint              |  
-| --------------------------| ----------- | --------------------------------------- |  
-| GET a predefined list of Service Guarantees (SLOs)| `GET` | `curl -H "Content-type:application/json" http://<your_machine_ip>:8080/tng-sla-mgmt/api/slas/v1/mgmt/guaranteesList` |  
-| GET the list with correlated NSs-Templates | `GET`  | `curl -H "Content-type:application/json" http://<your_machine_ip>:8080/tng-sla-mgmt/api/slas/v1/mgmt/services/templates/` |  
-| GET a list with NSs that have associated templates | `GET` | `curl -H "Content-type:application/json" http://<your_machine_ip>:8080/tng-sla-mgmt/api/slas/v1/mgmt/services/templates/true` |  
-| GET a list with NS that do not have associated templates yet| `GET` | `curl -H "Content-type:application/json" http://<your_machine_ip>:8080/tng-sla-mgmt/api/slas/v1/mgmt/services/templates/false` |  
-| GET a list with NS that have associated agreements| `GET`   | `curl -H "Content-type:application/json" http://<your_machine_ip>:8080/tng-sla-mgmt/api/slas/v1/mgmt/services/agreements/true` |  
-| GET a list with NS that do not have associated agreements yet| `GET` | `curl -H "Content-type:application/json" http://<your_machine_ip>:8080/tng-sla-mgmt/api/slas/v1/mgmt/services/agreements/false`|  
-
-
-Expected returned Codes:
-
-* `HTTP` code `200` (`OK`) 
-* `HTTP` code `201` (`Created`)
-* `HTTP` code `400` (`Bad Request`)
-* `HTTP` code `404` (`Not Found`)
+We have specified this micro-service's API in a swagger-formated file. Please check it [here](https://github.com/sonata-nfv/tng-sla-mgmt/blob/master/doc/sla_rest_api_model.json) 
+or on the [SLA Manager WIKI page](https://github.com/sonata-nfv/tng-sla-mgmt/wiki/API-Specification).
 
 ### Database
 
@@ -179,6 +129,23 @@ The databse includes the following tables:
 *  `cust_sla` - store and manage correlations between slas, instatiated network services and the customers. it is also used to manage the Agreements informations.
 *  `sla_violations` - store and manage all the SLA violations information.
 
+
+## Style guide
+
+Our style guide is really simple:
+*  We try to follow a Clean Code philosophy in as much as possible, i.e., classes and methods should do one thing only, have the least number of parameters possible, etc.;
+*  we use one (1) Tab for identation.
+
+## Tests
+*  Unit Tests are triggered automatically when building the project, and are defined in the [SLA Manager's test folder](https://github.com/ekapassa/tng-sla-mgmt/tree/master/sla-template-generator/src/test/java/eu/tng).
+*  Checkstyle Tests are triggered automatically when building the project, and are defined in the [SLA Manager's Checkstyle folder](https://github.com/ekapassa/tng-sla-mgmt/tree/master/sla-template-generator/src/main/resources/Checkstyle).
+*  Wider scope (integration and functional) tests involving this micro-service are defined in tng-tests.
+
+
+## Versioning
+*  The first release of the SLA Manager does not support versioning reagrding the code. In the future we can maybe use [SemVer](http://semver.org/) for this kind of versioning.
+*  The most up-to-date container version is v4. For the container versions available, see the [link to tags on this repository](https://github.com/sonata-nfv/tng-sla-mgmt/releases).
+	
 ## Development
 
 To contribute to the development of the 5GTANGO SLA Manager, you may use the very same development workflow as for any other 5GTANGO Github project. That is, you have to fork the repository and create pull requests. Moreover, all discussions regarding the 5GTANGO SLAs take place on GitHub, and NOT on the wiki.
@@ -207,7 +174,5 @@ The following lead developers are responsible for this repository and have admin
 *  Marios Touloupou (@mtouloup)
 
 ## Feedback-Chanel
-
-* You may use the mailing list tango-5g-wp5@lists.atosresearch.eu   
 * GitHub issues
 
