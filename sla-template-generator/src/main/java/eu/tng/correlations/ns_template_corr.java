@@ -111,7 +111,8 @@ public class ns_template_corr {
 
 		correlatedNS = tempArray; // assign temp to original
 		System.out.println(correlatedNS);
-
+		
+		dbo.closePostgreSQL();
 		return (JSONArray) correlatedNS;
 
 	}
@@ -191,7 +192,8 @@ public class ns_template_corr {
 
 		nsWithoutTemplate = tempArray; // assign temp to original
 		System.out.println("NS UUIDS WITHOUT TEMPLATE" + nsWithoutTemplate);
-
+		
+		
 		return nsWithoutTemplate;
 	}
 

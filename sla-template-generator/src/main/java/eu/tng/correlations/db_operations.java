@@ -58,17 +58,20 @@ public class db_operations {
     public static boolean connectPostgreSQL() {
         boolean connect = false;
         try {
-           
+
             Class.forName("org.postgresql.Driver");
             /*
-             c =
-             DriverManager.getConnection("jdbc:postgresql://localhost:5432/sla-manager","postgres",
-             "admin");
-            */
-            
-            c = DriverManager.getConnection("jdbc:postgresql://" + System.getenv("DATABASE_HOST") + ":" + System.getenv("DATABASE_PORT")
-                            + "/" + System.getenv("GTK_DB_NAME"),System.getenv("GTK_DB_USER"), System.getenv("GTK_DB_PASS"));
-            
+             * c =
+             * DriverManager.getConnection("jdbc:postgresql://localhost:5432/sla-manager",
+             * "postgres", "admin");
+             */
+
+            c = DriverManager
+                    .getConnection(
+                            "jdbc:postgresql://" + System.getenv("DATABASE_HOST") + ":" + System.getenv("DATABASE_PORT")
+                                    + "/" + System.getenv("GTK_DB_NAME"),
+                            System.getenv("GTK_DB_USER"), System.getenv("GTK_DB_PASS"));
+
             connect = true;
             System.out.println("Opened sla-manager database successfully");
 
@@ -107,16 +110,16 @@ public class db_operations {
         try {
             stmt = c.createStatement();
             String sql = "CREATE TABLE IF NOT EXISTS cust_sla" + "(ID  SERIAL PRIMARY KEY," + " NS_UUID TEXT NOT NULL, "
-            		+ "NSI_UUID TEXT NULL," + "NS_NAME TEXT NOT NULL," + "SLA_UUID  TEXT NOT NULL," + "SLA_NAME TEXT NOT NULL,"
-                    + "SLA_DATE TIMESTAMPTZ DEFAULT Now()," + "SLA_STATUS TEXT NOT NULL," + "CUST_EMAIL TEXT NOT NULL,"
-                    + "CUST_UUID  TEXT NOT NULL," + "INST_ID TEXT NOT NULL," + "INST_STATUS  TEXT NOT NULL )";
+                    + "NSI_UUID TEXT NULL," + "NS_NAME TEXT NOT NULL," + "SLA_UUID  TEXT NOT NULL,"
+                    + "SLA_NAME TEXT NOT NULL," + "SLA_DATE TIMESTAMPTZ DEFAULT Now()," + "SLA_STATUS TEXT NOT NULL,"
+                    + "CUST_EMAIL TEXT NOT NULL," + "CUST_UUID  TEXT NOT NULL," + "INST_ID TEXT NOT NULL,"
+                    + "INST_STATUS  TEXT NOT NULL )";
             stmt.executeUpdate(sql);
             stmt.close();
         } catch (Exception e) {
             System.err.println(e.getClass().getName() + ": " + e.getMessage());
         }
         System.out.println("Table cust_sla created successfully");
-
     }
 
     /**
@@ -137,7 +140,6 @@ public class db_operations {
             System.out.println("Error creating sla violations table or already exists");
 
         }
-
     }
 
     /**
@@ -160,7 +162,6 @@ public class db_operations {
         }
 
         System.out.println("Records ns-template saved successfully? " + result);
-
         return result;
     }
 
@@ -186,15 +187,14 @@ public class db_operations {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
     }
 
     /**
      * Insert Record violations
      * 
      */
-    public static void insertRecordViolation(String nsi_uuid, String sla_uuid, String violation_time, String alert_state,
-            String cust_uuid) {
+    public static void insertRecordViolation(String nsi_uuid, String sla_uuid, String violation_time,
+            String alert_state, String cust_uuid) {
 
         try {
             c.setAutoCommit(false);
@@ -209,7 +209,6 @@ public class db_operations {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
     }
 
     @SuppressWarnings("unchecked")
@@ -224,7 +223,8 @@ public class db_operations {
         try {
             c.setAutoCommit(false);
             stmt = c.createStatement();
-            ResultSet rs = stmt.executeQuery("SELECT * FROM cust_sla WHERE nsi_uuid = '"+ nsi_uuid +"' AND inst_status = 'VIOLATED';");
+            ResultSet rs = stmt.executeQuery(
+                    "SELECT * FROM cust_sla WHERE nsi_uuid = '" + nsi_uuid + "' AND inst_status = 'VIOLATED';");
             while (rs.next()) {
                 sla_uuid = rs.getString("sla_uuid");
                 cust_uuid = rs.getString("cust_uuid");
@@ -243,6 +243,7 @@ public class db_operations {
             System.err.println(e.getClass().getName() + ": " + e.getMessage());
         }
         return violated_sla;
+
     }
 
     /**
@@ -272,7 +273,7 @@ public class db_operations {
                 violation.put("cust_uuid", cust_uuid);
                 violation.put("ns_uuid", nsi_uuid);
                 violation.put("sla_uuid", sla_uuid);
-                
+
             }
             System.out.println("VIOLATIONS FROM DB OPERATIONS CLASS ==> " + violation);
             rs.close();
@@ -312,7 +313,7 @@ public class db_operations {
                 obj.put("nsi_uuid", nsi_uuid);
                 obj.put("sla_uuid", sla_uuid);
                 violations.add(obj);
-                
+
             }
             System.out.println("VIOLATIONS FROM DB OPERATIONS CLASS ==> " + violation_data);
             rs.close();
@@ -346,9 +347,8 @@ public class db_operations {
         }
 
         System.out.println("Set status READY? " + result);
-
     }
-    
+
     /**
      * Update Record cust-sla correlation
      * 
@@ -360,7 +360,7 @@ public class db_operations {
         try {
             c.setAutoCommit(false);
             stmt = c.createStatement();
-            String sql = "UPDATE cust_sla SET inst_status='VIOLATED' WHERE nsi_uuid='"+nsi_uuid+"';";
+            String sql = "UPDATE cust_sla SET inst_status='VIOLATED' WHERE nsi_uuid='" + nsi_uuid + "';";
             stmt.executeUpdate(sql);
             c.commit();
             stmt.close();
@@ -369,43 +369,40 @@ public class db_operations {
             System.err.println(e.getClass().getName() + ": " + e.getMessage());
         }
         System.out.println("Set status violated? " + result);
-   
-
     }
-    
+
     /**
      * Change the correlation id of the messaging between mano - GK
+     * 
      * @param nsi_uuid
      * @param correlation_id
      */
     public static void UpdateCorrelationID(String nsi_uuid, String correlation_id) {
-    	
-    	   String SQL = "UPDATE cust_sla " + "SET inst_id = ? " + "WHERE nsi_uuid = ?";
-           boolean result = false;
-           int affectedrows = 0;
 
-           try {
-               PreparedStatement pstmt = c.prepareStatement(SQL);
-               pstmt.setString(1, correlation_id);
-               pstmt.setString(2, nsi_uuid);
-               affectedrows = pstmt.executeUpdate();
-               result = true;
-           } catch (SQLException e) {
-               // TODO Auto-generated catch block
-               e.printStackTrace();
-           }
+        String SQL = "UPDATE cust_sla " + "SET inst_id = ? " + "WHERE nsi_uuid = ?";
+        boolean result = false;
+        int affectedrows = 0;
 
-           System.out.println("Correlation id updated?  " + result);
+        try {
+            PreparedStatement pstmt = c.prepareStatement(SQL);
+            pstmt.setString(1, correlation_id);
+            pstmt.setString(2, nsi_uuid);
+            affectedrows = pstmt.executeUpdate();
+            result = true;
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
 
-    	
+        System.out.println("Correlation id updated?  " + result);
     }
-    
+
     /**
-     * Update Record cust-sla correlation to terminate an agreement 
+     * Update Record cust-sla correlation to terminate an agreement
      * 
      */
     public static void TerminateAgreement(String agreement_status, String correlation_id) {
-    	
+
         String SQL = "UPDATE cust_sla " + "SET inst_status = ? " + "WHERE inst_id = ?";
         boolean result = false;
         int affectedrows = 0;
@@ -422,9 +419,7 @@ public class db_operations {
         }
 
         System.out.println("Set status TERMINATED? " + result);
-
     }
-    
 
     /**
      * Delete Record
@@ -444,7 +439,6 @@ public class db_operations {
             System.err.println(e.getClass().getName() + ": " + e.getMessage());
         }
         System.out.println("Records with deleted? " + result);
-
         return result;
     }
 
@@ -514,7 +508,6 @@ public class db_operations {
             }
 
         }
-
         return root;
     }
 
@@ -534,7 +527,8 @@ public class db_operations {
         try {
             c.setAutoCommit(false);
             stmt = c.createStatement();
-            ResultSet rs = stmt.executeQuery("SELECT * FROM cust_sla WHERE inst_status = 'READY' OR inst_status='VIOLATED';");
+            ResultSet rs = stmt
+                    .executeQuery("SELECT * FROM cust_sla WHERE inst_status = 'READY' OR inst_status='VIOLATED';");
             while (rs.next()) {
                 String ns_uuid = rs.getString("ns_uuid");
                 String ns_name = rs.getString("ns_name");
@@ -591,8 +585,8 @@ public class db_operations {
         try {
             c.setAutoCommit(false);
             stmt = c.createStatement();
-            ResultSet rs = stmt
-                    .executeQuery("SELECT * FROM cust_sla WHERE nsi_uuid = '" + nsi_uuid + "' AND inst_status='READY'; ");
+            ResultSet rs = stmt.executeQuery(
+                    "SELECT * FROM cust_sla WHERE nsi_uuid = '" + nsi_uuid + "' AND inst_status='READY'; ");
             while (rs.next()) {
                 String ns_uuid = rs.getString("ns_uuid");
                 String sla_uuid = rs.getString("sla_uuid");
@@ -611,7 +605,6 @@ public class db_operations {
         } catch (Exception e) {
             System.err.println(e.getClass().getName() + ": " + e.getMessage());
         }
-
         return root;
     }
 
@@ -639,7 +632,6 @@ public class db_operations {
                 String cust_uuid = rs.getString("cust_uuid");
                 String nsi_uuid = rs.getString("nsi_uuid");
 
-
                 JSONObject obj = new JSONObject();
                 obj.put("ns_uuid", ns_uuid);
                 obj.put("nsi_uuid", nsi_uuid);
@@ -655,7 +647,6 @@ public class db_operations {
         } catch (Exception e) {
             System.err.println(e.getClass().getName() + ": " + e.getMessage());
         }
-
         return root;
     }
 
@@ -690,7 +681,6 @@ public class db_operations {
         } catch (Exception e) {
             System.err.println(e.getClass().getName() + ": " + e.getMessage());
         }
-
         return root;
     }
 
@@ -722,7 +712,7 @@ public class db_operations {
     /**
      * Close connection with PostgreSQL
      */
-    public void closePostgreSQL() {
+    public static void closePostgreSQL() {
         try {
             c.close();
         } catch (SQLException e) {

@@ -71,7 +71,6 @@ public class ViolationAPIS {
 			JSONObject violations = db_operations.getViolationData(nsi_uuid, sla_uuid);
 			System.out.println("VIOLATIONS FROM VIOLATION API CLASS ==> " + violations);
 			
-			dbo.closePostgreSQL();
 			apiresponse = Response.ok(violations);
 			apiresponse.header("Content-Length", violations.toString().length());
 			return apiresponse.status(200).build();
@@ -99,7 +98,6 @@ public class ViolationAPIS {
 			org.json.simple.JSONArray violations = db_operations.getAllViolationData();
 			System.out.println("VIOLATIONS FROM VIOLATION API CLASS ==> " + violations);
 			
-			dbo.closePostgreSQL();
 			apiresponse = Response.ok(violations);
 			apiresponse.header("Content-Length", violations.toString().length());
 			return apiresponse.status(200).build();

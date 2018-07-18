@@ -65,7 +65,6 @@ public class cust_sla_corr {
 			String ns_name, String cust_uuid, String cust_email, String inst_status, String correlation_id) {
 
 		db_operations dbo = new db_operations();
-
 		db_operations.connectPostgreSQL();
 		db_operations.createTableCustSla();
 		dbo.insertRecordAgreement(ns_uuid, ns_name, sla_uuid, sla_name, sla_status, cust_email, cust_uuid, inst_status,
@@ -139,11 +138,11 @@ public class cust_sla_corr {
 		if (connect == true) {
 			status = 200;
 			dbo.deleteRecord(tablename, sla_uuid);
-			dbo.closePostgreSQL();
 		} else {
 			// failed to connect to database
 			status = 404; 
 		}
+        dbo.closePostgreSQL();
 		return status;
 		
 	}
@@ -216,9 +215,9 @@ public class cust_sla_corr {
 				tempArray.add(correlatedNS.get(i));
 			}
 		}
-
 		correlatedNS = tempArray; // assign temp to original
 		System.out.println(correlatedNS);
+	    db_operations.closePostgreSQL();
 
 		return (JSONArray) correlatedNS;
 

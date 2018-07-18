@@ -61,7 +61,8 @@ public class MqServiceTerminateConsumer implements ServletContextListener {
 
 	@Override
 	public void contextDestroyed(ServletContextEvent arg0) {
-		System.out.println("Server stopped");
+	    System.out.println("Listener Service Terminate stopped");
+
 	}
 
 	@Override
@@ -117,6 +118,7 @@ public class MqServiceTerminateConsumer implements ServletContextListener {
 							db_operations dbo = new db_operations();
 							db_operations.connectPostgreSQL();
 							db_operations.TerminateAgreement("TERMINATED", correlation_id);
+							db_operations.closePostgreSQL();
 						}
 
 					}
@@ -134,7 +136,7 @@ public class MqServiceTerminateConsumer implements ServletContextListener {
 						db_operations.connectPostgreSQL();
 						// make update record to change the correlation id  -  the correlation id of the termination messaging
 						db_operations.UpdateCorrelationID(nsi_uuid, correlation_id);
-				
+                        db_operations.closePostgreSQL();				
 					}
 
 				}
