@@ -76,6 +76,7 @@ public class MgmtAPIs {
 		dbo.connectPostgreSQL();
 		dbo.createTableNSTemplate();
 		JSONObject correlations = dbo.selectAllRecords("ns_template");
+		dbo.closePostgreSQL();
 
 		apiresponse = Response.ok((Object) correlations);
 		apiresponse.header("Content-Length", correlations.toString().length());
@@ -194,10 +195,9 @@ public class MgmtAPIs {
 		
 		String response = "Record deleted Succesfully";
 		db_operations db = new db_operations();
-		
 		db.connectPostgreSQL();
-		
 		db.deleteRecord("cust_sla", sla_uuid);
+		db.closePostgreSQL();
 		apiresponse = Response.ok((response));
 		apiresponse.header("Content-Length", response.length());
 		return apiresponse.status(200).build();
