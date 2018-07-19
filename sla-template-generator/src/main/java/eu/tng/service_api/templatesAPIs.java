@@ -320,6 +320,7 @@ public class templatesAPIs {
 		URL url = null;
 		
 		db_operations dbo = new db_operations();
+		dbo.createTableCustSla();
 		int counter = dbo.countAgreementCorrelationPeriD(sla_uuid);
 		dbo.closePostgreSQL();
 		
