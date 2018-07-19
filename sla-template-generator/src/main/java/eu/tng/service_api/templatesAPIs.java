@@ -106,7 +106,7 @@ public class templatesAPIs {
 			Object existingTemplates = parser.parse(response.toString());
 
 			apiresponse = Response.ok((Object) existingTemplates);
-			apiresponse.header("Content-Length", existingTemplates.toString().length());
+			apiresponse.header("Content-Length", response.length()); 
 			return apiresponse.status(200).build();
 
 		} catch (Exception e) {
