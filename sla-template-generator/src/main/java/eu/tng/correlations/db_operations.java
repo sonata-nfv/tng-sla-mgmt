@@ -368,12 +368,15 @@ public class db_operations {
 				String ns_uuid = rs.getString("ns_uuid");
 				String sla_uuid = rs.getString("sla_uuid");
 				String cust_uuid = rs.getString("cust_uuid");
+				String sla_status = rs.getString("sla_status");
 
 				JSONObject obj = new JSONObject();
 				obj.put("ns_uuid", ns_uuid);
 				obj.put("nsi_uuid", nsi_uuid);
 				obj.put("sla_uuid", sla_uuid);
 				obj.put("cust_uuid", cust_uuid);
+				obj.put("sla_status", sla_status);
+
 				cust_sla.add(obj);
 			}
 			root.put("cust_sla", cust_sla);
@@ -467,10 +470,34 @@ public class db_operations {
 		}
 		return root;
 	}
+	
+
+	/**
+	 * Delete Agreement correlation
+	 * @param nsi_uuid
+	 * @return
+	 */
+	public boolean deleteAgreement(String nsi_uuid) {
+		Statement stmt = null;
+		boolean result = false;
+		try {
+			c.setAutoCommit(false);
+			stmt = c.createStatement();
+			String sql = "DELETE FROM WHERE NSI_UUID='" + nsi_uuid + "';";
+			stmt.executeUpdate(sql);
+			c.commit();
+			stmt.close();
+			result = true;
+		} catch (Exception e) {
+			System.err.println(e.getClass().getName() + ": " + e.getMessage());
+		}
+		System.out.println("Agreement correlation deleted? " + result);
+		return result;
+	}
+
 
 	/**
 	 * Count active agreements per sla template
-	 * 
 	 * @param sla_uuid
 	 * @return
 	 */

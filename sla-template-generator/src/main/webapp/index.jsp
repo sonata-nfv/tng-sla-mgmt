@@ -63,9 +63,9 @@
 &nbsp;&nbsp;Purpose: Get a list with the existing sla agreements per customer
 
 <h3>Delete SLA Agreement</h3>
-- URI: /api/slas/v1/agreements/{sla_uuid}<br>
+- URI: /api/slas/v1/agreements/{nsi_uuid}<br>
 &nbsp;&nbsp;Method: DELETE<br>
-&nbsp;&nbsp;Purpose: Delete a SLA agreement
+&nbsp;&nbsp;Purpose: Delete a SLA agreement for a specific NSI
 
 <h3>Get agreement guarantee terms</h3>
 - URI: /api/slas/v1/agreements/guarantee-terms/{sla_uuid}<br>
