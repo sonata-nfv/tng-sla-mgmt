@@ -80,9 +80,9 @@ public class templatesAPIs {
 	public Response getTemplates() {
 		ResponseBuilder apiresponse = null;
 		try {
-			//String url = System.getenv("CATALOGUES_URL") + "slas/template-descriptors";
-			 String url =
-			 "http://pre-int-sp-ath.5gtango.eu:4011/catalogues/api/v2/slas/template-descriptors";
+			String url = System.getenv("CATALOGUES_URL") + "slas/template-descriptors";
+//			 String url =
+//			 "http://pre-int-sp-ath.5gtango.eu:4011/catalogues/api/v2/slas/template-descriptors";
 			URL object = new URL(url);
 
 			HttpURLConnection con = (HttpURLConnection) object.openConnection();
@@ -105,9 +105,6 @@ public class templatesAPIs {
 			JSONParser parser = new JSONParser();
 			Object existingTemplates = parser.parse(response.toString());
 
-			// check every sla uuid if has associated agreement - put an extra field : associated_agreement:true/false
-			existingTemplates = hasCorrelatedAgreement(existingTemplates);
-
 			apiresponse = Response.ok((Object) existingTemplates);
 			apiresponse.header("Content-Length", existingTemplates.toString().length());
 			return apiresponse.status(200).build();
@@ -122,26 +119,6 @@ public class templatesAPIs {
 
 	}
 
-	private Object hasCorrelatedAgreement(Object existingTemplates) {
-		JSONArray templates = (JSONArray) existingTemplates;
-		for (int i = 0; i < templates.size(); i++) {
-			JSONObject slaObject = (JSONObject) templates.get(i);
-			String sla_uuid = (String) slaObject.get("uuid");
-
-			db_operations dbo = new db_operations();
-			dbo.connectPostgreSQL();
-			int counter = dbo.countAgreementCorrelationPeriD(sla_uuid);
-			dbo.closePostgreSQL();
-
-			if (counter != 0) {
-				slaObject.put("associated_agreement", "true");
-			} else {
-				slaObject.put("associated_agreement", "false");
-			}
-		}
-		Object updatedTemplates = templates;
-		return updatedTemplates;
-	}
 
 	/**
 	 * api call in order to get specific sla
