@@ -66,8 +66,14 @@ public class PublishMonitoringRules {
 
 		try {
 
+			/*
 			String url = "http://pre-int-sp-ath.5gtango.eu:8000/api/v1/slamng/rules/service/" + service_id
 					+ "/configuration ";
+			*/		
+			
+			String url = System.getenv("MONITORING_URL")+"slamng/rules/service/" + service_id
+					+ "/configuration ";
+						
 			URL object = new URL(url);
 
 			HttpURLConnection con = (HttpURLConnection) object.openConnection();
