@@ -134,10 +134,8 @@ public class MonitoringRules {
 		switch (name) {
 		case "Resilience":
 			String description = "Trigger events if VM is down more than " + target_value + " seconds.";
-			String id = "id="+vdu_id+"";
-			String condition = "vm_up{id="+id+"}> " + target_value;
-			
-//delta(haproxy_backend_downtime{exported_instance="vnf:vnf-haproxy"}[1h]) > 3.6
+			//String condition = "vm_up{id="+id+"}> " + target_value;
+			String condition = "delta(haproxy_backend_downtime{resource_id=" + vdu_id + "}[1h]) > -1";
 			
 			dc.add(description);
 			dc.add(condition);
