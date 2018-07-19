@@ -56,175 +56,214 @@ import eu.tng.rules.MonitoringRules;
 
 public class MqServiceInstantiateConsumer implements ServletContextListener {
 
-    private static final String EXCHANGE_NAME = System.getenv("BROKER_EXCHANGE");
-    // private static final String EXCHANGE_NAME = "son-kernel";
+	private static final String EXCHANGE_NAME = System.getenv("BROKER_EXCHANGE");
+	// private static final String EXCHANGE_NAME = "son-kernel";
 
-    /**
-     * @see ServletContextListener#contextDestroyed(ServletContextEvent)
-     */
-    public void contextDestroyed(ServletContextEvent event) {
-        System.out.println("Listener Service Instances Create stopped");
-        System.out.println("Listener restarting");
-        contextInitialized(event);
-    }
+	/**
+	 * @see ServletContextListener#contextDestroyed(ServletContextEvent)
+	 */
+	public void contextDestroyed(ServletContextEvent event) {
+		System.out.println("Listener Service Instances Create stopped");
+		System.out.println("Listener restarting");
+		contextInitialized(event);
+	}
 
-    /**
-     * @see ServletContextListener#contextInitialized(ServletContextEvent)
-     */
-    public void contextInitialized(ServletContextEvent event) {
+	/**
+	 * @see ServletContextListener#contextInitialized(ServletContextEvent)
+	 */
+	public void contextInitialized(ServletContextEvent event) {
 
-        Channel channel_service_instance;
-        Connection connection;
-        String queueName_service_instance;
+		Channel channel_service_instance;
+		Connection connection;
+		String queueName_service_instance;
 
-        try {
-            RabbitMqConnector connect = new RabbitMqConnector();
-            connection = RabbitMqConnector.MqConnector();
+		try {
+			RabbitMqConnector connect = new RabbitMqConnector();
+			connection = RabbitMqConnector.MqConnector();
 
-            channel_service_instance = connection.createChannel();
-            channel_service_instance.exchangeDeclare(EXCHANGE_NAME, "topic");
-            queueName_service_instance = "slas.service.instances.create";
-            channel_service_instance.queueDeclare(queueName_service_instance, true, false, false, null);
-            System.out.println(" [*]  Binding queue to topics...");
-            channel_service_instance.queueBind(queueName_service_instance, EXCHANGE_NAME, "service.instances.create");
-            System.out.println(" [*] Bound to topic \"service.instances.create\"");
-            System.out.println(" [*] Waiting for messages.");
+			channel_service_instance = connection.createChannel();
+			channel_service_instance.exchangeDeclare(EXCHANGE_NAME, "topic");
+			queueName_service_instance = "slas.service.instances.create";
+			channel_service_instance.queueDeclare(queueName_service_instance, true, false, false, null);
+			System.out.println(" [*]  Binding queue to topics...");
+			channel_service_instance.queueBind(queueName_service_instance, EXCHANGE_NAME, "service.instances.create");
+			System.out.println(" [*] Bound to topic \"service.instances.create\"");
+			System.out.println(" [*] Waiting for messages.");
 
-            Consumer consumer_service_instance = new DefaultConsumer(channel_service_instance) {
+			Consumer consumer_service_instance = new DefaultConsumer(channel_service_instance) {
 
-                public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties,
-                        byte[] body) throws IOException {
-                    // Initialize variables
-                    String status = "test";
-                    JSONObject jsonObjectMessage = null;
-                    ArrayList<String> vnfrs_list = new ArrayList<String>();
-                    ArrayList<String> vdus_list = new ArrayList<String>();
-                    String correlation_id = null;
+				public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties,
+						byte[] body) throws IOException {
+					// Initialize variables
+					String status = "test";
+					JSONObject jsonObjectMessage = null;
+					ArrayList<String> vnfr_id_list = new ArrayList<String>();
+					ArrayList<String> vdus_id_list = new ArrayList<String>();
+					String correlation_id = null;
 
-                    // Parse message payload
-                    String message = new String(body, "UTF-8");
-                    // parse the yaml and convert it to json
-                    Yaml yaml = new Yaml();
-                    Map<String, Object> map = (Map<String, Object>) yaml.load(message);
-                    jsonObjectMessage = new JSONObject(map);
+					// Parse message payload
+					String message = new String(body, "UTF-8");
+					// parse the yaml and convert it to json
+					Yaml yaml = new Yaml();
+					Map<String, Object> map = (Map<String, Object>) yaml.load(message);
+					jsonObjectMessage = new JSONObject(map);
 
-                    System.out.println("START READING HEADERS FROM MESSAGE.....");
-                    correlation_id = (String) properties.getCorrelationId();
-                    System.out.println(" [*] Correlation_id ==> " + correlation_id);
+					System.out.println("START READING HEADERS FROM MESSAGE.....");
+					correlation_id = (String) properties.getCorrelationId();
+					System.out.println(" [*] Correlation_id ==> " + correlation_id);
 
-                    /** if message coming from the MANO - contain status key **/
-                    if (jsonObjectMessage.has("status")) {
-                        System.out.println(" [*] Message coming from MANO.....");
-                        System.out.println(" [*] Message as JSONObject ==> " + jsonObjectMessage);
-                        status = (String) jsonObjectMessage.get("status");
-                        System.out.println(" [*] STATUS ==> " + status);
+					/** if message coming from the MANO - contain status key **/
+					if (jsonObjectMessage.has("status")) {
+						System.out.println(" [*] Message coming from MANO.....");
+						System.out.println(" [*] Message as JSONObject ==> " + jsonObjectMessage);
+						status = (String) jsonObjectMessage.get("status");
+						System.out.println(" [*] STATUS ==> " + status);
 
-                        if (status.equals("READY")) {
+						if (status.equals("READY")) {
 
-                            // get info for the monitoring metrics
-                            String sla_id = "";
-                            String ns_id = "";
-                            // Get sla_id
-                            sla_id = (String) jsonObjectMessage.get("sla_id");
+							// get info for the monitoring metrics
+							String sla_id = "";
+							String ns_id = "";
+							// Get sla_id
+							sla_id = (String) jsonObjectMessage.get("sla_id");
 
-                            if (sla_id != null && !sla_id.isEmpty()) {
-                                // Get service uuid
-                                JSONObject nsr = (JSONObject) jsonObjectMessage.getJSONObject("nsr");
-                                ns_id = (String) nsr.get("id");
-                                // Get vnfrs
-                                JSONArray vnfrs = (JSONArray) jsonObjectMessage.getJSONArray("vnfrs");
-                                for (int i = 0; i < (vnfrs).length(); i++) {
-                                    String vnf_id = (String) ((JSONObject) vnfrs.getJSONObject(i)).get("id");
-                                    vnfrs_list.add(vnf_id);
-                                    System.out.println("[*] VNfrs List from MANO message ==> " + vnfrs_list);
-                                    // Get vdus foreach vnfr
-                                    JSONArray vdus = (JSONArray) ((JSONObject) vnfrs.getJSONObject(i))
-                                            .getJSONArray("virtual_deployment_units");
-                                    for (int j = 0; j < vdus.length(); j++) {
-                                        String vdu_id = (String) ((JSONObject) vdus.getJSONObject(j)).get("id");
-                                        vdus_list.add(vdu_id);
-                                        System.out.println(" [*] VDUs List from MANO message ==> " + vdus_list);
-                                    }
+							if (sla_id != null && !sla_id.isEmpty()) {
+								 // Get service uuid
+								 JSONObject nsr = (JSONObject) jsonObjectMessage.getJSONObject("nsr");
+								 ns_id = (String) nsr.get("id");
+								// get vnfrs info
+								JSONArray vnfrs = (JSONArray) jsonObjectMessage.getJSONArray("vnfrs");
+								for (int i = 0; i < (vnfrs).length(); i++) {
+									// Get vdus foreach vnfr
+									JSONArray vdus = (JSONArray) ((JSONObject) vnfrs.getJSONObject(i))
+											.getJSONArray("virtual_deployment_units");
+									for (int j = 0; j < vdus.length(); j++) {
+										String vdu_reference = (String) ((JSONObject) vdus.getJSONObject(i))
+												.get("vdu_reference");
+										// if vnfr is the haproxy function - conti nue to the monitoring creation
+										// metrics
+										if (vdu_reference.contains("haproxy")) {
+											
+											// get vnfr id
+											String vnfr_id = (String) ((JSONObject) vnfrs.get(i)).get("id");
+											vnfr_id_list.add(vnfr_id);
+		
+											// get vdu id (vc_id)
+											JSONArray vnfc_instance = (JSONArray) ((JSONObject) vdus.getJSONObject(j)).getJSONArray("vnfc_instance");
+											for (int k = 0; k < vnfc_instance.length(); k++) {
+												String vc_id = (String) ((JSONObject) vnfc_instance.getJSONObject(j)).get("vc_id");
+												vdus_id_list.add(vc_id);
+											}
+										}
+									}
+								}
 
-                                }
+								// // Get service uuid
+								// JSONObject nsr = (JSONObject) jsonObjectMessage.getJSONObject("nsr");
+								// ns_id = (String) nsr.get("id");
+								// // Get vnfrs
+								// JSONArray vnfrs = (JSONArray) jsonObjectMessage.getJSONArray("vnfrs");
+								// for (int i = 0; i < (vnfrs).length(); i++) {
+								// // Get vdus foreach vnfr
+								// JSONArray vdus = (JSONArray) ((JSONObject) vnfrs.getJSONObject(i))
+								// .getJSONArray("virtual_deployment_units");
+								// for (int j = 0; j < vdus.length(); j++) {
+								// String vdu_reference = (String) ((JSONObject) vdus.getJSONObject(i))
+								// .get("vdu_reference");
+								// vdu_reference_list.add(vdu_reference);
+								// System.out.println(" [*] VDU Reference name ==> " + vdu_reference_list);
+								//
+								// // check if vnf is haproxy
+								// if (vdu_reference.contains("haproxy") ) {
+								// JSONArray vnfc_instance = (JSONArray) ((JSONObject) vdus.getJSONObject(j))
+								// .getJSONArray("vnfc_instance");
+								// for (int k = 0; k < vnfc_instance.length(); k++) {
+								// String vc_id = (String) ((JSONObject)
+								// vnfc_instance.getJSONObject(j)).get("vc_id");
+								// vdus_list.add(vc_id);
+								// System.out.println(" [*] VDUs (vc_id) List==> " + vdus_list);
+								// }
+								// }
+								// }
+								// }
 
-                                // Update NSI Records
-                                db_operations dbo = new db_operations();
-                                db_operations.connectPostgreSQL();
-                                db_operations.UpdateRecordAgreement(status, correlation_id, ns_id);
-                                db_operations.closePostgreSQL();
-                                // call the create rules method
-                                MonitoringRules mr = new MonitoringRules();
-                                MonitoringRules.createMonitroingRules(sla_id, vnfrs_list, vdus_list, ns_id);
-                            }
+								// Update NSI Records
+								db_operations dbo = new db_operations();
+								db_operations.connectPostgreSQL();
+								db_operations.UpdateRecordAgreement(status, correlation_id, ns_id);
+								db_operations.closePostgreSQL();
+								// call the create rules method
+								MonitoringRules mr = new MonitoringRules();
+								MonitoringRules.createMonitroingRules(sla_id, vnfr_id_list, vdus_id_list, ns_id);
+							}
 
-                        }
+						}
 
-                    }
-                    /** if message coming from the GK - doesn't contain status key **/
-                    else {
-                        System.out.println(" [*] Message coming from Gatekeeper.....");
-                        System.out.println(" [*] Message as JSONObject ==> " + jsonObjectMessage);
-                        // status = (String) jsonObjectMessage.get("status");
-                        System.out.println(" [*] STATUS ==> " + status);
+					}
+					/** if message coming from the GK - doesn't contain status key **/
+					else {
+						System.out.println(" [*] Message coming from Gatekeeper.....");
+						System.out.println(" [*] Message as JSONObject ==> " + jsonObjectMessage);
+						// status = (String) jsonObjectMessage.get("status");
+						System.out.println(" [*] STATUS ==> " + status);
 
-                        // Initialize valiables
-                        String sla_uuid = null;
-                        String ns_uuid = null;
-                        String ns_name = null;
-                        String cust_uuid = null;
-                        String cust_email = null;
-                        String sla_name = null;
-                        String sla_status = null;
+						// Initialize valiables
+						String sla_uuid = null;
+						String ns_uuid = null;
+						String ns_name = null;
+						String cust_uuid = null;
+						String cust_email = null;
+						String sla_name = null;
+						String sla_status = null;
 
-                        // Get nsd data
-                        JSONObject nsd = jsonObjectMessage.getJSONObject("NSD");
-                        ns_name = (String) nsd.get("name");
-                        ns_uuid = (String) nsd.get("uuid");
-                        System.out.println(" NS NAME ==> " + ns_name);
-                        System.out.println(" NS UUID ==> " + ns_uuid);
+						// Get nsd data
+						JSONObject nsd = jsonObjectMessage.getJSONObject("NSD");
+						ns_name = (String) nsd.get("name");
+						ns_uuid = (String) nsd.get("uuid");
+						System.out.println(" NS NAME ==> " + ns_name);
+						System.out.println(" NS UUID ==> " + ns_uuid);
 
-                        // Parse customer data + sla uuid
-                        JSONObject user_data = (JSONObject) jsonObjectMessage.getJSONObject("user_data");
-                        JSONObject customer = (JSONObject) user_data.getJSONObject("customer");
-                        cust_uuid = (String) customer.get("uuid");
-                        cust_email = (String) customer.get("email");
-                        sla_uuid = (String) customer.get("sla_id");
-                        System.out.println(" Cust id  ==> " + cust_uuid);
-                        System.out.println("Cust email  ==> " + cust_email);
-                        System.out.println("SLA uuid  ==> " + sla_uuid);
+						// Parse customer data + sla uuid
+						JSONObject user_data = (JSONObject) jsonObjectMessage.getJSONObject("user_data");
+						JSONObject customer = (JSONObject) user_data.getJSONObject("customer");
+						cust_uuid = (String) customer.get("uuid");
+						cust_email = (String) customer.get("email");
+						sla_uuid = (String) customer.get("sla_id");
+						System.out.println(" Cust id  ==> " + cust_uuid);
+						System.out.println("Cust email  ==> " + cust_email);
+						System.out.println("SLA uuid  ==> " + sla_uuid);
 
-                        // if sla exists create record in database
-                        if (sla_uuid != null && !sla_uuid.isEmpty()) {
+						// if sla exists create record in database
+						if (sla_uuid != null && !sla_uuid.isEmpty()) {
 
-                            cust_sla_corr cust_sla = new cust_sla_corr();
-                            @SuppressWarnings("unchecked")
-                            ArrayList<String> SLADetails = cust_sla.getSLAdetails(sla_uuid);
-                            sla_name = (String) SLADetails.get(1);
-                            sla_status = (String) SLADetails.get(0);
+							cust_sla_corr cust_sla = new cust_sla_corr();
+							@SuppressWarnings("unchecked")
+							ArrayList<String> SLADetails = cust_sla.getSLAdetails(sla_uuid);
+							sla_name = (String) SLADetails.get(1);
+							sla_status = (String) SLADetails.get(0);
 
-                            System.out.println("SLA name  ==> " + sla_name);
-                            System.out.println("SLA status  ==> " + sla_status);
-                            String inst_status = "PENDING";
+							System.out.println("SLA name  ==> " + sla_name);
+							System.out.println("SLA status  ==> " + sla_status);
+							String inst_status = "PENDING";
 
-                            cust_sla_corr.createCustSlaCorr(sla_uuid, sla_name, sla_status, ns_uuid, ns_name, cust_uuid,
-                                    cust_email, inst_status, correlation_id);
-                        }
+							cust_sla_corr.createCustSlaCorr(sla_uuid, sla_name, sla_status, ns_uuid, ns_name, cust_uuid,
+									cust_email, inst_status, correlation_id);
+						}
 
-                    }
+					}
 
-                }
+				}
 
-            };
+			};
 
-            // service instantiation consumer
-            channel_service_instance.basicConsume(queueName_service_instance, true, consumer_service_instance);
+			// service instantiation consumer
+			channel_service_instance.basicConsume(queueName_service_instance, true, consumer_service_instance);
 
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            System.out.println(" [*] ERROR Connecting to MQ!" + e.getMessage());
-        }
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			System.out.println(" [*] ERROR Connecting to MQ!" + e.getMessage());
+		}
 
-    }
+	}
 
 }

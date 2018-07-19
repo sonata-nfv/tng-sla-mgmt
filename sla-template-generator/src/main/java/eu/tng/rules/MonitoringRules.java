@@ -54,8 +54,8 @@ public class MonitoringRules {
 	/**
 	 * Create monitoring rules based on a instantiated NS and the selected SLA
 	 **/
-	public static JSONObject createMonitroingRules(String sla_uuid, ArrayList<String> vnfrs_list,
-			ArrayList<String> vdus_list, String ns_id) throws IOException {
+	public static JSONObject createMonitroingRules(String sla_uuid, ArrayList<String> vnfr_id_list,
+			ArrayList<String> vdus_id_list, String ns_id) throws IOException {
 
 		JSONObject root = new JSONObject();
 
@@ -73,16 +73,16 @@ public class MonitoringRules {
 
 			// ** vnfs array **/
 			JSONArray vnfs = new JSONArray();
-			for (int i = 0; i < vnfrs_list.size(); i++) {
+			for (int i = 0; i < vnfr_id_list.size(); i++) {
 				JSONObject nvfid = new JSONObject();
-				nvfid.put("nvfid", vnfrs_list.get(i));
+				nvfid.put("nvfid", vnfr_id_list.get(i));
 				vnfs.add(nvfid);
 
 				// ** vdus array **/
 				JSONArray vdus = new JSONArray();
-				for (int j = 0; j < vdus_list.size(); j++) {
+				for (int j = 0; j < vdus_id_list.size(); j++) {
 					JSONObject vduid = new JSONObject();
-					vduid.put("vdu_id", vdus_list.get(j));
+					vduid.put("vdu_id", vdus_id_list.get(j));
 					vdus.add(vduid);
 
 					// ** rules array **/
@@ -90,16 +90,16 @@ public class MonitoringRules {
 					for (int k = 0; k < slos.size(); k++) {
 						JSONObject rule = new JSONObject();
 						String name = (String) ((JSONObject) slos.get(k)).get("name");
-						String duration = (String) ((JSONObject) slos.get(k)).get("duration");
+						String target_period = (String) ((JSONObject) slos.get(k)).get("duration");
 						String target_value = (String) ((JSONObject) slos.get(k)).get("target_value");
 
-						// call function getSlaDetails
-						ArrayList dc = createCondition(name, target_value,vdus_list.get(j));
+						// call function createCondition
+						ArrayList dc = createCondition(name,target_period, target_value,vdus_id_list.get(j));
 						String description = (String) dc.get(0);
 						String condition = (String) dc.get(1);
 
 						rule.put("name", "sla:rule:" + name);
-						rule.put("duration", duration);
+						rule.put("duration", "1s");
 						rule.put("description", description);
 						rule.put("condition", condition);
 						rule.put("summary", "");
@@ -129,14 +129,14 @@ public class MonitoringRules {
 		return root;
 	}
 
-	private static ArrayList createCondition(String name, String target_value, String vdu_id) {
+	private static ArrayList createCondition(String name, String target_period, String target_value, String vdu_id) {
 		ArrayList<String> dc = new ArrayList<String>();
 		switch (name) {
 		case "Resilience":
-			String description = "Trigger events if VM is down more than " + target_value + " seconds.";
+			String description = "Trigger events if VM is down more than " + target_value + " seconds in window of: " + target_period;
 			//String condition = "vm_up{id="+id+"}> " + target_value;
+			//String condition = "delta(haproxy_backend_downtime{resource_id=" + vdu_id + "}["+target_period+"]) >"+target_value;
 			String condition = "delta(haproxy_backend_downtime{resource_id=" + vdu_id + "}[1h]) > -1";
-			
 			dc.add(description);
 			dc.add(condition);
 			break;
