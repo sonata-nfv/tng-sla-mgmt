@@ -34,6 +34,9 @@ ENV CATALOGUES_URL http://tng-cat:4011/catalogues/api/v2/
 ENV MQSERVER amqp://guest:guest@broker:5672
 ENV BROKER_EXCHANGE son-kernel
 
+# Set MONITORING URL Environment Variables
+ENV MONITORING_URL http://son-monitor-manager:8000/api/v1/
+
 # Make port 8080 available outside this container
 EXPOSE 8080
 
