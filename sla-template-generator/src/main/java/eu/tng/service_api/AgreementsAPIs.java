@@ -33,7 +33,6 @@
  * 
  */
 
-
 package eu.tng.service_api;
 
 import java.io.BufferedReader;
@@ -58,6 +57,7 @@ import org.json.simple.parser.ParseException;
 
 import eu.tng.correlations.cust_sla_corr;
 import eu.tng.correlations.db_operations;
+import eu.tng.correlations.ns_template_corr;
 
 @Path("/agreements")
 @Consumes(MediaType.APPLICATION_JSON)
@@ -84,28 +84,51 @@ public class AgreementsAPIs {
 	}
 
 	/**
-	 * delete an agreement
+	 * Delete an agreement if violated
 	 */
 	@DELETE
-	@Path("/{sla_uuid}")
+	@Path("/{nsi_uuid}")
 	@Produces(MediaType.TEXT_PLAIN)
-	public Response deleteAgreement(@PathParam("sla_uuid") String sla_uuid) {
-
+	public Response deleteAgreement(@PathParam("nsi_uuid") String nsi_uuid) {
 		ResponseBuilder apiresponse = null;
-		new cust_sla_corr();
-		int status = cust_sla_corr.deleteCorr(sla_uuid);
-		if (status == 200) {
-			String dr = "Agreement deleted";
-			apiresponse = Response.ok(dr);
-			apiresponse.header("Content-Length", dr.toString().length());
-			return apiresponse.status(200).build();
-		} else {
-			String dr = "Error connecting to database";
-			apiresponse = Response.ok(dr);
-			apiresponse.header("Content-Length", dr.toString().length());
-			return apiresponse.status(404).build();
-		}
+		String dr = null;
+		HttpURLConnection httpURLConnection = null;
+		URL url = null;
 
+		db_operations dbo = new db_operations();
+		dbo.connectPostgreSQL();
+		JSONObject agrPerNs = dbo.selectAgreementPerNSI(nsi_uuid);
+		String sla_status = (String) agrPerNs.get("sla_status");
+		dbo.closePostgreSQL();
+		
+		if (sla_status.equals("VIOLATED")) {
+			
+			dbo.connectPostgreSQL();
+			boolean deleted = dbo.deleteAgreement(nsi_uuid);
+			dbo.closePostgreSQL();
+			
+			if (deleted == true) {
+				JSONObject success_delete = new JSONObject();
+				success_delete.put("OK: ", "Agreement was deleted successfully.");
+				apiresponse = Response.ok((Object) success_delete);
+				apiresponse.header("Content-Length", success_delete.toJSONString().length());
+				return apiresponse.status(200).build();
+			} 
+			else {
+				JSONObject error_deleting = new JSONObject();
+				error_deleting.put("ERROR: ", "Agreement cannot be deleted.");
+				apiresponse = Response.ok((Object) error_deleting);
+				apiresponse.header("Content-Length", error_deleting.toJSONString().length());
+				return apiresponse.status(404).build();
+			}
+		} 
+		else {
+			JSONObject error_activesla = new JSONObject();
+			error_activesla.put("ERROR: ", "Agreement cannot be deleted because it's active.");
+			apiresponse = Response.ok((Object) error_activesla);
+			apiresponse.header("Content-Length", error_activesla.toJSONString().length());
+			return apiresponse.status(400).build();
+		}
 	}
 
 	/**
@@ -122,7 +145,7 @@ public class AgreementsAPIs {
 		boolean connect = db_operations.connectPostgreSQL();
 		if (connect == true) {
 			db_operations.createTableCustSla();
-			JSONObject agrPerNs = dbo.selectAgreementPerNSI(nsi_uuid);			
+			JSONObject agrPerNs = dbo.selectAgreementPerNSI(nsi_uuid);
 			dbo.closePostgreSQL();
 
 			apiresponse = Response.ok(agrPerNs);
@@ -181,14 +204,15 @@ public class AgreementsAPIs {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/{sla_uuid}/{nsi_uuid}")
-	public Response getAgreementDetails(@PathParam("sla_uuid") String sla_uuid, @PathParam("nsi_uuid") String nsi_uuid) {
+	public Response getAgreementDetails(@PathParam("sla_uuid") String sla_uuid,
+			@PathParam("nsi_uuid") String nsi_uuid) {
 
 		ResponseBuilder apiresponse = null;
 		try {
 			String url = System.getenv("CATALOGUES_URL") + "slas/template-descriptors/" + sla_uuid;
-//			 String url =
-//			 "http://pre-int-sp-ath.5gtango.eu:4011/catalogues/api/v2/slas/template-descriptors/"
-//			 + sla_uuid;
+			// String url =
+			// "http://pre-int-sp-ath.5gtango.eu:4011/catalogues/api/v2/slas/template-descriptors/"
+			// + sla_uuid;
 			URL object = new URL(url);
 
 			HttpURLConnection con = (HttpURLConnection) object.openConnection();
@@ -207,45 +231,46 @@ public class AgreementsAPIs {
 				response.append(inputLine);
 			}
 			in.close();
-			
-			//  get the core sla from the catalogue
+
+			// get the core sla from the catalogue
 			JSONParser parser = new JSONParser();
 			Object existingTemplates = parser.parse(response.toString());
-			JSONObject agreement =  (JSONObject) parser.parse(response.toString());
-			
+			JSONObject agreement = (JSONObject) parser.parse(response.toString());
+
 			// get customer details from db
 			db_operations dbo = new db_operations();
 			dbo.connectPostgreSQL();
 			db_operations.createTableCustSla();
 			JSONObject agrPerSlaNs = dbo.selectAgreementPerSlaNs(sla_uuid, nsi_uuid);
 			dbo.closePostgreSQL();
-			
+
 			String cust_uuid = (String) agrPerSlaNs.get("cust_uuid");
 			String cust_email = (String) agrPerSlaNs.get("cust_email");
 			String sla_date = (String) agrPerSlaNs.get("sla_date");
 
-			// update the template with the necessary customer info - convert it to agreement
+			// update the template with the necessary customer info - convert it to
+			// agreement
 			JSONObject slad = (JSONObject) agreement.get("slad");
 			JSONObject sla_template = (JSONObject) slad.get("sla_template");
-			
+
 			/** change the offered date to the date the agreement was created */
 			sla_template.put("offered_date", sla_date);
-			
+
 			/** add the customer information */
 			JSONObject customer_info = new JSONObject();
 			customer_info.put("cust_uuid", cust_uuid);
 			customer_info.put("cust_email", cust_email);
-			sla_template.put("customer_info", customer_info);		
-			
+			sla_template.put("customer_info", customer_info);
+
 			System.out.println(agreement);
 			existingTemplates = agreement;
-			
+
 			apiresponse = Response.ok((Object) existingTemplates);
 			apiresponse.header("Content-Length", agreement.toJSONString().length() - 8);
 			return apiresponse.status(200).build();
 
 		} catch (Exception e) {
-			
+
 			JSONObject error = new JSONObject();
 			error.put("ERROR: ", "SLA Not Found");
 			apiresponse = Response.ok((Object) error);

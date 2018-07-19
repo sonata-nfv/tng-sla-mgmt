@@ -1076,7 +1076,7 @@
 						"description": "ERROR: SLA not found"
 					}
 				},
-				"operationId": "delete_agreement",
+				"operationId": "get_agreement",
 				"tags": [
 					"SLA-Agreements-v1"
 				]
@@ -1247,6 +1247,200 @@
 				"operationId": "guarantees_per_sla",
 				"tags": [
 					"SLA-Agreements-v1"
+				]
+			}
+		},
+		"/agreements/{nsi_uuid}": {
+			"parameters": [
+				{
+					"name": "nsi_uuid",
+					"in": "path",
+					"type": "string",
+					"required": true,
+					"description": "Network Service Instance uuid"
+				}
+			],
+			"delete": {
+				"responses": {
+					"200": {
+						"description": "Success: Agreement was deleted successfully."
+					},
+					"404": {
+						"description": "ERROR: Agreement cannot be deleted."
+					},
+					"400": {
+						"description": "ERROR: Agreement cannot be deleted because it's active."
+					}
+				},
+				"operationId": "delete_sla_template",
+				"tags": [
+					"SLA-Templates-v1"
+				]
+			},
+			"get": {
+				"responses": {
+					"200": {
+						"description": "Success",
+						"headers": {
+							"Content-Type": {
+								"description": "The MIME type of the body of the response (\"application/json\").",
+								"type": "string",
+								"maximum": 1,
+								"minimum": 1
+							}
+						},
+						"schema": {
+							"type": "object",
+							"properties": {
+								"descriptor_schema": {
+									"description": "The descriptor schema the template follows",
+									"type": "string"
+								},
+								"name": {
+									"description": "The name of the sla template",
+									"type": "string"
+								},
+								"vendor": {
+									"description": "The vendor of the sla template",
+									"type": "string"
+								},
+								"version": {
+									"description": "The version of the sla template",
+									"type": "string"
+								},
+								"author": {
+									"description": "The author/s of the sla template",
+									"type": "string"
+								},
+								"description": {
+									"description": "A simple description of the sla template",
+									"type": "string"
+								},
+								"sla_template": {
+									"type": "object",
+									"properties": {
+										"template_name": {
+											"description": "The user defined sla template name",
+											"type": "string"
+										},
+										"offered_date": {
+											"description": "The sla template offered date",
+											"type": "string"
+										},
+										"valid_until": {
+											"description": "The sla template expiration date",
+											"type": "string"
+										},
+										"ns": {
+											"type": "object",
+											"properties": {
+												"ns_uuid": {
+													"description": "The accosiated ns uuid",
+													"type": "string"
+												},
+												"ns_vendor": {
+													"description": "The accosiated ns vendor",
+													"type": "string"
+												},
+												"ns_version": {
+													"description": "The accosiated ns version",
+													"type": "string"
+												},
+												"ns_description": {
+													"description": "The accosiated ns description",
+													"type": "string"
+												},
+												"guaranteeTerms": {
+													"type": "array",
+													"items": {
+														"type": "object",
+														"properties": {
+															"guaranteeID": {
+																"description": "The id of the selected guarantee term",
+																"type": "string"
+															},
+															"name": {
+																"description": "The name of the selected guarantee term",
+																"type": "string"
+															},
+															"definition": {
+																"description": "A short definition of the selected guarantee term",
+																"type": "string"
+															},
+															"value": {
+																"description": "The value of the selected guarantee term",
+																"type": "string"
+															},
+															"operator": {
+																"description": "The operator describing the expression of the selected guarantee term",
+																"type": "string"
+															},
+															"unit": {
+																"description": "The unit describing the selected guarantee term",
+																"type": "string"
+															},
+															"serviceLevelObjetive": {
+																"type": "object",
+																"properties": {
+																	"period": {
+																		"description": "The period that the guarantee term will be calculated",
+																		"type": "string"
+																	},
+																	"parameter": {
+																		"description": "The service level objective that is going to be guaranteed",
+																		"type": "string"
+																	},
+																	"serviceLevel": {
+																		"description": "The unit describing the selected guarantee term",
+																		"type": "string"
+																	},
+																	"duration": {
+																		"description": "The monitoring duration of the guarantee",
+																		"type": "string"
+																	},
+																	"target_value": {
+																		"description": "The monitoring target_value of the guarantee",
+																		"type": "string"
+																	},
+																	"serviceLevelDetail": {
+																		"type": "array",
+																		"items": {
+																			"type": "object",
+																			"properties": {
+																				"unit": {
+																					"description": "The unit of the guarantee term",
+																					"type": "string"
+																				},
+																				"value": {
+																					"description": "The value of the guarantee term",
+																					"type": "string"
+																				},
+																				"operator": {
+																					"description": "The operator describing the expression of the guarantee term",
+																					"type": "string"
+																				}
+																			}
+																		}
+																	}
+																}
+															}
+														}
+													}
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "ERROR: SLA Not Found"
+					}
+				},
+				"operationId": "get_sla_by_uuid",
+				"tags": [
+					"SLA-Templates-v1"
 				]
 			}
 		},
