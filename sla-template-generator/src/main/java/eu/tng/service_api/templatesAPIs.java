@@ -58,6 +58,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.UriInfo;
 
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
@@ -79,9 +80,9 @@ public class templatesAPIs {
 	public Response getTemplates() {
 		ResponseBuilder apiresponse = null;
 		try {
-			String url = System.getenv("CATALOGUES_URL") + "slas/template-descriptors";
-			// String url =
-			// "http://pre-int-sp-ath.5gtango.eu:4011/catalogues/api/v2/slas/template-descriptors";
+			//String url = System.getenv("CATALOGUES_URL") + "slas/template-descriptors";
+			 String url =
+			 "http://pre-int-sp-ath.5gtango.eu:4011/catalogues/api/v2/slas/template-descriptors";
 			URL object = new URL(url);
 
 			HttpURLConnection con = (HttpURLConnection) object.openConnection();
@@ -100,10 +101,15 @@ public class templatesAPIs {
 				response.append(inputLine);
 			}
 			in.close();
+
 			JSONParser parser = new JSONParser();
 			Object existingTemplates = parser.parse(response.toString());
+
+			// check every sla uuid if has associated agreement - put an extra field : associated_agreement:true/false
+			existingTemplates = hasCorrelatedAgreement(existingTemplates);
+
 			apiresponse = Response.ok((Object) existingTemplates);
-			apiresponse.header("Content-Length", response.length());
+			apiresponse.header("Content-Length", existingTemplates.toString().length());
 			return apiresponse.status(200).build();
 
 		} catch (Exception e) {
@@ -114,6 +120,27 @@ public class templatesAPIs {
 			return apiresponse.status(404).build();
 		}
 
+	}
+
+	private Object hasCorrelatedAgreement(Object existingTemplates) {
+		JSONArray templates = (JSONArray) existingTemplates;
+		for (int i = 0; i < templates.size(); i++) {
+			JSONObject slaObject = (JSONObject) templates.get(i);
+			String sla_uuid = (String) slaObject.get("uuid");
+
+			db_operations dbo = new db_operations();
+			dbo.connectPostgreSQL();
+			int counter = dbo.countAgreementCorrelationPeriD(sla_uuid);
+			dbo.closePostgreSQL();
+
+			if (counter != 0) {
+				slaObject.put("associated_agreement", "true");
+			} else {
+				slaObject.put("associated_agreement", "false");
+			}
+		}
+		Object updatedTemplates = templates;
+		return updatedTemplates;
 	}
 
 	/**
@@ -323,19 +350,18 @@ public class templatesAPIs {
 		dbo.connectPostgreSQL();
 		int counter = dbo.countAgreementCorrelationPeriD(sla_uuid);
 		dbo.closePostgreSQL();
-		
+
 		if (counter != 0) {
 			dr = ("ERROR: SLA Template cannot be deleted because it is associated with an instantiated NS.");
 			apiresponse = Response.ok();
 			apiresponse.header("Content-Length", (dr.length()));
 			return apiresponse.status(400).entity(dr).build();
-		} 
-		else {
+		} else {
 			try {
-				 url = new
-				 URL("http://pre-int-sp-ath.5gtango.eu:4011/catalogues/api/v2/slas/template-descriptors/"
-				 + sla_uuid);
-				//url = new URL(System.getenv("CATALOGUES_URL") + "slas/template-descriptors/" + sla_uuid);
+				url = new URL("http://pre-int-sp-ath.5gtango.eu:4011/catalogues/api/v2/slas/template-descriptors/"
+						+ sla_uuid);
+				// url = new URL(System.getenv("CATALOGUES_URL") + "slas/template-descriptors/"
+				// + sla_uuid);
 
 				httpURLConnection = (HttpURLConnection) url.openConnection();
 				httpURLConnection.setRequestProperty("Content-Type", "application/json");
