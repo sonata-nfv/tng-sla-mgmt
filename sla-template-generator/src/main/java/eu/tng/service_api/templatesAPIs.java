@@ -345,9 +345,9 @@ public class templatesAPIs {
 		String dr = null;
 		HttpURLConnection httpURLConnection = null;
 		URL url = null;
-
+		
 		db_operations dbo = new db_operations();
-		dbo.connectPostgreSQL();
+		dbo.createTableCustSla();
 		int counter = dbo.countAgreementCorrelationPeriD(sla_uuid);
 		dbo.closePostgreSQL();
 
@@ -358,10 +358,12 @@ public class templatesAPIs {
 			return apiresponse.status(400).entity(dr).build();
 		} else {
 			try {
-				url = new URL("http://pre-int-sp-ath.5gtango.eu:4011/catalogues/api/v2/slas/template-descriptors/"
-						+ sla_uuid);
-				// url = new URL(System.getenv("CATALOGUES_URL") + "slas/template-descriptors/"
-				// + sla_uuid);
+			    /*
+				 url = new
+				 URL("http://pre-int-sp-ath.5gtango.eu:4011/catalogues/api/v2/slas/template-descriptors/"
+				 + sla_uuid);
+				 */
+				url = new URL(System.getenv("CATALOGUES_URL") + "slas/template-descriptors/" + sla_uuid);
 
 				httpURLConnection = (HttpURLConnection) url.openConnection();
 				httpURLConnection.setRequestProperty("Content-Type", "application/json");
