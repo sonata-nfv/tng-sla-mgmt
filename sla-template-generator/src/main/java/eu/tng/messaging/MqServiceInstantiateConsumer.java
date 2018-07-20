@@ -148,7 +148,7 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 											JSONArray vnfc_instance = (JSONArray) ((JSONObject) vdus.getJSONObject(j)).getJSONArray("vnfc_instance");
 											for (int k = 0; k < vnfc_instance.length(); k++) {
 												String vc_id = (String) ((JSONObject) vnfc_instance.getJSONObject(j)).get("vc_id");
-												vc_id_list.add(vnfr_id);	
+												vc_id_list.add(vc_id);	
 											}
 										}										
 									}
