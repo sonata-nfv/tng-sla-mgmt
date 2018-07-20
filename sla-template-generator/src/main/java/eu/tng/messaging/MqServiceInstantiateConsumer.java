@@ -99,7 +99,7 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 					String correlation_id = null;
 					JSONObject jsonObjectMessage = null;
 					String nsi_id = "";
-					String sla_id = "";
+					Object sla_id = null;
 					ArrayList<String> vc_id_list = new ArrayList<String>();
 					ArrayList<String> vnfr_id_list = new ArrayList<String>();
 				
@@ -108,6 +108,9 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 					// parse the yaml and convert it to json
 					Yaml yaml = new Yaml();
 					Map<String, Object> map = (Map<String, Object>) yaml.load(message);
+					
+					sla_id =  map.get("sla_id");
+					
 					jsonObjectMessage = new JSONObject(map);
 
 					System.out.println("START READING HEADERS FROM MESSAGE.....");
@@ -123,11 +126,8 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 
 						if (status.equals("READY")) {
 							System.out.println(" [*] Entered if status equals ready");
-
 							// get info for the monitoring metrics
-							// Get sla_id
-							sla_id = (String) jsonObjectMessage.get("sla_id");
-							if (sla_id != null && !sla_id.isEmpty()) {
+							if (sla_id != null) {
 								// Get service uuid
 								JSONObject nsr = (JSONObject) jsonObjectMessage.getJSONObject("nsr");
 								nsi_id = (String) nsr.get("id");
@@ -168,7 +168,7 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 								System.out.println(" [*] VDUS_ID LIST ==>  " + vc_id_list);
 
 								MonitoringRules mr = new MonitoringRules();
-								MonitoringRules.createMonitroingRules(sla_id, vnfr_id_list, vc_id_list, nsi_id);
+								MonitoringRules.createMonitroingRules(String.valueOf(sla_id), vnfr_id_list, vc_id_list, nsi_id); 
 							}
 
 						}
