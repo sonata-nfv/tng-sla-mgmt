@@ -97,8 +97,8 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 					// Initialize variables
 					String status = "test";
 					JSONObject jsonObjectMessage = null;
-					ArrayList<String> vnfr_id_list = new ArrayList<String>();
-					ArrayList<String> vdus_id_list = new ArrayList<String>();
+					ArrayList<String> vnfrs_list = new ArrayList<String>();
+					ArrayList<String> vdus_list = new ArrayList<String>();
 					String correlation_id = null;
 
 					// Parse message payload
@@ -120,86 +120,61 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 						System.out.println(" [*] STATUS ==> " + status);
 
 						if (status.equals("READY")) {
+							System.out.println(" [*] Entered if status equals ready");
 
 							// get info for the monitoring metrics
 							String sla_id = "";
 							String ns_id = "";
 							// Get sla_id
 							sla_id = (String) jsonObjectMessage.get("sla_id");
+							System.out.println(" [*] sla id from parsing the message ==> " + sla_id);
 
 							if (sla_id != null && !sla_id.isEmpty()) {
-								 // Get service uuid
-								 JSONObject nsr = (JSONObject) jsonObjectMessage.getJSONObject("nsr");
-								 ns_id = (String) nsr.get("id");
-								// get vnfrs info
+
+								System.out.println(" [*] entered if sla not null");
+
+								// Get service uuid
+								JSONObject nsr = (JSONObject) jsonObjectMessage.getJSONObject("nsr");
+								ns_id = (String) nsr.get("id");
+								System.out.println(" [*] ns_id from parsing the message ==> " + ns_id);
+
+								// Get vnfrs
 								JSONArray vnfrs = (JSONArray) jsonObjectMessage.getJSONArray("vnfrs");
 								for (int i = 0; i < (vnfrs).length(); i++) {
+									System.out.println(" [*] entered vnfrs for loop ");
 									// Get vdus foreach vnfr
 									JSONArray vdus = (JSONArray) ((JSONObject) vnfrs.getJSONObject(i))
 											.getJSONArray("virtual_deployment_units");
+									
 									for (int j = 0; j < vdus.length(); j++) {
-										String vdu_reference = (String) ((JSONObject) vdus.getJSONObject(i))
-												.get("vdu_reference");
-										// if vnfr is the haproxy function - conti nue to the monitoring creation
-										// metrics
-										if (vdu_reference.contains("haproxy")) {
-											
-											// get vnfr id
-											String vnfr_id = (String) ((JSONObject) vnfrs.get(i)).get("id");
-											vnfr_id_list.add(vnfr_id);
-		
-											// get vdu id (vc_id)
-											JSONArray vnfc_instance = (JSONArray) ((JSONObject) vdus.getJSONObject(j)).getJSONArray("vnfc_instance");
-											for (int k = 0; k < vnfc_instance.length(); k++) {
-												String vc_id = (String) ((JSONObject) vnfc_instance.getJSONObject(j)).get("vc_id");
-												vdus_id_list.add(vc_id);
-											}
-										}
+										System.out.println(" [*] entered vdus for loop ");
+										String vdu_reference = (String) ((JSONObject) vdus.getJSONObject(j)).get("vdu_reference");
+										System.out.println(" [*] vdu_reference from parsing the message ==> " + vdu_reference);
+										vdus_list.add(vdu_reference);
+										System.out.println(" [*] VDUs vdu_reference List from MANO message ==> " + vdus_list);
+										
+										
+										
 									}
+
 								}
 
-								// // Get service uuid
-								// JSONObject nsr = (JSONObject) jsonObjectMessage.getJSONObject("nsr");
-								// ns_id = (String) nsr.get("id");
-								// // Get vnfrs
-								// JSONArray vnfrs = (JSONArray) jsonObjectMessage.getJSONArray("vnfrs");
-								// for (int i = 0; i < (vnfrs).length(); i++) {
-								// // Get vdus foreach vnfr
-								// JSONArray vdus = (JSONArray) ((JSONObject) vnfrs.getJSONObject(i))
-								// .getJSONArray("virtual_deployment_units");
-								// for (int j = 0; j < vdus.length(); j++) {
-								// String vdu_reference = (String) ((JSONObject) vdus.getJSONObject(i))
-								// .get("vdu_reference");
-								// vdu_reference_list.add(vdu_reference);
-								// System.out.println(" [*] VDU Reference name ==> " + vdu_reference_list);
-								//
-								// // check if vnf is haproxy
-								// if (vdu_reference.contains("haproxy") ) {
-								// JSONArray vnfc_instance = (JSONArray) ((JSONObject) vdus.getJSONObject(j))
-								// .getJSONArray("vnfc_instance");
-								// for (int k = 0; k < vnfc_instance.length(); k++) {
-								// String vc_id = (String) ((JSONObject)
-								// vnfc_instance.getJSONObject(j)).get("vc_id");
-								// vdus_list.add(vc_id);
-								// System.out.println(" [*] VDUs (vc_id) List==> " + vdus_list);
-								// }
-								// }
-								// }
-								// }
-
-								// Update NSI Records
+								System.out.println(" [*] Start inserting record to dbv for agreement.... ");
+								// Update NSI Records - to create agreement
 								db_operations dbo = new db_operations();
 								db_operations.connectPostgreSQL();
 								db_operations.UpdateRecordAgreement(status, correlation_id, ns_id);
 								db_operations.closePostgreSQL();
 								// call the create rules method
-								MonitoringRules mr = new MonitoringRules();
-								MonitoringRules.createMonitroingRules(sla_id, vnfr_id_list, vdus_id_list, ns_id);
+//								System.out.println(" [*] Start creating monitoring rules....");
+//								MonitoringRules mr = new MonitoringRules();
+//								MonitoringRules.createMonitroingRules(sla_id, vnfrs_list, vdus_list, ns_id);
 							}
 
 						}
 
 					}
+
 					/** if message coming from the GK - doesn't contain status key **/
 					else {
 						System.out.println(" [*] Message coming from Gatekeeper.....");
