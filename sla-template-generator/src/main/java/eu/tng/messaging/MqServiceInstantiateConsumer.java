@@ -153,7 +153,24 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 										vdus_list.add(vdu_reference);
 										System.out.println(" [*] VDUs vdu_reference List from MANO message ==> " + vdus_list);
 										
-										
+										// if vnfr is the haproxy function - continue to the monitoring creation
+										// metrics
+										if (vdu_reference.startsWith("haproxy") == true) {
+											System.out.println(" [*] entered if. VDU REFERENCE CONTAINS == TRUE ");
+											// get vnfr id
+											String vnfr_id = (String) ((JSONObject) vnfrs.get(i)).get("id");
+											vnfrs_list.add(vnfr_id);
+											System.out.println(" [*] VDUs System List from MANO message ==> " + vnfrs_list);
+		
+											// get vdu id (vc_id)
+											JSONArray vnfc_instance = (JSONArray) ((JSONObject) vdus.getJSONObject(j)).getJSONArray("vnfc_instance");
+											for (int k = 0; k < vnfc_instance.length(); k++) {
+												System.out.println(" [*] entereED vnfc_instancefor loop" );
+												String vc_id = (String) ((JSONObject) vnfc_instance.getJSONObject(j)).get("vc_id");
+												System.out.println(" [*] VC_ID from MANO message ==> " + vc_id);
+
+											}
+										}
 										
 									}
 
