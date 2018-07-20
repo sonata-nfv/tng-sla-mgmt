@@ -313,7 +313,8 @@ public class templatesAPIs {
 	 * api call in order to edit an already existing sla template
 	 */
 
-	@Path("/{sla_uuid}")
+	@SuppressWarnings("static-access")
+    @Path("/{sla_uuid}")
 	@Produces(MediaType.TEXT_PLAIN)
 	@DELETE
 	public Response deleteTemplate(@PathParam("sla_uuid") String sla_uuid) {
@@ -324,9 +325,10 @@ public class templatesAPIs {
 		URL url = null;
 		
 		db_operations dbo = new db_operations();
-		db_operations.createTableCustSla();
+		dbo.connectPostgreSQL();
+		dbo.createTableCustSla();
 		int counter = dbo.countAgreementCorrelationPeriD(sla_uuid);
-		db_operations.closePostgreSQL();
+		dbo.closePostgreSQL();
 
 		if (counter != 0) {
 			dr = ("ERROR: SLA Template cannot be deleted because it is associated with an instantiated NS.");
