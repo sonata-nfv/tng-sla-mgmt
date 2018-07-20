@@ -55,7 +55,7 @@ public class MonitoringRules {
 	 * Create monitoring rules based on a instantiated NS and the selected SLA
 	 **/
 	public static JSONObject createMonitroingRules(String sla_uuid, ArrayList<String> vnfr_id_list,
-			ArrayList<String> vdus_id_list, String ns_id) throws IOException {
+			ArrayList<String> vdus_id_list, String nsi_id) throws IOException {
 
 		JSONObject root = new JSONObject();
 
@@ -119,7 +119,7 @@ public class MonitoringRules {
 			root.put("vnfs", vnfs);
 			System.out.println("monitoring body ==> " + root);
 			PublishMonitoringRules mr = new PublishMonitoringRules();
-			mr.publishMonitringRules(root, ns_id);
+			mr.publishMonitringRules(root, nsi_id);
 
 		} else {
 			System.out.println("ERROR: Unable to create rules. SLA ID is null");

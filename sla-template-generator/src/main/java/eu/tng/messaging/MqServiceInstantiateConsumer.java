@@ -95,12 +95,14 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 				public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties,
 						byte[] body) throws IOException {
 					// Initialize variables
-					String status = "test";
-					JSONObject jsonObjectMessage = null;
-					ArrayList<String> vnfrs_list = new ArrayList<String>();
-					ArrayList<String> vdus_list = new ArrayList<String>();
+					String status = "";
 					String correlation_id = null;
-
+					JSONObject jsonObjectMessage = null;
+					String nsi_id = "";
+					String sla_id = "";
+					ArrayList<String> vc_id_list = new ArrayList<String>();
+					ArrayList<String> vnfr_id_list = new ArrayList<String>();
+				
 					// Parse message payload
 					String message = new String(body, "UTF-8");
 					// parse the yaml and convert it to json
@@ -123,69 +125,50 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 							System.out.println(" [*] Entered if status equals ready");
 
 							// get info for the monitoring metrics
-							String sla_id = "";
-							String ns_id = "";
 							// Get sla_id
 							sla_id = (String) jsonObjectMessage.get("sla_id");
-							System.out.println(" [*] sla id from parsing the message ==> " + sla_id);
-
 							if (sla_id != null && !sla_id.isEmpty()) {
-
-								System.out.println(" [*] entered if sla not null");
-
 								// Get service uuid
 								JSONObject nsr = (JSONObject) jsonObjectMessage.getJSONObject("nsr");
-								ns_id = (String) nsr.get("id");
-								System.out.println(" [*] ns_id from parsing the message ==> " + ns_id);
-
+								nsi_id = (String) nsr.get("id");
 								// Get vnfrs
 								JSONArray vnfrs = (JSONArray) jsonObjectMessage.getJSONArray("vnfrs");
 								for (int i = 0; i < (vnfrs).length(); i++) {
-									System.out.println(" [*] entered vnfrs for loop ");
-									// Get vdus foreach vnfr
-									JSONArray vdus = (JSONArray) ((JSONObject) vnfrs.getJSONObject(i))
-											.getJSONArray("virtual_deployment_units");
-									
+									// Get vdus_reference foreach vnfr
+									JSONArray vdus = (JSONArray) ((JSONObject) vnfrs.getJSONObject(i)).getJSONArray("virtual_deployment_units");
 									for (int j = 0; j < vdus.length(); j++) {
-										System.out.println(" [*] entered vdus for loop ");
-										String vdu_reference = (String) ((JSONObject) vdus.getJSONObject(j)).get("vdu_reference");
-										System.out.println(" [*] vdu_reference from parsing the message ==> " + vdu_reference);
-										vdus_list.add(vdu_reference);
-										System.out.println(" [*] VDUs vdu_reference List from MANO message ==> " + vdus_list);
-										
+										String vdu_reference = (String) ((JSONObject) vdus.getJSONObject(j)).get("vdu_reference");									
 										// if vnfr is the haproxy function - continue to the monitoring creation
 										// metrics
 										if (vdu_reference.startsWith("haproxy") == true) {
-											System.out.println(" [*] entered if. VDU REFERENCE CONTAINS == TRUE ");
 											// get vnfr id
 											String vnfr_id = (String) ((JSONObject) vnfrs.get(i)).get("id");
-											vnfrs_list.add(vnfr_id);
-											System.out.println(" [*] VDUs System List from MANO message ==> " + vnfrs_list);
-		
+											vnfr_id_list.add(vnfr_id);	
 											// get vdu id (vc_id)
 											JSONArray vnfc_instance = (JSONArray) ((JSONObject) vdus.getJSONObject(j)).getJSONArray("vnfc_instance");
 											for (int k = 0; k < vnfc_instance.length(); k++) {
-												System.out.println(" [*] entereED vnfc_instancefor loop" );
 												String vc_id = (String) ((JSONObject) vnfc_instance.getJSONObject(j)).get("vc_id");
-												System.out.println(" [*] VC_ID from MANO message ==> " + vc_id);
-
+												vc_id_list.add(vnfr_id);	
 											}
-										}
-										
+										}										
 									}
-
 								}
 
-								System.out.println(" [*] Start inserting record to dbv for agreement.... ");
 								// Update NSI Records - to create agreement
+								System.out.println(" [*] Start inserting record to dbv for agreement.... ");
 								db_operations dbo = new db_operations();
 								db_operations.connectPostgreSQL();
-								db_operations.UpdateRecordAgreement(status, correlation_id, ns_id);
+								db_operations.UpdateRecordAgreement(status, correlation_id, nsi_id);
 								db_operations.closePostgreSQL();
-								// call the create rules method
-//								System.out.println(" [*] Start creating monitoring rules....");
-//								MonitoringRules mr = new MonitoringRules();
-//								MonitoringRules.createMonitroingRules(sla_id, vnfrs_list, vdus_list, ns_id);
+								
+								// Create rules
+								System.out.println(" [*] Start creating monitoring rules... ");
+								System.out.println(" [*] NSI ID ==> "+ nsi_id );
+								System.out.println(" [*] VNFRS_ID LIST ==>  " + vnfr_id_list);
+								System.out.println(" [*] VDUS_ID LIST ==>  " + vc_id_list);
+
+								MonitoringRules mr = new MonitoringRules();
+								MonitoringRules.createMonitroingRules(sla_id, vnfr_id_list, vc_id_list, nsi_id);
 							}
 
 						}
