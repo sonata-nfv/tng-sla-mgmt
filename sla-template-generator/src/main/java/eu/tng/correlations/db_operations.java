@@ -685,6 +685,34 @@ public class db_operations {
 		}
 		return violations;
 	}
+	
+	
+	@SuppressWarnings("unchecked")
+	public static int countViolationsPerNsi(String nsi_uuid) {
+
+		String SQL = "SELECT count(*) FROM sla_violations where ns_uuid = '" + nsi_uuid + "' ";
+		int count_violations = 0;
+		try {
+			stmt = c.createStatement();
+			ResultSet rs = stmt.executeQuery(SQL);
+			while (rs.next()) {
+				count_violations = rs.getInt(1);
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		System.out.println("SLA Violations for this NSI  are ==> " + count_violations);
+		return count_violations;
+
+	}
+	
+	
+	
+	
+	
+	
+	
 
 	/**
 	 * Delete Record
