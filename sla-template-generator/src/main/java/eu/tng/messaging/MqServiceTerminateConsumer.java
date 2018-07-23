@@ -91,35 +91,42 @@ public class MqServiceTerminateConsumer implements ServletContextListener {
 						byte[] body) throws IOException {
 
 					JSONObject jsonObjectMessage = null;
-					String correlation_id = "";
-					String status = "";
-					String nsi_uuid = "";
+					Object correlation_id = null;
+					Object status = null;
+					Object nsi_uuid = null;
 
 					// Parse message payload
 					String message = new String(body, "UTF-8");
-					System.out.println("Message for terminating service received: " + message);
+					
 					// parse the yaml and convert it to json
 					Yaml yaml = new Yaml();
 					Map<String, Object> map = (Map<String, Object>) yaml.load(message);
+					System.out.println("Message for terminating service received (printed as MAP): " + map);
 					jsonObjectMessage = new JSONObject(map);
 
+					System.out.println("Message (printed as JSONObject)" + jsonObjectMessage);
+					
+					
 					System.out.println("START READING HEADERS FROM MESSAGE.....");
-					correlation_id = (String) properties.getCorrelationId();
+					correlation_id = properties.getCorrelationId();
+					
 					System.out.println(" [*] Correlation_id ==> " + correlation_id);
 
-					// get status
-					//status = (String) jsonObjectMessage.get("status");
 
 					/** if message coming from the MANO - contain status key **/
 					if (jsonObjectMessage.has("status")) {
-					    status = (String) jsonObjectMessage.get("status");
+					    
+					    status = map.get("status");
+					    
 						if (status.equals("READY")) {
-
+						    System.out.println("STATUS READY");
 							// make the agreement status 'TERMINATED'
 							db_operations dbo = new db_operations();
 							db_operations.connectPostgreSQL();
-							db_operations.TerminateAgreement("TERMINATED", correlation_id);
+							db_operations.TerminateAgreement("TERMINATED", correlation_id.toString());
 							db_operations.closePostgreSQL();
+							System.out.println("Service TERMINATED, DB Updated");
+							
 						}
 
 					}
@@ -128,16 +135,15 @@ public class MqServiceTerminateConsumer implements ServletContextListener {
 
 						System.out.println(" [*] Message coming from Gatekeeper.....");
 						System.out.println(" [*] Message as JSONObject ==> " + jsonObjectMessage);
-						nsi_uuid = (String) jsonObjectMessage.get("instance_id");
+						nsi_uuid = map.get("service_instance_uuid");
 						System.out.println(" [*] instance_id  ==> " + nsi_uuid);
 						
-						
-						// make the agreement status 'TERMINATED'
 						db_operations dbo = new db_operations();
 						db_operations.connectPostgreSQL();
 						// make update record to change the correlation id  -  the correlation id of the termination messaging
-						db_operations.UpdateCorrelationID(nsi_uuid, correlation_id);
-                        db_operations.closePostgreSQL();				
+						db_operations.UpdateCorrelationID(nsi_uuid.toString(), correlation_id.toString());
+                        db_operations.closePostgreSQL();			
+                        System.out.println("Correaltion ID UPDATED");
 					}
 
 				}
