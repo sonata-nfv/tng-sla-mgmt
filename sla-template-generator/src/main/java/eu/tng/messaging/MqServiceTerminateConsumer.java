@@ -91,9 +91,9 @@ public class MqServiceTerminateConsumer implements ServletContextListener {
 						byte[] body) throws IOException {
 
 					JSONObject jsonObjectMessage = null;
-					String correlation_id = null;
-					String status = null;
-					String nsi_uuid = null;
+					String correlation_id = "";
+					String status = "";
+					String nsi_uuid = "";
 
 					// Parse message payload
 					String message = new String(body, "UTF-8");
@@ -108,10 +108,11 @@ public class MqServiceTerminateConsumer implements ServletContextListener {
 					System.out.println(" [*] Correlation_id ==> " + correlation_id);
 
 					// get status
-					status = (String) jsonObjectMessage.get("status");
+					//status = (String) jsonObjectMessage.get("status");
 
 					/** if message coming from the MANO - contain status key **/
 					if (jsonObjectMessage.has("status")) {
+					    status = (String) jsonObjectMessage.get("status");
 						if (status.equals("READY")) {
 
 							// make the agreement status 'TERMINATED'
