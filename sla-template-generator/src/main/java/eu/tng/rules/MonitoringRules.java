@@ -54,7 +54,8 @@ public class MonitoringRules {
 	/**
 	 * Create monitoring rules based on a instantiated NS and the selected SLA
 	 **/
-	public static JSONObject createMonitroingRules(String sla_uuid, ArrayList<String> vnfr_id_list,
+	@SuppressWarnings("unchecked")
+    public static JSONObject createMonitroingRules(String sla_uuid, ArrayList<String> vnfr_id_list,
 			ArrayList<String> vdus_id_list, String nsi_id) throws IOException {
 
 		JSONObject root = new JSONObject();
@@ -94,7 +95,8 @@ public class MonitoringRules {
 						String target_value = (String) ((JSONObject) slos.get(k)).get("target_value");
 
 						// call function createCondition
-						ArrayList dc = createCondition(name,target_period, target_value,vdus_id_list.get(j));
+						@SuppressWarnings("rawtypes")
+                        ArrayList dc = createCondition(name,target_period, target_value,vdus_id_list.get(j));
 						String description = (String) dc.get(0);
 						String condition = (String) dc.get(1);
 
@@ -129,14 +131,16 @@ public class MonitoringRules {
 		return root;
 	}
 
-	private static ArrayList createCondition(String name, String target_period, String target_value, String vdu_id) {
+	@SuppressWarnings("rawtypes")
+    private static ArrayList createCondition(String name, String target_period, String target_value, String vdu_id) {
 		ArrayList<String> dc = new ArrayList<String>();
+		String vdu_id_quotes = "\"" + vdu_id + "\"";
 		switch (name) {
 		case "Resilience":
 			String description = "Trigger events if VM is down more than " + target_value + " seconds in window of: " + target_period;
 			//String condition = "vm_up{id="+id+"}> " + target_value;
 			//String condition = "delta(haproxy_backend_downtime{resource_id=" + vdu_id + "}["+target_period+"]) >"+target_value;
-			String condition = "delta(haproxy_backend_downtime{resource_id=" + vdu_id + "}[1h]) > -1";
+			String condition = "delta(haproxy_backend_downtime{resource_id=" + vdu_id_quotes + "}[1h]) > -1";
 			dc.add(description);
 			dc.add(condition);
 			break;
@@ -146,7 +150,8 @@ public class MonitoringRules {
 		return dc;
 	}
 
-	public static JSONObject getSloDetails(String sla_uuid) {
+	@SuppressWarnings("unchecked")
+    public static JSONObject getSloDetails(String sla_uuid) {
 
 		JSONObject slo_details = new JSONObject();
 
