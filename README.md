@@ -2,23 +2,25 @@
 
 # tng-sla-mgmt [![Build Status](https://jenkins.sonata-nfv.eu/buildStatus/icon?job=tng-sla-mgmt/master)](https://jenkins.sonata-nfv.eu/job/tng-sla-mgmt/job/master/)   [![Join the chat at https://gitter.im/sonata-nfv/5gtango-sp](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/sonata-nfv/5gtango-sp)
 
-The 5GTANGO Service Platform's (SP) SLA Manager Repository.  
+5GTANGO's SLA management framework is part of the SONATA powered by 5GTANGO Service Platform. The SLA Management repository includes the SLAs descriptors
+examples and schemas, as well as all mechanisms that are implemented. The schema files are written in JSON-Schema, and the mechanisms included in the
+tng-sla-mgmt for the first release includes the `SLA Template Generator`. It's purpose is to create initial and tailored SLA templates driven from the operator.
+The SLA Templates are then available to the Customers, in order to select the desired one during the NS instantiation process. Agreements are also available
+to both operator and customer, in order to manage them accordingly.
 
-The SLA Management repository includes the SLAs descriptors examples and schemas, as well as all mechanisms that need to be implemented. 
-   
-The schema files are written in JSON-Schema      
-   
-The mechanisms included in the tng-sla-mgmt for the first release include the `SLA Template Generator`. The purpose is to create
-initial and tailored SLA templates from the operator. The SLA Templates are available to the Customers,in order to select the 
-desired one during the NS instantiation process. Agreements are also available to both operator and customer, in 
-order to manage the accordingly, as well as the violation of them.
-
-## Built With
+The violation of a SLA agreement is important to the customer. For this reason, while monitoring data are gathered by the monitoring manager, are then published
+to the SLA manager in case of a SLA violation. The afforementioned process is happening through publishing messages in the Message Queue framework (RabbitMQ) that is
+used in the project for communication purposes between each micro service. An example of an SLA violation can be the following. In this release, availability among others,
+is a supported metric by the monitoring manager. Different values of service's availability can be signed in the SLA agreement. If 98% is chosen by the customer, 
+this is translated into maximum downtime of his/her service 1.5 seconds in a windows of 60 secs. IF this limit is reached, an alert from the monitoring manager is produced.
+As SLA manager is a consumer of that topic in the MQ, it will consume the alert and mark the agreement as 'VIOLATED'.
+ 
+## Dependencies
 
 ### Programming Language
-The first release of the SLA Manager has been programmed using JAVA. Jersey RESTful Web Services framework is extensively used for the SLA Manager API programming.
+The first release of the SLA Manager has been programmed using JAVA (JDK8). Jersey RESTful Web Services framework is extensively used for the SLA Manager API programming.
 
-### Framework
+### Frameworks
 *  Jersey - RESTful Web Services in Java - Version 1.19 (CDDL, XXXXX )
     *  jersey-servlet : 1.19
 	*  jersey-json : 1.19
@@ -37,18 +39,13 @@ The first release of the SLA Manager has been programmed using JAVA. Jersey REST
 *  postgresql : 9.1-901.jdbc4 (PostgreSQL Licence)
 *  amqp-client :  5.2.0 (Apache 2.0, GPL 2.0, Mozilla Public License)
 
-## Prerequisites to run locally
+## Build and run tng-sla-mgmt locally (Container mode using Docker)
 
 ```
 git clone https://github.com/sonata-nfv/tng-sla-mgmt
+docker-compose up --build -d
 ```
 
-### Setting up Dev
-
-Install SLA Management Framework locally along with it's dependencies using Docker Compose
-```sh
-  docker-compose up
-```
 
 ## Configuration
 
@@ -72,8 +69,14 @@ The following shows how to use SLA Manager:
 
 * First, make sure there is a network service descriptor in the 5GTANGO Catalogue - More information on how to upload a Network Service in 5GTANGO Catalogue
  can be found [here](https://github.com/sonata-nfv/tng-cat).
+* Then, you can create a SLA template using the end point provided in API's Reference section.
+* If you have installed the whole 5GTANGO Service Platform, you can then instantiate a service.
+* Choosing one SLA template in the instantiation process, the SLA agreement will be automatically created and appear in the 5GTANGO'S PORTAL.
+* At a next stage monitoring manager is gathering data for your service, and if a violation is accured, you will receive a message in the Message Bus.
+* This information will be stored in sla manager's database and your SLA agreement status will marked as violated.
+* You can then terminate the service and see your SLA agreement marked as TERMINATED
 
-### API Reference
+### API References
 
 We have specified this micro-service's API in a swagger-formated file. Please check it [here](https://github.com/sonata-nfv/tng-sla-mgmt/blob/master/doc/sla_rest_api_model.json) 
 or on the [SLA Manager WIKI page](https://github.com/sonata-nfv/tng-sla-mgmt/wiki/API-Specification).
@@ -81,10 +84,10 @@ or on the [SLA Manager WIKI page](https://github.com/sonata-nfv/tng-sla-mgmt/wik
 ### Database
 
 The SLA Manager is using [PosgreSQL](https://www.postgresql.org/) as internal database.  
-The databse includes the following tables:     
-*  `ns_template` - store and manage correlations between sla templates and network services.
-*  `cust_sla` - store and manage correlations between slas, instatiated network services and the customers. it is also used to manage the Agreements informations.
-*  `sla_violations` - store and manage all the SLA violations information.
+The database includes the following tables:     
+*  `ns_template` - stores and manages correlations between sla templates and network services.
+*  `cust_sla` - stores and manages correlations between slas, instatiated network services and the customers. it is also used to manage the Agreements's informations.
+*  `sla_violations` - stores and manages all the SLA violations information per network service instance.
 
 
 ## Style guide
