@@ -343,6 +343,63 @@ public class db_operations {
 		System.out.println(root);
 		return root;
 	}
+	
+	/**
+	 * Get all Agreements
+	 * 
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public static JSONObject getActiveAgreements() {
+		Statement stmt = null;
+
+		JSONObject root = new JSONObject();
+		// JSONArray ns_template = new JSONArray();
+		JSONArray agreements = new JSONArray();
+
+		try {
+			c.setAutoCommit(false);
+			stmt = c.createStatement();
+			ResultSet rs = stmt
+					.executeQuery("SELECT * FROM cust_sla WHERE inst_status = 'READY';");
+			while (rs.next()) {
+				String ns_uuid = rs.getString("ns_uuid");
+				String ns_name = rs.getString("ns_name");
+				String sla_uuid = rs.getString("sla_uuid");
+				String sla_name = rs.getString("sla_name");
+				String sla_date = rs.getString("sla_date");
+				String sla_status = rs.getString("sla_status");
+				String cust_email = rs.getString("cust_email");
+				String cust_uuid = rs.getString("cust_uuid");
+				String inst_status = rs.getString("inst_status");
+				System.out.print("STATUS ======" + inst_status);
+				String inst_id = rs.getString("inst_id");
+				String nsi_uuid = rs.getString("nsi_uuid");
+
+				JSONObject obj = new JSONObject();
+				obj.put("ns_uuid", ns_uuid);
+				obj.put("ns_name", ns_name);
+				obj.put("sla_name", sla_name);
+				obj.put("sla_date", sla_date);
+				obj.put("sla_status", sla_status);
+				obj.put("sla_uuid", sla_uuid);
+				obj.put("cust_email", cust_email);
+				obj.put("cust_uuid", cust_uuid);
+				obj.put("inst_status", inst_status);
+				obj.put("correlation_id", inst_id);
+				obj.put("nsi_uuid", nsi_uuid);
+
+				agreements.add(obj);
+			}
+			root.put("agreements", agreements);
+			rs.close();
+			stmt.close();
+		} catch (Exception e) {
+			System.err.println(e.getClass().getName() + ": " + e.getMessage());
+		}
+		System.out.println(root);
+		return root;
+	}
 
 	/**
 	 * Get agreement per NS instance id

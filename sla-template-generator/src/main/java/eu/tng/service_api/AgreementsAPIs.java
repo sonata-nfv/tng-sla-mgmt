@@ -64,10 +64,31 @@ import eu.tng.correlations.ns_template_corr;
 public class AgreementsAPIs {
 
 	/**
-	 * api call in order to get a list with all the existing agreements
+	 * api call in order to get a list with the active agreements
 	 */
 	@Produces(MediaType.APPLICATION_JSON)
 	@GET
+	public Response getActiveAgreements() {
+
+		ResponseBuilder apiresponse = null;
+
+		db_operations dbo = new db_operations();
+		db_operations.connectPostgreSQL();
+		db_operations.createTableCustSla();
+		JSONObject correlations = db_operations.getActiveAgreements();
+		dbo.closePostgreSQL();
+
+		apiresponse = Response.ok((Object) correlations);
+		apiresponse.header("Content-Length", correlations.toString().length());
+		return apiresponse.status(200).build();
+	}
+	
+	/**
+	 * api call in order to get a list with all the existing agreements
+	 */
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("/all")
 	public Response getAgreements() {
 
 		ResponseBuilder apiresponse = null;
