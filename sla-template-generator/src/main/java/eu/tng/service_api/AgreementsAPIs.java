@@ -75,7 +75,7 @@ public class AgreementsAPIs {
 		db_operations dbo = new db_operations();
 		db_operations.connectPostgreSQL();
 		db_operations.createTableCustSla();
-		JSONObject correlations = db_operations.getAgreements();
+		JSONObject correlations = db_operations.getActiveAgreements();
 		dbo.closePostgreSQL();
 
 		apiresponse = Response.ok((Object) correlations);
