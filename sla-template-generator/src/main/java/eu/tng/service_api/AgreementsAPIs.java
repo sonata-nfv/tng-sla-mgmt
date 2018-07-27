@@ -348,6 +348,7 @@ public class AgreementsAPIs {
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes("application/x-www-form-urlencoded")
 	@POST
+	@Path("create")
 	public Response createAgreement(final MultivaluedMap<String, String> formParams) {
 		
 		
