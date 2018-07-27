@@ -37,16 +37,21 @@ package eu.tng.service_api;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 
@@ -58,6 +63,8 @@ import org.json.simple.parser.ParseException;
 import eu.tng.correlations.cust_sla_corr;
 import eu.tng.correlations.db_operations;
 import eu.tng.correlations.ns_template_corr;
+import eu.tng.template_gen.CreateTemplate;
+import eu.tng.validations.TemplateValidation;
 
 @Path("/agreements")
 @Consumes(MediaType.APPLICATION_JSON)
@@ -327,5 +334,67 @@ public class AgreementsAPIs {
 		}
 
 	}
+	
+	
+	
+	
+	
+	
+	
+	/**
+	 * api call in order to generate a sla template
+	 */
+	@SuppressWarnings("null")
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes("application/x-www-form-urlencoded")
+	@POST
+	@Path("create")
+	public Response createAgreement(final MultivaluedMap<String, String> formParams) {
+		
+		
+		List<String> ns_uuid1 = formParams.get("ns_uuid");
+		List<String> ns_name1 = formParams.get("ns_name");
+		List<String> sla_uuid1 = formParams.get("sla_uuid");
+		List<String> sla_name1 = formParams.get("sla_name");
+		List<String> sla_status1 = formParams.get("sla_status");
+		List<String> cust_name1 = formParams.get("cust_name");
+		List<String> cust_uuid1 = formParams.get("cust_uuid");
+		List<String> inst_status1 = formParams.get("inst_status");
+		List<String> correlation_id1 = formParams.get("correlation_id");
+		
+		ResponseBuilder apiresponse = null;
+		
+		db_operations dbo = new db_operations();
+		boolean connect = db_operations.connectPostgreSQL();
+
+		if (connect == true) {
+			db_operations.createTableCustSla();
+			dbo.insertRecordAgreement(ns_uuid1.get(0).toString(), ns_name1.toString(), sla_uuid1.get(0).toString(), sla_name1.get(0).toString(), sla_status1.get(0).toString(), 
+					cust_name1.get(0).toString(), cust_uuid1.get(0).toString(), inst_status1.get(0).toString(), correlation_id1.get(0).toString());
+			db_operations.UpdateRecordAgreement("READY", "123", "4fbb748a-4c2e-441b-b387-0f3da2c77ca7");
+			dbo.closePostgreSQL();
+
+			apiresponse = Response.ok();
+			return apiresponse.status(200).build();
+
+		} else {
+			dbo.closePostgreSQL();
+
+			JSONObject error = new JSONObject();
+			error.put("ERROR: ", "connecting to database");
+			apiresponse = Response.ok((Object) error);
+			apiresponse.header("Content-Length", error.toJSONString().length());
+			return apiresponse.status(404).build();
+		}
+
+
+	}
+	
+	
+	
+	
+	
+	
+	
 
 }

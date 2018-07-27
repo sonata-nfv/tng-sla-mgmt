@@ -54,10 +54,8 @@ public class GetGuarantee_Test {
 		guarantees.add("g1");
 		guarantees.add("g2");
 		guarantees.add("g3");
-		guarantees.add("g4");
-		guarantees.add("g5");
 
-		assertTrue(gt.getGuarantee(guarantees).size() == 5);
+		assertTrue(gt.getGuarantee(guarantees).size() == 3);
 
 	}
 
