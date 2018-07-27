@@ -763,13 +763,6 @@ public class db_operations {
 		return count_violations;
 
 	}
-	
-	
-	
-	
-	
-	
-	
 
 	/**
 	 * Delete Record
@@ -777,18 +770,37 @@ public class db_operations {
 	public boolean deleteRecord(String tablename, String sla_uuid) {
 		Statement stmt = null;
 		boolean result = false;
+		
+		String SQL = "SELECT count(*) FROM "+tablename+" where SLA_UUID = '" + sla_uuid + "' ";
+		int count = 0;
 		try {
-			c.setAutoCommit(false);
 			stmt = c.createStatement();
-			String sql = "DELETE from " + tablename + " where SLA_UUID='" + sla_uuid + "';";
-			stmt.executeUpdate(sql);
-			c.commit();
-			stmt.close();
-			result = true;
-		} catch (Exception e) {
-			System.err.println(e.getClass().getName() + ": " + e.getMessage());
+			ResultSet rs = stmt.executeQuery(SQL);
+			while (rs.next()) {
+				count = rs.getInt(1);
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-		System.out.println("Records with deleted? " + result);
+		
+		if (count>0) {
+			try {
+				c.setAutoCommit(false);
+				stmt = c.createStatement();
+				String sql = "DELETE from " + tablename + " where SLA_UUID='" + sla_uuid + "';";
+				stmt.executeUpdate(sql);
+				c.commit();
+				stmt.close();
+				result = true;
+			} catch (Exception e) {
+				System.err.println(e.getClass().getName() + ": " + e.getMessage());
+			}
+			System.out.println("Records with deleted? " + result);
+		}
+		else {
+			System.out.println("Records with deleted? " + result);
+		}
 		return result;
 	}
 

@@ -193,14 +193,24 @@ public class MgmtAPIs {
 	public Response deletecCustSlaCorrelation(@PathParam("sla_uuid") String sla_uuid) {
 		ResponseBuilder apiresponse = null;
 		
-		String response = "Record deleted Succesfully";
 		db_operations db = new db_operations();
 		db.connectPostgreSQL();
-		db.deleteRecord("cust_sla", sla_uuid);
+		boolean delete = db.deleteRecord("cust_sla", sla_uuid);
 		db.closePostgreSQL();
-		apiresponse = Response.ok((response));
-		apiresponse.header("Content-Length", response.length());
-		return apiresponse.status(200).build();
+		
+		if (delete==true) {
+			String response = "Agreement deleted Succesfully";
+			apiresponse = Response.ok((response));
+			apiresponse.header("Content-Length", response.length());
+			return apiresponse.status(200).build();
+		} 
+		else {
+			String response = "Agreement was not deleted. sla_uuid Not Found";
+			apiresponse = Response.ok((response));
+			apiresponse.header("Content-Length", response.length());
+			return apiresponse.status(404).build();
+		}
+		
 	}
 
 }
