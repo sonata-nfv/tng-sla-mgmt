@@ -113,15 +113,18 @@ public class MqMonitoringConsumer implements ServletContextListener {
 
 						// check if there is already a violation for this nsi
 						int count_violations = db_operations.countViolationsPerNsi(nsi_uuid);
-						if (count_violations == 0) {
+						//if (count_violations == 0) {
 							// get the sla agreements details for this violation
 							org.json.simple.JSONObject violated_sla = dbo.getViolatedSLA(nsi_uuid);
 							sla_uuid = (String) violated_sla.get("sla_uuid");
+							System.out.println("Violated sla_uuid ==> "+ sla_uuid);
 							cust_uuid = (String) violated_sla.get("cust_uuid");
+							cust_uuid = (String) violated_sla.get("cust_uuid");
+							System.out.println("Violated cust_uuid ==> "+ sla_uuid);
 							// insert the violation in the violation database
 							db_operations.insertRecordViolation(nsi_uuid, sla_uuid, alert_time, alert_state, cust_uuid);
 							db_operations.UpdateAgreementStatus(nsi_uuid);
-						}
+						//}
 						db_operations.closePostgreSQL();
 
 						try {
