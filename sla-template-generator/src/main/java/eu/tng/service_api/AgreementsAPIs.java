@@ -371,6 +371,7 @@ public class AgreementsAPIs {
 			db_operations.createTableCustSla();
 			dbo.insertRecordAgreement(ns_uuid1.get(0).toString(), ns_name1.toString(), sla_uuid1.get(0).toString(), sla_name1.get(0).toString(), sla_status1.get(0).toString(), 
 					cust_name1.get(0).toString(), cust_uuid1.get(0).toString(), inst_status1.get(0).toString(), correlation_id1.get(0).toString());
+			db_operations.UpdateRecordAgreement("READY", "123", "4fbb748a-4c2e-441b-b387-0f3da2c77ca7");
 			dbo.closePostgreSQL();
 
 			apiresponse = Response.ok();
