@@ -33,6 +33,7 @@ ENV CATALOGUES_URL http://tng-cat:4011/catalogues/api/v2/
 # Set MESSAGE BUS Environment Variables
 ENV MQSERVER amqp://guest:guest@broker:5672
 ENV BROKER_EXCHANGE son-kernel
+ENV BROKER_HOST broker
 
 # Set MONITORING URL Environment Variables
 ENV MONITORING_URL http://son-monitor-manager:8000/api/v1/

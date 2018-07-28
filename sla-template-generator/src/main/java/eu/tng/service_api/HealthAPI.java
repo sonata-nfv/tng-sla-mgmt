@@ -24,6 +24,8 @@ import com.rabbitmq.client.Connection;
 
 import eu.tng.correlations.db_operations;
 import eu.tng.messaging.RabbitMqConnector;
+import org.apache.commons.codec.binary.Base64;
+
 
 @Path("/ping")
 @Consumes(MediaType.APPLICATION_JSON)
@@ -95,7 +97,7 @@ public class HealthAPI {
             serverOK = true;
             System.out.println("OK. SLAM server is up!");
         }
-        JSONObject response = new JSONObject();
+        org.json.simple.JSONObject response = new org.json.simple.JSONObject();
         if (rabbitmqOK == true & postgresqlOK == true && catalogueOK == true && serverOK == true) {
             // returns the current time in milliseconds
             long curentTimeInMS = System.currentTimeMillis();
@@ -112,7 +114,7 @@ public class HealthAPI {
         } else {
             response.put("ERROR: ", "SLA Manager is not available.");
             apiresponse = Response.ok((Object) response);
-            apiresponse.header("Content-Length", response.toString().length());
+            apiresponse.header("Content-Length", response.toJSONString().length());
             return apiresponse.status(400).build();
         }
 
@@ -122,17 +124,28 @@ public class HealthAPI {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response rabbitMqHealthCheck() throws IOException {
-        // http://guest:guest@pre-int-sp-ath.5gtango.eu:15672/api/consumers
-
+        System.out.println("[*]  RabbitMQ Health check Triggered");
         ResponseBuilder apiresponse = null;
-        String url = "http://guest:guest@pre-int-sp-ath.5gtango.eu:15672/api/consumers";
+        String url = "http://pre-int-sp-ath.5gtango.eu:15672/api/consumers";
         URL object = new URL(url);
         HttpURLConnection con = (HttpURLConnection) object.openConnection();
 
+        String name = "guest";
+        String password = "guest";
+
+        String authString = name + ":" + password;
+        System.out.println("auth string: " + authString);
+        byte[] authEncBytes = Base64.encodeBase64(authString.getBytes());
+        String authStringEnc = new String(authEncBytes);
+        System.out.println("Base64 encoded auth string: " + authStringEnc);
+
+        
+        
         con.setDoOutput(true);
         con.setDoInput(true);
         con.setRequestProperty("Content-Type", "application/json");
         con.setRequestProperty("Accept", "application/json");
+        con.setRequestProperty("Authorization", "Basic " + authStringEnc);
         con.setRequestMethod("GET");
 
         BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
@@ -144,31 +157,39 @@ public class HealthAPI {
         in.close();
 
         JSONArray consumers = new JSONArray(response.toString());
+        System.out.println("Consumers: " + consumers);
+        
         int counter = 0;
-        for (int i = 0; i < consumers.length(); i++) {
-            JSONObject queueDetails = new JSONObject(consumers.getJSONObject(i));
 
-            JSONObject queue = queueDetails.getJSONObject("queue");
-            String queueName = queue.getString("name").replaceAll("\"", "&quote;");
-
-            if (queueName == "slas.service.instances.create" || queueName == "slas.service.instance.terminate"
-                    || queueName == "slas.tng.sla.violation" || queueName == "slas.son.monitoring.SLA") {
+        for (int i = 0; i < (consumers).length(); i++) {
+            JSONObject queueDetails = ((JSONObject) consumers.getJSONObject(i));
+            JSONObject queue = ((JSONObject) queueDetails.getJSONObject("queue"));  
+            
+            String queueName = queue.getString("name");
+            
+            if (queueName.equals("slas.service.instances.create") || queueName.equals("slas.service.instance.terminate") || queueName.equals("slas.tng.sla.violation") || queueName.equals("slas.son.monitoring.SLA") ) {
                 counter++;
             }
-
         }
-
-        JSONObject returnResult = new JSONObject();
+        System.out.println("COUNTER ==> "+ counter);
+        
+        org.json.simple.JSONObject returnResult = new org.json.simple.JSONObject();
 
         if (counter == 4) {
             returnResult.put("Alive", "true");
         } else {
+            
             returnResult.put("Alive", "false");
         }
+        
+        System.out.println("return result" + returnResult);
+      
+        apiresponse = Response.ok((Object) returnResult);
 
-        apiresponse = Response.ok(returnResult);
-        apiresponse.header("Content-Length", returnResult.toString().length());
+        apiresponse.header("Content-Length", returnResult.toJSONString().length());
         return apiresponse.status(200).build();
+       
+        
     }
 
 }
