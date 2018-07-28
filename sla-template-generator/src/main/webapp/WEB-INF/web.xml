@@ -62,7 +62,5 @@
   </listener>
   <listener>
     <listener-class>eu.tng.messaging.MqSlaViolationsConsumer</listener-class>
-  </listener>
-  
-  
+  </listener>  
 </web-app>
