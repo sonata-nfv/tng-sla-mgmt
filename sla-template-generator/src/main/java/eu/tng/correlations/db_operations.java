@@ -588,8 +588,8 @@ public class db_operations {
 	public static void createTableViolations() {
 		try {
 			stmt = c.createStatement();
-			String sql = "CREATE TABLE IF NOT EXISTS sla_violations" + "(ID  SERIAL PRIMARY KEY,"
-					+ " NS_UUID TEXT NOT NULL, " + "SLA_UUID TEXT NOT NULL," + "VIOLATION_TIME TEXT NOT NULL,"
+			String sql = "CREATE TABLE IF NOT EXISTS sla_violations" + "(ID  SERIAL,"
+					+ " NS_UUID TEXT PRIMARY KEY, " + "SLA_UUID TEXT NOT NULL," + "VIOLATION_TIME TEXT NOT NULL,"
 					+ "ALERT_STATE TEXT NOT NULL," + "CUST_UUID  TEXT NOT NULL )";
 			stmt.executeUpdate(sql);
 			stmt.close();
