@@ -170,6 +170,9 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 								MonitoringRules mr = new MonitoringRules();
 								MonitoringRules.createMonitroingRules(String.valueOf(sla_id), vnfr_id_list, vc_id_list, nsi_id); 
 							}
+							else {
+								System.out.println("[*] Instantiation without SLA. Message aborted.");
+							}
 
 						}
 
