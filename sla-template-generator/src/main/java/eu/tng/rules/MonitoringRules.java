@@ -132,8 +132,7 @@ public class MonitoringRules {
 		return root;
 	}
 
-	@SuppressWarnings("rawtypes")
-    private static ArrayList createCondition(String name, String target_period, String target_value, String vdu_id) {
+    private static ArrayList<String> createCondition(String name, String target_period, String target_value, String vdu_id) {
 		ArrayList<String> dc = new ArrayList<String>();
 		String vdu_id_quotes = "\"" + vdu_id + "\"";
 		if (name.equals("Availability")) {
@@ -144,9 +143,10 @@ public class MonitoringRules {
 			dc.add(description_availability);
 			dc.add(condition_avalability);
 		}
+		System.out.println(dc);
 		return dc;
 	}
-
+	
 	@SuppressWarnings("unchecked")
     public static JSONObject getSloDetails(String sla_uuid) {
 
@@ -186,9 +186,12 @@ public class MonitoringRules {
 									.get("serviceLevelObjetive");
 							String duration = (String) serviceLevelObjetive.get("duration");
 							String target_value = (String) serviceLevelObjetive.get("target_value");
+							String target_period = (String) serviceLevelObjetive.get("period");
+
 							slo.put("name", name);
 							slo.put("duration", duration);
 							slo.put("target_value", target_value);
+							slo.put("target_period", target_period);
 
 							slos.add(slo);
 
