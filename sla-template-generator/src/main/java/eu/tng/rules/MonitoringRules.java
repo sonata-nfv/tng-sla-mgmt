@@ -135,23 +135,12 @@ public class MonitoringRules {
     private static ArrayList createCondition(String name, String target_period, String target_value, String vdu_id) {
 		ArrayList<String> dc = new ArrayList<String>();
 		String vdu_id_quotes = "\"" + vdu_id + "\"";
-		switch (name) {
-		case "Resilience":
-			String description = "Trigger events if VM is down more than " + target_value + " seconds in window of: " + target_period;
-			//String condition = "delta(haproxy_backend_downtime{resource_id=" + vdu_id_quotes + "}["+target_period+"]) > " + target_value;
-			String condition = "delta(haproxy_backend_downtime{resource_id=" + vdu_id_quotes + "}[1h]) > -1";
-			dc.add(description);
-			dc.add(condition);
-			break;
-		case "Availability":
+		if (name.equals("Availability")) {
 			String description_availability = "Trigger events if VM is down more than " + target_value + " seconds in window of: " + target_period;
 			String condition_avalability = "delta(haproxy_backend_downtime{resource_id=" + vdu_id_quotes + "}["+target_period+"]) > " + target_value;
 			//String condition_avalability = "delta(haproxy_backend_downtime{resource_id=" + vdu_id_quotes + "}[1h]) > -1";
 			dc.add(description_availability);
 			dc.add(condition_avalability);
-			break;
-		default:
-			break;
 		}
 		return dc;
 	}
