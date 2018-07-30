@@ -97,6 +97,7 @@ public class MonitoringRules {
 						// call function createCondition
 						@SuppressWarnings("rawtypes")
                         ArrayList dc = createCondition(name,target_period, target_value,vdus_id_list.get(j));
+						System.out.println("[*] Condition created ==> " + dc.toString());
 						String description = (String) dc.get(0);
 						String condition = (String) dc.get(1);
 
@@ -136,6 +137,7 @@ public class MonitoringRules {
 		ArrayList<String> dc = new ArrayList<String>();
 		String vdu_id_quotes = "\"" + vdu_id + "\"";
 		if (name.equals("Availability")) {
+			System.out.println("[*] Start creating condition for availability metric.....");
 			String description_availability = "Trigger events if VM is down more than " + target_value + " seconds in window of: 10 second";
 			String condition_avalability = "delta(haproxy_backend_downtime{resource_id=" + vdu_id_quotes + "}["+target_period+"]) > " + target_value;
 			//String condition_avalability = "delta(haproxy_backend_downtime{resource_id=" + vdu_id_quotes + "}[1h]) > -1";
