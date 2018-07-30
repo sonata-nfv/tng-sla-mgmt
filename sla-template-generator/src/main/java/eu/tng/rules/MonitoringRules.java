@@ -91,17 +91,18 @@ public class MonitoringRules {
 					for (int k = 0; k < slos.size(); k++) {
 						JSONObject rule = new JSONObject();
 						String name = (String) ((JSONObject) slos.get(k)).get("name");
-						String target_period = (String) ((JSONObject) slos.get(k)).get("duration");
+						String target_period = (String) ((JSONObject) slos.get(k)).get("target_period");
 						String target_value = (String) ((JSONObject) slos.get(k)).get("target_value");
 
 						// call function createCondition
 						@SuppressWarnings("rawtypes")
                         ArrayList dc = createCondition(name,target_period, target_value,vdus_id_list.get(j));
+						System.out.println("[*] Condition created ==> " + dc.toString());
 						String description = (String) dc.get(0);
 						String condition = (String) dc.get(1);
 
 						rule.put("name", "sla:rule:" + name);
-						rule.put("duration", "1s");
+						rule.put("duration", "10s");
 						rule.put("description", description);
 						rule.put("condition", condition);
 						rule.put("summary", "");
@@ -136,7 +137,8 @@ public class MonitoringRules {
 		ArrayList<String> dc = new ArrayList<String>();
 		String vdu_id_quotes = "\"" + vdu_id + "\"";
 		if (name.equals("Availability")) {
-			String description_availability = "Trigger events if VM is down more than " + target_value + " seconds in window of: " + target_period;
+			System.out.println("[*] Start creating condition for availability metric.....");
+			String description_availability = "Trigger events if VM is down more than " + target_value + " seconds in window of: 10 second";
 			String condition_avalability = "delta(haproxy_backend_downtime{resource_id=" + vdu_id_quotes + "}["+target_period+"]) > " + target_value;
 			//String condition_avalability = "delta(haproxy_backend_downtime{resource_id=" + vdu_id_quotes + "}[1h]) > -1";
 			dc.add(description_availability);
