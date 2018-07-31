@@ -10,7 +10,7 @@ pipeline {
         }
 		stage('Building tng-sla-mgmt') {
           steps {
-            sh 'docker build -t registry.sonata-nfv.eu:5000/tng-sla-mgmt -f sla-template-generator/Dockerfile .'
+            sh 'docker build -t registry.sonata-nfv.eu:5000/tng-sla-mgmt:v4.0 -f sla-template-generator/Dockerfile .'
           }
 		}
       }
@@ -52,17 +52,17 @@ pipeline {
         }
 		stage('Publishing tng-sla-mgmt') {
           steps {
-            sh 'docker push registry.sonata-nfv.eu:5000/tng-sla-mgmt'
+            sh 'docker push registry.sonata-nfv.eu:5000/tng-sla-mgmt:v4.0'
           }
 		}
       }
     }	
 	
-	stage('Deployment in Pre-Integration') {
+	stage('Deployment in Staging Env') {
           parallel {
-            stage('Deployment in Pre-Integration') {
+            stage('Deployment in Staging Env') {
               steps {
-                echo 'Deploying in Pre-integration...'
+                echo 'Deploying in Staging Env...'
               }
             }
             stage('Deploying') {
@@ -70,28 +70,13 @@ pipeline {
                 sh 'rm -rf tng-devops || true'
                 sh 'git clone https://github.com/sonata-nfv/tng-devops.git'
                 dir(path: 'tng-devops') {
-                  sh 'ansible-playbook roles/sp.yml -i environments -e "target=pre-int-sp host_key_checking=False component=sla-management"'
+                  sh 'ansible-playbook roles/sp.yml -i environments -e "target=sta-sp-v4.0 host_key_checking=False component=sla-management"'
                 }
               }
             }
           }
 	}
 	
-	stage('Promoting to integration') {
-      when{
-        branch 'master'
-      }      
-      steps {
-        sh 'docker tag registry.sonata-nfv.eu:5000/tng-sla-mgmt:latest registry.sonata-nfv.eu:5000/tng-sla-mgmt:int'
-        sh 'docker push registry.sonata-nfv.eu:5000/tng-sla-mgmt:int'
-        sh 'rm -rf tng-devops || true'
-        sh 'git clone https://github.com/sonata-nfv/tng-devops.git'
-        dir(path: 'tng-devops') {
-		  sh 'ansible-playbook roles/sp.yml -i environments -e "target=int-sp component=sla-management"'
-        }
-      }
-    }
-
   }
   
   post {
