@@ -124,7 +124,8 @@ public class CreateTemplate {
 				licenses.add(license);
 			}
 			licensing.put("licenses", licenses);
-			
+			sla_template.put("licensing", licensing);
+
 			/** ns object **/
 			JSONObject ns = new JSONObject();
 			ns.put("ns_uuid", nsd_uuid);
