@@ -58,11 +58,9 @@ public class db_operations {
 		try {
 
 			Class.forName("org.postgresql.Driver");
-			/*
-			 * c =
-			 * DriverManager.getConnection("jdbc:postgresql://localhost:5432/sla-manager",
-			 * "postgres", "admin");
-			 */
+			
+			//c = DriverManager.getConnection("jdbc:postgresql://localhost:5432/sla-manager", "postgres", "admin");
+			 
 
 			c = DriverManager
 					.getConnection(
@@ -763,6 +761,30 @@ public class db_operations {
 		return count_violations;
 
 	}
+	
+	
+	/*******************************/
+	/** OPERATIONS FOR LICENSING **/
+	/*******************************/
+
+	/**
+	 * Create table if not exist - customer-sla correlation
+	 */
+	public static void createTableLicenseScaling() {
+		try {
+			stmt = c.createStatement();
+			String sql = "CREATE TABLE IF NOT EXISTS license_scaling" + "(ID  SERIAL PRIMARY KEY," + " NS_UUID TEXT NOT NULL, "
+					+ "NSI_UUID TEXT NULL," + "SLA_UUID  TEXT NOT NULL,"
+					+ "CORRELATION_ID TEXT NOT NULL," + "SCALING_STATUS  TEXT NOT NULL,"
+					+ "ALLOWED_SCALES TEXT NOT NULL," + "CURRENT_SCALES TEXT)";
+			stmt.executeUpdate(sql);
+			stmt.close();
+		} catch (Exception e) {
+			System.err.println(e.getClass().getName() + ": " + e.getMessage());
+		}
+		System.out.println("Table license_scaling created successfully");
+	}
+
 
 	/**
 	 * Delete Record
@@ -872,5 +894,9 @@ public class db_operations {
 		}
 		return root;
 	}
+	
+	
+	
+	
 
 }
