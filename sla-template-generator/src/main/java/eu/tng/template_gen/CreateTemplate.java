@@ -115,7 +115,10 @@ public class CreateTemplate {
 			for (int l_count = 0; l_count < Integer.parseInt(licenses_number); l_count++) {	
 				JSONObject license = new JSONObject();
 				String name = "Test License";
-				String definition = "Test License for the "+templateName+" SLA";
+				String definition = "Test License for the "+templateName+" SLA"
+						+ ""
+						+ ""
+						+ "";
 				license.put("name", name);
 				license.put("definition", definition);
 				licenses.add(license);
