@@ -58,17 +58,16 @@ public class db_operations {
 		try {
 
 			Class.forName("org.postgresql.Driver");
-			/*
-			 * c =
-			 * DriverManager.getConnection("jdbc:postgresql://localhost:5432/sla-manager",
-			 * "postgres", "admin");
-			 */
 
-			c = DriverManager
-					.getConnection(
-							"jdbc:postgresql://" + System.getenv("DATABASE_HOST") + ":" + System.getenv("DATABASE_PORT")
-									+ "/" + System.getenv("GTK_DB_NAME"),
-							System.getenv("GTK_DB_USER"), System.getenv("GTK_DB_PASS"));
+			 c =
+			 DriverManager.getConnection("jdbc:postgresql://localhost:5432/sla-manager",
+			 "postgres", "admin");
+
+//			c = DriverManager
+//					.getConnection(
+//							"jdbc:postgresql://" + System.getenv("DATABASE_HOST") + ":" + System.getenv("DATABASE_PORT")
+//									+ "/" + System.getenv("GTK_DB_NAME"),
+//							System.getenv("GTK_DB_USER"), System.getenv("GTK_DB_PASS"));
 
 			connect = true;
 			System.out.println("Opened sla-manager database successfully");
@@ -343,7 +342,7 @@ public class db_operations {
 		System.out.println(root);
 		return root;
 	}
-	
+
 	/**
 	 * Get all Agreements
 	 * 
@@ -360,8 +359,7 @@ public class db_operations {
 		try {
 			c.setAutoCommit(false);
 			stmt = c.createStatement();
-			ResultSet rs = stmt
-					.executeQuery("SELECT * FROM cust_sla WHERE inst_status = 'READY';");
+			ResultSet rs = stmt.executeQuery("SELECT * FROM cust_sla WHERE inst_status = 'READY';");
 			while (rs.next()) {
 				String ns_uuid = rs.getString("ns_uuid");
 				String ns_name = rs.getString("ns_name");
@@ -527,10 +525,10 @@ public class db_operations {
 		}
 		return root;
 	}
-	
 
 	/**
 	 * Delete Agreement correlation
+	 * 
 	 * @param nsi_uuid
 	 * @return
 	 */
@@ -552,9 +550,9 @@ public class db_operations {
 		return result;
 	}
 
-
 	/**
 	 * Count active agreements per sla template
+	 * 
 	 * @param sla_uuid
 	 * @return
 	 */
@@ -588,9 +586,9 @@ public class db_operations {
 	public static void createTableViolations() {
 		try {
 			stmt = c.createStatement();
-			String sql = "CREATE TABLE IF NOT EXISTS sla_violations" + "(ID  SERIAL,"
-					+ " NS_UUID TEXT PRIMARY KEY, " + "SLA_UUID TEXT NOT NULL," + "VIOLATION_TIME TEXT NOT NULL,"
-					+ "ALERT_STATE TEXT NOT NULL," + "CUST_UUID  TEXT NOT NULL )";
+			String sql = "CREATE TABLE IF NOT EXISTS sla_violations" + "(ID  SERIAL," + " NS_UUID TEXT PRIMARY KEY, "
+					+ "SLA_UUID TEXT NOT NULL," + "VIOLATION_TIME TEXT NOT NULL," + "ALERT_STATE TEXT NOT NULL,"
+					+ "CUST_UUID  TEXT NOT NULL )";
 			stmt.executeUpdate(sql);
 			stmt.close();
 			System.out.println("Table sla_violations created successfully");
@@ -742,8 +740,7 @@ public class db_operations {
 		}
 		return violations;
 	}
-	
-	
+
 	@SuppressWarnings("unchecked")
 	public static int countViolationsPerNsi(String nsi_uuid) {
 
@@ -764,14 +761,59 @@ public class db_operations {
 
 	}
 
+	/*******************************/
+	/** OPERATIONS FOR LICENSING **/
+	/*******************************/
+
+	/**
+	 * Create table if not exist - customer-sla correlation
+	 */
+	public static void createTableLicenseScaling() {
+		try {
+			stmt = c.createStatement();
+			String sql = "CREATE TABLE IF NOT EXISTS license_scaling" + "(ID  SERIAL PRIMARY KEY,"
+					+ " NS_UUID TEXT NOT NULL, " + "NSI_UUID TEXT NOT NULL," + "SLA_UUID  TEXT NOT NULL,"
+					+ "CORRELATION_ID TEXT NULL," + "SCALING_STATUS TEXT NULL," + "ALLOWED_SCALES TEXT NOT NULL,"
+					+ "CURRENT_SCALES TEXT NULL)";
+			stmt.executeUpdate(sql);
+			stmt.close();
+		} catch (Exception e) {
+			System.err.println(e.getClass().getName() + ": " + e.getMessage());
+		}
+		System.out.println("Table license_scaling created successfully");
+	}
+
+	/**
+	 * Insert Record licensing
+	 */
+	public static boolean insertRecordLicensing(String ns_uuid, String nsi_uuid, String sla_uuid, String allowed_scales) {
+		boolean result = false;
+		try {
+			c.setAutoCommit(false);
+			Statement stmt = c.createStatement();
+			String sql = "INSERT INTO license_scaling (ns_uuid, nsi_uuid,sla_uuid,allowed_scales) " + "VALUES ('"
+					+ ns_uuid + "','" + nsi_uuid + "' , '" + sla_uuid + "' ,  '" + allowed_scales + "' );";
+			stmt.executeUpdate(sql);
+			stmt.close();
+			c.commit();
+			result = true;
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		System.out.println("Records license_scaling saved successfully? " + result);
+		return result;
+	}
+	
 	/**
 	 * Delete Record
 	 */
 	public boolean deleteRecord(String tablename, String sla_uuid) {
 		Statement stmt = null;
 		boolean result = false;
-		
-		String SQL = "SELECT count(*) FROM "+tablename+" where SLA_UUID = '" + sla_uuid + "' ";
+
+		String SQL = "SELECT count(*) FROM " + tablename + " where SLA_UUID = '" + sla_uuid + "' ";
 		int count = 0;
 		try {
 			stmt = c.createStatement();
@@ -783,8 +825,8 @@ public class db_operations {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		if (count>0) {
+
+		if (count > 0) {
 			try {
 				c.setAutoCommit(false);
 				stmt = c.createStatement();
@@ -797,8 +839,7 @@ public class db_operations {
 				System.err.println(e.getClass().getName() + ": " + e.getMessage());
 			}
 			System.out.println("Records with deleted? " + result);
-		}
-		else {
+		} else {
 			System.out.println("Records with deleted? " + result);
 		}
 		return result;
