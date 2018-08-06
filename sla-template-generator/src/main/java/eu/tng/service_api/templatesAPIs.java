@@ -183,10 +183,12 @@ public class templatesAPIs {
 
 		ArrayList<String> guarantees = new ArrayList<String>();
 		guarantees.addAll(formParams.get("guaranteeId"));
+		
+		List<String> licenses_number = formParams.get("licenses_number");
 
 		// call CreateTemplate method
 		CreateTemplate ct = new CreateTemplate();
-		JSONObject template = ct.createTemplate(nsd_uuid.get(0), templateName.get(0), expireDate.get(0), guarantees);
+		JSONObject template = ct.createTemplate(nsd_uuid.get(0), templateName.get(0), expireDate.get(0), guarantees, licenses_number.get(0));
 
 		if (template == null) {
 			String dr = null;
