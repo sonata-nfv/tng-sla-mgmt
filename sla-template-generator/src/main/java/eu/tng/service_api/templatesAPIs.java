@@ -185,13 +185,14 @@ public class templatesAPIs {
 		guarantees.addAll(formParams.get("guaranteeId"));
 		
 		List<String> licenses_number = formParams.get("licenses_number");
+		System.out.print("License List ==> " +licenses_number);
+		
 		String license_number;
-		if (licenses_number.isEmpty() == true) {
+		if (formParams.get("licenses_number") == null) {
 			license_number = "0";
 		} else {
 			license_number = licenses_number.get(0);
 		}
-		System.out.print("License List ==> " +licenses_number);
 		System.out.print("License Number ==> " +license_number);
 
 		// call CreateTemplate method
