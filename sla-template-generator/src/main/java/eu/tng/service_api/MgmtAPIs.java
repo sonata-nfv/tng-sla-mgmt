@@ -36,19 +36,25 @@
 
 package eu.tng.service_api;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 
@@ -58,6 +64,8 @@ import org.json.simple.parser.JSONParser;
 import eu.tng.correlations.cust_sla_corr;
 import eu.tng.correlations.db_operations;
 import eu.tng.correlations.ns_template_corr;
+import eu.tng.template_gen.CreateTemplate;
+import eu.tng.validations.TemplateValidation;
 
 @Path("/mgmt")
 @Consumes(MediaType.APPLICATION_JSON)
@@ -211,6 +219,37 @@ public class MgmtAPIs {
 			return apiresponse.status(404).build();
 		}
 		
+	}
+	
+	/**
+	 * api in order to insert dummy violation records
+	 */
+	@Path("/violation")
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes("application/x-www-form-urlencoded")
+	@POST
+	public Response insertViolationData(final MultivaluedMap<String, String> formParams) {
+
+		ResponseBuilder apiresponse = null;
+
+		List<String> nsi_uuid = formParams.get("nsi_uuid");
+		List<String> sla_uuid = formParams.get("sla_uuid");
+		List<String> cust_uuid = formParams.get("cust_uuid");
+		List<String> violation_time = formParams.get("violation_time");
+		
+		db_operations dbo = new db_operations();
+		db_operations.connectPostgreSQL();
+		db_operations.createTableViolations();
+		db_operations.insertRecordViolation(nsi_uuid.get(0), sla_uuid.get(0), violation_time.get(0), "firing", cust_uuid.get(0));
+		db_operations.closePostgreSQL();
+
+		JSONObject success = new JSONObject();
+		success.put("OK: ", "Dummy violation data uploaded to db.");
+		apiresponse = Response.ok((Object) success);
+		apiresponse.header("Content-Length", success.toJSONString().length());
+		return apiresponse.status(200).build();
+			
+
 	}
 
 }
