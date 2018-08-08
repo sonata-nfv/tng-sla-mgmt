@@ -224,6 +224,7 @@ public class MgmtAPIs {
 	/**
 	 * api in order to insert dummy violation records
 	 */
+	@Path("/violation")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes("application/x-www-form-urlencoded")
 	@POST
