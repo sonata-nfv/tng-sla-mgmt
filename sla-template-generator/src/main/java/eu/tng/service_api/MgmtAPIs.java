@@ -312,5 +312,25 @@ public class MgmtAPIs {
 		}
 
 	}
+	
+	/**
+	 * Get all license records
+	 */
+	@Path("/licenses")
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getLicenses() {
+
+		ResponseBuilder apiresponse = null;
+		db_operations dbo = new db_operations();
+		dbo.connectPostgreSQL();
+		dbo.createTableLicenseScaling();
+		JSONArray licenses = dbo.getLicenses();
+		dbo.closePostgreSQL();
+
+		apiresponse = Response.ok((Object) licenses);
+		apiresponse.header("Content-Length", licenses.toString().length());
+		return apiresponse.status(200).build();
+	}
 
 }
