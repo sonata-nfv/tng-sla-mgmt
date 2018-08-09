@@ -62,6 +62,7 @@ import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 
+import org.apache.derby.client.am.DateTime;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -260,14 +261,23 @@ public class MgmtAPIs {
 			String random_sla_uuid = UUID.randomUUID().toString();
 			String random_cust_uuid = UUID.randomUUID().toString();
 			
-			long offset = Timestamp.valueOf("2018-06-01 00:00:00").getTime();
+			long offset = Timestamp.valueOf("2018-06-01 00:00:00 ").getTime();
 			DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 			Date date = new Date();
 			@SuppressWarnings("deprecation")
 			long end = Timestamp.parse(dateFormat.format(date));
 			long diff = end - offset + 1;			
 			String random_violation_time = new Timestamp(offset + (long)(Math.random() * diff)).toString();
-
+			
+			String[] parts = random_violation_time.split(" ");
+			String part1 = parts[0]; 
+			String part2 = parts[1]; 
+			part1 = part1.concat("'T'");
+			part2 = part2.concat("'Z'");
+            
+			random_violation_time = part1+part2;
+			
+			System.out.println(random_violation_time);
 			db_operations.createTableViolations();
 			db_operations.insertRecordViolation(random_nsi_uuid, random_sla_uuid, random_cust_uuid, "firing", random_violation_time);
 			insertion++;
@@ -278,7 +288,10 @@ public class MgmtAPIs {
 		}
 		return success;
 	}
-	
+	public static void main(String [ ] args)
+	{
+	   addMultipleDummyViolations(1);
+	}
 	/**
 	 * delete all violations
 	 */
