@@ -809,13 +809,13 @@ public class db_operations {
 	/**
 	 * Insert Record licensing
 	 */
-	public static boolean insertRecordLicensing(String ns_uuid, String nsi_uuid, String sla_uuid, String allowed_scales) {
+	public static boolean insertRecordLicensing(String ns_uuid, String sla_uuid, String correlation_id, String scaling_status, String allowed_scales) {
 		boolean result = false;
 		try {
 			c.setAutoCommit(false);
 			Statement stmt = c.createStatement();
-			String sql = "INSERT INTO license_scaling (ns_uuid, nsi_uuid,sla_uuid,allowed_scales) " + "VALUES ('"
-					+ ns_uuid + "','" + nsi_uuid + "' , '" + sla_uuid + "' ,  '" + allowed_scales + "' );";
+			String sql = "INSERT INTO license_scaling (ns_uuid, nsi_uuid, sla_uuid, correlation_id, scaling_status, allowed_scales) " + "VALUES ('"
+					+ ns_uuid + "', ' ' ,'" + sla_uuid + "' , '" + correlation_id + "' ,  '" + scaling_status + "' ,  '" + allowed_scales + "');";
 			stmt.executeUpdate(sql);
 			stmt.close();
 			c.commit();
@@ -827,6 +827,79 @@ public class db_operations {
 
 		System.out.println("Records license_scaling saved successfully? " + result);
 		return result;
+	}
+	
+	/**
+	 * Update record for agreement in order to include ns instance id and status
+	 * ready
+	 * 
+	 * @param inst_status
+	 * @param correlation_id
+	 * @param nsi_uuid
+	 */
+	public static void UpdateRecordLicense(String scaling_status, String correlation_id, String nsi_uuid) {
+
+		String SQL = "UPDATE license_scaling " + "SET scaling_status = ?, nsi_uuid = ? , correlation_id = ?" + "WHERE correlation_id = ?";
+		boolean result = false;
+		try {
+			PreparedStatement pstmt = c.prepareStatement(SQL);
+			pstmt.setString(1, scaling_status);
+			pstmt.setString(2, nsi_uuid);
+			pstmt.setString(3, "");
+			pstmt.setString(4, correlation_id);
+
+			pstmt.executeUpdate();
+			result = true;
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		System.out.println("Define nsi_uuid for license record? " + result);
+	}
+	
+	/**
+	 * get all license records
+	 * @return
+	 */
+	
+	public static JSONArray getLicenses() {
+
+		JSONObject license_data = new JSONObject();
+		JSONArray licenses = new JSONArray();
+		Statement stmt = null;
+
+		try {
+			c.setAutoCommit(false);
+			stmt = c.createStatement();
+			ResultSet rs = stmt.executeQuery("SELECT * FROM license_scaling;");
+			while (rs.next()) {
+				String ns_uuid = rs.getString("ns_uuid");
+				String nsi_uuid = rs.getString("nsi_uuid");
+				String sla_uuid = rs.getString("sla_uuid");
+				String scaling_status = rs.getString("scaling_status");
+				String allowed_scales = rs.getString("allowed_scales");
+				String current_scales = rs.getString("current_scales");
+				String correlation_id = rs.getString("correlation_id");
+
+				license_data.put("ns_uuid", ns_uuid);
+				license_data.put("nsi_uuid", nsi_uuid);
+				license_data.put("sla_uuid", sla_uuid);
+				license_data.put("scaling_status", scaling_status);
+				license_data.put("allowed_scales", allowed_scales);
+				license_data.put("current_scales", current_scales);
+				license_data.put("correlation_id", correlation_id);
+
+				licenses.add(license_data);
+
+			}
+			System.out.println(licenses);
+			rs.close();
+			stmt.close();
+		} catch (Exception e) {
+			System.err.println(e.getClass().getName() + ": " + e.getMessage());
+		}
+		return licenses;
 	}
 	
 	/**
