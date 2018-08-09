@@ -538,7 +538,7 @@ public class db_operations {
 		try {
 			c.setAutoCommit(false);
 			stmt = c.createStatement();
-			String sql = "DELETE FROM WHERE NSI_UUID='" + nsi_uuid + "';";
+			String sql = "DELETE FROM cust_sla WHERE NSI_UUID='" + nsi_uuid + "';";
 			stmt.executeUpdate(sql);
 			c.commit();
 			stmt.close();
@@ -760,6 +760,29 @@ public class db_operations {
 		return count_violations;
 
 	}
+	
+	/**
+	 * Delete all violations
+	 * @return
+	 */
+	public boolean deleteAllViolations() {
+		Statement stmt = null;
+		boolean result = false;
+		try {
+			c.setAutoCommit(false);
+			stmt = c.createStatement();
+			String sql = "DELETE FROM sla_violations;";
+			stmt.executeUpdate(sql);
+			c.commit();
+			stmt.close();
+			result = true;
+		} catch (Exception e) {
+			System.err.println(e.getClass().getName() + ": " + e.getMessage());
+		}
+		System.out.println("All violations deleted? " + result);
+		return result;
+	}
+	
 
 	/*******************************/
 	/** OPERATIONS FOR LICENSING **/
