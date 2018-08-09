@@ -814,8 +814,8 @@ public class db_operations {
 		try {
 			c.setAutoCommit(false);
 			Statement stmt = c.createStatement();
-			String sql = "INSERT INTO license_scaling (ns_uuid,sla_uuid, correlation_id, scaling_status, allowed_scales) " + "VALUES ('"
-					+ ns_uuid + "','" + sla_uuid + "' , '" + correlation_id + "' ,  '" + scaling_status + "' ,  '" + allowed_scales + "');";
+			String sql = "INSERT INTO license_scaling (ns_uuid, nsi_uuid, sla_uuid, correlation_id, scaling_status, allowed_scales) " + "VALUES ('"
+					+ ns_uuid + "', ' ' ,'" + sla_uuid + "' , '" + correlation_id + "' ,  '" + scaling_status + "' ,  '" + allowed_scales + "');";
 			stmt.executeUpdate(sql);
 			stmt.close();
 			c.commit();
