@@ -263,8 +263,8 @@ public class MgmtAPIs {
 			String[] parts = random_violation_time.split(" ");
 			String part1 = parts[0];
 			String part2 = parts[1];
-			part1 = part1.concat("'T'");
-			part2 = part2.concat("'Z'");
+			part1 = part1.concat("T");
+			part2 = part2.concat("Z");
 
 			random_violation_time = part1 + part2;
 
