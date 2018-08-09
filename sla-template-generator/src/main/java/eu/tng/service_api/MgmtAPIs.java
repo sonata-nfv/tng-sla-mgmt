@@ -278,5 +278,34 @@ public class MgmtAPIs {
 		}
 		return success;
 	}
+	
+	/**
+	 * delete all violations
+	 */
+	@SuppressWarnings("static-access")
+	@Path("/violation")
+	@Produces(MediaType.TEXT_PLAIN)
+	@DELETE
+	public Response deleteViolations() {
+		ResponseBuilder apiresponse = null;
+
+		db_operations db = new db_operations();
+		db.connectPostgreSQL();
+		boolean delete = db.deleteAllViolations();
+		db.closePostgreSQL();
+
+		if (delete == true) {
+			String response = "Violations deleted Succesfully";
+			apiresponse = Response.ok((response));
+			apiresponse.header("Content-Length", response.length());
+			return apiresponse.status(200).build();
+		} else {
+			String response = "Error deleting violations.";
+			apiresponse = Response.ok((response));
+			apiresponse.header("Content-Length", response.length());
+			return apiresponse.status(404).build();
+		}
+
+	}
 
 }
