@@ -105,7 +105,8 @@ public class cust_sla_corr {
 							JSONObject slad = (JSONObject) jsonObject.get("slad");
 							// get slad name
 							String name = (String) slad.get("name");
-													
+							details.add(name);
+			
 							if (slad.containsKey("sla_template")) {
 								JSONObject sla_template = (JSONObject) slad.get("sla_template");
 								if (sla_template.containsKey("licensing")) {
