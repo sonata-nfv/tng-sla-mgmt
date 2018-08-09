@@ -33,7 +33,6 @@
  * 
  */
 
-
 package eu.tng.service_api;
 
 import java.io.BufferedReader;
@@ -43,8 +42,13 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.sql.Timestamp;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -189,7 +193,7 @@ public class MgmtAPIs {
 		return apiresponse.status(200).build();
 
 	}
-	
+
 	/**
 	 * delete cust-ns-sla correlation based on sla uuid
 	 */
@@ -200,27 +204,26 @@ public class MgmtAPIs {
 	@DELETE
 	public Response deletecCustSlaCorrelation(@PathParam("sla_uuid") String sla_uuid) {
 		ResponseBuilder apiresponse = null;
-		
+
 		db_operations db = new db_operations();
 		db.connectPostgreSQL();
 		boolean delete = db.deleteRecord("cust_sla", sla_uuid);
 		db.closePostgreSQL();
-		
-		if (delete==true) {
+
+		if (delete == true) {
 			String response = "Agreement deleted Succesfully";
 			apiresponse = Response.ok((response));
 			apiresponse.header("Content-Length", response.length());
 			return apiresponse.status(200).build();
-		} 
-		else {
+		} else {
 			String response = "Agreement was not deleted. sla_uuid Not Found";
 			apiresponse = Response.ok((response));
 			apiresponse.header("Content-Length", response.length());
 			return apiresponse.status(404).build();
 		}
-		
+
 	}
-	
+
 	/**
 	 * api in order to insert dummy violation records
 	 */
@@ -229,27 +232,51 @@ public class MgmtAPIs {
 	@Consumes("application/x-www-form-urlencoded")
 	@POST
 	public Response insertViolationData(final MultivaluedMap<String, String> formParams) {
-
 		ResponseBuilder apiresponse = null;
+		List<String> v_number = formParams.get("v_number");
+		boolean insert = addMultipleDummyViolations(Integer.parseInt(v_number.get(0)));
+		if (insert == true) {
+			JSONObject success = new JSONObject();
+			success.put("OK: ", "Dummy violation data uploaded to db.");
+			apiresponse = Response.ok((Object) success);
+			apiresponse.header("Content-Length", success.toJSONString().length());
+			return apiresponse.status(200).build();
+		} else {
+			JSONObject fail = new JSONObject();
+			fail.put("ERROR: ", "Dummy violation data failed to be uploaded to db.");
+			apiresponse = Response.ok((Object) fail);
+			apiresponse.header("Content-Length", fail.toJSONString().length());
+			return apiresponse.status(200).build();
+		}
+	}
 
-		List<String> nsi_uuid = formParams.get("nsi_uuid");
-		List<String> sla_uuid = formParams.get("sla_uuid");
-		List<String> cust_uuid = formParams.get("cust_uuid");
-		List<String> violation_time = formParams.get("violation_time");
-		
+	public static boolean addMultipleDummyViolations(int v_number) {
+		boolean success = false;
+		int insertion = 0;
 		db_operations dbo = new db_operations();
 		db_operations.connectPostgreSQL();
-		db_operations.createTableViolations();
-		db_operations.insertRecordViolation(nsi_uuid.get(0), sla_uuid.get(0), violation_time.get(0), "firing", cust_uuid.get(0));
-		db_operations.closePostgreSQL();
-
-		JSONObject success = new JSONObject();
-		success.put("OK: ", "Dummy violation data uploaded to db.");
-		apiresponse = Response.ok((Object) success);
-		apiresponse.header("Content-Length", success.toJSONString().length());
-		return apiresponse.status(200).build();
+		for (int i = 0; i < v_number; i++) {
+			String random_nsi_uuid = UUID.randomUUID().toString();
+			String random_sla_uuid = UUID.randomUUID().toString();
+			String random_cust_uuid = UUID.randomUUID().toString();
 			
+			long offset = Timestamp.valueOf("2018-06-01 00:00:00").getTime();
+			DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+			Date date = new Date();
+			@SuppressWarnings("deprecation")
+			long end = Timestamp.parse(dateFormat.format(date));
+			long diff = end - offset + 1;			
+			String random_violation_time = new Timestamp(offset + (long)(Math.random() * diff)).toString();
 
+			db_operations.createTableViolations();
+			db_operations.insertRecordViolation(random_nsi_uuid, random_sla_uuid, random_cust_uuid, "firing", random_violation_time);
+			insertion++;
+		}
+		db_operations.closePostgreSQL();
+		if (insertion == v_number) {
+			success = true;
+		}
+		return success;
 	}
 
 }
