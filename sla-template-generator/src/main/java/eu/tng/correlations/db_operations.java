@@ -846,7 +846,7 @@ public class db_operations {
 			pstmt.setString(1, scaling_status);
 			pstmt.setString(2, nsi_uuid);
 			pstmt.setString(3, "");
-			pstmt.setString(3, correlation_id);
+			pstmt.setString(4, correlation_id);
 
 			pstmt.executeUpdate();
 			result = true;
