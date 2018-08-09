@@ -59,15 +59,15 @@ public class db_operations {
 
 			Class.forName("org.postgresql.Driver");
 
-//			 c =
-//			 DriverManager.getConnection("jdbc:postgresql://localhost:5432/sla-manager",
-//			 "postgres", "admin");
+			 c =
+			 DriverManager.getConnection("jdbc:postgresql://localhost:5432/sla-manager",
+			 "postgres", "admin");
 
-			c = DriverManager
-					.getConnection(
-							"jdbc:postgresql://" + System.getenv("DATABASE_HOST") + ":" + System.getenv("DATABASE_PORT")
-									+ "/" + System.getenv("GTK_DB_NAME"),
-							System.getenv("GTK_DB_USER"), System.getenv("GTK_DB_PASS"));
+//			c = DriverManager
+//					.getConnection(
+//							"jdbc:postgresql://" + System.getenv("DATABASE_HOST") + ":" + System.getenv("DATABASE_PORT")
+//									+ "/" + System.getenv("GTK_DB_NAME"),
+//							System.getenv("GTK_DB_USER"), System.getenv("GTK_DB_PASS"));
 
 			connect = true;
 			System.out.println("Opened sla-manager database successfully");
@@ -876,7 +876,6 @@ public class db_operations {
 			while (rs.next()) {
 				String ns_uuid = rs.getString("ns_uuid");
 				String nsi_uuid = rs.getString("nsi_uuid");
-				String cust_uuid = rs.getString("cust_uuid");
 				String sla_uuid = rs.getString("sla_uuid");
 				String scaling_status = rs.getString("scaling_status");
 				String allowed_scales = rs.getString("allowed_scales");
@@ -885,7 +884,6 @@ public class db_operations {
 
 				license_data.put("ns_uuid", ns_uuid);
 				license_data.put("nsi_uuid", nsi_uuid);
-				license_data.put("cust_uuid", cust_uuid);
 				license_data.put("sla_uuid", sla_uuid);
 				license_data.put("scaling_status", scaling_status);
 				license_data.put("allowed_scales", allowed_scales);
@@ -895,6 +893,7 @@ public class db_operations {
 				licenses.add(license_data);
 
 			}
+			System.out.println(licenses);
 			rs.close();
 			stmt.close();
 		} catch (Exception e) {
@@ -903,6 +902,12 @@ public class db_operations {
 		return licenses;
 	}
 	
+	public static void main(String[] args) {
+		connectPostgreSQL();
+		createTableLicenseScaling();
+		getLicenses();
+		closePostgreSQL();
+    }
 	
 	
 	
