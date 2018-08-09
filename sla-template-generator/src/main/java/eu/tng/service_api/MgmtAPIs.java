@@ -35,16 +35,8 @@
 
 package eu.tng.service_api;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.sql.Timestamp;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -62,15 +54,15 @@ import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 
-import org.apache.derby.client.am.DateTime;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
-import eu.tng.correlations.cust_sla_corr;
-import eu.tng.correlations.db_operations;
-import eu.tng.correlations.ns_template_corr;
-import eu.tng.template_gen.CreateTemplate;
-import eu.tng.validations.TemplateValidation;
+
+import java.sql.Timestamp;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+
+import eu.tng.correlations.*;
 
 @Path("/mgmt")
 @Consumes(MediaType.APPLICATION_JSON)
