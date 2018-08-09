@@ -809,13 +809,13 @@ public class db_operations {
 	/**
 	 * Insert Record licensing
 	 */
-	public static boolean insertRecordLicensing(String ns_uuid, String nsi_uuid, String sla_uuid, String allowed_scales) {
+	public static boolean insertRecordLicensing(String ns_uuid, String sla_uuid, String correlation_id, String scaling_status, String allowed_scales) {
 		boolean result = false;
 		try {
 			c.setAutoCommit(false);
 			Statement stmt = c.createStatement();
-			String sql = "INSERT INTO license_scaling (ns_uuid, nsi_uuid,sla_uuid,allowed_scales) " + "VALUES ('"
-					+ ns_uuid + "','" + nsi_uuid + "' , '" + sla_uuid + "' ,  '" + allowed_scales + "' );";
+			String sql = "INSERT INTO license_scaling (ns_uuid,sla_uuid, correlation_id, scaling_status, allowed_scales) " + "VALUES ('"
+					+ ns_uuid + "','" + sla_uuid + "' , '" + correlation_id + "' ,  '" + scaling_status + "' ,  '" + allowed_scales + "');";
 			stmt.executeUpdate(sql);
 			stmt.close();
 			c.commit();
@@ -828,6 +828,39 @@ public class db_operations {
 		System.out.println("Records license_scaling saved successfully? " + result);
 		return result;
 	}
+	
+	/**
+	 * Update record for agreement in order to include ns instance id and status
+	 * ready
+	 * 
+	 * @param inst_status
+	 * @param correlation_id
+	 * @param nsi_uuid
+	 */
+	public static void UpdateRecordLicense(String scaling_status, String correlation_id, String nsi_uuid) {
+
+		String SQL = "UPDATE license_scaling " + "SET scaling_status = ?, nsi_uuid = ? , correlation_id = ?" + "WHERE correlation_id = ?";
+		boolean result = false;
+		try {
+			PreparedStatement pstmt = c.prepareStatement(SQL);
+			pstmt.setString(1, scaling_status);
+			pstmt.setString(2, nsi_uuid);
+			pstmt.setString(3, "");
+			pstmt.setString(3, correlation_id);
+
+			pstmt.executeUpdate();
+			result = true;
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		System.out.println("Define nsi_uuid for license record? " + result);
+	}
+	
+	
+	
+	
 	
 	/**
 	 * Delete Record

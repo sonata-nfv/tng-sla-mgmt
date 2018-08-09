@@ -153,12 +153,16 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 										}										
 									}
 								}
-
+								
 								// Update NSI Records - to create agreement
 								System.out.println(" [*] Start inserting record to dbv for agreement.... ");
 								db_operations dbo = new db_operations();
 								db_operations.connectPostgreSQL();
 								db_operations.UpdateRecordAgreement(status, correlation_id, nsi_id);
+								
+								// Update Licensing record with the nsi_uuid
+								db_operations.UpdateRecordLicense("pending", correlation_id, nsi_id);
+
 								db_operations.closePostgreSQL();
 								
 								// Create rules
@@ -193,6 +197,8 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 						String cust_email = null;
 						String sla_name = null;
 						String sla_status = null;
+						String allowed_scales  = null;
+
 
 						// Get nsd data
 						JSONObject nsd = jsonObjectMessage.getJSONObject("NSD");
@@ -226,6 +232,22 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 
 							cust_sla_corr.createCustSlaCorr(sla_uuid, sla_name, sla_status, ns_uuid, ns_name, cust_uuid,
 									cust_email, inst_status, correlation_id);
+							
+							// Start inserting licensing information
+							allowed_scales = (String) SLADetails.get(2);
+							System.out.println("[*] Allowed scales based on licenses ==> " + allowed_scales);
+							if (allowed_scales != null && !allowed_scales.isEmpty()) {
+								db_operations.connectPostgreSQL();
+								db_operations.createTableLicenseScaling();
+								db_operations.insertRecordLicensing(ns_uuid, sla_uuid, correlation_id, "pending", allowed_scales);
+								System.out.println("[*] Licenses info added. Allowed scales ==> " + allowed_scales);
+								db_operations.closePostgreSQL();
+							}
+							else {
+								System.out.println("[*] The SLA: " +sla_uuid+ " does not have licenses." );
+
+							}							
+							
 						}
 
 					}

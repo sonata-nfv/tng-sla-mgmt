@@ -105,7 +105,17 @@ public class cust_sla_corr {
 							JSONObject slad = (JSONObject) jsonObject.get("slad");
 							// get slad name
 							String name = (String) slad.get("name");
-							details.add(name);
+													
+							if (slad.containsKey("sla_template")) {
+								JSONObject sla_template = (JSONObject) slad.get("sla_template");
+								if (sla_template.containsKey("licensing")) {
+									JSONObject licensing = (JSONObject) sla_template.get("licensing");
+									// get number of licenses
+									String vms_number = (String) licensing.get("vms_number");
+									details.add(vms_number);
+								}
+							}				
+							
 						}
 
 					} catch (ParseException e) {
