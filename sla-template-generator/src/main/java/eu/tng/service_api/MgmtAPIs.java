@@ -270,8 +270,7 @@ public class MgmtAPIs {
 
 			System.out.println(random_violation_time);
 			db_operations.createTableViolations();
-			db_operations.insertRecordViolation(random_nsi_uuid, random_sla_uuid, random_cust_uuid, "firing",
-					random_violation_time);
+			db_operations.insertRecordViolation(random_nsi_uuid, random_sla_uuid, random_violation_time, "firing",random_cust_uuid);
 			insertion++;
 		}
 		db_operations.closePostgreSQL();
