@@ -1006,7 +1006,7 @@ public class db_operations {
 			}
 
 			// check if current scales are less than the allowed ones
-			if (Integer.parseInt(allowed_scales) > Integer.parseInt(current_scales)) {
+			if (Integer.parseInt(current_scales) > Integer.parseInt(allowed_scales)) {
 				try {
 					c.setAutoCommit(false);
 					stmt = c.createStatement();
