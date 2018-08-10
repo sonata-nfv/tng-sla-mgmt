@@ -903,6 +903,50 @@ public class db_operations {
 	}
 	
 	/**
+	 * Update the correlation id ion license_scaling table for messaging purposes through the MQ
+	 */
+	public static boolean UpdateCorrelationIdLicenseTable(String nsi_uuid, String correlation_id) {
+		boolean result = false;
+		
+		String SQL = "SELECT count(*) FROM license_scaling WHERE NSI_UUID = '" + nsi_uuid + "' ";
+		int count = 0;
+		try {
+			stmt = c.createStatement();
+			ResultSet rs = stmt.executeQuery(SQL);
+			while (rs.next()) {
+				count = rs.getInt(1);
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		if (count > 0) {
+			String SQL_Update = "UPDATE license_scaling " + "SET correlation_id = ?" + " WHERE nsi_uuid = ?";
+			try {
+				PreparedStatement pstmt = c.prepareStatement(SQL);
+				pstmt.setString(1, correlation_id);
+				pstmt.setString(2, nsi_uuid);
+				pstmt.executeUpdate();
+				result = true;
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			System.out.println(" [*] Update correlation id in license_scaling table? " + result);
+
+		} else {
+			System.out.println(" [*] Update abored. There is no such nsi_uuid in license_scaling table");
+
+		}
+		return result;
+				
+	}
+
+
+	
+	
+	/**
 	 * Delete Record
 	 */
 	public boolean deleteRecord(String tablename, String sla_uuid) {
