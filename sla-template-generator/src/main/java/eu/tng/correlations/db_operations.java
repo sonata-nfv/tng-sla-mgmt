@@ -924,7 +924,7 @@ public class db_operations {
 		if (count > 0) {
 			String SQL_Update = "UPDATE license_scaling " + "SET correlation_id = ?" + " WHERE nsi_uuid = ?";
 			try {
-				PreparedStatement pstmt = c.prepareStatement(SQL);
+				PreparedStatement pstmt = c.prepareStatement(SQL_Update);
 				pstmt.setString(1, correlation_id);
 				pstmt.setString(2, nsi_uuid);
 				pstmt.executeUpdate();
@@ -990,7 +990,7 @@ public class db_operations {
 			
 			String SQL_Update = "UPDATE license_scaling " + "SET current_scales = ? , scaling_status = 'READY'" + " WHERE correlation_id = ?";
 			try {
-				PreparedStatement pstmt = c.prepareStatement(SQL);
+				PreparedStatement pstmt = c.prepareStatement(SQL_Update);
 				pstmt.setString(1, current_scales);
 				pstmt.setString(2, correlation_id);
 				pstmt.executeUpdate();
