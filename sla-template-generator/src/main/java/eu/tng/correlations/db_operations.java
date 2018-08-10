@@ -59,9 +59,9 @@ public class db_operations {
 
 			Class.forName("org.postgresql.Driver");
 
-//			 c =
-//			 DriverManager.getConnection("jdbc:postgresql://localhost:5432/sla-manager",
-//			 "postgres", "admin");
+			// c =
+			// DriverManager.getConnection("jdbc:postgresql://localhost:5432/sla-manager",
+			// "postgres", "admin");
 
 			c = DriverManager
 					.getConnection(
@@ -760,9 +760,10 @@ public class db_operations {
 		return count_violations;
 
 	}
-	
+
 	/**
 	 * Delete all violations
+	 * 
 	 * @return
 	 */
 	public boolean deleteAllViolations() {
@@ -782,7 +783,6 @@ public class db_operations {
 		System.out.println("All violations deleted? " + result);
 		return result;
 	}
-	
 
 	/*******************************/
 	/** OPERATIONS FOR LICENSING **/
@@ -809,13 +809,15 @@ public class db_operations {
 	/**
 	 * Insert Record licensing
 	 */
-	public static boolean insertRecordLicensing(String ns_uuid, String sla_uuid, String correlation_id, String scaling_status, String allowed_scales) {
+	public static boolean insertRecordLicensing(String ns_uuid, String sla_uuid, String correlation_id,
+			String scaling_status, String allowed_scales) {
 		boolean result = false;
 		try {
 			c.setAutoCommit(false);
 			Statement stmt = c.createStatement();
-			String sql = "INSERT INTO license_scaling (ns_uuid, nsi_uuid, sla_uuid, correlation_id, scaling_status, allowed_scales) " + "VALUES ('"
-					+ ns_uuid + "', ' ' ,'" + sla_uuid + "' , '" + correlation_id + "' ,  '" + scaling_status + "' ,  '" + allowed_scales + "');";
+			String sql = "INSERT INTO license_scaling (ns_uuid, nsi_uuid, sla_uuid, correlation_id, scaling_status, allowed_scales) "
+					+ "VALUES ('" + ns_uuid + "', ' ' ,'" + sla_uuid + "' , '" + correlation_id + "' ,  '"
+					+ scaling_status + "' ,  '" + allowed_scales + "');";
 			stmt.executeUpdate(sql);
 			stmt.close();
 			c.commit();
@@ -828,7 +830,7 @@ public class db_operations {
 		System.out.println("Records license_scaling saved successfully? " + result);
 		return result;
 	}
-	
+
 	/**
 	 * Update record for agreement in order to include ns instance id and status
 	 * ready
@@ -839,7 +841,8 @@ public class db_operations {
 	 */
 	public static void UpdateRecordLicense(String scaling_status, String correlation_id, String nsi_uuid) {
 
-		String SQL = "UPDATE license_scaling " + "SET scaling_status = ?, nsi_uuid = ? , correlation_id = ?" + "WHERE correlation_id = ?";
+		String SQL = "UPDATE license_scaling " + "SET scaling_status = ?, nsi_uuid = ? , correlation_id = ?"
+				+ "WHERE correlation_id = ?";
 		boolean result = false;
 		try {
 			PreparedStatement pstmt = c.prepareStatement(SQL);
@@ -857,12 +860,13 @@ public class db_operations {
 
 		System.out.println("Define nsi_uuid for license record? " + result);
 	}
-	
+
 	/**
 	 * get all license records
+	 * 
 	 * @return
 	 */
-	
+
 	public static JSONArray getLicenses() {
 
 		JSONObject license_data = new JSONObject();
@@ -901,7 +905,135 @@ public class db_operations {
 		}
 		return licenses;
 	}
-	
+
+	/**
+	 * Update the correlation id ion license_scaling table for messaging purposes
+	 * through the MQ
+	 */
+	public static boolean UpdateCorrelationIdLicenseTable(String nsi_uuid, String correlation_id) {
+		boolean result = false;
+
+		String SQL = "SELECT count(*) FROM license_scaling WHERE NSI_UUID = '" + nsi_uuid + "' ";
+		int count = 0;
+		try {
+			stmt = c.createStatement();
+			ResultSet rs = stmt.executeQuery(SQL);
+			while (rs.next()) {
+				count = rs.getInt(1);
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		if (count > 0) {
+			String SQL_Update = "UPDATE license_scaling " + "SET correlation_id = ?" + " WHERE nsi_uuid = ?";
+			try {
+				PreparedStatement pstmt = c.prepareStatement(SQL_Update);
+				pstmt.setString(1, correlation_id);
+				pstmt.setString(2, nsi_uuid);
+				pstmt.executeUpdate();
+				result = true;
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			System.out.println(" [*] Update correlation id in license_scaling table? " + result);
+
+		} else {
+			System.out.println(" [*] Update abored. There is no such nsi_uuid in license_scaling table");
+
+		}
+		return result;
+
+	}
+
+	/**
+	 * Update the current scales
+	 */
+	public static boolean UpdateCurrentScales(String correlation_id, String workflow) {
+		boolean result = false;
+		String SQL = "SELECT count(*) FROM license_scaling WHERE correlation_id = '" + correlation_id + "' ";
+		int count = 0;
+		try {
+			stmt = c.createStatement();
+			ResultSet rs = stmt.executeQuery(SQL);
+			while (rs.next()) {
+				count = rs.getInt(1);
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		if (count > 0) {
+			// get current scales
+			String current_scales = "";
+			String allowed_scales = "";
+			try {
+				c.setAutoCommit(false);
+				stmt = c.createStatement();
+				ResultSet rs = stmt
+						.executeQuery("SELECT * FROM license_scaling WHERE correlation_id='" + correlation_id + "';");
+				while (rs.next()) {
+					current_scales = rs.getString("current_scales");
+					allowed_scales = rs.getString("allowed_scales");
+				}
+				rs.close();
+				stmt.close();
+
+				// check scale type
+				System.out.println(" [*] Scaling type ==> " + workflow);
+				if (workflow.equals("addvnf")) {
+					if (current_scales == null) {
+						current_scales = "1";
+					} else {
+						int cs = Integer.parseInt(current_scales);
+						cs=cs+1;
+						current_scales = Integer.toString(cs);
+					}
+				} else {
+					if (current_scales != null) {
+						int cs = Integer.parseInt(current_scales);
+						cs = cs-1;
+						current_scales = Integer.toString(cs);
+					}
+				}
+				System.out.println(" [*] Current scales ==> " + current_scales);
+				System.out.println(" [*] Allowed scales ==> " + allowed_scales);
+
+			} catch (Exception e) {
+				System.err.println(e.getClass().getName() + ": " + e.getMessage());
+			}
+
+			// check if current scales are less than the allowed ones
+			if (Integer.parseInt(current_scales) < Integer.parseInt(allowed_scales)) {
+				try {
+					c.setAutoCommit(false);
+					stmt = c.createStatement();
+					String sql = "UPDATE license_scaling SET scaling_status='READY', current_scales='" + current_scales
+							+ "' WHERE correlation_id='" + correlation_id + "';";
+					stmt.executeUpdate(sql);
+					c.commit();
+					stmt.close();
+					result = true;
+					System.out.println(" [*] Update current scales in license_scaling table? " + result);
+
+				} catch (Exception e) {
+					System.err.println(e.getClass().getName() + ": " + e.getMessage());
+				}
+			} 
+			else {
+				System.out.println(" [*] License Violation. Current Scales: " + current_scales +" but the allowed scales are: " + allowed_scales);
+			}
+
+		} else {
+			System.out.println(" [*] Update aborted. There is no such correlation id in license_scaling table");
+
+		}
+		return result;
+
+	}
+
 	/**
 	 * Delete Record
 	 */
