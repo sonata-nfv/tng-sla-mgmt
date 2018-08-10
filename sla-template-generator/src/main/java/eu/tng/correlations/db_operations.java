@@ -975,7 +975,7 @@ public class db_operations {
 				}
 				rs.close();
 				stmt.close();				
-				if (current_scales.equals("null")) {
+				if (current_scales == null) {
 					current_scales = "1";					
 				} 
 				else {
@@ -999,10 +999,10 @@ public class db_operations {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			System.out.println(" [*] Update correlation id in license_scaling table? " + result);
+			System.out.println(" [*] Update current scales in license_scaling table? " + result);
 
 		} else {
-			System.out.println(" [*] Update abored. There is no such nsi_uuid in license_scaling table");
+			System.out.println(" [*] Update aborted. There is no such correlation id in license_scaling table");
 
 		}
 		return result;
