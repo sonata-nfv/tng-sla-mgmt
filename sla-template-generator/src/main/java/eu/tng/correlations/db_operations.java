@@ -983,7 +983,7 @@ public class db_operations {
 
 				// check scale type
 				System.out.println(" [*] Scaling type ==> " + workflow);
-				if (workflow == "addvnf") {
+				if (workflow.equals("addvnf")) {
 					if (current_scales == null) {
 						current_scales = "1";
 					} else {
