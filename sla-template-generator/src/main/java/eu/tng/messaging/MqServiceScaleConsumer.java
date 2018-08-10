@@ -63,9 +63,10 @@ public class MqServiceScaleConsumer implements ServletContextListener {
 						byte[] body) throws IOException {
 					
 					// Initialize variables
-					String correlation_id = null;
+					String correlation_id = "123";
 					String nsi_uuid = "";
 					String scaling_status = "null";
+					String workflow = "null";
 					JSONObject jsonObjectMessage = null;
 				
 					// Parse message payload
@@ -76,7 +77,7 @@ public class MqServiceScaleConsumer implements ServletContextListener {
 					jsonObjectMessage = new JSONObject(map);
 
 					System.out.println("START READING HEADERS FROM MESSAGE.....");
-					correlation_id = (String) properties.getCorrelationId();
+					//correlation_id = (String) properties.getCorrelationId();
 					System.out.println(" [*] Correlation_id (from service.instance.scale queue) ==> " + correlation_id);
 					
 					/** if message coming from the MANO - contain status key **/
@@ -85,6 +86,16 @@ public class MqServiceScaleConsumer implements ServletContextListener {
 						System.out.println(" [*] Message as JSONObject ==> " + jsonObjectMessage);
 						scaling_status = (String) jsonObjectMessage.get("status");
 						System.out.println(" [*] Scaling Status ==> " + scaling_status);
+						workflow = (String) jsonObjectMessage.get("workflow");
+						System.out.println(" [*] Scaling Workflow type ==> " + workflow);
+
+						if (scaling_status.equals("READY")) {
+							System.out.println(" [*] Scaling Status 'READY'");
+							db_operations.connectPostgreSQL();
+							db_operations.UpdateCurrentScales(correlation_id, workflow);
+							db_operations.closePostgreSQL();
+
+						}
 					}
 					
 					/** if message coming from the Policy Manager - doesn't contain status key **/
@@ -98,8 +109,13 @@ public class MqServiceScaleConsumer implements ServletContextListener {
 						
 						db_operations.connectPostgreSQL();
 						db_operations.createTableLicenseScaling();
-						db_operations.UpdateCorrelationIdLicenseTable(nsi_uuid, correlation_id);
-						System.out.println("[*] Correlation id in license scaling table updated succesfully!");
+						boolean updated = db_operations.UpdateCorrelationIdLicenseTable(nsi_uuid, correlation_id);
+						if (updated == true) {
+							System.out.println("[*] Correlation id in license scaling table updated succesfully!");
+						}
+						else {
+							System.out.println("[*] ERROR while updating orrelation id in license scaling table!");
+						}
 						db_operations.closePostgreSQL();
 						
 					}		

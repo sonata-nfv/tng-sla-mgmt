@@ -942,9 +942,73 @@ public class db_operations {
 		return result;
 				
 	}
-
-
 	
+	/**
+	 * Update the current scales
+	 */
+	public static boolean UpdateCurrentScales(String correlation_id, String workflow) {
+		boolean result = false;
+		
+		String SQL = "SELECT count(*) FROM license_scaling WHERE correlation_id = '" + correlation_id + "' ";
+		int count = 0;
+		try {
+			stmt = c.createStatement();
+			ResultSet rs = stmt.executeQuery(SQL);
+			while (rs.next()) {
+				count = rs.getInt(1);
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		if (count > 0) {
+		
+			// get current scales
+			String current_scales= "";
+			try {
+				c.setAutoCommit(false);
+				stmt = c.createStatement();
+				ResultSet rs = stmt.executeQuery("SELECT current_scales FROM license_scaling WHERE correlation_id='"+correlation_id+"';");
+				while (rs.next()) {
+					current_scales = rs.getString("current_scales");
+				}
+				rs.close();
+				stmt.close();				
+				if (current_scales.equals("null")) {
+					current_scales = "1";					
+				} 
+				else {
+					int cs = Integer.parseInt(current_scales);
+					cs++;
+					current_scales = Integer.toString(cs);
+				}
+			} catch (Exception e) {
+				System.err.println(e.getClass().getName() + ": " + e.getMessage());
+			}			
+			
+			
+			String SQL_Update = "UPDATE license_scaling " + "SET current_scales = ? , scaling_status = 'READY'" + " WHERE correlation_id = ?";
+			try {
+				PreparedStatement pstmt = c.prepareStatement(SQL);
+				pstmt.setString(1, current_scales);
+				pstmt.setString(2, correlation_id);
+				pstmt.executeUpdate();
+				result = true;
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			System.out.println(" [*] Update correlation id in license_scaling table? " + result);
+
+		} else {
+			System.out.println(" [*] Update abored. There is no such nsi_uuid in license_scaling table");
+
+		}
+		return result;
+				
+	}
+
 	
 	/**
 	 * Delete Record
