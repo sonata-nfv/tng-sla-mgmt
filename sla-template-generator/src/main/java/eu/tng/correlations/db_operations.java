@@ -983,23 +983,26 @@ public class db_operations {
 					cs++;
 					current_scales = Integer.toString(cs);
 				}
+				System.out.println(" [*] Current scales ==> " + current_scales);
+
 			} catch (Exception e) {
 				System.err.println(e.getClass().getName() + ": " + e.getMessage());
 			}			
 			
-			
-			String SQL_Update = "UPDATE license_scaling " + "SET current_scales = ? , scaling_status = 'READY'" + " WHERE correlation_id = ?";
+				
+			String SQL_Update = "UPDATE license_scaling " + "SET scaling_status = ?, current_scales = ?" + "WHERE correlation_id = ?";
 			try {
 				PreparedStatement pstmt = c.prepareStatement(SQL_Update);
-				pstmt.setString(1, current_scales);
-				pstmt.setString(2, correlation_id);
+				pstmt.setString(1, "READY");
+				pstmt.setString(2, current_scales);
+				pstmt.setString(3, correlation_id);
 				pstmt.executeUpdate();
 				result = true;
+				System.out.println(" [*] Update current scales in license_scaling table? " + result);
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			System.out.println(" [*] Update current scales in license_scaling table? " + result);
 
 		} else {
 			System.out.println(" [*] Update aborted. There is no such correlation id in license_scaling table");
