@@ -982,18 +982,19 @@ public class db_operations {
 				stmt.close();
 
 				// check scale type
+				System.out.println(" [*] Scaling type ==> " + workflow);
 				if (workflow == "addvnf") {
 					if (current_scales == null) {
 						current_scales = "1";
 					} else {
 						int cs = Integer.parseInt(current_scales);
-						cs++;
+						cs=cs+1;
 						current_scales = Integer.toString(cs);
 					}
 				} else {
 					if (current_scales != null) {
 						int cs = Integer.parseInt(current_scales);
-						cs--;
+						cs = cs-1;
 						current_scales = Integer.toString(cs);
 					}
 				}
