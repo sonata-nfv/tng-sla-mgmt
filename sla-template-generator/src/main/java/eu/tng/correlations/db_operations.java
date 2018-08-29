@@ -611,9 +611,7 @@ public class db_operations {
 		try {
 			c.setAutoCommit(false);
 			Statement stmt = c.createStatement();
-			String sql = "INSERT INTO sla_violations  (ns_uuid, sla_uuid,violation_time, alert_state, cust_uuid ) VALUES ('"
-					+ nsi_uuid + "', '" + sla_uuid + "', '" + violation_time + "','" + alert_state + "', '" + cust_uuid
-					+ "');  ";
+			String sql = "INSERT INTO sla_violations (ns_uuid, sla_uuid,violation_time, alert_state, cust_uuid) VALUES ('"+ nsi_uuid + "', '" + sla_uuid + "', '" + violation_time + "','" + alert_state + "', '" + cust_uuid+ "');  ";
 			stmt.executeUpdate(sql);
 			stmt.close();
 			c.commit();
