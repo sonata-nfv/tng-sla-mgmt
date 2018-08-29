@@ -101,7 +101,7 @@ public class MonitoringRules {
 						String description = (String) dc.get(0);
 						String condition = (String) dc.get(1);
 
-						rule.put("name", "sla:rule:" + name);
+						rule.put("name", "sla:rule:" + name + "_" + nsi_id);
 						rule.put("duration", "10s");
 						rule.put("description", description);
 						rule.put("condition", condition);
