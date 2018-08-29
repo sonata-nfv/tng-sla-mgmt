@@ -606,7 +606,8 @@ public class db_operations {
 	 */
 	public static void insertRecordViolation(String nsi_uuid, String sla_uuid, String violation_time,
 			String alert_state, String cust_uuid) {
-
+		
+		System.out.println("sla_uuid inside the insert violation function");
 		try {
 			c.setAutoCommit(false);
 			Statement stmt = c.createStatement();
