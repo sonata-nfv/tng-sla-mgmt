@@ -168,6 +168,7 @@ public class db_operations {
 	public void insertRecordAgreement(String ns_uuid, String ns_name, String sla_uuid, String sla_name,
 			String sla_status, String cust_name, String cust_uuid, String inst_status, String correlation_id) {
 
+		cust_name = "tango-customer";
 		try {
 			c.setAutoCommit(false);
 			Statement stmt = c.createStatement();
