@@ -169,6 +169,8 @@ public class db_operations {
 	public void insertRecordAgreement(String ns_uuid, String ns_name, String sla_uuid, String sla_name,
 			String sla_status, String cust_name, String cust_uuid, String inst_status, String correlation_id) {
 
+		cust_uuid = "tango-customer";
+		String cust_email ="tango-customer-email";
 		try {
 			c.setAutoCommit(false);
 			Statement stmt = c.createStatement();
@@ -609,6 +611,7 @@ public class db_operations {
 	public static void insertRecordViolation(String nsi_uuid, String sla_uuid, String violation_time,
 			String alert_state, String cust_uuid) {
 
+		cust_uuid = "tango-customer";
 		try {
 			c.setAutoCommit(false);
 			Statement stmt = c.createStatement();
@@ -643,7 +646,7 @@ public class db_operations {
 			c.setAutoCommit(false);
 			stmt = c.createStatement();
 			ResultSet rs = stmt.executeQuery(
-					"SELECT * FROM cust_sla WHERE nsi_uuid = '" + nsi_uuid + "' AND sla_status = 'VIOLATED';");
+					"SELECT * FROM cust_sla WHERE nsi_uuid = '" + nsi_uuid + "';");
 			while (rs.next()) {
 				sla_uuid = rs.getString("sla_uuid");
 				cust_uuid = rs.getString("cust_uuid");
