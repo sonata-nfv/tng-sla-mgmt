@@ -608,6 +608,8 @@ public class db_operations {
 			String alert_state, String cust_uuid) {
 		
 		System.out.println("sla_uuid inside the insert violation function   " + sla_uuid);
+		System.out.println("cust_uuid inside the insert violation function   " + cust_uuid);
+
 		try {
 			c.setAutoCommit(false);
 			Statement stmt = c.createStatement();
