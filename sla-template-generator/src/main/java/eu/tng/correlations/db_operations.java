@@ -169,6 +169,8 @@ public class db_operations {
 	public void insertRecordAgreement(String ns_uuid, String ns_name, String sla_uuid, String sla_name,
 			String sla_status, String cust_name, String cust_uuid, String inst_status, String correlation_id) {
 
+		cust_uuid = "tango-customer";
+		String cust_email ="tango-customer-email";
 		try {
 			c.setAutoCommit(false);
 			Statement stmt = c.createStatement();
@@ -609,6 +611,7 @@ public class db_operations {
 	public static void insertRecordViolation(String nsi_uuid, String sla_uuid, String violation_time,
 			String alert_state, String cust_uuid) {
 
+		cust_uuid = "tango-customer";
 		try {
 			c.setAutoCommit(false);
 			Statement stmt = c.createStatement();
