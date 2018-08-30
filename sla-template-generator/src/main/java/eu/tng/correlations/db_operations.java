@@ -686,7 +686,7 @@ public class db_operations {
 
 				violation.put("violation_time", violation_time);
 				violation.put("alert_state", alert_state);
-				violation.put("cust_uuid", cust_uuid);
+				violation.put("cust_uuid", "tango-cust-uuid");
 				violation.put("ns_uuid", nsi_uuid);
 				violation.put("sla_uuid", sla_uuid);
 

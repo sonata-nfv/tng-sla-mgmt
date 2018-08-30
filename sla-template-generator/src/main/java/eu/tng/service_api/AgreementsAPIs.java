@@ -292,8 +292,10 @@ public class AgreementsAPIs {
 			System.out.println(agreement);
 			existingTemplates = agreement;
 
+	
+			
 			apiresponse = Response.ok((Object) existingTemplates);
-			apiresponse.header("Content-Length", agreement.toJSONString().length() - 9);
+			apiresponse.header("Content-Length", apiresponse.toString().length()); 
 			return apiresponse.status(200).build();
 
 		} catch (Exception e) {
