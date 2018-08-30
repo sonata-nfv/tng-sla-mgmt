@@ -642,7 +642,7 @@ public class db_operations {
 			c.setAutoCommit(false);
 			stmt = c.createStatement();
 			ResultSet rs = stmt.executeQuery(
-					"SELECT * FROM cust_sla WHERE nsi_uuid = '" + nsi_uuid + "' AND sla_status = 'VIOLATED';");
+					"SELECT * FROM cust_sla WHERE nsi_uuid = '" + nsi_uuid + "';");
 			while (rs.next()) {
 				sla_uuid = rs.getString("sla_uuid");
 				cust_uuid = rs.getString("cust_uuid");
