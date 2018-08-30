@@ -168,6 +168,7 @@ public class db_operations {
 	public void insertRecordAgreement(String ns_uuid, String ns_name, String sla_uuid, String sla_name,
 			String sla_status, String cust_name, String cust_uuid, String inst_status, String correlation_id) {
 
+		cust_name = "tango-customer";
 		try {
 			c.setAutoCommit(false);
 			Statement stmt = c.createStatement();
@@ -606,13 +607,14 @@ public class db_operations {
 	 */
 	public static void insertRecordViolation(String nsi_uuid, String sla_uuid, String violation_time,
 			String alert_state, String cust_uuid) {
+		
+		System.out.println("sla_uuid inside the insert violation function   " + sla_uuid);
+		System.out.println("cust_uuid inside the insert violation function   " + cust_uuid);
 
 		try {
 			c.setAutoCommit(false);
 			Statement stmt = c.createStatement();
-			String sql = "INSERT INTO sla_violations  (ns_uuid, sla_uuid,violation_time, alert_state, cust_uuid ) VALUES ('"
-					+ nsi_uuid + "', '" + sla_uuid + "', '" + violation_time + "','" + alert_state + "', '" + cust_uuid
-					+ "');  ";
+			String sql = "INSERT INTO sla_violations (ns_uuid, sla_uuid,violation_time, alert_state, cust_uuid) VALUES ('"+ nsi_uuid + "', '" + sla_uuid + "', '" + violation_time + "','" + alert_state + "', '" + cust_uuid+ "');  ";
 			stmt.executeUpdate(sql);
 			stmt.close();
 			c.commit();
@@ -641,7 +643,7 @@ public class db_operations {
 			c.setAutoCommit(false);
 			stmt = c.createStatement();
 			ResultSet rs = stmt.executeQuery(
-					"SELECT * FROM cust_sla WHERE nsi_uuid = '" + nsi_uuid + "' AND sla_status = 'VIOLATED';");
+					"SELECT * FROM cust_sla WHERE nsi_uuid = '" + nsi_uuid + "';");
 			while (rs.next()) {
 				sla_uuid = rs.getString("sla_uuid");
 				cust_uuid = rs.getString("cust_uuid");
@@ -687,7 +689,7 @@ public class db_operations {
 
 				violation.put("violation_time", violation_time);
 				violation.put("alert_state", alert_state);
-				violation.put("cust_uuid", cust_uuid);
+				violation.put("cust_uuid", "tango-cust-uuid");
 				violation.put("ns_uuid", nsi_uuid);
 				violation.put("sla_uuid", sla_uuid);
 

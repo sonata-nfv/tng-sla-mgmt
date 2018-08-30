@@ -117,10 +117,9 @@ public class MqMonitoringConsumer implements ServletContextListener {
 							// get the sla agreements details for this violation
 							org.json.simple.JSONObject violated_sla = dbo.getViolatedSLA(nsi_uuid);
 							sla_uuid = (String) violated_sla.get("sla_uuid");
-							System.out.println("Violated sla_uuid ==> "+ sla_uuid);
-							cust_uuid = (String) violated_sla.get("cust_uuid");
-							cust_uuid = (String) violated_sla.get("cust_uuid");
-							System.out.println("Violated cust_uuid ==> "+ sla_uuid);
+							System.out.println("Violated sla_uuid (from monitoring consumer) ==> "+ sla_uuid);
+							cust_uuid = "tango-customer"; //(String) violated_sla.get("cust_uuid");
+							System.out.println("Violated cust_uuid ==> "+ cust_uuid);
 							// insert the violation in the violation database
 							db_operations.insertRecordViolation(nsi_uuid, sla_uuid, alert_time, alert_state, cust_uuid);
 							db_operations.UpdateAgreementStatus(nsi_uuid);

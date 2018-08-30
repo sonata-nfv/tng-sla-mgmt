@@ -215,7 +215,6 @@ public class MgmtAPIs {
 		}
 
 	}
-
 	/**
 	 * api in order to insert dummy violation records
 	 */
