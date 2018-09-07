@@ -275,7 +275,7 @@ public class AgreementsAPIs {
 			String cust_uuid = "tango-customer"; //(String) agrPerSlaNs.get("cust_uuid");
 			String cust_email = "tango-customer-email"; //(String) agrPerSlaNs.get("cust_email");
 			String sla_date = (String) agrPerSlaNs.get("sla_date");
-
+			System.out.println("SLA DATE" + sla_date);
 			// update the template with the necessary customer info - convert it to
 			// agreement
 			JSONObject slad = (JSONObject) agreement.get("slad");
