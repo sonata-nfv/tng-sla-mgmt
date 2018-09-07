@@ -137,7 +137,7 @@ public class MgmtAPIs {
 			System.out.println(jsonObject.toJSONString().length());
 
 			apiresponse = Response.ok(jsonObject);
-			//apiresponse.header("Content-Length", jsonObject.toJSONString().length() - 6);
+			apiresponse.header("Content-Length", jsonObject.toJSONString().length());
 			return apiresponse.status(200).build();
 
 		} catch (Exception e) {
