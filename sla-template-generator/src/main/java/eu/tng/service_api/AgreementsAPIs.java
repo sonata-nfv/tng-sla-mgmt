@@ -290,12 +290,12 @@ public class AgreementsAPIs {
 			customer_info.put("cust_email", cust_email);
 			sla_template.put("customer_info", customer_info);
 
-			System.out.println(agreement);
+			System.out.println("SLA AGREEMENT:" + sla_template);
 			existingTemplates = agreement;
 
-			apiresponse = Response.ok((Object) existingTemplates);
-			apiresponse.header("Content-Length", agreement.toJSONString().length());
-			return apiresponse.build();
+			apiresponse = Response.ok((Object) sla_template);
+			apiresponse.header("Content-Length", sla_template.toJSONString().length());
+			return apiresponse.status(200).build();
 
 		} catch (Exception e) {
 
