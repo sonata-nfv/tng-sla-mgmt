@@ -300,7 +300,7 @@ public class AgreementsAPIs {
 			System.out.println("SLA AGREEMENT:" + sla_template);
 
 			apiresponse = Response.ok((Object) sla_template);
-			apiresponse.header("Content-Length", sla_template.toJSONString().length());
+			apiresponse.header("Content-Length", sla_template.size());
 			return apiresponse.status(200).build();
 
 		} catch (Exception e) {
