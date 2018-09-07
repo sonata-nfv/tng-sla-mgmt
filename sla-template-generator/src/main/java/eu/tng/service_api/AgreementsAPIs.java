@@ -242,7 +242,7 @@ public class AgreementsAPIs {
 			// "http://pre-int-sp-ath.5gtango.eu:4011/catalogues/api/v2/slas/template-descriptors/"
 			// + sla_uuid;
 			URL object = new URL(url);
-
+			JSONObject sla_template = new JSONObject();
 			HttpURLConnection con = (HttpURLConnection) object.openConnection();
 			con.setDoOutput(true);
 			con.setDoInput(true);
@@ -279,19 +279,25 @@ public class AgreementsAPIs {
 			// update the template with the necessary customer info - convert it to
 			// agreement
 			JSONObject slad = (JSONObject) agreement.get("slad");
-			JSONObject sla_template = (JSONObject) slad.get("sla_template");
+			System.out.println("SLAD " + slad);
+			sla_template = (JSONObject) slad.get("sla_template");
 
+			System.out.println("SLA template: " + sla_template);
 			/** change the offered date to the date the agreement was created */
 			sla_template.put("offered_date", sla_date);
+            System.out.println("SLA template: " + sla_template);
 
 			/** add the customer information */
 			JSONObject customer_info = new JSONObject();
 			customer_info.put("cust_uuid", cust_uuid);
 			customer_info.put("cust_email", cust_email);
+	         System.out.println("SLA template: " + sla_template);
+
 			sla_template.put("customer_info", customer_info);
+            System.out.println("Custoemer Info: " + customer_info);
+
 
 			System.out.println("SLA AGREEMENT:" + sla_template);
-			existingTemplates = agreement;
 
 			apiresponse = Response.ok((Object) sla_template);
 			apiresponse.header("Content-Length", sla_template.toJSONString().length());
