@@ -295,7 +295,7 @@ public class AgreementsAPIs {
 
 			apiresponse = Response.ok((Object) existingTemplates);
 			apiresponse.header("Content-Length", agreement.toJSONString().length());
-			return apiresponse.status(200).build();
+			return apiresponse.build();
 
 		} catch (Exception e) {
 
