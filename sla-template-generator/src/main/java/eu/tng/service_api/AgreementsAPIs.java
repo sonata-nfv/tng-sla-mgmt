@@ -322,8 +322,8 @@ public class AgreementsAPIs {
 		JSONArray gt = cust_sla_corr.getGuaranteeTerms(sla_uuid);
 		if (gt != null) {
 			apiresponse = Response.ok(gt);
-			System.out.println(gt.toString().length());
-			apiresponse.header("Content-Length", gt.toString().length() - 1);
+			System.out.println("Response Length:" + gt.toString().length());
+			//apiresponse.header("Content-Length", gt.toString().length() - 1);
 			return apiresponse.status(200).build();
 		} else {
 			JSONObject error = new JSONObject();
