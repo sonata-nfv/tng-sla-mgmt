@@ -294,7 +294,7 @@ public class AgreementsAPIs {
 			existingTemplates = agreement;
 
 			apiresponse = Response.ok((Object) existingTemplates);
-			apiresponse.header("Content-Length", agreement.toJSONString().length()-8);
+			//apiresponse.header("Content-Length", agreement.toJSONString().length()-8);
 			return apiresponse.status(200).build();
 
 		} catch (Exception e) {
@@ -322,8 +322,8 @@ public class AgreementsAPIs {
 		JSONArray gt = cust_sla_corr.getGuaranteeTerms(sla_uuid);
 		if (gt != null) {
 			apiresponse = Response.ok(gt);
-			System.out.println("Response Length:" + gt.toString().length());
-			//apiresponse.header("Content-Length", gt.toString().length() - 1);
+			System.out.println(gt.toString().length());
+			apiresponse.header("Content-Length", gt.toString().length() - 1);
 			return apiresponse.status(200).build();
 		} else {
 			JSONObject error = new JSONObject();
