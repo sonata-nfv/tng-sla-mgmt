@@ -262,7 +262,7 @@ public class AgreementsAPIs {
 
 			// get the core sla from the catalogue
 			JSONParser parser = new JSONParser();
-			Object existingTemplates = parser.parse(response.toString());
+			//Object existingTemplate = parser.parse(response.toString());
 			JSONObject agreement = (JSONObject) parser.parse(response.toString());
 
 			// get customer details from db
@@ -275,6 +275,7 @@ public class AgreementsAPIs {
 			String cust_uuid = "tango-customer"; //(String) agrPerSlaNs.get("cust_uuid");
 			String cust_email = "tango-customer-email"; //(String) agrPerSlaNs.get("cust_email");
 			String sla_date = (String) agrPerSlaNs.get("sla_date");
+			System.out.println("SLA Date from DB ==> " + sla_date);
 
 			// update the template with the necessary customer info - convert it to
 			// agreement
@@ -283,6 +284,8 @@ public class AgreementsAPIs {
 
 			/** change the offered date to the date the agreement was created */
 			sla_template.put("offered_date", sla_date);
+			System.out.println("offered_date inside the updated agreement ==> " + sla_template.get(sla_date));
+
 
 			/** add the customer information */
 			JSONObject customer_info = new JSONObject();
@@ -290,11 +293,11 @@ public class AgreementsAPIs {
 			customer_info.put("cust_email", cust_email);
 			sla_template.put("customer_info", customer_info);
 
-			System.out.println(agreement);
-			existingTemplates = agreement;
+			System.out.println("Detailed Agreement Information ==> " + agreement);
+			Object detailedAgreement = agreement;
 
-			apiresponse = Response.ok((Object) existingTemplates);
-			apiresponse.header("Content-Length", agreement.toJSONString().length()-8);
+			apiresponse = Response.ok((Object) detailedAgreement);
+			apiresponse.header("Content-Length", ((String) detailedAgreement).length()-8);
 			return apiresponse.status(200).build();
 
 		} catch (Exception e) {
