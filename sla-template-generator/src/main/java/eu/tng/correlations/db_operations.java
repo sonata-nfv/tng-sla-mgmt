@@ -58,10 +58,11 @@ public class db_operations {
 		try {
 
 			Class.forName("org.postgresql.Driver");
-
-			// c =
-			// DriverManager.getConnection("jdbc:postgresql://localhost:5432/sla-manager",
-			// "postgres", "admin");
+			/*
+			 * c =
+			 * DriverManager.getConnection("jdbc:postgresql://localhost:5432/sla-manager",
+			 * "postgres", "admin");
+			 */
 
 			c = DriverManager
 					.getConnection(
@@ -168,7 +169,8 @@ public class db_operations {
 	public void insertRecordAgreement(String ns_uuid, String ns_name, String sla_uuid, String sla_name,
 			String sla_status, String cust_name, String cust_uuid, String inst_status, String correlation_id) {
 
-		cust_name = "tango-customer";
+		cust_uuid = "tango-customer";
+		String cust_email ="tango-customer-email";
 		try {
 			c.setAutoCommit(false);
 			Statement stmt = c.createStatement();
@@ -343,7 +345,7 @@ public class db_operations {
 		System.out.println(root);
 		return root;
 	}
-
+	
 	/**
 	 * Get all Agreements
 	 * 
@@ -360,7 +362,8 @@ public class db_operations {
 		try {
 			c.setAutoCommit(false);
 			stmt = c.createStatement();
-			ResultSet rs = stmt.executeQuery("SELECT * FROM cust_sla WHERE inst_status = 'READY';");
+			ResultSet rs = stmt
+					.executeQuery("SELECT * FROM cust_sla WHERE inst_status = 'READY';");
 			while (rs.next()) {
 				String ns_uuid = rs.getString("ns_uuid");
 				String ns_name = rs.getString("ns_name");
@@ -526,10 +529,10 @@ public class db_operations {
 		}
 		return root;
 	}
+	
 
 	/**
 	 * Delete Agreement correlation
-	 * 
 	 * @param nsi_uuid
 	 * @return
 	 */
@@ -539,7 +542,7 @@ public class db_operations {
 		try {
 			c.setAutoCommit(false);
 			stmt = c.createStatement();
-			String sql = "DELETE FROM cust_sla WHERE NSI_UUID='" + nsi_uuid + "';";
+			String sql = "DELETE FROM WHERE NSI_UUID='" + nsi_uuid + "';";
 			stmt.executeUpdate(sql);
 			c.commit();
 			stmt.close();
@@ -551,9 +554,9 @@ public class db_operations {
 		return result;
 	}
 
+
 	/**
 	 * Count active agreements per sla template
-	 * 
 	 * @param sla_uuid
 	 * @return
 	 */
@@ -587,9 +590,9 @@ public class db_operations {
 	public static void createTableViolations() {
 		try {
 			stmt = c.createStatement();
-			String sql = "CREATE TABLE IF NOT EXISTS sla_violations" + "(ID  SERIAL," + " NS_UUID TEXT PRIMARY KEY, "
-					+ "SLA_UUID TEXT NOT NULL," + "VIOLATION_TIME TEXT NOT NULL," + "ALERT_STATE TEXT NOT NULL,"
-					+ "CUST_UUID  TEXT NOT NULL )";
+			String sql = "CREATE TABLE IF NOT EXISTS sla_violations" + "(ID  SERIAL,"
+					+ " NS_UUID TEXT PRIMARY KEY, " + "SLA_UUID TEXT NOT NULL," + "VIOLATION_TIME TEXT NOT NULL,"
+					+ "ALERT_STATE TEXT NOT NULL," + "CUST_UUID  TEXT NOT NULL )";
 			stmt.executeUpdate(sql);
 			stmt.close();
 			System.out.println("Table sla_violations created successfully");
@@ -607,14 +610,14 @@ public class db_operations {
 	 */
 	public static void insertRecordViolation(String nsi_uuid, String sla_uuid, String violation_time,
 			String alert_state, String cust_uuid) {
-		
-		System.out.println("sla_uuid inside the insert violation function   " + sla_uuid);
-		System.out.println("cust_uuid inside the insert violation function   " + cust_uuid);
 
+		cust_uuid = "tango-customer";
 		try {
 			c.setAutoCommit(false);
 			Statement stmt = c.createStatement();
-			String sql = "INSERT INTO sla_violations (ns_uuid, sla_uuid,violation_time, alert_state, cust_uuid) VALUES ('"+ nsi_uuid + "', '" + sla_uuid + "', '" + violation_time + "','" + alert_state + "', '" + cust_uuid+ "');  ";
+			String sql = "INSERT INTO sla_violations  (ns_uuid, sla_uuid,violation_time, alert_state, cust_uuid ) VALUES ('"
+					+ nsi_uuid + "', '" + sla_uuid + "', '" + violation_time + "','" + alert_state + "', '" + cust_uuid
+					+ "');  ";
 			stmt.executeUpdate(sql);
 			stmt.close();
 			c.commit();
@@ -689,7 +692,7 @@ public class db_operations {
 
 				violation.put("violation_time", violation_time);
 				violation.put("alert_state", alert_state);
-				violation.put("cust_uuid", "tango-cust-uuid");
+				violation.put("cust_uuid", cust_uuid);
 				violation.put("ns_uuid", nsi_uuid);
 				violation.put("sla_uuid", sla_uuid);
 
@@ -742,7 +745,8 @@ public class db_operations {
 		}
 		return violations;
 	}
-
+	
+	
 	@SuppressWarnings("unchecked")
 	public static int countViolationsPerNsi(String nsi_uuid) {
 
@@ -764,286 +768,13 @@ public class db_operations {
 	}
 
 	/**
-	 * Delete all violations
-	 * 
-	 * @return
-	 */
-	public boolean deleteAllViolations() {
-		Statement stmt = null;
-		boolean result = false;
-		try {
-			c.setAutoCommit(false);
-			stmt = c.createStatement();
-			String sql = "DELETE FROM sla_violations;";
-			stmt.executeUpdate(sql);
-			c.commit();
-			stmt.close();
-			result = true;
-		} catch (Exception e) {
-			System.err.println(e.getClass().getName() + ": " + e.getMessage());
-		}
-		System.out.println("All violations deleted? " + result);
-		return result;
-	}
-
-	/*******************************/
-	/** OPERATIONS FOR LICENSING **/
-	/*******************************/
-
-	/**
-	 * Create table if not exist - customer-sla correlation
-	 */
-	public static void createTableLicenseScaling() {
-		try {
-			stmt = c.createStatement();
-			String sql = "CREATE TABLE IF NOT EXISTS license_scaling" + "(ID  SERIAL PRIMARY KEY,"
-					+ " NS_UUID TEXT NOT NULL, " + "NSI_UUID TEXT NOT NULL," + "SLA_UUID  TEXT NOT NULL,"
-					+ "CORRELATION_ID TEXT NULL," + "SCALING_STATUS TEXT NULL," + "ALLOWED_SCALES TEXT NOT NULL,"
-					+ "CURRENT_SCALES TEXT NULL)";
-			stmt.executeUpdate(sql);
-			stmt.close();
-		} catch (Exception e) {
-			System.err.println(e.getClass().getName() + ": " + e.getMessage());
-		}
-		System.out.println("Table license_scaling created successfully");
-	}
-
-	/**
-	 * Insert Record licensing
-	 */
-	public static boolean insertRecordLicensing(String ns_uuid, String sla_uuid, String correlation_id,
-			String scaling_status, String allowed_scales) {
-		boolean result = false;
-		try {
-			c.setAutoCommit(false);
-			Statement stmt = c.createStatement();
-			String sql = "INSERT INTO license_scaling (ns_uuid, nsi_uuid, sla_uuid, correlation_id, scaling_status, allowed_scales) "
-					+ "VALUES ('" + ns_uuid + "', ' ' ,'" + sla_uuid + "' , '" + correlation_id + "' ,  '"
-					+ scaling_status + "' ,  '" + allowed_scales + "');";
-			stmt.executeUpdate(sql);
-			stmt.close();
-			c.commit();
-			result = true;
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-		System.out.println("Records license_scaling saved successfully? " + result);
-		return result;
-	}
-
-	/**
-	 * Update record for agreement in order to include ns instance id and status
-	 * ready
-	 * 
-	 * @param inst_status
-	 * @param correlation_id
-	 * @param nsi_uuid
-	 */
-	public static void UpdateRecordLicense(String scaling_status, String correlation_id, String nsi_uuid) {
-
-		String SQL = "UPDATE license_scaling " + "SET scaling_status = ?, nsi_uuid = ? , correlation_id = ?"
-				+ "WHERE correlation_id = ?";
-		boolean result = false;
-		try {
-			PreparedStatement pstmt = c.prepareStatement(SQL);
-			pstmt.setString(1, scaling_status);
-			pstmt.setString(2, nsi_uuid);
-			pstmt.setString(3, "");
-			pstmt.setString(4, correlation_id);
-
-			pstmt.executeUpdate();
-			result = true;
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-		System.out.println("Define nsi_uuid for license record? " + result);
-	}
-
-	/**
-	 * get all license records
-	 * 
-	 * @return
-	 */
-
-	public static JSONArray getLicenses() {
-
-		JSONObject license_data = new JSONObject();
-		JSONArray licenses = new JSONArray();
-		Statement stmt = null;
-
-		try {
-			c.setAutoCommit(false);
-			stmt = c.createStatement();
-			ResultSet rs = stmt.executeQuery("SELECT * FROM license_scaling;");
-			while (rs.next()) {
-				String ns_uuid = rs.getString("ns_uuid");
-				String nsi_uuid = rs.getString("nsi_uuid");
-				String sla_uuid = rs.getString("sla_uuid");
-				String scaling_status = rs.getString("scaling_status");
-				String allowed_scales = rs.getString("allowed_scales");
-				String current_scales = rs.getString("current_scales");
-				String correlation_id = rs.getString("correlation_id");
-
-				license_data.put("ns_uuid", ns_uuid);
-				license_data.put("nsi_uuid", nsi_uuid);
-				license_data.put("sla_uuid", sla_uuid);
-				license_data.put("scaling_status", scaling_status);
-				license_data.put("allowed_scales", allowed_scales);
-				license_data.put("current_scales", current_scales);
-				license_data.put("correlation_id", correlation_id);
-
-				licenses.add(license_data);
-
-			}
-			System.out.println(licenses);
-			rs.close();
-			stmt.close();
-		} catch (Exception e) {
-			System.err.println(e.getClass().getName() + ": " + e.getMessage());
-		}
-		return licenses;
-	}
-
-	/**
-	 * Update the correlation id ion license_scaling table for messaging purposes
-	 * through the MQ
-	 */
-	public static boolean UpdateCorrelationIdLicenseTable(String nsi_uuid, String correlation_id) {
-		boolean result = false;
-
-		String SQL = "SELECT count(*) FROM license_scaling WHERE NSI_UUID = '" + nsi_uuid + "' ";
-		int count = 0;
-		try {
-			stmt = c.createStatement();
-			ResultSet rs = stmt.executeQuery(SQL);
-			while (rs.next()) {
-				count = rs.getInt(1);
-			}
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-		if (count > 0) {
-			String SQL_Update = "UPDATE license_scaling " + "SET correlation_id = ?" + " WHERE nsi_uuid = ?";
-			try {
-				PreparedStatement pstmt = c.prepareStatement(SQL_Update);
-				pstmt.setString(1, correlation_id);
-				pstmt.setString(2, nsi_uuid);
-				pstmt.executeUpdate();
-				result = true;
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			System.out.println(" [*] Update correlation id in license_scaling table? " + result);
-
-		} else {
-			System.out.println(" [*] Update abored. There is no such nsi_uuid in license_scaling table");
-
-		}
-		return result;
-
-	}
-
-	/**
-	 * Update the current scales
-	 */
-	public static boolean UpdateCurrentScales(String correlation_id, String workflow) {
-		boolean result = false;
-		String SQL = "SELECT count(*) FROM license_scaling WHERE correlation_id = '" + correlation_id + "' ";
-		int count = 0;
-		try {
-			stmt = c.createStatement();
-			ResultSet rs = stmt.executeQuery(SQL);
-			while (rs.next()) {
-				count = rs.getInt(1);
-			}
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		if (count > 0) {
-			// get current scales
-			String current_scales = "";
-			String allowed_scales = "";
-			try {
-				c.setAutoCommit(false);
-				stmt = c.createStatement();
-				ResultSet rs = stmt
-						.executeQuery("SELECT * FROM license_scaling WHERE correlation_id='" + correlation_id + "';");
-				while (rs.next()) {
-					current_scales = rs.getString("current_scales");
-					allowed_scales = rs.getString("allowed_scales");
-				}
-				rs.close();
-				stmt.close();
-
-				// check scale type
-				System.out.println(" [*] Scaling type ==> " + workflow);
-				if (workflow.equals("addvnf")) {
-					if (current_scales == null) {
-						current_scales = "1";
-					} else {
-						int cs = Integer.parseInt(current_scales);
-						cs=cs+1;
-						current_scales = Integer.toString(cs);
-					}
-				} else {
-					if (current_scales != null) {
-						int cs = Integer.parseInt(current_scales);
-						cs = cs-1;
-						current_scales = Integer.toString(cs);
-					}
-				}
-				System.out.println(" [*] Current scales ==> " + current_scales);
-				System.out.println(" [*] Allowed scales ==> " + allowed_scales);
-
-			} catch (Exception e) {
-				System.err.println(e.getClass().getName() + ": " + e.getMessage());
-			}
-
-			// check if current scales are less than the allowed ones
-			if (Integer.parseInt(current_scales) < Integer.parseInt(allowed_scales)) {
-				try {
-					c.setAutoCommit(false);
-					stmt = c.createStatement();
-					String sql = "UPDATE license_scaling SET scaling_status='READY', current_scales='" + current_scales
-							+ "' WHERE correlation_id='" + correlation_id + "';";
-					stmt.executeUpdate(sql);
-					c.commit();
-					stmt.close();
-					result = true;
-					System.out.println(" [*] Update current scales in license_scaling table? " + result);
-
-				} catch (Exception e) {
-					System.err.println(e.getClass().getName() + ": " + e.getMessage());
-				}
-			} 
-			else {
-				System.out.println(" [*] License Violation. Current Scales: " + current_scales +" but the allowed scales are: " + allowed_scales);
-			}
-
-		} else {
-			System.out.println(" [*] Update aborted. There is no such correlation id in license_scaling table");
-
-		}
-		return result;
-
-	}
-
-	/**
 	 * Delete Record
 	 */
 	public boolean deleteRecord(String tablename, String sla_uuid) {
 		Statement stmt = null;
 		boolean result = false;
-
-		String SQL = "SELECT count(*) FROM " + tablename + " where SLA_UUID = '" + sla_uuid + "' ";
+		
+		String SQL = "SELECT count(*) FROM "+tablename+" where SLA_UUID = '" + sla_uuid + "' ";
 		int count = 0;
 		try {
 			stmt = c.createStatement();
@@ -1055,8 +786,8 @@ public class db_operations {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
-		if (count > 0) {
+		
+		if (count>0) {
 			try {
 				c.setAutoCommit(false);
 				stmt = c.createStatement();
@@ -1069,7 +800,8 @@ public class db_operations {
 				System.err.println(e.getClass().getName() + ": " + e.getMessage());
 			}
 			System.out.println("Records with deleted? " + result);
-		} else {
+		}
+		else {
 			System.out.println("Records with deleted? " + result);
 		}
 		return result;

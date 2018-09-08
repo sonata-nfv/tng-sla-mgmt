@@ -51,7 +51,7 @@ public class CreateTemplate {
 
 	@SuppressWarnings("unchecked")
 	public JSONObject createTemplate(String nsd_uuid, String templateName, String expireDate,
-			ArrayList<String> guarantees, String licenses_number) {
+			ArrayList<String> guarantees) {
 
 		GetGuarantee guarantee = new GetGuarantee();
 		ArrayList<JSONObject> guaranteeArr = guarantee.getGuarantee(guarantees);
@@ -90,7 +90,6 @@ public class CreateTemplate {
 			String validUntil = df.format(date2);
 
 			/** generate the template */
-			
 			// ** root element **/
 			JSONObject root = new JSONObject();
 			root.put("descriptor_schema",
@@ -100,32 +99,12 @@ public class CreateTemplate {
 			root.put("version", "0.1");
 			root.put("author", "Evgenia Kapassa, Marios Touloupou");
 			root.put("description", "");
-			
 			/** sla_template object **/
 			JSONObject sla_template = new JSONObject();
 			sla_template.put("template_name", templateName);
 			sla_template.put("offered_date", offered_date);
 			sla_template.put("valid_until", validUntil);
 			root.put("sla_template", sla_template);
-			/** licensing object **/
-			JSONObject licensing = new JSONObject();
-			licensing.put("licenses_number", licenses_number);
-			licensing.put("vms_number", licenses_number);   // # licenses == # VMs
-			JSONArray licenses = new JSONArray();
-			for (int l_count = 0; l_count < Integer.parseInt(licenses_number); l_count++) {	
-				JSONObject license = new JSONObject();
-				String name = "Test License";
-				String definition = "Test License for the "+templateName+" SLA"
-						+ ""
-						+ ""
-						+ "";
-				license.put("name", name);
-				license.put("definition", definition);
-				licenses.add(license);
-			}
-			licensing.put("licenses", licenses);
-			sla_template.put("licensing", licensing);
-
 			/** ns object **/
 			JSONObject ns = new JSONObject();
 			ns.put("ns_uuid", nsd_uuid);
@@ -134,7 +113,6 @@ public class CreateTemplate {
 			ns.put("ns_version", getNsd.getVersion());
 			ns.put("ns_description", getNsd.getDescription());
 			sla_template.put("ns", ns);
-			
 			/** guaranteeTerms array **/
 			JSONArray guaranteeTerms = new JSONArray();
 			for (int counter = 0; counter < guaranteeArr.size(); counter++) {

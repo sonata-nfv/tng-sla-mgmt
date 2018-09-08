@@ -106,7 +106,7 @@ public class templatesAPIs {
 			Object existingTemplates = parser.parse(response.toString());
 
 			apiresponse = Response.ok((Object) existingTemplates);
-			apiresponse.header("Content-Length", response.toString().length()); 
+			apiresponse.header("Content-Length", response.length()); 
 			return apiresponse.status(200).build();
 
 		} catch (Exception e) {
@@ -183,21 +183,10 @@ public class templatesAPIs {
 
 		ArrayList<String> guarantees = new ArrayList<String>();
 		guarantees.addAll(formParams.get("guaranteeId"));
-		
-		List<String> licenses_number = formParams.get("licenses_number");
-		System.out.print("License List ==> " +licenses_number);
-		
-		String license_number;
-		if (formParams.get("licenses_number") == null) {
-			license_number = "0";
-		} else {
-			license_number = licenses_number.get(0);
-		}
-		System.out.print("License Number ==> " +license_number);
 
 		// call CreateTemplate method
 		CreateTemplate ct = new CreateTemplate();
-		JSONObject template = ct.createTemplate(nsd_uuid.get(0), templateName.get(0), expireDate.get(0), guarantees, license_number);
+		JSONObject template = ct.createTemplate(nsd_uuid.get(0), templateName.get(0), expireDate.get(0), guarantees);
 
 		if (template == null) {
 			String dr = null;
