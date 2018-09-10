@@ -272,8 +272,8 @@ public class AgreementsAPIs {
 			JSONObject agrPerSlaNs = dbo.selectAgreementPerSlaNs(sla_uuid, nsi_uuid);
 			dbo.closePostgreSQL();
 
-			String cust_uuid = "tango-customer"; //(String) agrPerSlaNs.get("cust_uuid");
-			String cust_email = "tango-customer-email"; //(String) agrPerSlaNs.get("cust_email");
+			String cust_uuid = (String) agrPerSlaNs.get("cust_uuid");
+			String cust_email = (String) agrPerSlaNs.get("cust_email");
 			String sla_date = (String) agrPerSlaNs.get("sla_date");
 
 			// update the template with the necessary customer info - convert it to
@@ -294,7 +294,7 @@ public class AgreementsAPIs {
 			existingTemplates = agreement;
 
 			apiresponse = Response.ok((Object) existingTemplates);
-			apiresponse.header("Content-Length", agreement.toJSONString().length()-8);
+			apiresponse.header("Content-Length", agreement.toJSONString().length() - 9);
 			return apiresponse.status(200).build();
 
 		} catch (Exception e) {
