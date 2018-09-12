@@ -623,7 +623,7 @@ public class db_operations {
 			c.commit();
 			System.out.println("Violation record created successfully");
 		} catch (Exception e) {
-			e.printStackTrace();
+			System.out.println("Error, Violation Record with same NSI already exists!");
 		}
 	}
 
