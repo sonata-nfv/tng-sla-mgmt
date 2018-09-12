@@ -139,7 +139,8 @@ public class MonitoringRules {
 		if (name.equals("Availability")) {
 			System.out.println("[*] Start creating condition for availability metric.....");
 			String description_availability = "Trigger events if VM is down more than " + target_value + " seconds in window of: 10 second";
-			String condition_avalability = "delta(haproxy_backend_downtime{resource_id=" + vdu_id_quotes + "}["+target_period+"]) > " + trimed_target_value;
+			String condition_avalability = "delta(haproxy_backend_downtime{resource_id=" + vdu_id_quotes + "}[24h]) > 43";
+			//String condition_avalability = "delta(haproxy_backend_downtime{resource_id=" + vdu_id_quotes + "}["+target_period+"]) > " + trimed_target_value;
 			//String condition_avalability = "delta(haproxy_backend_downtime{resource_id=" + vdu_id_quotes + "}[1h]) > -1";
 			dc.add(description_availability);
 			dc.add(condition_avalability);
