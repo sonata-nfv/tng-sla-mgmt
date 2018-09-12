@@ -60,7 +60,9 @@
   <listener>
     <listener-class>eu.tng.messaging.MqMonitoringConsumer</listener-class>
   </listener>
+   <!--  
   <listener>
-    <listener-class>eu.tng.messaging.MqSlaViolationsConsumer</listener-class>
+  	<listener-class>eu.tng.messaging.MqSlaViolationsConsumer</listener-class>
   </listener>  
+  -->
 </web-app>
