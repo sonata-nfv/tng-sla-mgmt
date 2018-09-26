@@ -109,11 +109,6 @@
 			<artifactId>jersey-multipart</artifactId>
 			<version>1.17</version>
 		</dependency>
-		<dependency>
-			<groupId>org.jvnet.mimepull</groupId>
-			<artifactId>mimepull</artifactId>
-			<version>1.9.5</version>
-		</dependency>
 		<!-- https://mvnrepository.com/artifact/postgresql/postgresql -->
 		<dependency>
 			<groupId>postgresql</groupId>
