@@ -57,9 +57,9 @@
 			<version>1.19</version>
 		</dependency>
 		<dependency>
-			<groupId>com.sun.jersey</groupId>
-			<artifactId>jersey-json</artifactId>
-			<version>1.19</version>
+			<groupId>com.owlike</groupId>
+			<artifactId>genson</artifactId>
+			<version>0.99</version>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
