@@ -8,13 +8,7 @@ ADD sla-template-generator /sla-template-generator
 WORKDIR /sla-template-generator
 
 # Run maven install project
-RUN mvn clean install -XX:MinHeapFreeRatio=10 \
-					  -XX:MaxHeapFreeRatio=70 \
-					  -XX:CompressedClassSpaceSize=64m \
-					  -XX:ReservedCodeCacheSize=64m \
-					  -XX:MaxMetaspaceSize=128 \
-					  -Xms128m \
-					  -Xmx500m \
+RUN mvn clean install
 
 # New container with tomcat8
 FROM tomcat:8.5-alpine
