@@ -56,6 +56,7 @@
 			<artifactId>jersey-servlet</artifactId>
 			<version>1.19</version>
 		</dependency>
+		<!-- Do Not Remove -->
 		<dependency>
 			<groupId>com.owlike</groupId>
 			<artifactId>genson</artifactId>
@@ -71,12 +72,6 @@
 			<groupId>com.sun.jersey</groupId>
 			<artifactId>jersey-client</artifactId>
 			<version>1.19</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.glassfish.extras</groupId>
-			<artifactId>glassfish-embedded-web</artifactId>
-			<version>${glassfish.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
