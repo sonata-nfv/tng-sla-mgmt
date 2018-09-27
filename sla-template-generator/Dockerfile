@@ -1,9 +1,6 @@
 # Use an official Maven image
 FROM maven:3.5-jdk-8-alpine
 
-# Set JVM Option Variables
-ENV JVM_OPTS -XX:+UseG1GC -Xmx2g -Xms32m
-
 # Copy the sla-template-generator directory contents into the container at /sla-template-generator
 ADD sla-template-generator /sla-template-generator
 
@@ -15,6 +12,10 @@ RUN mvn clean install
 
 # New container with tomcat8
 FROM tomcat:8.5-alpine
+
+# Set JVM Option Variables
+ENV JVM_OPTS -XX:+UseG1GC -Xmx2g -Xms32m
+
 
 # Delete existing ROOT folder
 RUN rm -rf /usr/local/tomcat/webapps/ROOT
