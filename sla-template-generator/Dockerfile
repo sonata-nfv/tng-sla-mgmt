@@ -1,6 +1,9 @@
 # Use an official Maven image
 FROM maven:3.5-jdk-8-alpine
 
+# Set JVM Option Variables
+ENV JVM_OPTS -XX:+UseG1GC -Xmx2g -Xms32m
+
 # Copy the sla-template-generator directory contents into the container at /sla-template-generator
 ADD sla-template-generator /sla-template-generator
 
@@ -8,13 +11,7 @@ ADD sla-template-generator /sla-template-generator
 WORKDIR /sla-template-generator
 
 # Run maven install project
-RUN mvn clean install -XX:MinHeapFreeRatio=10 \
-					  -XX:MaxHeapFreeRatio=70 \
-					  -XX:CompressedClassSpaceSize=64m \
-					  -XX:ReservedCodeCacheSize=64m \
-					  -XX:MaxMetaspaceSize=128 \
-					  -Xms128m \
-					  -Xmx500m \
+RUN mvn clean install
 
 # New container with tomcat8
 FROM tomcat:8.5-alpine
