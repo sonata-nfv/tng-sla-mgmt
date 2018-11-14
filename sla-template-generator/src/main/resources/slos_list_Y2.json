@@ -1,0 +1,61 @@
+{
+  "guaranteeTerms": [
+    {
+      "guaranteeID": "g2",
+      "guarantee_name": "Availability",
+      "guarantee_threshold": "99.95",
+      "guarantee_operator": "greater",
+      "guarantee_unit": "%",
+      "guarantee_period": "Daily",
+      "guarantee_definition": "",
+      "target_slo": [
+        {
+          "target_kpi": "Downtime",
+          "target_value": "43s",
+          "target_operator": "less",
+          "target_duration": "10s",
+          "target_period": "24h",
+          "target_service_level": "Downtime less than 43 seconds"
+        }
+      ]
+    },
+    {
+      "guaranteeID": "g2",
+      "guarantee_name": "Availability",
+      "guarantee_threshold": "98",
+      "guarantee_operator": "greater",
+      "guarantee_unit": "%",
+      "guarantee_period": "Daily",
+      "guarantee_definition": "",
+      "target_slo": [
+        {
+          "target_kpi": "Downtime",
+          "target_value": "1728s",
+          "target_operator": "less",
+          "target_duration": "10s",
+          "target_period": "24h",
+          "target_service_level": "Downtime less than 1728 seconds"
+        }
+      ]
+    },
+    {
+      "guaranteeID": "g3",
+      "guarantee_name": "Availability",
+      "guarantee_threshold": "95",
+      "guarantee_operator": "greater",
+      "guarantee_unit": "%",
+      "guarantee_period": "Daily",
+      "guarantee_definition": "",
+      "target_slo": [
+        {
+          "target_kpi": "Downtime",
+          "target_value": "4320s",
+          "target_operator": "less",
+          "target_duration": "10s",
+          "target_period": "24h",
+          "target_service_level": "Downtime less than 4320 seconds"
+        }
+      ]
+    }
+  ]
+}
