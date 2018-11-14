@@ -127,12 +127,12 @@ public class MgmtAPIs {
 
 		ResponseBuilder apiresponse = null;
 		try {
-			File testf = new File(this.getClass().getResource("/slos_list_release1.json").toURI());
+			File testf = new File(this.getClass().getResource("/slos_list_Y2.json").toURI());
 			jsonObject = (JSONObject) parser.parse(new FileReader(testf));
 			System.out.println(jsonObject.toJSONString().length());
 
 			apiresponse = Response.ok(jsonObject);
-			apiresponse.header("Content-Length", jsonObject.toJSONString().length() - 6);
+			apiresponse.header("Content-Length", jsonObject.toJSONString().length());
 			return apiresponse.status(200).build();
 
 		} catch (Exception e) {
