@@ -57,7 +57,7 @@ public class GetGuarantee {
 		ArrayList<JSONObject> guaranteeArr = new ArrayList<JSONObject>();
 
 		try {
-			File testf = new File(this.getClass().getResource("/slos_list_release1.json").toURI());
+			File testf = new File(this.getClass().getResource("/slos_list_Y2.json").toURI());
 			jsonObject = (JSONObject) parser.parse(new FileReader(testf));
 
 			JSONObject guaranteeObject = (JSONObject) jsonObject;

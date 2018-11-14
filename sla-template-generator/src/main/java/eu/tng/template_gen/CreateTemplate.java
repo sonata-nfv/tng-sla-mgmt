@@ -102,8 +102,8 @@ public class CreateTemplate {
 			/** sla_template object **/
 			JSONObject sla_template = new JSONObject();
 			sla_template.put("template_name", templateName);
-			sla_template.put("offered_date", offered_date);
-			sla_template.put("valid_until", validUntil);
+			sla_template.put("offer_date", offered_date);
+			sla_template.put("expiration_date", validUntil);
 			root.put("sla_template", sla_template);
 			/** ns object **/
 			JSONObject ns = new JSONObject();
