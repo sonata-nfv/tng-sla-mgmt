@@ -1,7 +1,7 @@
 {
   "guaranteeTerms": [
     {
-      "guaranteeID": "g2",
+      "guaranteeID": "g1",
       "guarantee_name": "Availability",
       "guarantee_threshold": "99.95",
       "guarantee_operator": "greater",
