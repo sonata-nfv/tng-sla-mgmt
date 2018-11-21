@@ -108,19 +108,13 @@ public class templatesAPIs {
 			}
 			in.close();
 
-			System.err.println("test_erro0r");
-			System.err.println("test stdout0");
-			
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 			ThreadContext.put("type", "I");
 			ThreadContext.put("timestamp", timestamp.toString());
 			ThreadContext.put("operation", "Get SLA Templates");
 			ThreadContext.put("status", "200");
-			System.err.println("test_error");
-			System.err.println("test stdout");
 			logger.info("Available SLA Templates");
-			System.out.println(logger);
 			ThreadContext.clearAll();
 
 			JSONParser parser = new JSONParser();
