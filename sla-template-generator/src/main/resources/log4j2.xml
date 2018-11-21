@@ -16,7 +16,7 @@
 	</Appenders>
 	<Loggers>
 		<!-- SLAM Logger with  JSON Appender-->
-		<Logger name="SLAM_Logger" level="ALL" additivity="false">
+		<Logger name="SLAM_Logger" level="INFO" additivity="false">
 			<AppenderRef ref="SLAM_JSON_Appender" />
 		</Logger>
 	</Loggers>
