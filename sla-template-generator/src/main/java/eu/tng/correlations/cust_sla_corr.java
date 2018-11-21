@@ -41,6 +41,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
@@ -50,10 +51,13 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-import eu.tng.template_gen.GetNsd;
-import eu.tng.template_gen.Nsd;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.ThreadContext;
 
 public class cust_sla_corr {
+
+	static Logger logger = LogManager.getLogger("SLAM_Logger");
 
 	/**
 	 * Create a correlation between an instatiated network service, a customer and a
@@ -77,17 +81,25 @@ public class cust_sla_corr {
 		ArrayList<String> details = new ArrayList<String>();
 
 		try {
-//			String url = "http://pre-int-sp-ath.5gtango.eu:4011/catalogues/api/v2/slas/template-descriptors/"
-//					+ sla_uuid;
-//			URL object = new URL(url);
+			// String url =
+			// "http://pre-int-sp-ath.5gtango.eu:4011/catalogues/api/v2/slas/template-descriptors/"
+			// + sla_uuid;
+			// URL object = new URL(url);
 
-			 URL url = new URL(System.getenv("CATALOGUES_URL") +
-			 "slas/template-descriptors/" + sla_uuid);
+			URL url = new URL(System.getenv("CATALOGUES_URL") + "slas/template-descriptors/" + sla_uuid);
 			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 			conn.setRequestProperty("Content-Type", "application/json");
 
 			if (conn.getResponseCode() != 200) {
-				System.out.println("Failed : HTTP error code : SLA not FOUND");
+				// logging
+				Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+				ThreadContext.put("type", "E");
+				ThreadContext.put("timestamp", timestamp.toString());
+				ThreadContext.put("operation", "Getting SLA descriptor from the Catalogue");
+				ThreadContext.put("status", String.valueOf(conn.getResponseCode()));
+				logger.error("SLA uuid not found");
+				ThreadContext.clearAll();
+
 				details = null;
 			} else {
 				BufferedReader br = new BufferedReader(new InputStreamReader((conn.getInputStream())));
@@ -109,20 +121,46 @@ public class cust_sla_corr {
 						}
 
 					} catch (ParseException e) {
-						e.printStackTrace();
+						// logging
+						Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+						ThreadContext.put("type", "E");
+						ThreadContext.put("timestamp", timestamp.toString());
+						ThreadContext.put("operation", "Parsing SLA Descriptor");
+						ThreadContext.put("status", "");
+						logger.error("Error while parsing SLA with uuid=" + sla_uuid);
+						ThreadContext.clearAll();
 					}
 
 				}
+				// logging
+				Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+				ThreadContext.put("type", "I");
+				ThreadContext.put("timestamp", timestamp.toString());
+				ThreadContext.put("operation", "Fetching SLAD to get details");
+				ThreadContext.put("status", String.valueOf(conn.getResponseCode()));
+				logger.info("Succesfully fetched SLAD to get details.");
+				ThreadContext.clearAll();
 				conn.disconnect();
 			}
 
 		} catch (MalformedURLException e) {
-
-			e.printStackTrace();
-
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			ThreadContext.put("type", "E");
+			ThreadContext.put("timestamp", timestamp.toString());
+			ThreadContext.put("operation", "Ping Catalogue URL to get SLA descriptor.");
+			ThreadContext.put("status", "");
+			logger.error("A malformed URL has occurred");
+			ThreadContext.clearAll();
 		} catch (IOException e) {
-
-			e.printStackTrace();
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			ThreadContext.put("type", "E");
+			ThreadContext.put("timestamp", timestamp.toString());
+			ThreadContext.put("operation", "Ping Catalogue URL to get SLA descriptor.");
+			ThreadContext.put("status", "");
+			logger.error("Signals that an I/O exception of some sort has occurred.");
+			ThreadContext.clearAll();
 		}
 		return details;
 	}
@@ -140,11 +178,11 @@ public class cust_sla_corr {
 			dbo.deleteRecord(tablename, sla_uuid);
 		} else {
 			// failed to connect to database
-			status = 404; 
+			status = 404;
 		}
-        dbo.closePostgreSQL();
+		dbo.closePostgreSQL();
 		return status;
-		
+
 	}
 
 	public static JSONArray getGuaranteeTerms(String sla_uuid) {
@@ -152,7 +190,8 @@ public class cust_sla_corr {
 		JSONArray guaranteeTerms = null;
 		try {
 			String url = System.getenv("CATALOGUES_URL") + "slas/template-descriptors/" + sla_uuid + "\r\n";
-			//String url = "http://pre-int-sp-ath.5gtango.eu:4011/catalogues/api/v2/slas/template-descriptors/"+sla_uuid;
+			// String url =
+			// "http://pre-int-sp-ath.5gtango.eu:4011/catalogues/api/v2/slas/template-descriptors/"+sla_uuid;
 			URL object = new URL(url);
 
 			HttpURLConnection con = (HttpURLConnection) object.openConnection();
@@ -177,11 +216,25 @@ public class cust_sla_corr {
 			JSONObject sla_template = (JSONObject) slad.get("sla_template");
 			JSONObject ns = (JSONObject) sla_template.get("ns");
 			guaranteeTerms = (JSONArray) ns.get("guaranteeTerms");
-			System.out.println(guaranteeTerms);
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			ThreadContext.put("type", "I");
+			ThreadContext.put("timestamp", timestamp.toString());
+			ThreadContext.put("operation", "Getting guarantee terms from SLA");
+			ThreadContext.put("status", String.valueOf(con.getResponseCode()));
+			logger.info(guaranteeTerms);
+			ThreadContext.clearAll();
 			return guaranteeTerms;
-		} 
-		catch (Exception e) {
-			System.out.println("SLA Agreement not found");
+
+		} catch (Exception e) {
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			ThreadContext.put("type", "E");
+			ThreadContext.put("timestamp", timestamp.toString());
+			ThreadContext.put("operation", "Ping Catalogue URL to get SLA descriptor.");
+			logger.error("SLA uuid not found");
+			ThreadContext.clearAll();
+
 			return null;
 		}
 
@@ -216,8 +269,16 @@ public class cust_sla_corr {
 			}
 		}
 		correlatedNS = tempArray; // assign temp to original
-		System.out.println(correlatedNS);
-	    db_operations.closePostgreSQL();
+
+		// logging
+		Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+		ThreadContext.put("type", "I");
+		ThreadContext.put("timestamp", timestamp.toString());
+		ThreadContext.put("operation", "Get correlation between NS and Agreement");
+		logger.info(correlatedNS);
+		ThreadContext.clearAll();
+
+		db_operations.closePostgreSQL();
 
 		return (JSONArray) correlatedNS;
 
@@ -289,6 +350,14 @@ public class cust_sla_corr {
 		}
 
 		nsWithoutAgreement = tempArray; // assign temp to original
+
+		// logging
+		Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+		ThreadContext.put("type", "I");
+		ThreadContext.put("timestamp", timestamp.toString());
+		ThreadContext.put("operation", "Get NSs that do not have Agreements yet.");
+		logger.info(nsWithoutAgreement);
+		ThreadContext.clearAll();
 
 		return nsWithoutAgreement;
 	}

@@ -40,12 +40,19 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Timestamp;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.ThreadContext;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import java.sql.ResultSet;
 
 public class db_operations {
+
+	static Logger logger = LogManager.getLogger("SLAM_Logger");
 
 	static Connection c = null;
 	static Statement stmt = null;
@@ -71,11 +78,29 @@ public class db_operations {
 							System.getenv("GTK_DB_USER"), System.getenv("GTK_DB_PASS"));
 
 			connect = true;
-			System.out.println("Opened sla-manager database successfully");
+
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			ThreadContext.put("type", "I");
+			ThreadContext.put("timestamp", timestamp.toString());
+			ThreadContext.put("operation", "Connecting to SLA Manager's internal database.");
+			ThreadContext.put("status", "");
+			logger.info("Opened sla-manager database successfully");
+			ThreadContext.clearAll();
 
 		} catch (Exception e) {
 			e.printStackTrace();
 			System.err.println(e.getClass().getName() + ": " + e.getMessage());
+
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			ThreadContext.put("type", "E");
+			ThreadContext.put("timestamp", timestamp.toString());
+			ThreadContext.put("operation", "Connecting to SLA Manager's internal database.");
+			ThreadContext.put("status", "");
+			logger.error("Error connecting to SLA Manager's internal database.");
+			ThreadContext.clearAll();
+
 			connect = false;
 		}
 		return connect;
@@ -87,8 +112,23 @@ public class db_operations {
 	public static void closePostgreSQL() {
 		try {
 			c.close();
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			ThreadContext.put("type", "I");
+			ThreadContext.put("timestamp", timestamp.toString());
+			ThreadContext.put("operation", "Closing conection to SLA Manager's internal database.");
+			ThreadContext.put("status", "");
+			logger.info("Succesfully closed the connection to SLA Manager's internal database.");
+			ThreadContext.clearAll();
 		} catch (SQLException e) {
-			e.printStackTrace();
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			ThreadContext.put("type", "E");
+			ThreadContext.put("timestamp", timestamp.toString());
+			ThreadContext.put("operation", "Closing conection to SLA Manager's internal database.");
+			ThreadContext.put("status", "");
+			logger.error("Error closing the connection to SLA Manager's internal database.");
+			ThreadContext.clearAll();
 		}
 	}
 
@@ -108,11 +148,27 @@ public class db_operations {
 			stmt.executeUpdate(sql);
 			stmt.close();
 			result = true;
+
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			ThreadContext.put("type", "I");
+			ThreadContext.put("timestamp", timestamp.toString());
+			ThreadContext.put("operation", "Creating table for NS - Template correlations");
+			ThreadContext.put("status", "");
+			logger.info("Table Created? " + result);
+			ThreadContext.clearAll();
+
 		} catch (Exception e) {
-			System.err.println(e.getClass().getName() + ": " + e.getMessage());
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			ThreadContext.put("type", "E");
+			ThreadContext.put("timestamp", timestamp.toString());
+			ThreadContext.put("operation", "Creating table for NS - Template correlations");
+			ThreadContext.put("status", "");
+			logger.error("Table Created? " + result);
+			ThreadContext.clearAll();
 		}
 
-		System.out.println("Table Created? " + result);
 		return result;
 	}
 
@@ -131,11 +187,27 @@ public class db_operations {
 			c.commit();
 			result = true;
 
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			ThreadContext.put("type", "I");
+			ThreadContext.put("timestamp", timestamp.toString());
+			ThreadContext.put("operation", "Insert record to table for NS - Template correlations");
+			ThreadContext.put("status", "");
+			logger.info("Records ns-template saved successfully? " + result);
+			ThreadContext.clearAll();
+
 		} catch (Exception e) {
 			e.printStackTrace();
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			ThreadContext.put("type", "E");
+			ThreadContext.put("timestamp", timestamp.toString());
+			ThreadContext.put("operation", "Insert record to table for NS - Template correlations");
+			ThreadContext.put("status", "");
+			logger.error("Records ns-template saved successfully? " + result);
+			ThreadContext.clearAll();
 		}
 
-		System.out.println("Records ns-template saved successfully? " + result);
 		return result;
 	}
 
@@ -156,10 +228,26 @@ public class db_operations {
 					+ "INST_STATUS  TEXT NOT NULL )";
 			stmt.executeUpdate(sql);
 			stmt.close();
+
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			ThreadContext.put("type", "I");
+			ThreadContext.put("timestamp", timestamp.toString());
+			ThreadContext.put("operation", "Create table for Customer - SLA Agreement correlations");
+			ThreadContext.put("status", "");
+			logger.error("Table cust_sla created successfully");
+			ThreadContext.clearAll();
+
 		} catch (Exception e) {
-			System.err.println(e.getClass().getName() + ": " + e.getMessage());
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			ThreadContext.put("type", "E");
+			ThreadContext.put("timestamp", timestamp.toString());
+			ThreadContext.put("operation", "Create table for Customer - SLA Agreement correlations");
+			ThreadContext.put("status", "");
+			logger.error("Error creating cust_sla table.");
+			ThreadContext.clearAll();
 		}
-		System.out.println("Table cust_sla created successfully");
 	}
 
 	/**
@@ -170,7 +258,7 @@ public class db_operations {
 			String sla_status, String cust_name, String cust_uuid, String inst_status, String correlation_id) {
 
 		cust_uuid = "Tom";
-		String cust_email ="tom@example.com";
+		String cust_email = "tom@example.com";
 		try {
 			c.setAutoCommit(false);
 			Statement stmt = c.createStatement();
@@ -182,9 +270,25 @@ public class db_operations {
 			stmt.executeUpdate(sql);
 			stmt.close();
 			c.commit();
-			System.out.println("Records  cust-sla saved successfully");
+
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			ThreadContext.put("type", "I");
+			ThreadContext.put("timestamp", timestamp.toString());
+			ThreadContext.put("operation", "Inserting record for customer-sla correlation");
+			ThreadContext.put("status", "");
+			logger.info("Records  cust-sla saved successfully");
+			ThreadContext.clearAll();
+
 		} catch (Exception e) {
-			e.printStackTrace();
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			ThreadContext.put("type", "E");
+			ThreadContext.put("timestamp", timestamp.toString());
+			ThreadContext.put("operation", "Inserting record for customer-sla correlation");
+			ThreadContext.put("status", "");
+			logger.warn("cust-sla correlation was not saved!");
+			ThreadContext.clearAll();
 		}
 	}
 
@@ -207,12 +311,25 @@ public class db_operations {
 			pstmt.setString(3, correlation_id);
 			pstmt.executeUpdate();
 			result = true;
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			ThreadContext.put("type", "I");
+			ThreadContext.put("timestamp", timestamp.toString());
+			ThreadContext.put("operation", "Updating SLA Agreement status");
+			ThreadContext.put("status", "");
+			logger.info("Set status READY?" + result);
+			ThreadContext.clearAll();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			ThreadContext.put("type", "W");
+			ThreadContext.put("timestamp", timestamp.toString());
+			ThreadContext.put("operation", "Updating SLA Agreement record status");
+			ThreadContext.put("status", "");
+			logger.warn("Error updating the status");
+			ThreadContext.clearAll();
 		}
 
-		System.out.println("Set status READY? " + result);
 	}
 
 	/**
@@ -232,10 +349,27 @@ public class db_operations {
 			c.commit();
 			stmt.close();
 			result = true;
+
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			ThreadContext.put("type", "I");
+			ThreadContext.put("timestamp", timestamp.toString());
+			ThreadContext.put("operation", "Updating SLA Agreement Violation Status");
+			ThreadContext.put("status", "");
+			logger.info("SLA Violated?" + result);
+			ThreadContext.clearAll();
+
 		} catch (Exception e) {
 			System.err.println(e.getClass().getName() + ": " + e.getMessage());
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			ThreadContext.put("type", "W");
+			ThreadContext.put("timestamp", timestamp.toString());
+			ThreadContext.put("operation", "Updating SLA Agreement Violation Status");
+			ThreadContext.put("status", "");
+			logger.warn("SLA Violated?" + result);
+			ThreadContext.clearAll();
 		}
-		System.out.println("Set status violated? " + result);
 	}
 
 	/**
@@ -255,11 +389,24 @@ public class db_operations {
 			pstmt.setString(2, nsi_uuid);
 			pstmt.executeUpdate();
 			result = true;
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			ThreadContext.put("type", "I");
+			ThreadContext.put("timestamp", timestamp.toString());
+			ThreadContext.put("operation", "Updating correlation id for NS instantiation process");
+			ThreadContext.put("status", "");
+			logger.info("Correlation id updated?" + result);
+			ThreadContext.clearAll();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			ThreadContext.put("type", "W");
+			ThreadContext.put("timestamp", timestamp.toString());
+			ThreadContext.put("operation", "Updating correlation id for NS instantiation process");
+			ThreadContext.put("status", "");
+			logger.warn("Correlation id updated?" + result);
+			ThreadContext.clearAll();
 		}
-		System.out.println("Correlation id updated?  " + result);
 	}
 
 	/**
@@ -282,10 +429,23 @@ public class db_operations {
 			c.commit();
 			stmt.close();
 			result = true;
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			ThreadContext.put("type", "I");
+			ThreadContext.put("timestamp", timestamp.toString());
+			ThreadContext.put("operation", "Terminating SLA Agreement");
+			ThreadContext.put("status", "");
+			logger.info("Set status TERMINATED?" + result);
+			ThreadContext.clearAll();
 		} catch (Exception e) {
-			System.err.println(e.getClass().getName() + ": " + e.getMessage());
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			ThreadContext.put("type", "W");
+			ThreadContext.put("timestamp", timestamp.toString());
+			ThreadContext.put("operation", "Terminating SLA Agreement");
+			ThreadContext.put("status", "");
+			logger.warn("Set status TERMINATED?" + result);
 		}
-		System.out.println("Set status TERMINATED? " + result);
 		return result;
 	}
 
@@ -339,13 +499,26 @@ public class db_operations {
 			root.put("agreements", agreements);
 			rs.close();
 			stmt.close();
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			ThreadContext.put("type", "I");
+			ThreadContext.put("timestamp", timestamp.toString());
+			ThreadContext.put("operation", "Get all SLA Agreement record details");
+			ThreadContext.put("status", "");
+			logger.info(root);
 		} catch (Exception e) {
 			System.err.println(e.getClass().getName() + ": " + e.getMessage());
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			ThreadContext.put("type", "E");
+			ThreadContext.put("timestamp", timestamp.toString());
+			ThreadContext.put("operation", "Get all SLA Agreement record details");
+			ThreadContext.put("status", "");
+			logger.error("Error getting agreement details");
 		}
-		System.out.println(root);
 		return root;
 	}
-	
+
 	/**
 	 * Get all Agreements
 	 * 
@@ -362,8 +535,7 @@ public class db_operations {
 		try {
 			c.setAutoCommit(false);
 			stmt = c.createStatement();
-			ResultSet rs = stmt
-					.executeQuery("SELECT * FROM cust_sla WHERE inst_status = 'READY';");
+			ResultSet rs = stmt.executeQuery("SELECT * FROM cust_sla WHERE inst_status = 'READY';");
 			while (rs.next()) {
 				String ns_uuid = rs.getString("ns_uuid");
 				String ns_name = rs.getString("ns_name");
@@ -396,10 +568,22 @@ public class db_operations {
 			root.put("agreements", agreements);
 			rs.close();
 			stmt.close();
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			ThreadContext.put("type", "I");
+			ThreadContext.put("timestamp", timestamp.toString());
+			ThreadContext.put("operation", "Get active SLA Agreement record details");
+			ThreadContext.put("status", "");
+			logger.info(root);
 		} catch (Exception e) {
-			System.err.println(e.getClass().getName() + ": " + e.getMessage());
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			ThreadContext.put("type", "E");
+			ThreadContext.put("timestamp", timestamp.toString());
+			ThreadContext.put("operation", "Get active SLA Agreement record details");
+			ThreadContext.put("status", "");
+			logger.error("Error getting active agreements details");
 		}
-		System.out.println(root);
 		return root;
 	}
 
@@ -442,7 +626,13 @@ public class db_operations {
 			rs.close();
 			stmt.close();
 		} catch (Exception e) {
-			System.err.println(e.getClass().getName() + ": " + e.getMessage());
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			ThreadContext.put("type", "E");
+			ThreadContext.put("timestamp", timestamp.toString());
+			ThreadContext.put("operation", "Get agreement per NS instance id");
+			ThreadContext.put("status", "");
+			logger.error("Error getting agreement for NSI= " + nsi_uuid);
 		}
 		return root;
 	}
@@ -485,7 +675,13 @@ public class db_operations {
 			rs.close();
 			stmt.close();
 		} catch (Exception e) {
-			System.err.println(e.getClass().getName() + ": " + e.getMessage());
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			ThreadContext.put("type", "E");
+			ThreadContext.put("timestamp", timestamp.toString());
+			ThreadContext.put("operation", "Get all agreements per customer");
+			ThreadContext.put("status", "");
+			logger.error("Error getting agreements for cust_uuid= " + custuuid);
 		}
 		return root;
 	}
@@ -525,14 +721,20 @@ public class db_operations {
 			rs.close();
 			stmt.close();
 		} catch (Exception e) {
-			System.err.println(e.getClass().getName() + ": " + e.getMessage());
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			ThreadContext.put("type", "E");
+			ThreadContext.put("timestamp", timestamp.toString());
+			ThreadContext.put("operation", "Get specific agreement per nsi and sla");
+			ThreadContext.put("status", "");
+			logger.error("Error getting agreements for nsi=" + nsi_uuid + " and sla= " + sla_uuid);
 		}
 		return root;
 	}
-	
 
 	/**
 	 * Delete Agreement correlation
+	 * 
 	 * @param nsi_uuid
 	 * @return
 	 */
@@ -547,16 +749,31 @@ public class db_operations {
 			c.commit();
 			stmt.close();
 			result = true;
+
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			ThreadContext.put("type", "I");
+			ThreadContext.put("timestamp", timestamp.toString());
+			ThreadContext.put("operation", "Delete Agreement correlation");
+			ThreadContext.put("status", "");
+			logger.info("Delete agreement for nsi=" + nsi_uuid);
+
 		} catch (Exception e) {
-			System.err.println(e.getClass().getName() + ": " + e.getMessage());
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			ThreadContext.put("type", "E");
+			ThreadContext.put("timestamp", timestamp.toString());
+			ThreadContext.put("operation", "Delete Agreement correlation");
+			ThreadContext.put("status", "");
+			logger.error("Error deleting agreement for nsi=" + nsi_uuid);
 		}
-		System.out.println("Agreement correlation deleted? " + result);
+
 		return result;
 	}
 
-
 	/**
 	 * Count active agreements per sla template
+	 * 
 	 * @param sla_uuid
 	 * @return
 	 */
@@ -571,11 +788,22 @@ public class db_operations {
 			while (rs.next()) {
 				count = rs.getInt(1);
 			}
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			ThreadContext.put("type", "I");
+			ThreadContext.put("timestamp", timestamp.toString());
+			ThreadContext.put("operation", "Count active agreements per sla template");
+			ThreadContext.put("status", "");
+			logger.info("The number of Agreements correlations are = " + count);
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			ThreadContext.put("type", "E");
+			ThreadContext.put("timestamp", timestamp.toString());
+			ThreadContext.put("operation", "Count active agreements per sla template");
+			ThreadContext.put("status", "");
+			logger.error("Error counting agreements");
 		}
-		System.out.println("SLA Correlations are ==> " + count);
 		return count;
 
 	}
@@ -590,17 +818,28 @@ public class db_operations {
 	public static void createTableViolations() {
 		try {
 			stmt = c.createStatement();
-			String sql = "CREATE TABLE IF NOT EXISTS sla_violations" + "(ID  SERIAL,"
-					+ " NS_UUID TEXT PRIMARY KEY, " + "SLA_UUID TEXT NOT NULL," + "VIOLATION_TIME TEXT NOT NULL,"
-					+ "ALERT_STATE TEXT NOT NULL," + "CUST_UUID  TEXT NOT NULL )";
+			String sql = "CREATE TABLE IF NOT EXISTS sla_violations" + "(ID  SERIAL," + " NS_UUID TEXT PRIMARY KEY, "
+					+ "SLA_UUID TEXT NOT NULL," + "VIOLATION_TIME TEXT NOT NULL," + "ALERT_STATE TEXT NOT NULL,"
+					+ "CUST_UUID  TEXT NOT NULL )";
 			stmt.executeUpdate(sql);
 			stmt.close();
-			System.out.println("Table sla_violations created successfully");
-
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			ThreadContext.put("type", "I");
+			ThreadContext.put("timestamp", timestamp.toString());
+			ThreadContext.put("operation", "Create table for Violation records");
+			ThreadContext.put("status", "");
+			logger.info("Table sla_violations created successfully");
+			ThreadContext.clearAll();
 		} catch (Exception e) {
-			System.err.println(e.getClass().getName() + ": " + e.getMessage());
-			System.out.println("Error creating sla violations table or already exists");
-
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			ThreadContext.put("type", "E");
+			ThreadContext.put("timestamp", timestamp.toString());
+			ThreadContext.put("operation", "Create table for Violation records");
+			ThreadContext.put("status", "");
+			logger.error("Error creating sla violations table or table already exists");
+			ThreadContext.clearAll();
 		}
 	}
 
@@ -621,9 +860,24 @@ public class db_operations {
 			stmt.executeUpdate(sql);
 			stmt.close();
 			c.commit();
-			System.out.println("Violation record created successfully");
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			ThreadContext.put("type", "I");
+			ThreadContext.put("timestamp", timestamp.toString());
+			ThreadContext.put("operation", "Insert violation record");
+			ThreadContext.put("status", "");
+			logger.info("Violation record created successfully");
+			ThreadContext.clearAll();
 		} catch (Exception e) {
 			System.out.println("Error, Violation Record with same NSI already exists!");
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			ThreadContext.put("type", "W");
+			ThreadContext.put("timestamp", timestamp.toString());
+			ThreadContext.put("operation", "Insert violation record");
+			ThreadContext.put("status", "");
+			logger.warn("Error, Violation Record with same NSI already exists!");
+			ThreadContext.clearAll();
 		}
 	}
 
@@ -645,24 +899,35 @@ public class db_operations {
 		try {
 			c.setAutoCommit(false);
 			stmt = c.createStatement();
-			ResultSet rs = stmt.executeQuery(
-					"SELECT * FROM cust_sla WHERE nsi_uuid = '" + nsi_uuid + "';");
+			ResultSet rs = stmt.executeQuery("SELECT * FROM cust_sla WHERE nsi_uuid = '" + nsi_uuid + "';");
 			while (rs.next()) {
 				sla_uuid = rs.getString("sla_uuid");
 				cust_uuid = rs.getString("cust_uuid");
-				System.out.println("sla_uuid = " + sla_uuid);
-				System.out.println("cust_uuid = " + cust_uuid);
-
 				violated_sla.put("sla_uuid", sla_uuid);
 				violated_sla.put("cust_uuid", cust_uuid);
 
 			}
-			System.out.println("Get violated sla ==>" + violated_sla);
-
 			rs.close();
 			stmt.close();
+
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			ThreadContext.put("type", "I");
+			ThreadContext.put("timestamp", timestamp.toString());
+			ThreadContext.put("operation", "Get violated SLA");
+			ThreadContext.put("status", "");
+			logger.info("Violated SLA ==> " + violated_sla);
+			ThreadContext.clearAll();
+
 		} catch (Exception e) {
-			System.err.println(e.getClass().getName() + ": " + e.getMessage());
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			ThreadContext.put("type", "W");
+			ThreadContext.put("timestamp", timestamp.toString());
+			ThreadContext.put("operation", "Get violated SLA");
+			ThreadContext.put("status", "");
+			logger.warn("Error getting the violated SLA: " + sla_uuid);
+			ThreadContext.clearAll();
 		}
 		return violated_sla;
 
@@ -700,8 +965,25 @@ public class db_operations {
 			System.out.println("VIOLATIONS FROM DB OPERATIONS CLASS ==> " + violation);
 			rs.close();
 			stmt.close();
+
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			ThreadContext.put("type", "I");
+			ThreadContext.put("timestamp", timestamp.toString());
+			ThreadContext.put("operation", "Get violated SLA");
+			ThreadContext.put("status", "");
+			logger.info("Violation record ==> " + violation);
+			ThreadContext.clearAll();
+
 		} catch (Exception e) {
-			System.err.println(e.getClass().getName() + ": " + e.getMessage());
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			ThreadContext.put("type", "W");
+			ThreadContext.put("timestamp", timestamp.toString());
+			ThreadContext.put("operation", "Get violated SLA");
+			ThreadContext.put("status", "");
+			logger.warn("Error getting the violated SLA records");
+			ThreadContext.clearAll();
 		}
 		return violation;
 	}
@@ -737,16 +1019,30 @@ public class db_operations {
 				violations.add(obj);
 
 			}
-			System.out.println("VIOLATIONS FROM DB OPERATIONS CLASS ==> " + violation_data);
 			rs.close();
 			stmt.close();
+
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			ThreadContext.put("type", "I");
+			ThreadContext.put("timestamp", timestamp.toString());
+			ThreadContext.put("operation", "Get violated SLA");
+			ThreadContext.put("status", "");
+			logger.info("All Violation records ==> " + violation_data);
+			ThreadContext.clearAll();
 		} catch (Exception e) {
-			System.err.println(e.getClass().getName() + ": " + e.getMessage());
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			ThreadContext.put("type", "W");
+			ThreadContext.put("timestamp", timestamp.toString());
+			ThreadContext.put("operation", "Get violated SLA");
+			ThreadContext.put("status", "");
+			logger.warn("Error getting the violation data");
+			ThreadContext.clearAll();
 		}
 		return violations;
 	}
-	
-	
+
 	@SuppressWarnings("unchecked")
 	public static int countViolationsPerNsi(String nsi_uuid) {
 
@@ -761,8 +1057,15 @@ public class db_operations {
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			ThreadContext.put("type", "W");
+			ThreadContext.put("timestamp", timestamp.toString());
+			ThreadContext.put("operation", "Get violated SLA");
+			ThreadContext.put("status", "");
+			logger.warn("Error counting the violations fro the nsi_uuid= " + nsi_uuid);
+			ThreadContext.clearAll();
 		}
-		System.out.println("SLA Violations for this NSI  are ==> " + count_violations);
 		return count_violations;
 
 	}
@@ -773,8 +1076,8 @@ public class db_operations {
 	public boolean deleteRecord(String tablename, String sla_uuid) {
 		Statement stmt = null;
 		boolean result = false;
-		
-		String SQL = "SELECT count(*) FROM "+tablename+" where SLA_UUID = '" + sla_uuid + "' ";
+
+		String SQL = "SELECT count(*) FROM " + tablename + " where SLA_UUID = '" + sla_uuid + "' ";
 		int count = 0;
 		try {
 			stmt = c.createStatement();
@@ -782,12 +1085,12 @@ public class db_operations {
 			while (rs.next()) {
 				count = rs.getInt(1);
 			}
+
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+
 		}
-		
-		if (count>0) {
+
+		if (count > 0) {
 			try {
 				c.setAutoCommit(false);
 				stmt = c.createStatement();
@@ -797,12 +1100,31 @@ public class db_operations {
 				stmt.close();
 				result = true;
 			} catch (Exception e) {
-				System.err.println(e.getClass().getName() + ": " + e.getMessage());
+				// logging
+				Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+				ThreadContext.put("type", "W");
+				ThreadContext.put("timestamp", timestamp.toString());
+				ThreadContext.put("operation", "Delete violated SLA");
+				ThreadContext.put("status", "");
+				logger.warn("Error deleting violation for the sla_uuid= " + sla_uuid);
+				ThreadContext.clearAll();
 			}
-			System.out.println("Records with deleted? " + result);
-		}
-		else {
-			System.out.println("Records with deleted? " + result);
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			ThreadContext.put("type", "I");
+			ThreadContext.put("timestamp", timestamp.toString());
+			ThreadContext.put("operation", "Delete violated SLA");
+			ThreadContext.put("status", "");
+			logger.info("Violation record for sla_uuid=" + sla_uuid + " was deleted succesfully");
+		} else {
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			ThreadContext.put("type", "W");
+			ThreadContext.put("timestamp", timestamp.toString());
+			ThreadContext.put("operation", "Delete violated SLA");
+			ThreadContext.put("status", "");
+			logger.warn("Error deleting violation for the sla_uuid= " + sla_uuid);
+			ThreadContext.clearAll();
 		}
 		return result;
 	}
@@ -841,7 +1163,14 @@ public class db_operations {
 				rs.close();
 				stmt.close();
 			} catch (Exception e) {
-				System.err.println(e.getClass().getName() + ": " + e.getMessage());
+				// logging
+				Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+				ThreadContext.put("type", "W");
+				ThreadContext.put("timestamp", timestamp.toString());
+				ThreadContext.put("operation", "Delete violated SLA");
+				ThreadContext.put("status", "");
+				logger.warn("Error fetching data from table= "+ tablename);
+				ThreadContext.clearAll();
 			}
 
 		} else if (tablename == "cust_sla") {
@@ -869,7 +1198,14 @@ public class db_operations {
 				stmt.close();
 
 			} catch (Exception e) {
-				System.err.println(e.getClass().getName() + ": " + e.getMessage());
+				// logging
+				Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+				ThreadContext.put("type", "W");
+				ThreadContext.put("timestamp", timestamp.toString());
+				ThreadContext.put("operation", "Delete violated SLA");
+				ThreadContext.put("status", "");
+				logger.warn("Error fetching data from table= "+ tablename);
+				ThreadContext.clearAll();
 			}
 
 		}

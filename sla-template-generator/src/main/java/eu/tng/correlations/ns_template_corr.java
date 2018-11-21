@@ -39,14 +39,21 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.ThreadContext;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
 public class ns_template_corr {
+	
+	static Logger logger = LogManager.getLogger("SLAM_Logger");
 
 	/**
 	 * Create a correlation between a network service and a sla template
@@ -109,9 +116,7 @@ public class ns_template_corr {
 			}
 		}
 
-		correlatedNS = tempArray; // assign temp to original
-		System.out.println(correlatedNS);
-		
+		correlatedNS = tempArray; // assign temp to original		
 		dbo.closePostgreSQL();
 		return (JSONArray) correlatedNS;
 
@@ -160,8 +165,6 @@ public class ns_template_corr {
 				JSONObject ns_obj = (JSONObject) existingNSArray.get(i);
 				existingNSIDs.add((String) ns_obj.get("uuid"));
 			}
-			System.out.println("ALL THE NS UUIDS" + existingNSIDs);
-
 		} catch (Exception e) {
 		}
 
@@ -192,7 +195,14 @@ public class ns_template_corr {
 
 		nsWithoutTemplate = tempArray; // assign temp to original
 		System.out.println("NS UUIDS WITHOUT TEMPLATE" + nsWithoutTemplate);
-		
+		// logging
+		Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+		ThreadContext.put("type", "I");
+		ThreadContext.put("timestamp", timestamp.toString());
+		ThreadContext.put("operation", "NSs without associated SLA Templates");
+		ThreadContext.put("status", "");
+		logger.info(nsWithoutTemplate);
+		ThreadContext.clearAll();
 		
 		return nsWithoutTemplate;
 	}
