@@ -77,7 +77,7 @@ import eu.tng.correlations.*;
 public class templatesAPIs {
 
 	static Logger logger = LogManager.getLogger("SLAM_Logger");
-
+	
 	/**
 	 * api call in order to get a list with all the existing sla templates
 	 */
@@ -397,6 +397,15 @@ public class templatesAPIs {
 
 		}
 
+	}
+	
+	public static void main(String [] args)
+	{
+		ThreadContext.put("type", "I");
+		ThreadContext.put("operation", "Get SLA Templates");
+		ThreadContext.put("status", "200");
+		logger.info("Available SLA Templates");
+		ThreadContext.clearAll();
 	}
 
 }
