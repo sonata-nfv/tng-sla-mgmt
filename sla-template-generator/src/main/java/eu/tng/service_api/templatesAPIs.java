@@ -115,6 +115,7 @@ public class templatesAPIs {
 			ThreadContext.put("operation", "Get SLA Templates");
 			ThreadContext.put("status", "200");
 			logger.info("Available SLA Templates ==> " + response);
+			System.out.println(logger);
 			ThreadContext.clearAll();
 
 			JSONParser parser = new JSONParser();
