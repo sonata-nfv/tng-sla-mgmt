@@ -40,6 +40,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import javax.ws.rs.Consumes;
@@ -58,6 +59,9 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.UriInfo;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.ThreadContext;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -72,6 +76,8 @@ import eu.tng.correlations.*;
 @Consumes(MediaType.APPLICATION_JSON)
 public class templatesAPIs {
 
+	static Logger logger = LogManager.getLogger("SLAM_Logger");
+
 	/**
 	 * api call in order to get a list with all the existing sla templates
 	 */
@@ -81,8 +87,8 @@ public class templatesAPIs {
 		ResponseBuilder apiresponse = null;
 		try {
 			String url = System.getenv("CATALOGUES_URL") + "slas/template-descriptors";
-//			 String url =
-//			 "http://pre-int-sp-ath.5gtango.eu:4011/catalogues/api/v2/slas/template-descriptors";
+			// String url =
+			// "http://pre-int-sp-ath.5gtango.eu:4011/catalogues/api/v2/slas/template-descriptors";
 			URL object = new URL(url);
 
 			HttpURLConnection con = (HttpURLConnection) object.openConnection();
@@ -102,11 +108,19 @@ public class templatesAPIs {
 			}
 			in.close();
 
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			ThreadContext.put("type", "I");
+			ThreadContext.put("timestamp", timestamp.toString());
+			ThreadContext.put("operation", "Get SLA Templates");
+			ThreadContext.put("status", apiresponse.status(200).toString());
+			logger.info("Available SLA Templates ==> " + response);
+			ThreadContext.clearAll(); 
+
 			JSONParser parser = new JSONParser();
 			Object existingTemplates = parser.parse(response.toString());
-
 			apiresponse = Response.ok((Object) existingTemplates);
-			apiresponse.header("Content-Length", response.length()); 
+			apiresponse.header("Content-Length", response.length());
 			return apiresponse.status(200).build();
 
 		} catch (Exception e) {
@@ -118,7 +132,6 @@ public class templatesAPIs {
 		}
 
 	}
-
 
 	/**
 	 * api call in order to get specific sla
@@ -314,7 +327,7 @@ public class templatesAPIs {
 	 */
 
 	@SuppressWarnings("static-access")
-    @Path("/{sla_uuid}")
+	@Path("/{sla_uuid}")
 	@Produces(MediaType.TEXT_PLAIN)
 	@DELETE
 	public Response deleteTemplate(@PathParam("sla_uuid") String sla_uuid) {
@@ -323,7 +336,7 @@ public class templatesAPIs {
 		String dr = null;
 		HttpURLConnection httpURLConnection = null;
 		URL url = null;
-		
+
 		db_operations dbo = new db_operations();
 		dbo.connectPostgreSQL();
 		dbo.createTableCustSla();
@@ -337,10 +350,10 @@ public class templatesAPIs {
 			return apiresponse.status(400).entity(dr).build();
 		} else {
 			try {
-			    /*
-				 url = new
-				 URL("http://pre-int-sp-ath.5gtango.eu:4011/catalogues/api/v2/slas/template-descriptors/"
-				 + sla_uuid);
+				/*
+				 * url = new URL(
+				 * "http://pre-int-sp-ath.5gtango.eu:4011/catalogues/api/v2/slas/template-descriptors/"
+				 * + sla_uuid);
 				 */
 				url = new URL(System.getenv("CATALOGUES_URL") + "slas/template-descriptors/" + sla_uuid);
 
