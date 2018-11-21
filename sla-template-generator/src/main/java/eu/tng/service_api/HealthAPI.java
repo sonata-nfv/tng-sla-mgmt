@@ -9,6 +9,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
+import java.util.Base64;
 import java.util.Date;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -24,7 +25,7 @@ import com.rabbitmq.client.Connection;
 
 import eu.tng.correlations.db_operations;
 import eu.tng.messaging.RabbitMqConnector;
-import org.apache.commons.codec.binary.Base64;
+
 
 
 @Path("/ping")
@@ -135,11 +136,10 @@ public class HealthAPI {
 
         String authString = name + ":" + password;
         System.out.println("auth string: " + authString);
-        byte[] authEncBytes = Base64.encodeBase64(authString.getBytes());
+        byte[] authEncBytes = Base64.getEncoder().encode(authString.getBytes());
         String authStringEnc = new String(authEncBytes);
+      
         System.out.println("Base64 encoded auth string: " + authStringEnc);
-
-        
         
         con.setDoOutput(true);
         con.setDoInput(true);

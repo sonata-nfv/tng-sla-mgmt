@@ -19,9 +19,10 @@
 	The authors would like to * acknowledge the contributions of their colleagues 
 	of the 5GTANGO * partner consortium (www.5gtango.eu). * */ -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" 
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	       xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>eu.tng</groupId>
 	<artifactId>tng-sla-mgmt</artifactId>
@@ -86,63 +87,16 @@
 			<artifactId>jersey-servlet</artifactId>
 			<version>1.19</version>
 		</dependency>
-		<dependency>
-			<groupId>com.sun.jersey</groupId>
-			<artifactId>jersey-json</artifactId>
-			<version>1.19</version>
-		</dependency>
+		<!-- Do Not Remove -->
 		<dependency>
 			<groupId>com.owlike</groupId>
 			<artifactId>genson</artifactId>
 			<version>0.99</version>
 		</dependency>
 		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.8.2</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.sun.jersey</groupId>
-			<artifactId>jersey-client</artifactId>
-			<version>1.19</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.glassfish.extras</groupId>
-			<artifactId>glassfish-embedded-web</artifactId>
-			<version>${glassfish.version}</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
 			<groupId>com.googlecode.json-simple</groupId>
 			<artifactId>json-simple</artifactId>
 			<version>1.1.1</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.httpcomponents</groupId>
-			<artifactId>httpclient</artifactId>
-			<version>4.5.5</version>
-		</dependency>
-		<dependency>
-			<groupId>com.jayway.jsonpath</groupId>
-			<artifactId>json-path</artifactId>
-			<version>2.3.0</version>
-		</dependency>
-		<dependency>
-			<groupId>com.google.code.gson</groupId>
-			<artifactId>gson</artifactId>
-			<version>2.3.1</version>
-		</dependency>
-		<dependency>
-			<groupId>com.sun.jersey.contribs</groupId>
-			<artifactId>jersey-multipart</artifactId>
-			<version>1.17</version>
-		</dependency>
-		<dependency>
-			<groupId>org.jvnet.mimepull</groupId>
-			<artifactId>mimepull</artifactId>
-			<version>1.9.5</version>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/postgresql/postgresql -->
 		<dependency>
@@ -163,11 +117,6 @@
 			<scope>provided</scope>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/com.esotericsoftware.yamlbeans/yamlbeans -->
-		<dependency>
-			<groupId>com.esotericsoftware.yamlbeans</groupId>
-			<artifactId>yamlbeans</artifactId>
-			<version>1.13</version>
-		</dependency>
 		<dependency>
 			<groupId>org.yaml</groupId>
 			<artifactId>snakeyaml</artifactId>

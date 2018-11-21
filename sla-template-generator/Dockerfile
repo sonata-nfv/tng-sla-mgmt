@@ -13,6 +13,9 @@ RUN mvn clean install
 # New container with tomcat8
 FROM tomcat:8.5-alpine
 
+# Set JVM Option Variables
+ENV CATALINA_OPTS -XX:+UseG1GC -Xmx2g -Xms32m
+
 # Delete existing ROOT folder
 RUN rm -rf /usr/local/tomcat/webapps/ROOT
 
