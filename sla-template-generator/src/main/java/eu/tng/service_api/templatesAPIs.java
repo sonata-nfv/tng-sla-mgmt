@@ -113,9 +113,9 @@ public class templatesAPIs {
 			ThreadContext.put("type", "I");
 			ThreadContext.put("timestamp", timestamp.toString());
 			ThreadContext.put("operation", "Get SLA Templates");
-			ThreadContext.put("status", apiresponse.status(200).toString());
+			ThreadContext.put("status", "200");
 			logger.info("Available SLA Templates ==> " + response);
-			ThreadContext.clearAll(); 
+			ThreadContext.clearAll();
 
 			JSONParser parser = new JSONParser();
 			Object existingTemplates = parser.parse(response.toString());
@@ -124,6 +124,16 @@ public class templatesAPIs {
 			return apiresponse.status(200).build();
 
 		} catch (Exception e) {
+
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			ThreadContext.put("type", "E");
+			ThreadContext.put("timestamp", timestamp.toString());
+			ThreadContext.put("operation", "Get SLA Templates");
+			ThreadContext.put("status", apiresponse.status(404).toString());
+			logger.error("Not found");
+			ThreadContext.clearAll();
+
 			JSONObject error = new JSONObject();
 			error.put("ERROR: ", "Not Found");
 			apiresponse = Response.ok((Object) error);
