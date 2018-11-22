@@ -45,6 +45,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintStream;
+import java.io.StringWriter;
 import java.net.HttpURLConnection;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -72,6 +73,7 @@ import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.ThreadContext;
+import org.apache.logging.log4j.core.appender.ConsoleAppender;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -120,7 +122,7 @@ public class templatesAPIs {
 			in.close();
 
 			// logging
-			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+//			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 //			ThreadContext.put("type", "I");
 //			ThreadContext.put("timestamp", timestamp.toString());
 //			ThreadContext.put("operation", "Get SLA Templates");
@@ -138,12 +140,12 @@ public class templatesAPIs {
 
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-			ThreadContext.put("type", "E");
-			ThreadContext.put("timestamp", timestamp.toString());
-			ThreadContext.put("operation", "Get SLA Templates");
-			ThreadContext.put("status", apiresponse.status(404).toString());
+//			ThreadContext.put("type", "E");
+//			ThreadContext.put("timestamp", timestamp.toString());
+//			ThreadContext.put("operation", "Get SLA Templates");
+//			ThreadContext.put("status", apiresponse.status(404).toString());
 			logger.error("Not found");
-			ThreadContext.clearAll();
+//			ThreadContext.clearAll();
 
 			JSONObject error = new JSONObject();
 			error.put("ERROR: ", "Not Found");

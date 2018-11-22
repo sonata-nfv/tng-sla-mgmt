@@ -3,8 +3,7 @@
 <Configuration status="WARN">
 	<Appenders>
 		<Console name="console" target="SYSTEM_OUT">
-			<JsonLayout complete="false" compact="false">
-			<!-- 
+			<JsonLayout complete="false" compact="true">
 				<KeyValuePair key="type" value="$${ctx:type}" />
 				<KeyValuePair key="timestamp" value="$${ctx:timestamp}" />
 				<KeyValuePair key="start_stop" value="" />
@@ -12,7 +11,6 @@
 				<KeyValuePair key="operation" value="$${ctx:operation}" />
 				<KeyValuePair key="status" value="$${ctx:status}" />
 				<KeyValuePair key="time_elapsed" value="" />
-			-->
 			</JsonLayout>
 		</Console>
 	</Appenders>
