@@ -89,51 +89,51 @@ public class templatesAPIs {
 
 	final Logger logger = LogManager.getLogger("SLAM_Logger");
 
-	public static void main(String[] args) {
-		final Logger log = LogManager.getLogger();
-		JSONObject jsonObject = null;
-		JSONParser parser = new JSONParser();
-
-		// logging
-		Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-		System.out.println("Timestamp ===> " + timestamp);
-		ThreadContext.put("type", "I");
-		ThreadContext.put("timestamp", timestamp.toString());
-		ThreadContext.put("operation", "Get SLA Templates");
-		ThreadContext.put("status", "200");
-
-		log.info("Available SLA Templates1");
-		
-		try {
-			File file = new File("src\\main\\resources\\logs.log");
-			FileReader fileReader = new FileReader(file);
-			BufferedReader bufferedReader = new BufferedReader(fileReader);
-			StringBuffer stringBuffer = new StringBuffer();
-			String line;
-			while ((line = bufferedReader.readLine()) != null) {
-				stringBuffer.append(line);
-				stringBuffer.append("\n");
-			}
-			fileReader.close();
-			System.out.println(stringBuffer.toString());
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		
-		
-		
-		//log.warn("Available SLA Templates1");
-
-		//log.error("Available SLA Templates1");
-
-
-		
-		//log.error("Available SLA Templates2");
-		//log.warn("Available SLA Templates3");
-
-		ThreadContext.clearAll();
-
-	}
+//	public static void main(String[] args) {
+//		final Logger log = LogManager.getLogger();
+//		JSONObject jsonObject = null;
+//		JSONParser parser = new JSONParser();
+//
+//		// logging
+//		Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+//		System.out.println("Timestamp ===> " + timestamp);
+//		ThreadContext.put("type", "I");
+//		ThreadContext.put("timestamp", timestamp.toString());
+//		ThreadContext.put("operation", "Get SLA Templates");
+//		ThreadContext.put("status", "200");
+//
+//		log.info("Available SLA Templates1");
+//		
+//		try {
+//			File file = new File("src\\main\\resources\\logs.log");
+//			FileReader fileReader = new FileReader(file);
+//			BufferedReader bufferedReader = new BufferedReader(fileReader);
+//			StringBuffer stringBuffer = new StringBuffer();
+//			String line;
+//			while ((line = bufferedReader.readLine()) != null) {
+//				stringBuffer.append(line);
+//				stringBuffer.append("\n");
+//			}
+//			fileReader.close();
+//			System.out.println(stringBuffer.toString());
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
+//		
+//		
+//		
+//		//log.warn("Available SLA Templates1");
+//
+//		//log.error("Available SLA Templates1");
+//
+//
+//		
+//		//log.error("Available SLA Templates2");
+//		//log.warn("Available SLA Templates3");
+//
+//		ThreadContext.clearAll();
+//
+//	}
 
 	/**
 	 * api call in order to get a list with all the existing sla templates
@@ -172,11 +172,24 @@ public class templatesAPIs {
 			ThreadContext.put("timestamp", timestamp.toString());
 			ThreadContext.put("operation", "Get SLA Templates");
 			ThreadContext.put("status", "200");
-			logger.info("Available SLA Templates1");
-			logger.error("Available SLA Templates2");
-			logger.warn("Available SLA Templates3");
-			ThreadContext.clearAll();
 
+			logger.info("Available SLA Templates1");
+			
+			try {
+				File file = new File("src\\main\\resources\\logs.log");
+				FileReader fileReader = new FileReader(file);
+				BufferedReader bufferedReader = new BufferedReader(fileReader);
+				StringBuffer stringBuffer = new StringBuffer();
+				String line;
+				while ((line = bufferedReader.readLine()) != null) {
+					stringBuffer.append(line);
+					stringBuffer.append("\n");
+				}
+				fileReader.close();
+				System.out.println(stringBuffer.toString());
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 			JSONParser parser = new JSONParser();
 			Object existingTemplates = parser.parse(response.toString());
 			apiresponse = Response.ok((Object) existingTemplates);
