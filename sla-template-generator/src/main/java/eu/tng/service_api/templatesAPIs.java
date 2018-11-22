@@ -125,8 +125,8 @@ public class templatesAPIs {
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 			String timestamps = timestamp.toString();
 			String operation = "Getting SLA Templates";
-			String message = response.toString();
-			String status = "200";
+			String message = "Available SLA Templates ==> " + response.toString();
+			String status = String.valueOf(responseCode);
 			
 			logger.info("{\"type\":\"I\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}", timestamps,operation,message,status);
 			
