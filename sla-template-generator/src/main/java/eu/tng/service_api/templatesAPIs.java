@@ -36,12 +36,21 @@
 package eu.tng.service_api;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.io.PrintStream;
 import java.net.HttpURLConnection;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -59,12 +68,14 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.UriInfo;
 
+import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.ThreadContext;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 import com.sun.jersey.core.util.Base64;
 
@@ -77,6 +88,52 @@ import eu.tng.correlations.*;
 public class templatesAPIs {
 
 	final Logger logger = LogManager.getLogger("SLAM_Logger");
+
+	public static void main(String[] args) {
+		final Logger log = LogManager.getLogger();
+		JSONObject jsonObject = null;
+		JSONParser parser = new JSONParser();
+
+		// logging
+		Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+		System.out.println("Timestamp ===> " + timestamp);
+		ThreadContext.put("type", "I");
+		ThreadContext.put("timestamp", timestamp.toString());
+		ThreadContext.put("operation", "Get SLA Templates");
+		ThreadContext.put("status", "200");
+
+		log.info("Available SLA Templates1");
+		
+		try {
+			File file = new File("src\\main\\resources\\logs.log");
+			FileReader fileReader = new FileReader(file);
+			BufferedReader bufferedReader = new BufferedReader(fileReader);
+			StringBuffer stringBuffer = new StringBuffer();
+			String line;
+			while ((line = bufferedReader.readLine()) != null) {
+				stringBuffer.append(line);
+				stringBuffer.append("\n");
+			}
+			fileReader.close();
+			System.out.println(stringBuffer.toString());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		
+		
+		//log.warn("Available SLA Templates1");
+
+		//log.error("Available SLA Templates1");
+
+
+		
+		//log.error("Available SLA Templates2");
+		//log.warn("Available SLA Templates3");
+
+		ThreadContext.clearAll();
+
+	}
 
 	/**
 	 * api call in order to get a list with all the existing sla templates

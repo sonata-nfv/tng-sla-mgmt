@@ -2,7 +2,7 @@
 
 <Configuration status="WARN">
 	<Appenders>
-		<Console name="console">
+		<Console name="console" target="SYSTEM_OUT">
 			<JsonLayout complete="false" compact="true">
 				<KeyValuePair key="type" value="$${ctx:type}" />
 				<KeyValuePair key="timestamp" value="$${ctx:timestamp}" />
@@ -14,10 +14,23 @@
 			</JsonLayout>
 		</Console>
 
+		<File name="everything" fileName="src\main\resources\logs.log">
+			<JsonLayout complete="false" compact="true">
+				<KeyValuePair key="type" value="$${ctx:type}" />
+				<KeyValuePair key="timestamp" value="$${ctx:timestamp}" />
+				<KeyValuePair key="start_stop" value="" />
+				<KeyValuePair key="component" value="tng-sla-mgmt" />
+				<KeyValuePair key="operation" value="$${ctx:operation}" />
+				<KeyValuePair key="status" value="$${ctx:status}" />
+				<KeyValuePair key="time_elapsed" value="" />
+			</JsonLayout>
+		</File>
+
 	</Appenders>
 	<Loggers>
 		<Root level="trace">
-			<AppenderRef ref="console" level="info" />
+			<AppenderRef ref="console" />
+			<AppenderRef ref="everything" />
 		</Root>
 	</Loggers>
 </Configuration>
