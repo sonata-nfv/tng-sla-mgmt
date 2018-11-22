@@ -18,7 +18,6 @@
 	<Loggers>
 		<Root level="trace">
 			<AppenderRef ref="console" />
-			<AppenderRef ref="everything" />
 		</Root>
 	</Loggers>
 </Configuration>
