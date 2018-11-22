@@ -89,8 +89,9 @@ import eu.tng.correlations.*;
 @Consumes(MediaType.APPLICATION_JSON)
 public class templatesAPIs {
 
-	final Logger logger = LogManager.getLogger("SLAM_Logger");
+	final Logger logger = LogManager.getLogger();
 
+		
 	/**
 	 * api call in order to get a list with all the existing sla templates
 	 */
