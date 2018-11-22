@@ -121,12 +121,12 @@ public class templatesAPIs {
 
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-			ThreadContext.put("type", "I");
-			ThreadContext.put("timestamp", timestamp.toString());
-			ThreadContext.put("operation", "Get SLA Templates");
-			ThreadContext.put("status", "200");
+//			ThreadContext.put("type", "I");
+//			ThreadContext.put("timestamp", timestamp.toString());
+//			ThreadContext.put("operation", "Get SLA Templates");
+//			ThreadContext.put("status", "200");
 			logger.info("Available SLA Templates1");
-			ThreadContext.clearAll();
+//			ThreadContext.clearAll();
 
 			JSONParser parser = new JSONParser();
 			Object existingTemplates = parser.parse(response.toString());
