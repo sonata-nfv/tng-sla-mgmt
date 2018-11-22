@@ -114,7 +114,9 @@ public class templatesAPIs {
 			ThreadContext.put("timestamp", timestamp.toString());
 			ThreadContext.put("operation", "Get SLA Templates");
 			ThreadContext.put("status", "200");
-			logger.info("Available SLA Templates");
+			logger.info("Available SLA Templates1");
+			logger.error("Available SLA Templates2");
+			logger.warn("Available SLA Templates3");
 			ThreadContext.clearAll();
 
 			JSONParser parser = new JSONParser();
@@ -404,7 +406,9 @@ public class templatesAPIs {
 		ThreadContext.put("type", "I");
 		ThreadContext.put("operation", "Get SLA Templates");
 		ThreadContext.put("status", "200");
-		logger.info("Available SLA Templates");
+		logger.info("Available SLA Templates4");
+		logger.error("Available SLA Templates5");
+		logger.warn("Available SLA Templates6");
 		ThreadContext.clearAll();
 	}
 
