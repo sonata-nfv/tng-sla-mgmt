@@ -90,6 +90,7 @@ import eu.tng.correlations.*;
 public class templatesAPIs {
 
 	final static Logger logger = LogManager.getLogger();
+		
 	/**
 	 * api call in order to get a list with all the existing sla templates
 	 */
@@ -121,15 +122,14 @@ public class templatesAPIs {
 			in.close();
 
 			// logging
-//			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-//			ThreadContext.put("type", "I");
-//			ThreadContext.put("timestamp", timestamp.toString());
-//			ThreadContext.put("operation", "Get SLA Templates");
-//			ThreadContext.put("status", "200");
-			//logger.info("Available SLA Templates1");
-			logger.info("{\"type\": \"I\", \"status\": \"%s\", \"component\": \"tng-sla-mgmt\"}", "200");
-			System.out.println();
-//			ThreadContext.clearAll();
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			String timestamps = timestamp.toString();
+			String operation = "Getting SLA Templates";
+			String message = response.toString();
+			String status = "200";
+			
+			logger.info("{\"type\":\"I\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}", timestamps,operation,message,status);
+			
 
 			JSONParser parser = new JSONParser();
 			Object existingTemplates = parser.parse(response.toString());
@@ -138,16 +138,6 @@ public class templatesAPIs {
 			return apiresponse.status(200).build();
 
 		} catch (Exception e) {
-
-			// logging
-			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-//			ThreadContext.put("type", "E");
-//			ThreadContext.put("timestamp", timestamp.toString());
-//			ThreadContext.put("operation", "Get SLA Templates");
-//			ThreadContext.put("status", apiresponse.status(404).toString());
-			logger.error("Not found");
-//			ThreadContext.clearAll();
-
 			JSONObject error = new JSONObject();
 			error.put("ERROR: ", "Not Found");
 			apiresponse = Response.ok((Object) error);
