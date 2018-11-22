@@ -13,10 +13,12 @@
 				<KeyValuePair key="time_elapsed" value="" />
 			</JsonLayout>
 		</Console>
+
 	</Appenders>
 	<Loggers>
 		<Root level="trace">
 			<AppenderRef ref="console" />
+			<AppenderRef ref="everything" />
 		</Root>
 	</Loggers>
 </Configuration>
