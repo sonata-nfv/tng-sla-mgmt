@@ -90,8 +90,6 @@ import eu.tng.correlations.*;
 public class templatesAPIs {
 
 	final static Logger logger = LogManager.getLogger();
-
-
 	/**
 	 * api call in order to get a list with all the existing sla templates
 	 */

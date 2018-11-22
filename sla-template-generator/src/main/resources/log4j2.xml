@@ -4,7 +4,7 @@
 	<Appenders>
 		<Console name="console" target="SYSTEM_OUT">
 		 
-			<JsonLayout complete="false" compact="true">
+			<JsonLayout complete="false" compact="false">
 				<KeyValuePair key="type" value="$${ctx:type}" />
 				<KeyValuePair key="timestamp" value="$${ctx:timestamp}" />
 				<KeyValuePair key="start_stop" value="" />
