@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Configuration>
+
+<Configuration status="WARN">
 	<Appenders>
-		<!-- Console Appender -->
-		<Console name="SLAM_JSON_Appender" target="SYSTEM_OUT">
-			<JsonLayout compact="true">
+		<Console name="console">
+			<JsonLayout complete="false" compact="true">
 				<KeyValuePair key="type" value="$${ctx:type}" />
 				<KeyValuePair key="timestamp" value="$${ctx:timestamp}" />
 				<KeyValuePair key="start_stop" value="" />
@@ -13,12 +13,12 @@
 				<KeyValuePair key="time_elapsed" value="" />
 			</JsonLayout>
 		</Console>
-		
+
 	</Appenders>
 	<Loggers>
-		<!-- SLAM Logger with JSON Appender -->
-		<Logger name="SLAM_Logger" level="INFO" additivity="false">
-			<AppenderRef ref="SLAM_JSON_Appender" />
-		</Logger>
+		<Root level="trace">
+			<AppenderRef ref="console" level="info" />
+
+		</Root>
 	</Loggers>
 </Configuration>
