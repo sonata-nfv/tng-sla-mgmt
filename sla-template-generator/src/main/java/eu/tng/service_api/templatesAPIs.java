@@ -126,8 +126,8 @@ public class templatesAPIs {
 //			ThreadContext.put("timestamp", timestamp.toString());
 //			ThreadContext.put("operation", "Get SLA Templates");
 //			ThreadContext.put("status", "200");
-			logger.info("Available SLA Templates1");
-			//logger.info("{\"type\": \"I\", \"status\": \"%s\"}", "200");
+			//logger.info("Available SLA Templates1");
+			logger.info("{\"type\": \"I\", \"status\": \"%s\", \"component\": \"tng-sla-mgmt\"}", "200");
 			System.out.println();
 //			ThreadContext.clearAll();
 

@@ -3,7 +3,7 @@
 <Configuration>
 	<Appenders>
 		<Console name="console" target="SYSTEM_OUT">
-		 
+		 <!-- 
 			<JsonLayout complete="false" compact="false">
 				<KeyValuePair key="type" value="$${ctx:type}" />
 				<KeyValuePair key="timestamp" value="$${ctx:timestamp}" />
@@ -13,7 +13,7 @@
 				<KeyValuePair key="status" value="$${ctx:status}" />
 				<KeyValuePair key="time_elapsed" value="" />
 			</JsonLayout>
-			
+			-->
 		</Console>
 
 	</Appenders>
