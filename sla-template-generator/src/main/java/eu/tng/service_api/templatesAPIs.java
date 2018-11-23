@@ -103,8 +103,8 @@ public class templatesAPIs {
 			String timestamps = timestamp.toString();
 			String type = "I";
 			String operation = "Getting SLA Templates";
-			String message = "Available SLA Templates ==>   " + response.toString();
-			String status = String.valueOf(responseCode);
+			String message = "SLA Templates feched succesfully";
+			String status = String.valueOf(200);
 			logger.info(
 					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 					type, timestamps, operation, message, status);
@@ -133,7 +133,6 @@ public class templatesAPIs {
 			apiresponse.header("Content-Length", error.toJSONString().length());
 			return apiresponse.status(404).build();
 		}
-
 	}
 
 	/**
@@ -217,6 +216,9 @@ public class templatesAPIs {
 
 		ResponseBuilder apiresponse = null;
 
+		
+		
+		
 		List<String> nsd_uuid = formParams.get("nsd_uuid");
 		List<String> expireDate = formParams.get("expireDate");
 		List<String> templateName = formParams.get("templateName");
@@ -390,7 +392,7 @@ public class templatesAPIs {
 						String timestamps = timestamp.toString();
 						String type = "I";
 						String operation = "Generate the SLA Template";
-						String message = "SLA was generated succesfully ==> " + responseSLA;
+						String message = "SLA was generated succesfully";
 						String status = String.valueOf(201);
 						logger.info(
 								"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
