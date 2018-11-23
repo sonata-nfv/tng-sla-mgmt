@@ -107,7 +107,7 @@ public class templatesAPIs {
 			String status = String.valueOf(responseCode);
 			logger.info(
 					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
-					type,timestamps, operation, message, status);
+					type, timestamps, operation, message, status);
 
 			JSONParser parser = new JSONParser();
 			Object existingTemplates = parser.parse(response.toString());
@@ -116,22 +116,21 @@ public class templatesAPIs {
 			return apiresponse.status(200).build();
 
 		} catch (Exception e) {
-			JSONObject error = new JSONObject();
-			error.put("ERROR: ", "Not Found");
-			apiresponse = Response.ok((Object) error);
-			apiresponse.header("Content-Length", error.toJSONString().length());
-
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 			String timestamps = timestamp.toString();
 			String type = "E";
 			String operation = "Getting SLA Templates";
 			String message = "Error Not Found";
-			String status = String.valueOf(apiresponse);
+			String status = String.valueOf(404);
 			logger.error(
 					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
-					type,timestamps, operation, message, status);
+					type, timestamps, operation, message, status);
 
+			JSONObject error = new JSONObject();
+			error.put("ERROR: ", "Not Found");
+			apiresponse = Response.ok((Object) error);
+			apiresponse.header("Content-Length", error.toJSONString().length());
 			return apiresponse.status(404).build();
 		}
 
@@ -178,10 +177,10 @@ public class templatesAPIs {
 			String type = "E";
 			String operation = "Get specific SLA Template";
 			String message = "SLA Template with uuid=" + sla_uuid + " found succesfully!";
-			String status = String.valueOf(apiresponse);
+			String status = String.valueOf(200);
 			logger.error(
 					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
-					type,timestamps, operation, message, status);
+					type, timestamps, operation, message, status);
 
 			return apiresponse.status(200).build();
 
@@ -197,10 +196,10 @@ public class templatesAPIs {
 			String operation = "Get specific SLA Template";
 			String type = "E";
 			String message = "SLA Template with uuid=" + sla_uuid + " NOT Found";
-			String status = String.valueOf(apiresponse);
+			String status = String.valueOf(404);
 			logger.error(
 					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
-					type,timestamps, operation, message, status);
+					type, timestamps, operation, message, status);
 
 			return apiresponse.status(404).build();
 		}
@@ -242,10 +241,10 @@ public class templatesAPIs {
 			String type = "D";
 			String operation = "Generate SLA Template";
 			String message = "ERROR: Corresponding NSD = " + nsd_uuid.get(0) + " Not Found!";
-			String status = String.valueOf(apiresponse);
+			String status = String.valueOf(404);
 			logger.debug(
 					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
-					type,timestamps, operation, message, status);
+					type, timestamps, operation, message, status);
 
 			return apiresponse.status(404).build();
 		} else {
@@ -269,10 +268,10 @@ public class templatesAPIs {
 				String type = "D";
 				String operation = "Validating the SLA Template";
 				String message = "Error: Invalid expire date format. The format should be dd/mm/YYY";
-				String status = String.valueOf(apiresponse);
+				String status = String.valueOf(400);
 				logger.debug(
 						"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
-						type,timestamps, operation, message, status);
+						type, timestamps, operation, message, status);
 
 				return apiresponse.status(400).build();
 
@@ -290,10 +289,10 @@ public class templatesAPIs {
 				String type = "D";
 				String operation = "Validating the SLA Template";
 				String message = "Error: The expire date is not a future date.";
-				String status = String.valueOf(apiresponse);
+				String status = String.valueOf(400);
 				logger.debug(
 						"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
-						type,timestamps, operation, message, status);
+						type, timestamps, operation, message, status);
 
 				return apiresponse.status(400).build();
 
@@ -312,10 +311,10 @@ public class templatesAPIs {
 				String type = "D";
 				String operation = "Validating the SLA Template";
 				String message = "Error: There is a problem with the guarantee terms. You should select at least one guarantee id, and avoid duplicates.";
-				String status = String.valueOf(apiresponse);
+				String status = String.valueOf(400);
 				logger.debug(
 						"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
-						type,timestamps, operation, message, status);
+						type, timestamps, operation, message, status);
 
 				return apiresponse.status(400).build();
 
@@ -333,10 +332,10 @@ public class templatesAPIs {
 				String type = "D";
 				String operation = "Validating the SLA Template";
 				String message = "Error: No SLA name specified.";
-				String status = String.valueOf(apiresponse);
+				String status = String.valueOf(400);
 				logger.debug(
 						"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
-						type,timestamps, operation, message, status);
+						type, timestamps, operation, message, status);
 
 				return apiresponse.status(400).build();
 			} else {
@@ -392,10 +391,10 @@ public class templatesAPIs {
 						String type = "I";
 						String operation = "Generate the SLA Template";
 						String message = "SLA was generated succesfully ==> " + responseSLA;
-						String status = String.valueOf(apiresponse);
+						String status = String.valueOf(201);
 						logger.info(
 								"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
-								type,timestamps, operation, message, status);
+								type, timestamps, operation, message, status);
 
 						return apiresponse.status(201).build();
 
@@ -412,10 +411,10 @@ public class templatesAPIs {
 						String type = "I";
 						String operation = "Generate the SLA Template";
 						String message = "Error uploding to Catalogue : " + con.getResponseMessage();
-						String status = String.valueOf(apiresponse);
+						String status = String.valueOf(400);
 						logger.warn(
 								"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
-								type,timestamps, operation, message, status);
+								type, timestamps, operation, message, status);
 
 						return apiresponse.status(400).build();
 					}
@@ -432,10 +431,10 @@ public class templatesAPIs {
 					String type = "W";
 					String operation = "Generate the SLA Template";
 					String message = "Error uploding to Catalogue : URL invalid";
-					String status = String.valueOf(apiresponse);
+					String status = String.valueOf(404);
 					logger.warn(
 							"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
-							type,timestamps, operation, message, status);
+							type, timestamps, operation, message, status);
 
 					return apiresponse.status(404).build();
 				}
@@ -477,7 +476,7 @@ public class templatesAPIs {
 			String type = "W";
 			String operation = "Delete an SLA Template";
 			String message = "ERROR: This SLA Template cannot be deleted because it is associated with an instantiated NS.";
-			String status = String.valueOf(apiresponse);
+			String status = String.valueOf(400);
 			logger.warn(
 					"{\"type\":\"I\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 					timestamps, operation, message, status);
@@ -495,7 +494,6 @@ public class templatesAPIs {
 				httpURLConnection = (HttpURLConnection) url.openConnection();
 				httpURLConnection.setRequestProperty("Content-Type", "application/json");
 				httpURLConnection.setRequestMethod("DELETE");
-				System.out.println(httpURLConnection.getResponseCode());
 
 				if (httpURLConnection.getResponseCode() == 404) {
 					return Response.status(404).entity("SLA uuid Not Found").build();
@@ -513,11 +511,11 @@ public class templatesAPIs {
 					String timestamps = timestamp.toString();
 					String type = "I";
 					String operation = "Delete an SLA Template";
-					String message = "SLA Template with uuid = "+sla_uuid+" deleted succesfully";
-					String status = String.valueOf(apiresponse);
+					String message = "SLA Template with uuid = " + sla_uuid + " deleted succesfully";
+					String status = String.valueOf(200);
 					logger.info(
 							"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
-							type,timestamps, operation, message, status);
+							type, timestamps, operation, message, status);
 
 					return apiresponse.status(200).entity(dr).build();
 
@@ -528,17 +526,17 @@ public class templatesAPIs {
 				error.put("ERROR: ", "URL Not Found");
 				apiresponse = Response.ok((Object) error);
 				apiresponse.header("Content-Length", error.toJSONString().length());
-				
+
 				// logging
 				Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 				String timestamps = timestamp.toString();
 				String type = "W";
 				String operation = "Delete an SLA Template";
 				String message = "Error uploding to Catalogue : URL invalid";
-				String status = String.valueOf(apiresponse);
+				String status = String.valueOf(404);
 				logger.warn(
 						"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
-						type,timestamps, operation, message, status);
+						type, timestamps, operation, message, status);
 
 				return apiresponse.status(404).build();
 
