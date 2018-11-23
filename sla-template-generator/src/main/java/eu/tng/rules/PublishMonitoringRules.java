@@ -33,7 +33,6 @@
  * 
  */
 
-
 package eu.tng.rules;
 
 import java.io.BufferedReader;
@@ -41,15 +40,20 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.sql.Timestamp;
 
 import javax.ws.rs.core.Response;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
 import eu.tng.correlations.ns_template_corr;
 
 public class PublishMonitoringRules {
+
+	final static Logger logger = LogManager.getLogger();
 
 	/**
 	 * Publish monitoring rules to the Monitoring Manager Y1 : Communication via
@@ -60,20 +64,17 @@ public class PublishMonitoringRules {
 
 	public JSONObject publishMonitringRules(JSONObject body, String ns_id) {
 
-		System.out.println(body);
 		String service_id = ns_id;
-		System.out.println("NS ID" + ns_id);
-
 		try {
 
 			/*
-			String url = "http://pre-int-sp-ath.5gtango.eu:8000/api/v1/slamng/rules/service/" + service_id
-					+ "/configuration ";
-			*/		
-			
-			String url = System.getenv("MONITORING_URL")+"slamng/rules/service/" + service_id
-					+ "/configuration ";
-						
+			 * String url =
+			 * "http://pre-int-sp-ath.5gtango.eu:8000/api/v1/slamng/rules/service/" +
+			 * service_id + "/configuration ";
+			 */
+
+			String url = System.getenv("MONITORING_URL") + "slamng/rules/service/" + service_id + "/configuration ";
+
 			URL object = new URL(url);
 
 			HttpURLConnection con = (HttpURLConnection) object.openConnection();
@@ -82,7 +83,7 @@ public class PublishMonitoringRules {
 			con.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
 			con.setRequestProperty("Accept", "application/json");
 			con.setRequestMethod("POST");
-			
+
 			OutputStreamWriter wr = new OutputStreamWriter(con.getOutputStream());
 			wr.write(body.toString());
 			wr.flush();
@@ -91,15 +92,43 @@ public class PublishMonitoringRules {
 			int HttpResult = con.getResponseCode();
 
 			if (HttpResult == HttpURLConnection.HTTP_OK) {
-				System.out.println("SLA rules were send");
-				System.out.println(con.getResponseMessage());
+				// logging
+				Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+				String timestamps = timestamp.toString();
+				String type = "W";
+				String operation = "Publishing monitoring rule for SLA violation checks";
+				String message = "[*] SLA rules were send succesfully ==> " + con.getResponseMessage();
+				String status = String.valueOf(con.getResponseCode());
+				logger.warn(
+						"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+						type, timestamps, operation, message, status);
 
 			} else {
-				// ERROR sending the monitoring rules 
-				System.out.println("ERROR sending the monitoring rules : " + con.getResponseMessage());
+				// ERROR sending the monitoring rules
+				// logging
+				Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+				String timestamps = timestamp.toString();
+				String type = "W";
+				String operation = "Publishing monitoring rule for SLA violation checks";
+				String message = "[*] ERROR sending the monitoring rules ==> " +con.getResponseMessage();
+				String status = String.valueOf(con.getResponseCode());
+				logger.warn(
+						"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+						type, timestamps, operation, message, status);
+
 			}
 		} catch (Exception e) {
 			System.out.println("ERROR connecting with monitoring api  : " + e.getMessage());
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			String timestamps = timestamp.toString();
+			String type = "W";
+			String operation = "Publishing monitoring rule for SLA violation checks";
+			String message = "[*] ERROR connecting with monitoring api  : " + e.getMessage();
+			String status = "";
+			logger.warn(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
 		}
 
 		return null;
