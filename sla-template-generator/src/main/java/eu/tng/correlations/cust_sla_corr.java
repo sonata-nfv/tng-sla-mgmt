@@ -91,15 +91,6 @@ public class cust_sla_corr {
 			conn.setRequestProperty("Content-Type", "application/json");
 
 			if (conn.getResponseCode() != 200) {
-				// logging
-				Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-				ThreadContext.put("type", "E");
-				ThreadContext.put("timestamp", timestamp.toString());
-				ThreadContext.put("operation", "Getting SLA descriptor from the Catalogue");
-				ThreadContext.put("status", String.valueOf(conn.getResponseCode()));
-				logger.error("SLA uuid not found");
-				ThreadContext.clearAll();
-
 				details = null;
 			} else {
 				BufferedReader br = new BufferedReader(new InputStreamReader((conn.getInputStream())));
@@ -121,46 +112,44 @@ public class cust_sla_corr {
 						}
 
 					} catch (ParseException e) {
-						// logging
-						Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-						ThreadContext.put("type", "E");
-						ThreadContext.put("timestamp", timestamp.toString());
-						ThreadContext.put("operation", "Parsing SLA Descriptor");
-						ThreadContext.put("status", "");
-						logger.error("Error while parsing SLA with uuid=" + sla_uuid);
-						ThreadContext.clearAll();
 					}
 
 				}
-				// logging
 				Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-				ThreadContext.put("type", "I");
-				ThreadContext.put("timestamp", timestamp.toString());
-				ThreadContext.put("operation", "Fetching SLAD to get details");
-				ThreadContext.put("status", String.valueOf(conn.getResponseCode()));
-				logger.info("Succesfully fetched SLAD to get details.");
-				ThreadContext.clearAll();
+				String timestamps = timestamp.toString();
+				String type = "I";
+				String operation = "Fetching SLAD to get details";
+				String message = ("Succesfully fetched SLAD to get details.");
+				String status = String.valueOf(conn.getResponseCode());
+				logger.info(
+						"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+						type, timestamps, operation, message, status);
 				conn.disconnect();
 			}
 
 		} catch (MalformedURLException e) {
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-			ThreadContext.put("type", "E");
-			ThreadContext.put("timestamp", timestamp.toString());
-			ThreadContext.put("operation", "Ping Catalogue URL to get SLA descriptor.");
-			ThreadContext.put("status", "");
-			logger.error("A malformed URL has occurred");
-			ThreadContext.clearAll();
+			String timestamps = timestamp.toString();
+			String type = "W";
+			String operation = "Fetching SLAD to get details";
+			String message = ("A malformed URL has occurred");
+			String status = "";
+			logger.warn(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
+
 		} catch (IOException e) {
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-			ThreadContext.put("type", "E");
-			ThreadContext.put("timestamp", timestamp.toString());
-			ThreadContext.put("operation", "Ping Catalogue URL to get SLA descriptor.");
-			ThreadContext.put("status", "");
-			logger.error("Signals that an I/O exception of some sort has occurred.");
-			ThreadContext.clearAll();
+			String timestamps = timestamp.toString();
+			String type = "W";
+			String operation = "Ping Catalogue URL to get SLA descriptor.";
+			String message = ("Signals that an I/O exception of some sort has occurred.");
+			String status = "";
+			logger.warn(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
 		}
 		return details;
 	}
@@ -218,22 +207,29 @@ public class cust_sla_corr {
 			guaranteeTerms = (JSONArray) ns.get("guaranteeTerms");
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-			ThreadContext.put("type", "I");
-			ThreadContext.put("timestamp", timestamp.toString());
-			ThreadContext.put("operation", "Getting guarantee terms from SLA");
-			ThreadContext.put("status", String.valueOf(con.getResponseCode()));
-			logger.info(guaranteeTerms);
-			ThreadContext.clearAll();
+			String timestamps = timestamp.toString();
+			String type = "I";
+			String operation = "Getting guarantee terms from SLA.";
+			String message = ("Succesfully get guarantee terms");
+			String status = (String.valueOf(con.getResponseCode()));
+			logger.info(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
+
 			return guaranteeTerms;
 
 		} catch (Exception e) {
+
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-			ThreadContext.put("type", "E");
-			ThreadContext.put("timestamp", timestamp.toString());
-			ThreadContext.put("operation", "Ping Catalogue URL to get SLA descriptor.");
-			logger.error("SLA uuid not found");
-			ThreadContext.clearAll();
+			String timestamps = timestamp.toString();
+			String type = "W";
+			String operation = "Getting guarantee terms from SLA.";
+			String message = ("Succesfully get guarantee terms");
+			String status = ("SLA uuid not found");
+			logger.warn(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
 
 			return null;
 		}
@@ -269,14 +265,17 @@ public class cust_sla_corr {
 			}
 		}
 		correlatedNS = tempArray; // assign temp to original
-
+		
 		// logging
 		Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-		ThreadContext.put("type", "I");
-		ThreadContext.put("timestamp", timestamp.toString());
-		ThreadContext.put("operation", "Get correlation between NS and Agreement");
-		logger.info(correlatedNS);
-		ThreadContext.clearAll();
+		String timestamps = timestamp.toString();
+		String type = "I";
+		String operation = "Get correlation between NS and Agreement";
+		String message = ("Succesfully get correlation between NS and Agreement");
+		String status = ("");
+		logger.warn(
+				"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+				type, timestamps, operation, message, status);
 
 		db_operations.closePostgreSQL();
 
@@ -322,6 +321,17 @@ public class cust_sla_corr {
 				existingNSIDs.add((String) ns_obj.get("uuid"));
 			}
 		} catch (Exception e) {
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			String timestamps = timestamp.toString();
+			String type = "W";
+			String operation = "Get NS without Agreement";
+			String message = ("Error getting list of NSs without agreement ==> " +e.getMessage());
+			String status = "";
+			logger.warn(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
+
 		}
 
 		// create array list with ns uuids that have not sla templates yet
@@ -350,14 +360,17 @@ public class cust_sla_corr {
 		}
 
 		nsWithoutAgreement = tempArray; // assign temp to original
-
+		
 		// logging
 		Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-		ThreadContext.put("type", "I");
-		ThreadContext.put("timestamp", timestamp.toString());
-		ThreadContext.put("operation", "Get NSs that do not have Agreements yet.");
-		logger.info(nsWithoutAgreement);
-		ThreadContext.clearAll();
+		String timestamps = timestamp.toString();
+		String type = "I";
+		String operation = "Get NS without Agreement";
+		String message = ("Succesfully get list of NSs without agreement");
+		String status = "";
+		logger.info(
+				"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+				type, timestamps, operation, message, status);
 
 		return nsWithoutAgreement;
 	}
