@@ -52,7 +52,7 @@ import java.sql.ResultSet;
 
 public class db_operations {
 
-	static Logger logger = LogManager.getLogger("SLAM_Logger");
+	static Logger logger = LogManager.getLogger();
 
 	static Connection c = null;
 	static Statement stmt = null;
@@ -81,25 +81,26 @@ public class db_operations {
 
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-			ThreadContext.put("type", "I");
-			ThreadContext.put("timestamp", timestamp.toString());
-			ThreadContext.put("operation", "Connecting to SLA Manager's internal database.");
-			ThreadContext.put("status", "");
-			logger.info("Opened sla-manager database successfully");
-			ThreadContext.clearAll();
+			String timestamps = timestamp.toString();
+			String type = "I";
+			String operation = "Connecting to SLA Manager's internal database.";
+			String message = "Opened sla-manager database successfully";
+			String status = "";
+			logger.info(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
 
 		} catch (Exception e) {
-			e.printStackTrace();
-			System.err.println(e.getClass().getName() + ": " + e.getMessage());
-
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-			ThreadContext.put("type", "E");
-			ThreadContext.put("timestamp", timestamp.toString());
-			ThreadContext.put("operation", "Connecting to SLA Manager's internal database.");
-			ThreadContext.put("status", "");
-			logger.error("Error connecting to SLA Manager's internal database.");
-			ThreadContext.clearAll();
+			String timestamps = timestamp.toString();
+			String type = "W";
+			String operation = "Connecting to SLA Manager's internal database.";
+			String message = "Error connecting to SLA Manager's internal database. ==> " + e.getMessage();
+			String status = "";
+			logger.warn(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
 
 			connect = false;
 		}
@@ -112,23 +113,33 @@ public class db_operations {
 	public static void closePostgreSQL() {
 		try {
 			c.close();
+			boolean connect = false;
+
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-			ThreadContext.put("type", "I");
-			ThreadContext.put("timestamp", timestamp.toString());
-			ThreadContext.put("operation", "Closing conection to SLA Manager's internal database.");
-			ThreadContext.put("status", "");
-			logger.info("Succesfully closed the connection to SLA Manager's internal database.");
-			ThreadContext.clearAll();
+			String timestamps = timestamp.toString();
+			String type = "W";
+			String operation = "Closing conection to SLA Manager's internal database.";
+			String message = "Succesfully closed the connection to SLA Manager's internal database.";
+			String status = "";
+			logger.warn(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
+
+			connect = false;
+
 		} catch (SQLException e) {
+
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-			ThreadContext.put("type", "E");
-			ThreadContext.put("timestamp", timestamp.toString());
-			ThreadContext.put("operation", "Closing conection to SLA Manager's internal database.");
-			ThreadContext.put("status", "");
-			logger.error("Error closing the connection to SLA Manager's internal database.");
-			ThreadContext.clearAll();
+			String timestamps = timestamp.toString();
+			String type = "W";
+			String operation = "Closing conection to SLA Manager's internal database.";
+			String message = "Error closing the connection to SLA Manager's internal database. == > " + e.getMessage();
+			String status = String.valueOf(e.getErrorCode());
+			logger.warn(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
 		}
 	}
 
@@ -151,22 +162,26 @@ public class db_operations {
 
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-			ThreadContext.put("type", "I");
-			ThreadContext.put("timestamp", timestamp.toString());
-			ThreadContext.put("operation", "Creating table for NS - Template correlations");
-			ThreadContext.put("status", "");
-			logger.info("Table Created? " + result);
-			ThreadContext.clearAll();
+			String timestamps = timestamp.toString();
+			String type = "I";
+			String operation = "Creating table for NS - Template correlations";
+			String message = "ns_template table Created? " + result;
+			String status = "";
+			logger.info(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
 
 		} catch (Exception e) {
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-			ThreadContext.put("type", "E");
-			ThreadContext.put("timestamp", timestamp.toString());
-			ThreadContext.put("operation", "Creating table for NS - Template correlations");
-			ThreadContext.put("status", "");
-			logger.error("Table Created? " + result);
-			ThreadContext.clearAll();
+			String timestamps = timestamp.toString();
+			String type = "W";
+			String operation = "Creating table for NS - Template correlations";
+			String message = "ns_template table Created? " + result;
+			String status = "";
+			logger.warn(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
 		}
 
 		return result;
@@ -189,23 +204,27 @@ public class db_operations {
 
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-			ThreadContext.put("type", "I");
-			ThreadContext.put("timestamp", timestamp.toString());
-			ThreadContext.put("operation", "Insert record to table for NS - Template correlations");
-			ThreadContext.put("status", "");
-			logger.info("Records ns-template saved successfully? " + result);
-			ThreadContext.clearAll();
+			String timestamps = timestamp.toString();
+			String type = "I";
+			String operation = "Insert record to table for NS - Template correlations";
+			String message = "Records ns-template saved successfully? " + result;
+			String status = "";
+			logger.info(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
 
 		} catch (Exception e) {
-			e.printStackTrace();
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-			ThreadContext.put("type", "E");
-			ThreadContext.put("timestamp", timestamp.toString());
-			ThreadContext.put("operation", "Insert record to table for NS - Template correlations");
-			ThreadContext.put("status", "");
-			logger.error("Records ns-template saved successfully? " + result);
-			ThreadContext.clearAll();
+			String timestamps = timestamp.toString();
+			String type = "W";
+			String operation = "Insert record to table for NS - Template correlations";
+			String message = "Records ns-template saved successfully? " + result;
+			String status = "";
+			logger.warn(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
+
 		}
 
 		return result;
@@ -229,24 +248,29 @@ public class db_operations {
 			stmt.executeUpdate(sql);
 			stmt.close();
 
+			ThreadContext.clearAll();
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-			ThreadContext.put("type", "I");
-			ThreadContext.put("timestamp", timestamp.toString());
-			ThreadContext.put("operation", "Create table for Customer - SLA Agreement correlations");
-			ThreadContext.put("status", "");
-			logger.error("Table cust_sla created successfully");
-			ThreadContext.clearAll();
+			String timestamps = timestamp.toString();
+			String type = "I";
+			String operation = "Create table for Customer - SLA Agreement correlations";
+			String message = "Table cust_sla created successfully";
+			String status = "";
+			logger.info(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
 
 		} catch (Exception e) {
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-			ThreadContext.put("type", "E");
-			ThreadContext.put("timestamp", timestamp.toString());
-			ThreadContext.put("operation", "Create table for Customer - SLA Agreement correlations");
-			ThreadContext.put("status", "");
-			logger.error("Error creating cust_sla table.");
-			ThreadContext.clearAll();
+			String timestamps = timestamp.toString();
+			String type = "W";
+			String operation = "Create table for Customer - SLA Agreement correlations";
+			String message = "Error creating cust_sla table ==> " + e.getMessage();
+			String status = "";
+			logger.warn(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
 		}
 	}
 
@@ -273,22 +297,27 @@ public class db_operations {
 
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-			ThreadContext.put("type", "I");
-			ThreadContext.put("timestamp", timestamp.toString());
-			ThreadContext.put("operation", "Inserting record for customer-sla correlation");
-			ThreadContext.put("status", "");
-			logger.info("Records  cust-sla saved successfully");
-			ThreadContext.clearAll();
+			String timestamps = timestamp.toString();
+			String type = "I";
+			String operation = "Inserting record for customer-sla correlation";
+			String message = "Records  cust-sla saved successfully";
+			String status = "";
+			logger.info(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
 
 		} catch (Exception e) {
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-			ThreadContext.put("type", "E");
-			ThreadContext.put("timestamp", timestamp.toString());
-			ThreadContext.put("operation", "Inserting record for customer-sla correlation");
-			ThreadContext.put("status", "");
-			logger.warn("cust-sla correlation was not saved!");
-			ThreadContext.clearAll();
+			String timestamps = timestamp.toString();
+			String type = "W";
+			String operation = "Inserting record for customer-sla correlation";
+			String message = "Error creating records for cust-sla ==> " + e.getMessage();
+			String status = "";
+			logger.warn(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
+
 		}
 	}
 
@@ -311,23 +340,29 @@ public class db_operations {
 			pstmt.setString(3, correlation_id);
 			pstmt.executeUpdate();
 			result = true;
+
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-			ThreadContext.put("type", "I");
-			ThreadContext.put("timestamp", timestamp.toString());
-			ThreadContext.put("operation", "Updating SLA Agreement status");
-			ThreadContext.put("status", "");
-			logger.info("Set status READY?" + result);
-			ThreadContext.clearAll();
+			String timestamps = timestamp.toString();
+			String type = "I";
+			String operation = "Updating SLA Agreement status";
+			String message = "Set status READY?" + result;
+			String status = "";
+			logger.info(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
+
 		} catch (SQLException e) {
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-			ThreadContext.put("type", "W");
-			ThreadContext.put("timestamp", timestamp.toString());
-			ThreadContext.put("operation", "Updating SLA Agreement record status");
-			ThreadContext.put("status", "");
-			logger.warn("Error updating the status");
-			ThreadContext.clearAll();
+			String timestamps = timestamp.toString();
+			String type = "I";
+			String operation = "Updating SLA Agreement status";
+			String message = "Set status READY?" + result + " ==> " + e.getMessage();
+			String status = "";
+			logger.info(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
 		}
 
 	}
@@ -352,23 +387,27 @@ public class db_operations {
 
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-			ThreadContext.put("type", "I");
-			ThreadContext.put("timestamp", timestamp.toString());
-			ThreadContext.put("operation", "Updating SLA Agreement Violation Status");
-			ThreadContext.put("status", "");
-			logger.info("SLA Violated?" + result);
-			ThreadContext.clearAll();
+			String timestamps = timestamp.toString();
+			String type = "I";
+			String operation = "Updating SLA Agreement Violation Status";
+			String message = "SLA Violated?" + result;
+			String status = "";
+			logger.info(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
 
 		} catch (Exception e) {
-			System.err.println(e.getClass().getName() + ": " + e.getMessage());
+
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-			ThreadContext.put("type", "W");
-			ThreadContext.put("timestamp", timestamp.toString());
-			ThreadContext.put("operation", "Updating SLA Agreement Violation Status");
-			ThreadContext.put("status", "");
-			logger.warn("SLA Violated?" + result);
-			ThreadContext.clearAll();
+			String timestamps = timestamp.toString();
+			String type = "W";
+			String operation = "Updating SLA Agreement Violation Status";
+			String message = "SLA Violated?" + result + " ==> " + e.getMessage();
+			String status = "";
+			logger.warn(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
 		}
 	}
 
@@ -389,23 +428,29 @@ public class db_operations {
 			pstmt.setString(2, nsi_uuid);
 			pstmt.executeUpdate();
 			result = true;
+
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-			ThreadContext.put("type", "I");
-			ThreadContext.put("timestamp", timestamp.toString());
-			ThreadContext.put("operation", "Updating correlation id for NS instantiation process");
-			ThreadContext.put("status", "");
-			logger.info("Correlation id updated?" + result);
-			ThreadContext.clearAll();
+			String timestamps = timestamp.toString();
+			String type = "I";
+			String operation = "Updating correlation id for NS instantiation process";
+			String message = ("Correlation id updated?" + result);
+			String status = "";
+			logger.info(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
+
 		} catch (SQLException e) {
-			// logging
+
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-			ThreadContext.put("type", "W");
-			ThreadContext.put("timestamp", timestamp.toString());
-			ThreadContext.put("operation", "Updating correlation id for NS instantiation process");
-			ThreadContext.put("status", "");
-			logger.warn("Correlation id updated?" + result);
-			ThreadContext.clearAll();
+			String timestamps = timestamp.toString();
+			String type = "W";
+			String operation = "Updating correlation id for NS instantiation process";
+			String message = ("Correlation id updated?" + result);
+			String status = "";
+			logger.warn(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
 		}
 	}
 
@@ -429,22 +474,27 @@ public class db_operations {
 			c.commit();
 			stmt.close();
 			result = true;
-			// logging
+
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-			ThreadContext.put("type", "I");
-			ThreadContext.put("timestamp", timestamp.toString());
-			ThreadContext.put("operation", "Terminating SLA Agreement");
-			ThreadContext.put("status", "");
-			logger.info("Set status TERMINATED?" + result);
-			ThreadContext.clearAll();
+			String timestamps = timestamp.toString();
+			String type = "I";
+			String operation = "Terminating SLA Agreement";
+			String message = ("Set status TERMINATED?" + result);
+			String status = "";
+			logger.info(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
+
 		} catch (Exception e) {
-			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-			ThreadContext.put("type", "W");
-			ThreadContext.put("timestamp", timestamp.toString());
-			ThreadContext.put("operation", "Terminating SLA Agreement");
-			ThreadContext.put("status", "");
-			logger.warn("Set status TERMINATED?" + result);
+			String timestamps = timestamp.toString();
+			String type = "W";
+			String operation = "Terminating SLA Agreement";
+			String message = ("Set status TERMINATED?" + result);
+			String status = "";
+			logger.warn(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
 		}
 		return result;
 	}
@@ -499,22 +549,30 @@ public class db_operations {
 			root.put("agreements", agreements);
 			rs.close();
 			stmt.close();
-			// logging
+
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-			ThreadContext.put("type", "I");
-			ThreadContext.put("timestamp", timestamp.toString());
-			ThreadContext.put("operation", "Get all SLA Agreement record details");
-			ThreadContext.put("status", "");
-			logger.info(root);
+			String timestamps = timestamp.toString();
+			String type = "I";
+			String operation = "Get all SLA Agreement record details";
+			String message = ("Agreement details feched succesfully");
+			String status = "";
+			logger.info(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
+
 		} catch (Exception e) {
 			System.err.println(e.getClass().getName() + ": " + e.getMessage());
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-			ThreadContext.put("type", "E");
-			ThreadContext.put("timestamp", timestamp.toString());
-			ThreadContext.put("operation", "Get all SLA Agreement record details");
-			ThreadContext.put("status", "");
-			logger.error("Error getting agreement details");
+			String timestamps = timestamp.toString();
+			String type = "W";
+			String operation = "Get all SLA Agreement record details";
+			String message = ("Error getting agreement details ==> " + e.getMessage());
+			String status = "";
+			logger.warn(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
+
 		}
 		return root;
 	}
@@ -568,21 +626,29 @@ public class db_operations {
 			root.put("agreements", agreements);
 			rs.close();
 			stmt.close();
+
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-			ThreadContext.put("type", "I");
-			ThreadContext.put("timestamp", timestamp.toString());
-			ThreadContext.put("operation", "Get active SLA Agreement record details");
-			ThreadContext.put("status", "");
-			logger.info(root);
+			String timestamps = timestamp.toString();
+			String type = "I";
+			String operation = "Get active SLA Agreement record details";
+			String message = ("Succesfully get active sla agreements");
+			String status = "";
+			logger.info(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
+
 		} catch (Exception e) {
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-			ThreadContext.put("type", "E");
-			ThreadContext.put("timestamp", timestamp.toString());
-			ThreadContext.put("operation", "Get active SLA Agreement record details");
-			ThreadContext.put("status", "");
-			logger.error("Error getting active agreements details");
+			String timestamps = timestamp.toString();
+			String type = "W";
+			String operation = "Get active SLA Agreement record details";
+			String message = ("Error getting active sla agreements ==> " + e.getMessage());
+			String status = "";
+			logger.warn(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
 		}
 		return root;
 	}
@@ -628,11 +694,14 @@ public class db_operations {
 		} catch (Exception e) {
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-			ThreadContext.put("type", "E");
-			ThreadContext.put("timestamp", timestamp.toString());
-			ThreadContext.put("operation", "Get agreement per NS instance id");
-			ThreadContext.put("status", "");
-			logger.error("Error getting agreement for NSI= " + nsi_uuid);
+			String timestamps = timestamp.toString();
+			String type = "W";
+			String operation = "Get  SLA Agreement per nsi";
+			String message = ("Error getting agreement per nsi ==> " + e.getMessage());
+			String status = "";
+			logger.warn(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
 		}
 		return root;
 	}
@@ -677,11 +746,14 @@ public class db_operations {
 		} catch (Exception e) {
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-			ThreadContext.put("type", "E");
-			ThreadContext.put("timestamp", timestamp.toString());
-			ThreadContext.put("operation", "Get all agreements per customer");
-			ThreadContext.put("status", "");
-			logger.error("Error getting agreements for cust_uuid= " + custuuid);
+			String timestamps = timestamp.toString();
+			String type = "W";
+			String operation = "Get  SLA Agreement per customer";
+			String message = ("Error getting agreement per customer  ==> " + e.getMessage());
+			String status = "";
+			logger.warn(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
 		}
 		return root;
 	}
@@ -721,13 +793,17 @@ public class db_operations {
 			rs.close();
 			stmt.close();
 		} catch (Exception e) {
+
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-			ThreadContext.put("type", "E");
-			ThreadContext.put("timestamp", timestamp.toString());
-			ThreadContext.put("operation", "Get specific agreement per nsi and sla");
-			ThreadContext.put("status", "");
-			logger.error("Error getting agreements for nsi=" + nsi_uuid + " and sla= " + sla_uuid);
+			String timestamps = timestamp.toString();
+			String type = "W";
+			String operation = "Get specific agreement per nsi and sla";
+			String message = ("Error Getting specific agreement per nsi and sla ==> " + e.getMessage());
+			String status = "";
+			logger.warn(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
 		}
 		return root;
 	}
@@ -749,23 +825,28 @@ public class db_operations {
 			c.commit();
 			stmt.close();
 			result = true;
-
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-			ThreadContext.put("type", "I");
-			ThreadContext.put("timestamp", timestamp.toString());
-			ThreadContext.put("operation", "Delete Agreement correlation");
-			ThreadContext.put("status", "");
-			logger.info("Delete agreement for nsi=" + nsi_uuid);
+			String timestamps = timestamp.toString();
+			String type = "I";
+			String operation = "Delete Agreement correlation";
+			String message = ("Agreement deleted succesfully");
+			String status = "";
+			logger.info(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
 
 		} catch (Exception e) {
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-			ThreadContext.put("type", "E");
-			ThreadContext.put("timestamp", timestamp.toString());
-			ThreadContext.put("operation", "Delete Agreement correlation");
-			ThreadContext.put("status", "");
-			logger.error("Error deleting agreement for nsi=" + nsi_uuid);
+			String timestamps = timestamp.toString();
+			String type = "W";
+			String operation = "Delete Agreement correlation";
+			String message = ("Error deleting agreement ==> " + e.getMessage());
+			String status = "";
+			logger.warn(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
 		}
 
 		return result;
@@ -790,19 +871,26 @@ public class db_operations {
 			}
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-			ThreadContext.put("type", "I");
-			ThreadContext.put("timestamp", timestamp.toString());
-			ThreadContext.put("operation", "Count active agreements per sla template");
-			ThreadContext.put("status", "");
-			logger.info("The number of Agreements correlations are = " + count);
+			String timestamps = timestamp.toString();
+			String type = "I";
+			String operation = "Count active agreements per sla template";
+			String message = ("The number of Agreements correlations are = " + count);
+			String status = "";
+			logger.info(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
+
 		} catch (SQLException e) {
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-			ThreadContext.put("type", "E");
-			ThreadContext.put("timestamp", timestamp.toString());
-			ThreadContext.put("operation", "Count active agreements per sla template");
-			ThreadContext.put("status", "");
-			logger.error("Error counting agreements");
+			String timestamps = timestamp.toString();
+			String type = "W";
+			String operation = "Count active agreements per sla template";
+			String message = ("Error counting agreements ==> " + e.getMessage());
+			String status = "";
+			logger.warn(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
 		}
 		return count;
 
@@ -825,21 +913,26 @@ public class db_operations {
 			stmt.close();
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-			ThreadContext.put("type", "I");
-			ThreadContext.put("timestamp", timestamp.toString());
-			ThreadContext.put("operation", "Create table for Violation records");
-			ThreadContext.put("status", "");
-			logger.info("Table sla_violations created successfully");
-			ThreadContext.clearAll();
+			String timestamps = timestamp.toString();
+			String type = "I";
+			String operation = "Create table for Violation records";
+			String message = ("Table sla_violations created successfully");
+			String status = "";
+			logger.info(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
+
 		} catch (Exception e) {
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-			ThreadContext.put("type", "E");
-			ThreadContext.put("timestamp", timestamp.toString());
-			ThreadContext.put("operation", "Create table for Violation records");
-			ThreadContext.put("status", "");
-			logger.error("Error creating sla violations table or table already exists");
-			ThreadContext.clearAll();
+			String timestamps = timestamp.toString();
+			String type = "W";
+			String operation = "Create table for Violation records";
+			String message = ("Error creating table sla_violations created successfully");
+			String status = "";
+			logger.warn(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
 		}
 	}
 
@@ -860,24 +953,30 @@ public class db_operations {
 			stmt.executeUpdate(sql);
 			stmt.close();
 			c.commit();
+
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-			ThreadContext.put("type", "I");
-			ThreadContext.put("timestamp", timestamp.toString());
-			ThreadContext.put("operation", "Insert violation record");
-			ThreadContext.put("status", "");
-			logger.info("Violation record created successfully");
-			ThreadContext.clearAll();
+			String timestamps = timestamp.toString();
+			String type = "I";
+			String operation = "Insert violation record";
+			String message = ("Violation record created successfully");
+			String status = "";
+			logger.info(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
+
 		} catch (Exception e) {
-			System.out.println("Error, Violation Record with same NSI already exists!");
+
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-			ThreadContext.put("type", "W");
-			ThreadContext.put("timestamp", timestamp.toString());
-			ThreadContext.put("operation", "Insert violation record");
-			ThreadContext.put("status", "");
-			logger.warn("Error, Violation Record with same NSI already exists!");
-			ThreadContext.clearAll();
+			String timestamps = timestamp.toString();
+			String type = "W";
+			String operation = "Insert violation record";
+			String message = ("Error creating violation record ==> " + e.getMessage());
+			String status = "";
+			logger.warn(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
 		}
 	}
 
@@ -912,22 +1011,27 @@ public class db_operations {
 
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-			ThreadContext.put("type", "I");
-			ThreadContext.put("timestamp", timestamp.toString());
-			ThreadContext.put("operation", "Get violated SLA");
-			ThreadContext.put("status", "");
-			logger.info("Violated SLA ==> " + violated_sla);
-			ThreadContext.clearAll();
+			String timestamps = timestamp.toString();
+			String type = "I";
+			String operation = "Get violated SLA";
+			String message = ("Violated SLA fetched succesfully");
+			String status = "";
+			logger.info(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
 
 		} catch (Exception e) {
+
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-			ThreadContext.put("type", "W");
-			ThreadContext.put("timestamp", timestamp.toString());
-			ThreadContext.put("operation", "Get violated SLA");
-			ThreadContext.put("status", "");
-			logger.warn("Error getting the violated SLA: " + sla_uuid);
-			ThreadContext.clearAll();
+			String timestamps = timestamp.toString();
+			String type = "W";
+			String operation = "Get violated SLA";
+			String message = ("Error getting the violated SLA ==> " + e.getMessage());
+			String status = "";
+			logger.warn(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
 		}
 		return violated_sla;
 
@@ -962,28 +1066,20 @@ public class db_operations {
 				violation.put("sla_uuid", sla_uuid);
 
 			}
-			System.out.println("VIOLATIONS FROM DB OPERATIONS CLASS ==> " + violation);
 			rs.close();
 			stmt.close();
-
-			// logging
-			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-			ThreadContext.put("type", "I");
-			ThreadContext.put("timestamp", timestamp.toString());
-			ThreadContext.put("operation", "Get violated SLA");
-			ThreadContext.put("status", "");
-			logger.info("Violation record ==> " + violation);
-			ThreadContext.clearAll();
 
 		} catch (Exception e) {
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-			ThreadContext.put("type", "W");
-			ThreadContext.put("timestamp", timestamp.toString());
-			ThreadContext.put("operation", "Get violated SLA");
-			ThreadContext.put("status", "");
-			logger.warn("Error getting the violated SLA records");
-			ThreadContext.clearAll();
+			String timestamps = timestamp.toString();
+			String type = "W";
+			String operation = "Get violated SLA";
+			String message = ("Error getting the violated SLA records ==> " + e.getMessage());
+			String status = "";
+			logger.warn(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
 		}
 		return violation;
 	}
@@ -1022,23 +1118,17 @@ public class db_operations {
 			rs.close();
 			stmt.close();
 
-			// logging
-			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-			ThreadContext.put("type", "I");
-			ThreadContext.put("timestamp", timestamp.toString());
-			ThreadContext.put("operation", "Get violated SLA");
-			ThreadContext.put("status", "");
-			logger.info("All Violation records ==> " + violation_data);
-			ThreadContext.clearAll();
 		} catch (Exception e) {
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-			ThreadContext.put("type", "W");
-			ThreadContext.put("timestamp", timestamp.toString());
-			ThreadContext.put("operation", "Get violated SLA");
-			ThreadContext.put("status", "");
-			logger.warn("Error getting the violation data");
-			ThreadContext.clearAll();
+			String timestamps = timestamp.toString();
+			String type = "W";
+			String operation = "Get violated SLA data";
+			String message = ("Error getting the violated SLA  data==> " + e.getMessage());
+			String status = "";
+			logger.warn(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
 		}
 		return violations;
 	}
@@ -1054,17 +1144,27 @@ public class db_operations {
 			while (rs.next()) {
 				count_violations = rs.getInt(1);
 			}
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-			ThreadContext.put("type", "W");
-			ThreadContext.put("timestamp", timestamp.toString());
-			ThreadContext.put("operation", "Get violated SLA");
-			ThreadContext.put("status", "");
-			logger.warn("Error counting the violations fro the nsi_uuid= " + nsi_uuid);
-			ThreadContext.clearAll();
+			String timestamps = timestamp.toString();
+			String type = "I";
+			String operation = "Counting violations";
+			String message = ("Number of violations  ==> " + count_violations);
+			String status = "";
+			logger.info(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
+		} catch (SQLException e) {
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			String timestamps = timestamp.toString();
+			String type = "W";
+			String operation = "Counting violations";
+			String message = ("Error counting the violations ==> " + e.getMessage());
+			String status = "";
+			logger.warn(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
 		}
 		return count_violations;
 
@@ -1099,32 +1199,41 @@ public class db_operations {
 				c.commit();
 				stmt.close();
 				result = true;
-			} catch (Exception e) {
+			} catch (Exception e) {			
 				// logging
 				Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-				ThreadContext.put("type", "W");
-				ThreadContext.put("timestamp", timestamp.toString());
-				ThreadContext.put("operation", "Delete violated SLA");
-				ThreadContext.put("status", "");
-				logger.warn("Error deleting violation for the sla_uuid= " + sla_uuid);
-				ThreadContext.clearAll();
+				String timestamps = timestamp.toString();
+				String type = "W";
+				String operation = "Delete violated SLA";
+				String message = ("Error deleting violation for the sla_uuid= " + sla_uuid);
+				String status = "";
+				logger.warn(
+						"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+						type, timestamps, operation, message, status);
+				
+				
 			}
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-			ThreadContext.put("type", "I");
-			ThreadContext.put("timestamp", timestamp.toString());
-			ThreadContext.put("operation", "Delete violated SLA");
-			ThreadContext.put("status", "");
-			logger.info("Violation record for sla_uuid=" + sla_uuid + " was deleted succesfully");
-		} else {
+			String timestamps = timestamp.toString();
+			String type = "I";
+			String operation = "Delete violated SLA";
+			String message = ("Succesfully deleted violation for sla_uuid= " + sla_uuid);
+			String status = "";
+			logger.info(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
+		} else {			
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-			ThreadContext.put("type", "W");
-			ThreadContext.put("timestamp", timestamp.toString());
-			ThreadContext.put("operation", "Delete violated SLA");
-			ThreadContext.put("status", "");
-			logger.warn("Error deleting violation for the sla_uuid= " + sla_uuid);
-			ThreadContext.clearAll();
+			String timestamps = timestamp.toString();
+			String type = "W";
+			String operation = "Delete violated SLA";
+			String message = ("Error deleting violation for the sla_uuid= " + sla_uuid);
+			String status = "";
+			logger.warn(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
 		}
 		return result;
 	}
@@ -1165,12 +1274,14 @@ public class db_operations {
 			} catch (Exception e) {
 				// logging
 				Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-				ThreadContext.put("type", "W");
-				ThreadContext.put("timestamp", timestamp.toString());
-				ThreadContext.put("operation", "Delete violated SLA");
-				ThreadContext.put("status", "");
-				logger.warn("Error fetching data from table= "+ tablename);
-				ThreadContext.clearAll();
+				String timestamps = timestamp.toString();
+				String type = "W";
+				String operation = "Get al records";
+				String message = ("Error fech data from table = " + tablename);
+				String status = "";
+				logger.warn(
+						"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+						type, timestamps, operation, message, status);
 			}
 
 		} else if (tablename == "cust_sla") {
@@ -1200,12 +1311,15 @@ public class db_operations {
 			} catch (Exception e) {
 				// logging
 				Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-				ThreadContext.put("type", "W");
-				ThreadContext.put("timestamp", timestamp.toString());
-				ThreadContext.put("operation", "Delete violated SLA");
-				ThreadContext.put("status", "");
-				logger.warn("Error fetching data from table= "+ tablename);
-				ThreadContext.clearAll();
+				String timestamps = timestamp.toString();
+				String type = "W";
+				String operation = "Get all records";
+				String message = ("Error fech data from table = " + tablename);
+				String status = "";
+				logger.warn(
+						"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+						type, timestamps, operation, message, status);
+
 			}
 
 		}
