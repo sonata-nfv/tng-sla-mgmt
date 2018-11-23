@@ -37,7 +37,10 @@ package eu.tng.messaging;
 
 import com.rabbitmq.client.Connection;
 import java.io.IOException;
+import java.sql.Timestamp;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -45,54 +48,99 @@ import com.rabbitmq.client.Channel;
 
 public class ViolationsProducer {
 
-    private static final String EXCHANGE_NAME = System.getenv("BROKER_EXCHANGE");
-    //private static final String EXCHANGE_NAME = "son-kernel";
+	static Logger logger = LogManager.getLogger();
 
-    public static void publishViolationMessage(JSONObject payload, Connection connection) throws Exception {
-        try {
+	private static final String EXCHANGE_NAME = System.getenv("BROKER_EXCHANGE");
+	// private static final String EXCHANGE_NAME = "son-kernel";
 
-            Channel channel_test = connection.createChannel();
+	public static void publishViolationMessage(JSONObject payload, Connection connection) throws Exception {
+		try {
 
-            channel_test.exchangeDeclare(EXCHANGE_NAME, "topic");
+			Channel channel_test = connection.createChannel();
 
-            String routingKey = "tng.sla.violation";
+			channel_test.exchangeDeclare(EXCHANGE_NAME, "topic");
 
-            String message = payload.toString();
+			String routingKey = "tng.sla.violation";
 
-            try {
-                channel_test.basicPublish(EXCHANGE_NAME, routingKey, null, message.getBytes());
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            System.out.println(" [x] Sent '" + routingKey + "':'" + message + "'");
+			String message = payload.toString();
 
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            System.out.println("Error publishing message " + e.getMessage());
-        }
-    }
+			try {
+				channel_test.basicPublish(EXCHANGE_NAME, routingKey, null, message.getBytes());
+			} catch (Exception e) {
+				// logging
+				Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+				String timestamps = timestamp.toString();
+				String type = "D";
+				String operation = "RabbitMQ - Violation Producer";
+				String messageLOG = e.getMessage();
+				String status = "";
+				logger.debug(
+						"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+						type, timestamps, operation, messageLOG, status);
+			}
 
-    public static JSONObject createViolationMessage(String ns_uuid, String sla_uuid, String alert_time,
-            String alert_state, String cust_uuid, Connection connection) throws Exception {
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			String timestamps = timestamp.toString();
+			String type = "D";
+			String operation = "RabbitMQ - Violation Producer";
+			String messageLOG = "[*] Sent message " + routingKey + " : " + message;
+			String status = "";
+			logger.debug(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, messageLOG, status);
 
-        JSONObject payload = new JSONObject();
-        try {
-            payload.put("ns_uuid", ns_uuid);
-            payload.put("violated_sla", sla_uuid);
-            payload.put("cust_uuid", cust_uuid);
-            payload.put("violation_time", alert_time);
-            payload.put("alert_state", alert_state);
-        } catch (JSONException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        try {
-            publishViolationMessage(payload, connection);
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        return payload;
-    }
+		} catch (IOException e) {
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			String timestamps = timestamp.toString();
+			String type = "D";
+			String operation = "RabbitMQ - Violation Producer";
+			String messageLOG = e.getMessage();
+			String status = "";
+			logger.debug(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, messageLOG, status);
+		}
+	}
+
+	public static JSONObject createViolationMessage(String ns_uuid, String sla_uuid, String alert_time,
+			String alert_state, String cust_uuid, Connection connection) throws Exception {
+
+		JSONObject payload = new JSONObject();
+		try {
+			payload.put("ns_uuid", ns_uuid);
+			payload.put("violated_sla", sla_uuid);
+			payload.put("cust_uuid", cust_uuid);
+			payload.put("violation_time", alert_time);
+			payload.put("alert_state", alert_state);
+		} catch (JSONException e) {
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			String timestamps = timestamp.toString();
+			String type = "D";
+			String operation = "RabbitMQ - Violation Producer";
+			String messageLOG = e.getMessage();
+			String status = "";
+			logger.debug(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, messageLOG, status);
+		}
+		try {
+			publishViolationMessage(payload, connection);
+		} catch (Exception e) {
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			String timestamps = timestamp.toString();
+			String type = "D";
+			String operation = "RabbitMQ - Violation Producer";
+			String messageLOG = e.getMessage();
+			String status = "";
+			logger.debug(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, messageLOG, status);
+		}
+		return payload;
+	}
 
 }

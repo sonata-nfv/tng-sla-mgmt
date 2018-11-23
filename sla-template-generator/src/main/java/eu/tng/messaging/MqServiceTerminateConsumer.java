@@ -36,12 +36,15 @@
 package eu.tng.messaging;
 
 import java.io.IOException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Map;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.json.*;
 import org.yaml.snakeyaml.Yaml;
 
@@ -56,12 +59,21 @@ import eu.tng.correlations.db_operations;
 
 public class MqServiceTerminateConsumer implements ServletContextListener {
 
+	static Logger logger = LogManager.getLogger();
+
+	Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+	String timestamps = "";
+	String type = "";
+	String operation = "";
+	String message = "";
+	String status = "";
+
 	private static final String EXCHANGE_NAME = System.getenv("BROKER_EXCHANGE");
 	// private static final String EXCHANGE_NAME = "son-kernel";
 
 	@Override
 	public void contextDestroyed(ServletContextEvent arg0) {
-	    System.out.println("Listener Service Terminate stopped");
+		System.out.println("Listener Service Terminate stopped");
 
 	}
 
@@ -79,11 +91,41 @@ public class MqServiceTerminateConsumer implements ServletContextListener {
 			channel_service_terminate.exchangeDeclare(EXCHANGE_NAME, "topic");
 			queueName_service_terminate = "slas.service.instance.terminate";
 			channel_service_terminate.queueDeclare(queueName_service_terminate, true, false, false, null);
-			System.out.println(" [*]  Binding queue to topic...");
+			// logging
+			timestamp = new Timestamp(System.currentTimeMillis());
+			timestamps = timestamp.toString();
+			type = "I";
+			operation = "RabbitMQ Listener - NS Termination";
+			message = "[*] Binding queue to topic...";
+			status = "";
+			logger.info(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
+
 			channel_service_terminate.queueBind(queueName_service_terminate, EXCHANGE_NAME,
 					"service.instance.terminate");
-			System.out.println(" [*] Bound to topic \"service.instances.terminate\"");
-			System.out.println(" [*] Waiting for messages.");
+
+			// logging
+			timestamp = new Timestamp(System.currentTimeMillis());
+			timestamps = timestamp.toString();
+			type = "I";
+			operation = "RabbitMQ Listener - NS Termination";
+			message = "[*] Bound to topic \"service.instances.terminate\"\"";
+			status = "";
+			logger.info(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
+
+			// logging
+			timestamp = new Timestamp(System.currentTimeMillis());
+			timestamps = timestamp.toString();
+			type = "I";
+			operation = "RabbitMQ Listener - NS Termination";
+			message = "[*] Waiting for messages.";
+			status = "";
+			logger.info(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
 
 			Consumer consumer_service_terminate = new DefaultConsumer(channel_service_terminate) {
 
@@ -97,52 +139,50 @@ public class MqServiceTerminateConsumer implements ServletContextListener {
 
 					// Parse message payload
 					String message = new String(body, "UTF-8");
-					
+
 					// parse the yaml and convert it to json
 					Yaml yaml = new Yaml();
 					Map<String, Object> map = (Map<String, Object>) yaml.load(message);
 					System.out.println("Message for terminating service received (printed as MAP): " + map);
 					jsonObjectMessage = new JSONObject(map);
 
-					System.out.println("Message (printed as JSONObject)" + jsonObjectMessage);
-					
-					
-					System.out.println("START READING HEADERS FROM MESSAGE.....");
 					correlation_id = properties.getCorrelationId();
-					
-					System.out.println(" [*] Correlation_id ==> " + correlation_id);
-
 
 					/** if message coming from the MANO - contain status key **/
 					if (jsonObjectMessage.has("status")) {
-					    
-					    status = map.get("status");
-					    
+
+						status = map.get("status");
+
 						if (status.equals("READY")) {
-						    System.out.println("STATUS READY");
 							// make the agreement status 'TERMINATED'
 							db_operations dbo = new db_operations();
 							db_operations.connectPostgreSQL();
 							db_operations.TerminateAgreement("TERMINATED", correlation_id.toString());
 							db_operations.closePostgreSQL();
-							System.out.println("Service TERMINATED, DB Updated");							
+
+							// logging
+							timestamp = new Timestamp(System.currentTimeMillis());
+							timestamps = timestamp.toString();
+							type = "I";
+							operation = "RabbitMQ Listener NS TRermination";
+							message = "[*] Service TERMINATED, DB Updated";
+							status = "";
+							logger.info(
+									"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+									type, timestamps, operation, message, status);
 						}
 					}
 					/** if message coming from the GK - does not contain status key **/
 					else {
-
-						System.out.println(" [*] Message coming from Gatekeeper.....");
-						System.out.println(" [*] Message as JSONObject ==> " + jsonObjectMessage);
 						nsi_uuid = map.get("service_instance_uuid");
-						System.out.println(" [*] instance_id  ==> " + nsi_uuid);
-						
+
 						db_operations dbo = new db_operations();
 						db_operations.connectPostgreSQL();
 						db_operations.createTableCustSla();
-						// make update record to change the correlation id  -  the correlation id of the termination messaging
+						// make update record to change the correlation id - the correlation id of the
+						// termination messaging
 						db_operations.UpdateCorrelationID(nsi_uuid.toString(), correlation_id.toString());
-                        db_operations.closePostgreSQL();			
-                        System.out.println("Correaltion ID UPDATED");
+						db_operations.closePostgreSQL();
 					}
 
 				}
@@ -153,8 +193,16 @@ public class MqServiceTerminateConsumer implements ServletContextListener {
 			channel_service_terminate.basicConsume(queueName_service_terminate, true, consumer_service_terminate);
 
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			System.out.println("ERROR Connecting to MQ!" + e.getMessage());
+			// logging
+			timestamp = new Timestamp(System.currentTimeMillis());
+			timestamps = timestamp.toString();
+			type = "E";
+			operation = "RabbitMQ Listener";
+			message = "[*] ERROR Connecting to MQ!" + e.getMessage();
+			status= "";
+			logger.error(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
 		}
 	}
 }

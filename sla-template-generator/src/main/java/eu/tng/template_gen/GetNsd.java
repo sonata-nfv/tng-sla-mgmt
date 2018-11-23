@@ -41,8 +41,11 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -50,20 +53,33 @@ import org.json.simple.parser.ParseException;
 
 public class GetNsd {
 
+	static Logger logger = LogManager.getLogger();
+
 	public boolean getNSD(String nsId) {
 		Nsd setNsdFields = new Nsd();
 		ArrayList<String> mon_desc_list = new ArrayList<String>();
 		ArrayList<String> mon_metric_list = new ArrayList<String>();
 		boolean nsdr = false;
 		try {
-			URL url = new URL(System.getenv("CATALOGUES_URL")+"network-services/"+ nsId);
-			//URL url = new URL("http://pre-int-sp-ath.5gtango.eu:4011/catalogues/api/v2/network-services/" + nsId);
+			URL url = new URL(System.getenv("CATALOGUES_URL") + "network-services/" + nsId);
+			// URL url = new
+			// URL("http://pre-int-sp-ath.5gtango.eu:4011/catalogues/api/v2/network-services/"
+			// + nsId);
 			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 			conn.setRequestProperty("Content-Type", "application/json");
 
 			if (conn.getResponseCode() != 200) {
-				//System.out.println("Failed : HTTP error code : NSD not FOUND");
 				nsdr = false;
+				// logging
+				Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+				String timestamps = timestamp.toString();
+				String type = "W";
+				String operation = "Get NSD from Catalogue";
+				String message = "NSD: "+ nsId+" couldn't be fetched";
+				String status = String.valueOf(conn.getResponseCode());
+				logger.warn(
+						"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+						type, timestamps, operation, message, status);
 			} else {
 				BufferedReader br = new BufferedReader(new InputStreamReader((conn.getInputStream())));
 				String output;
@@ -95,9 +111,28 @@ public class GetNsd {
 
 						}
 
+						// logging
+						Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+						String timestamps = timestamp.toString();
+						String type = "I";
+						String operation = "Get NSD from Catalogue";
+						String message = "NSD: "+ nsId+" received succesfully";
+						String status = String.valueOf(conn.getResponseCode());
+						logger.info(
+								"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+								type, timestamps, operation, message, status);
+						
 					} catch (ParseException e) {
-						e.printStackTrace();
-					}
+						// logging
+						Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+						String timestamps = timestamp.toString();
+						String type = "W";
+						String operation = "Get NSD from Catalogue";
+						String message = e.getMessage();
+						String status = "";
+						logger.warn(
+								"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+								type, timestamps, operation, message, status);					}
 
 				}
 				conn.disconnect();
@@ -105,11 +140,28 @@ public class GetNsd {
 			}
 		} catch (MalformedURLException e) {
 
-			e.printStackTrace();
-
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			String timestamps = timestamp.toString();
+			String type = "W";
+			String operation = "Get NSD from Catalogue";
+			String message = e.getMessage();
+			String status = "";
+			logger.warn(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
+			
 		} catch (IOException e) {
-
-			e.printStackTrace();
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			String timestamps = timestamp.toString();
+			String type = "W";
+			String operation = "Get NSD from Catalogue";
+			String message = e.getMessage();
+			String status = "";
+			logger.warn(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
 
 		}
 		return nsdr;

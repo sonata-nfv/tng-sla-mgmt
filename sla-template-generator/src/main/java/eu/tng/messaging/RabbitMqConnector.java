@@ -35,9 +35,16 @@
 
 package eu.tng.messaging;
 
+import java.sql.Timestamp;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.rabbitmq.client.*;
 
 public class RabbitMqConnector {
+
+	static Logger logger = LogManager.getLogger();
 
 	static Connection connection = null;
 
@@ -45,7 +52,7 @@ public class RabbitMqConnector {
 	public static Connection MqConnector() {
 
 		String connector_url = System.getenv("MQSERVER");
-		//String connector_url = "amqp://guest:guest@83.212.238.159:5672";
+		// String connector_url = "amqp://guest:guest@83.212.238.159:5672";
 
 		ConnectionFactory factory = new ConnectionFactory();
 		try {
@@ -57,7 +64,16 @@ public class RabbitMqConnector {
 			setconnection(connection);
 
 		} catch (Exception e) {
-			System.out.println(e.toString());
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			String timestamps = timestamp.toString();
+			String type = "E";
+			String operation = "Connectrion to RabbitMQ";
+			String message = e.getMessage();
+			String status = "";
+			logger.error(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
 		}
 
 		return connection;
@@ -80,7 +96,16 @@ public class RabbitMqConnector {
 			connection.close();
 			result = true;
 		} catch (Exception e) {
-			System.out.println(e.toString());
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			String timestamps = timestamp.toString();
+			String type = "E";
+			String operation = "Connectrion to RabbitMQ";
+			String message = e.getMessage();
+			String status = "";
+			logger.error(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
 		}
 		return result;
 	}

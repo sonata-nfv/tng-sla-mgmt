@@ -33,8 +33,9 @@
  * 
  */
 
-
 package eu.tng.service_api;
+
+import java.sql.Timestamp;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -45,6 +46,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.json.simple.JSONObject;
 
 import eu.tng.correlations.db_operations;
@@ -52,6 +55,8 @@ import eu.tng.correlations.db_operations;
 @Path("/violations")
 @Consumes(MediaType.APPLICATION_JSON)
 public class ViolationAPIS {
+
+	final static Logger logger = LogManager.getLogger();
 
 	/**
 	 * api call in order to get a JSONObject with violations per
@@ -63,7 +68,7 @@ public class ViolationAPIS {
 	public Response getViolation(@PathParam("nsi_uuid") String nsi_uuid, @PathParam("sla_uuid") String sla_uuid) {
 
 		ResponseBuilder apiresponse = null;
-		
+
 		db_operations dbo = new db_operations();
 		boolean connect = db_operations.connectPostgreSQL();
 		if (connect == true) {
@@ -74,26 +79,50 @@ public class ViolationAPIS {
 
 			apiresponse = Response.ok(violations);
 			apiresponse.header("Content-Length", violations.toString().length());
+
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			String timestamps = timestamp.toString();
+			String type = "I";
+			String operation = "Getting Violations";
+			String message = "SLA Violations feched succesfully";
+			String status = String.valueOf(200);
+			logger.info(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
+
 			return apiresponse.status(200).build();
 
 		} else {
 			dbo.closePostgreSQL();
-			
+
 			JSONObject error = new JSONObject();
 			error.put("ERROR: ", "connecting to database");
 			apiresponse = Response.ok((Object) error);
 			apiresponse.header("Content-Length", error.toJSONString().length());
+
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			String timestamps = timestamp.toString();
+			String type = "E";
+			String operation = "Getting Violations";
+			String message = "Error connecting to Database in order to get violation records";
+			String status = String.valueOf(404);
+			logger.error(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
+
 			return apiresponse.status(404).build();
 
 		}
 	}
-	
+
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getAllViolationData() {
 
 		ResponseBuilder apiresponse = null;
-		
+
 		db_operations dbo = new db_operations();
 		boolean connect = db_operations.connectPostgreSQL();
 		if (connect == true) {
@@ -104,6 +133,18 @@ public class ViolationAPIS {
 
 			apiresponse = Response.ok(violations);
 			apiresponse.header("Content-Length", violations.toString().length());
+
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			String timestamps = timestamp.toString();
+			String type = "I";
+			String operation = "Getting Violations";
+			String message = "SLA Violations feched succesfully";
+			String status = String.valueOf(200);
+			logger.info(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
+
 			return apiresponse.status(200).build();
 
 		} else {
@@ -113,6 +154,18 @@ public class ViolationAPIS {
 			error.put("ERROR: ", "connecting to database");
 			apiresponse = Response.ok((Object) error);
 			apiresponse.header("Content-Length", error.toJSONString().length());
+
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			String timestamps = timestamp.toString();
+			String type = "E";
+			String operation = "Getting Violations";
+			String message = "Error connecting to Database in order to get violation records";
+			String status = String.valueOf(404);
+			logger.error(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
+
 			return apiresponse.status(404).build();
 
 		}

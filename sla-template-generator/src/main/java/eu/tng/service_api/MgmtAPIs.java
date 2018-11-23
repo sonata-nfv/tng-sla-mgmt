@@ -33,13 +33,13 @@
  * 
  */
 
-
 package eu.tng.service_api;
 
 import java.io.File;
 import java.io.FileReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 
 import javax.ws.rs.Consumes;
@@ -52,6 +52,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -62,6 +64,8 @@ import eu.tng.correlations.ns_template_corr;
 @Path("/mgmt")
 @Consumes(MediaType.APPLICATION_JSON)
 public class MgmtAPIs {
+
+	final static Logger logger = LogManager.getLogger();
 
 	/**
 	 * Get all ns- templates correlations
@@ -80,6 +84,18 @@ public class MgmtAPIs {
 
 		apiresponse = Response.ok((Object) correlations);
 		apiresponse.header("Content-Length", correlations.toString().length());
+
+		// logging
+		Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+		String timestamps = timestamp.toString();
+		String type = "I";
+		String operation = "Get all ns- templates correlations";
+		String message = ("[*] Success! ns- templates correlations received");
+		String status = "200";
+		logger.info(
+				"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+				type, timestamps, operation, message, status);
+
 		return apiresponse.status(200).build();
 	}
 
@@ -133,6 +149,18 @@ public class MgmtAPIs {
 
 			apiresponse = Response.ok(jsonObject);
 			apiresponse.header("Content-Length", jsonObject.toJSONString().length());
+
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			String timestamps = timestamp.toString();
+			String type = "I";
+			String operation = "Get Guarantee List";
+			String message = ("[*] Success. Guarantees list received");
+			String status = "200";
+			logger.info(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
+
 			return apiresponse.status(200).build();
 
 		} catch (Exception e) {
@@ -140,6 +168,18 @@ public class MgmtAPIs {
 			error.put("ERROR: ", "Guarantees List Not Found");
 			apiresponse = Response.ok((Object) error);
 			apiresponse.header("Content-Length", error.toJSONString().length());
+
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			String timestamps = timestamp.toString();
+			String type = "W";
+			String operation = "Get Guarantee List";
+			String message = ("[*] Error. Guarantees list not found!");
+			String status = "404";
+			logger.warn(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
+
 			return apiresponse.status(404).build();
 
 		}
@@ -181,7 +221,7 @@ public class MgmtAPIs {
 		return apiresponse.status(200).build();
 
 	}
-	
+
 	/**
 	 * delete cust-ns-sla correlation based on sla uuid
 	 */
@@ -192,25 +232,24 @@ public class MgmtAPIs {
 	@DELETE
 	public Response deletecCustSlaCorrelation(@PathParam("sla_uuid") String sla_uuid) {
 		ResponseBuilder apiresponse = null;
-		
+
 		db_operations db = new db_operations();
 		db.connectPostgreSQL();
 		boolean delete = db.deleteRecord("cust_sla", sla_uuid);
 		db.closePostgreSQL();
-		
-		if (delete==true) {
+
+		if (delete == true) {
 			String response = "Agreement deleted Succesfully";
 			apiresponse = Response.ok((response));
 			apiresponse.header("Content-Length", response.length());
 			return apiresponse.status(200).build();
-		} 
-		else {
+		} else {
 			String response = "Agreement was not deleted. sla_uuid Not Found";
 			apiresponse = Response.ok((response));
 			apiresponse.header("Content-Length", response.length());
 			return apiresponse.status(404).build();
 		}
-		
+
 	}
 
 }

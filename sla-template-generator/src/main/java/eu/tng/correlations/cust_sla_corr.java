@@ -41,6 +41,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
@@ -50,10 +51,13 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-import eu.tng.template_gen.GetNsd;
-import eu.tng.template_gen.Nsd;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.ThreadContext;
 
 public class cust_sla_corr {
+
+	static Logger logger = LogManager.getLogger("SLAM_Logger");
 
 	/**
 	 * Create a correlation between an instatiated network service, a customer and a
@@ -77,17 +81,16 @@ public class cust_sla_corr {
 		ArrayList<String> details = new ArrayList<String>();
 
 		try {
-//			String url = "http://pre-int-sp-ath.5gtango.eu:4011/catalogues/api/v2/slas/template-descriptors/"
-//					+ sla_uuid;
-//			URL object = new URL(url);
+			// String url =
+			// "http://pre-int-sp-ath.5gtango.eu:4011/catalogues/api/v2/slas/template-descriptors/"
+			// + sla_uuid;
+			// URL object = new URL(url);
 
-			 URL url = new URL(System.getenv("CATALOGUES_URL") +
-			 "slas/template-descriptors/" + sla_uuid);
+			URL url = new URL(System.getenv("CATALOGUES_URL") + "slas/template-descriptors/" + sla_uuid);
 			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 			conn.setRequestProperty("Content-Type", "application/json");
 
 			if (conn.getResponseCode() != 200) {
-				System.out.println("Failed : HTTP error code : SLA not FOUND");
 				details = null;
 			} else {
 				BufferedReader br = new BufferedReader(new InputStreamReader((conn.getInputStream())));
@@ -109,20 +112,44 @@ public class cust_sla_corr {
 						}
 
 					} catch (ParseException e) {
-						e.printStackTrace();
 					}
 
 				}
+				Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+				String timestamps = timestamp.toString();
+				String type = "I";
+				String operation = "Fetching SLAD to get details";
+				String message = ("Succesfully fetched SLAD to get details.");
+				String status = String.valueOf(conn.getResponseCode());
+				logger.info(
+						"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+						type, timestamps, operation, message, status);
 				conn.disconnect();
 			}
 
 		} catch (MalformedURLException e) {
-
-			e.printStackTrace();
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			String timestamps = timestamp.toString();
+			String type = "W";
+			String operation = "Fetching SLAD to get details";
+			String message = ("A malformed URL has occurred");
+			String status = "";
+			logger.warn(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
 
 		} catch (IOException e) {
-
-			e.printStackTrace();
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			String timestamps = timestamp.toString();
+			String type = "W";
+			String operation = "Ping Catalogue URL to get SLA descriptor.";
+			String message = ("Signals that an I/O exception of some sort has occurred.");
+			String status = "";
+			logger.warn(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
 		}
 		return details;
 	}
@@ -140,11 +167,11 @@ public class cust_sla_corr {
 			dbo.deleteRecord(tablename, sla_uuid);
 		} else {
 			// failed to connect to database
-			status = 404; 
+			status = 404;
 		}
-        dbo.closePostgreSQL();
+		dbo.closePostgreSQL();
 		return status;
-		
+
 	}
 
 	public static JSONArray getGuaranteeTerms(String sla_uuid) {
@@ -152,7 +179,8 @@ public class cust_sla_corr {
 		JSONArray guaranteeTerms = null;
 		try {
 			String url = System.getenv("CATALOGUES_URL") + "slas/template-descriptors/" + sla_uuid + "\r\n";
-			//String url = "http://pre-int-sp-ath.5gtango.eu:4011/catalogues/api/v2/slas/template-descriptors/"+sla_uuid;
+			// String url =
+			// "http://pre-int-sp-ath.5gtango.eu:4011/catalogues/api/v2/slas/template-descriptors/"+sla_uuid;
 			URL object = new URL(url);
 
 			HttpURLConnection con = (HttpURLConnection) object.openConnection();
@@ -177,11 +205,32 @@ public class cust_sla_corr {
 			JSONObject sla_template = (JSONObject) slad.get("sla_template");
 			JSONObject ns = (JSONObject) sla_template.get("ns");
 			guaranteeTerms = (JSONArray) ns.get("guaranteeTerms");
-			System.out.println(guaranteeTerms);
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			String timestamps = timestamp.toString();
+			String type = "I";
+			String operation = "Getting guarantee terms from SLA.";
+			String message = ("Succesfully get guarantee terms");
+			String status = (String.valueOf(con.getResponseCode()));
+			logger.info(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
+
 			return guaranteeTerms;
-		} 
-		catch (Exception e) {
-			System.out.println("SLA Agreement not found");
+
+		} catch (Exception e) {
+
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			String timestamps = timestamp.toString();
+			String type = "W";
+			String operation = "Getting guarantee terms from SLA.";
+			String message = ("Succesfully get guarantee terms");
+			String status = ("SLA uuid not found");
+			logger.warn(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
+
 			return null;
 		}
 
@@ -216,8 +265,19 @@ public class cust_sla_corr {
 			}
 		}
 		correlatedNS = tempArray; // assign temp to original
-		System.out.println(correlatedNS);
-	    db_operations.closePostgreSQL();
+		
+		// logging
+		Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+		String timestamps = timestamp.toString();
+		String type = "I";
+		String operation = "Get correlation between NS and Agreement";
+		String message = ("Succesfully get correlation between NS and Agreement");
+		String status = ("");
+		logger.warn(
+				"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+				type, timestamps, operation, message, status);
+
+		db_operations.closePostgreSQL();
 
 		return (JSONArray) correlatedNS;
 
@@ -261,6 +321,17 @@ public class cust_sla_corr {
 				existingNSIDs.add((String) ns_obj.get("uuid"));
 			}
 		} catch (Exception e) {
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			String timestamps = timestamp.toString();
+			String type = "W";
+			String operation = "Get NS without Agreement";
+			String message = ("Error getting list of NSs without agreement ==> " +e.getMessage());
+			String status = "";
+			logger.warn(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
+
 		}
 
 		// create array list with ns uuids that have not sla templates yet
@@ -289,6 +360,17 @@ public class cust_sla_corr {
 		}
 
 		nsWithoutAgreement = tempArray; // assign temp to original
+		
+		// logging
+		Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+		String timestamps = timestamp.toString();
+		String type = "I";
+		String operation = "Get NS without Agreement";
+		String message = ("Succesfully get list of NSs without agreement");
+		String status = "";
+		logger.info(
+				"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+				type, timestamps, operation, message, status);
 
 		return nsWithoutAgreement;
 	}

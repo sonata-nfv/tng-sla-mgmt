@@ -39,14 +39,21 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.ThreadContext;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
 public class ns_template_corr {
+
+	static Logger logger = LogManager.getLogger("SLAM_Logger");
 
 	/**
 	 * Create a correlation between a network service and a sla template
@@ -110,8 +117,6 @@ public class ns_template_corr {
 		}
 
 		correlatedNS = tempArray; // assign temp to original
-		System.out.println(correlatedNS);
-		
 		dbo.closePostgreSQL();
 		return (JSONArray) correlatedNS;
 
@@ -130,12 +135,12 @@ public class ns_template_corr {
 		// get the ns uuids that have correlated an sla template
 		ArrayList<String> correlatedNSArray = new ArrayList<String>();
 		correlatedNSArray = nsWithTemplate();
-		System.out.println("NS WITH TEMPLATE " + correlatedNSArray);
 
 		// get all the available ns from the catalogue
 		try {
 			String url = System.getenv("CATALOGUES_URL") + "network-services";
-			//String url = "http://pre-int-sp-ath.5gtango.eu:4011/catalogues/api/v2/network-services/";
+			// String url =
+			// "http://pre-int-sp-ath.5gtango.eu:4011/catalogues/api/v2/network-services/";
 			URL object = new URL(url);
 
 			HttpURLConnection con = (HttpURLConnection) object.openConnection();
@@ -160,9 +165,17 @@ public class ns_template_corr {
 				JSONObject ns_obj = (JSONObject) existingNSArray.get(i);
 				existingNSIDs.add((String) ns_obj.get("uuid"));
 			}
-			System.out.println("ALL THE NS UUIDS" + existingNSIDs);
-
 		} catch (Exception e) {
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			String timestamps = timestamp.toString();
+			String type = "W";
+			String operation = "Get NS List that do not have templates";
+			String message = ("An error occured ==> " + e.getMessage());
+			String status = "";
+			logger.warn(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
 		}
 
 		// create array list with ns uuids that have not sla templates yet
@@ -191,9 +204,17 @@ public class ns_template_corr {
 		}
 
 		nsWithoutTemplate = tempArray; // assign temp to original
-		System.out.println("NS UUIDS WITHOUT TEMPLATE" + nsWithoutTemplate);
-		
-		
+		// logging
+		Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+		String timestamps = timestamp.toString();
+		String type = "I";
+		String operation = "NSs without associated SLA Templates";
+		String message = ("Succesfully created list with NSs that do not have templates");
+		String status = "";
+		logger.info(
+				"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+				type, timestamps, operation, message, status);
+
 		return nsWithoutTemplate;
 	}
 

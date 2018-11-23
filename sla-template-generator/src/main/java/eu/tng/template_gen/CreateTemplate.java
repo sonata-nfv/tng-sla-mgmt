@@ -35,6 +35,7 @@
 
 package eu.tng.template_gen;
 
+import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -42,10 +43,14 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.TimeZone;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 public class CreateTemplate {
+
+	static Logger logger = LogManager.getLogger();
 
 	Nsd getNsd = new Nsd();
 
@@ -59,9 +64,19 @@ public class CreateTemplate {
 		/** get network service descriptor for the given nsId */
 		GetNsd nsd = new GetNsd();
 		boolean correctNsUuid = nsd.getNSD(nsd_uuid);
-		//System.out.println("Correct ns uuid?" + nsd.getNSD(nsd_uuid));
 
 		if (nsd.getNSD(nsd_uuid) == false) {
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			String timestamps = timestamp.toString();
+			String type = "D";
+			String operation = "Create SLA Template";
+			String message = "Wrong NSD";
+			String status = "";
+			logger.debug(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
+
 			return null;
 		} else {
 			/** GENERATE THE TEMPLATE **/
@@ -119,6 +134,17 @@ public class CreateTemplate {
 				guaranteeTerms.add(guaranteeArr.get(counter));
 			}
 			ns.put("guaranteeTerms", guaranteeTerms);
+
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			String timestamps = timestamp.toString();
+			String type = "I";
+			String operation = "Create SLA Template";
+			String message = "Succesfully created the template";
+			String status = "";
+			logger.info(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
 
 			return root;
 

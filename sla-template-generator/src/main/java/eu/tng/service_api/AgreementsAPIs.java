@@ -40,6 +40,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -55,6 +56,8 @@ import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -69,6 +72,8 @@ import eu.tng.validations.TemplateValidation;
 @Path("/agreements")
 @Consumes(MediaType.APPLICATION_JSON)
 public class AgreementsAPIs {
+
+	final static Logger logger = LogManager.getLogger();
 
 	/**
 	 * api call in order to get a list with the active agreements
@@ -87,9 +92,21 @@ public class AgreementsAPIs {
 
 		apiresponse = Response.ok((Object) correlations);
 		apiresponse.header("Content-Length", correlations.toString().length());
+
+		// logging
+		Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+		String timestamps = timestamp.toString();
+		String type = "I";
+		String operation = "Get active Agreements";
+		String message = ("Succesfully getting active agreements");
+		String status = "200";
+		logger.info(
+				"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+				type, timestamps, operation, message, status);
+
 		return apiresponse.status(200).build();
 	}
-	
+
 	/**
 	 * api call in order to get a list with all the existing agreements
 	 */
@@ -108,6 +125,18 @@ public class AgreementsAPIs {
 
 		apiresponse = Response.ok((Object) correlations);
 		apiresponse.header("Content-Length", correlations.toString().length());
+
+		// logging
+		Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+		String timestamps = timestamp.toString();
+		String type = "I";
+		String operation = "Get all Agreements";
+		String message = ("Succesfully getting agreements");
+		String status = "200";
+		logger.info(
+				"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+				type, timestamps, operation, message, status);
+
 		return apiresponse.status(200).build();
 	}
 
@@ -128,33 +157,67 @@ public class AgreementsAPIs {
 		JSONObject agrPerNs = dbo.selectAgreementPerNSI(nsi_uuid);
 		String sla_status = (String) agrPerNs.get("sla_status");
 		dbo.closePostgreSQL();
-		
+
 		if (sla_status.equals("VIOLATED")) {
-			
+
 			dbo.connectPostgreSQL();
 			boolean deleted = dbo.deleteAgreement(nsi_uuid);
 			dbo.closePostgreSQL();
-			
+
 			if (deleted == true) {
 				JSONObject success_delete = new JSONObject();
 				success_delete.put("OK: ", "Agreement was deleted successfully.");
 				apiresponse = Response.ok((Object) success_delete);
 				apiresponse.header("Content-Length", success_delete.toJSONString().length());
+
+				// logging
+				Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+				String timestamps = timestamp.toString();
+				String type = "I";
+				String operation = "Delete Agreement";
+				String message = ("Succesfully deleting agreement because it was violated");
+				String status = "200";
+				logger.info(
+						"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+						type, timestamps, operation, message, status);
+
 				return apiresponse.status(200).build();
-			} 
-			else {
+			} else {
 				JSONObject error_deleting = new JSONObject();
 				error_deleting.put("ERROR: ", "Agreement cannot be deleted.");
 				apiresponse = Response.ok((Object) error_deleting);
 				apiresponse.header("Content-Length", error_deleting.toJSONString().length());
+
+				// logging
+				Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+				String timestamps = timestamp.toString();
+				String type = "W";
+				String operation = "Delete Agreement";
+				String message = ("Error. Agreement cannot be deleted");
+				String status = "404";
+				logger.warn(
+						"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+						type, timestamps, operation, message, status);
+
 				return apiresponse.status(404).build();
 			}
-		} 
-		else {
+		} else {
 			JSONObject error_activesla = new JSONObject();
 			error_activesla.put("ERROR: ", "Agreement cannot be deleted because it's active.");
 			apiresponse = Response.ok((Object) error_activesla);
 			apiresponse.header("Content-Length", error_activesla.toJSONString().length());
+
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			String timestamps = timestamp.toString();
+			String type = "W";
+			String operation = "Delete Agreement";
+			String message = ("Error. Agreement cannot be deleted because it's active.");
+			String status = "400";
+			logger.warn(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
+
 			return apiresponse.status(400).build();
 		}
 	}
@@ -295,6 +358,18 @@ public class AgreementsAPIs {
 
 			apiresponse = Response.ok((Object) existingTemplates);
 			apiresponse.header("Content-Length", agreement.toJSONString().length() - 9);
+
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			String timestamps = timestamp.toString();
+			String type = "I";
+			String operation = "Get Agreement";
+			String message = ("Succesfully get the agreement among with customer info");
+			String status = "200";
+			logger.info(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
+
 			return apiresponse.status(200).build();
 
 		} catch (Exception e) {
@@ -303,7 +378,20 @@ public class AgreementsAPIs {
 			error.put("ERROR: ", "SLA Not Found");
 			apiresponse = Response.ok((Object) error);
 			apiresponse.header("Content-Length", error.toJSONString().length());
+
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			String timestamps = timestamp.toString();
+			String type = "W";
+			String operation = "Get Agreement";
+			String message = ("SLA Not Found");
+			String status = "404";
+			logger.info(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
+
 			return apiresponse.status(404).build();
+
 		}
 
 	}
@@ -324,23 +412,40 @@ public class AgreementsAPIs {
 			apiresponse = Response.ok(gt);
 			System.out.println(gt.toString().length());
 			apiresponse.header("Content-Length", gt.toString().length() - 1);
+
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			String timestamps = timestamp.toString();
+			String type = "I";
+			String operation = "Get Guarantee terms";
+			String message = ("Succesfully get Guarantee terms");
+			String status = "200";
+			logger.info(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
+
 			return apiresponse.status(200).build();
 		} else {
 			JSONObject error = new JSONObject();
 			error.put("ERROR: ", "guarantee terms are null");
 			apiresponse = Response.ok((Object) error);
 			apiresponse.header("Content-Length", error.toJSONString().length());
+
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			String timestamps = timestamp.toString();
+			String type = "W";
+			String operation = "Get Guarantee terms";
+			String message = ("Error getting Guarantee terms");
+			String status = "404";
+			logger.info(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
 			return apiresponse.status(404).build();
 		}
 
 	}
-	
-	
-	
-	
-	
-	
-	
+
 	/**
 	 * api call in order to generate a sla template
 	 */
@@ -350,8 +455,7 @@ public class AgreementsAPIs {
 	@POST
 	@Path("create")
 	public Response createAgreement(final MultivaluedMap<String, String> formParams) {
-		
-		
+
 		List<String> ns_uuid1 = formParams.get("ns_uuid");
 		List<String> ns_name1 = formParams.get("ns_name");
 		List<String> sla_uuid1 = formParams.get("sla_uuid");
@@ -361,16 +465,17 @@ public class AgreementsAPIs {
 		List<String> cust_uuid1 = formParams.get("cust_uuid");
 		List<String> inst_status1 = formParams.get("inst_status");
 		List<String> correlation_id1 = formParams.get("correlation_id");
-		
+
 		ResponseBuilder apiresponse = null;
-		
+
 		db_operations dbo = new db_operations();
 		boolean connect = db_operations.connectPostgreSQL();
 
 		if (connect == true) {
 			db_operations.createTableCustSla();
-			dbo.insertRecordAgreement(ns_uuid1.get(0).toString(), ns_name1.toString(), sla_uuid1.get(0).toString(), sla_name1.get(0).toString(), sla_status1.get(0).toString(), 
-					cust_name1.get(0).toString(), cust_uuid1.get(0).toString(), inst_status1.get(0).toString(), correlation_id1.get(0).toString());
+			dbo.insertRecordAgreement(ns_uuid1.get(0).toString(), ns_name1.toString(), sla_uuid1.get(0).toString(),
+					sla_name1.get(0).toString(), sla_status1.get(0).toString(), cust_name1.get(0).toString(),
+					cust_uuid1.get(0).toString(), inst_status1.get(0).toString(), correlation_id1.get(0).toString());
 			db_operations.UpdateRecordAgreement("READY", "123", "4fbb748a-4c2e-441b-b387-0f3da2c77ca7");
 			dbo.closePostgreSQL();
 
@@ -387,14 +492,6 @@ public class AgreementsAPIs {
 			return apiresponse.status(404).build();
 		}
 
-
 	}
-	
-	
-	
-	
-	
-	
-	
 
 }
