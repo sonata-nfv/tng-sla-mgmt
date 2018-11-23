@@ -135,7 +135,6 @@ public class ns_template_corr {
 		// get the ns uuids that have correlated an sla template
 		ArrayList<String> correlatedNSArray = new ArrayList<String>();
 		correlatedNSArray = nsWithTemplate();
-		System.out.println("NS WITH TEMPLATE " + correlatedNSArray);
 
 		// get all the available ns from the catalogue
 		try {
@@ -205,7 +204,6 @@ public class ns_template_corr {
 		}
 
 		nsWithoutTemplate = tempArray; // assign temp to original
-		System.out.println("NS UUIDS WITHOUT TEMPLATE" + nsWithoutTemplate);
 		// logging
 		Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 		String timestamps = timestamp.toString();
