@@ -36,10 +36,13 @@
 package eu.tng.messaging;
 
 import java.io.IOException;
+import java.sql.Timestamp;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -54,12 +57,23 @@ import eu.tng.correlations.db_operations;
 
 public class MqMonitoringConsumer implements ServletContextListener {
 
+	static Logger logger = LogManager.getLogger();
+
 	private static final String EXCHANGE_NAME = System.getenv("BROKER_EXCHANGE");
 	// private static final String EXCHANGE_NAME = "son-kernel";
 
 	@Override
 	public void contextDestroyed(ServletContextEvent arg0) {
-		System.out.println("Listener Monitoring Consumer stopped");
+		// logging
+		Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+		String timestamps = timestamp.toString();
+		String type = "I";
+		String operation = "RabbitMQ Listener";
+		String message = "[*] Listener Monitoring Consumer stopped";
+		String status = "";
+		logger.info(
+				"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+				type, timestamps, operation, message, status);
 
 	}
 
@@ -77,10 +91,38 @@ public class MqMonitoringConsumer implements ServletContextListener {
 			channel_monitor.exchangeDeclare(EXCHANGE_NAME, "topic");
 			queueName_monitor = "slas.son.monitoring.SLA";
 			channel_monitor.queueDeclare(queueName_monitor, true, false, false, null);
-			System.out.println(" [*]  Binding queue to topic...");
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			String timestamps = timestamp.toString();
+			String type = "I";
+			String operation = "RabbitMQ Listener";
+			String message = "[*] Binding queue to topic...";
+			String status = "";
+			logger.info(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
+
 			channel_monitor.queueBind(queueName_monitor, EXCHANGE_NAME, "son.monitoring.SLA");
-			System.out.println(" [*] Bound to topic \"son.monitoring.SLA\"");
-			System.out.println(" [*] Waiting for messages.");
+			// logging
+			Timestamp timestamp1 = new Timestamp(System.currentTimeMillis());
+			String timestamps1 = timestamp1.toString();
+			String type1 = "I";
+			String operation1 = "RabbitMQ Listener";
+			String message1 = "[*] Bound to topic \"son.monitoring.SLA\"\"";
+			String status1 = "";
+			logger.info(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type1, timestamps1, operation1, message1, status1);
+
+			Timestamp timestamp2 = new Timestamp(System.currentTimeMillis());
+			String timestamps2 = timestamp2.toString();
+			String type2 = "I";
+			String operation2 = "RabbitMQ Listener";
+			String message2 = "[*] Waiting for messages.";
+			String status2 = "";
+			logger.info(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type2, timestamps2, operation2, message2, status2);
 
 			Consumer consumer_monitor = new DefaultConsumer(channel_monitor) {
 
@@ -113,31 +155,45 @@ public class MqMonitoringConsumer implements ServletContextListener {
 
 						// check if there is already a violation for this nsi
 						int count_violations = db_operations.countViolationsPerNsi(nsi_uuid);
-						//if (count_violations == 0) {
-							// get the sla agreements details for this violation
-							org.json.simple.JSONObject violated_sla = dbo.getViolatedSLA(nsi_uuid);
-							sla_uuid = (String) violated_sla.get("sla_uuid");
-							System.out.println("Violated sla_uuid ==> "+ sla_uuid);
-							cust_uuid = (String) violated_sla.get("cust_uuid");
-							cust_uuid = (String) violated_sla.get("cust_uuid");
-							System.out.println("Violated cust_uuid ==> "+ sla_uuid);
-							// insert the violation in the violation database
-							db_operations.insertRecordViolation(nsi_uuid, sla_uuid, alert_time, alert_state, cust_uuid);
-							db_operations.UpdateAgreementStatus(nsi_uuid);
-						//}
+						// if (count_violations == 0) {
+						// get the sla agreements details for this violation
+						org.json.simple.JSONObject violated_sla = dbo.getViolatedSLA(nsi_uuid);
+						sla_uuid = (String) violated_sla.get("sla_uuid");
+						System.out.println("Violated sla_uuid ==> " + sla_uuid);
+						cust_uuid = (String) violated_sla.get("cust_uuid");
+						cust_uuid = (String) violated_sla.get("cust_uuid");
+						System.out.println("Violated cust_uuid ==> " + sla_uuid);
+						// insert the violation in the violation database
+						db_operations.insertRecordViolation(nsi_uuid, sla_uuid, alert_time, alert_state, cust_uuid);
+						db_operations.UpdateAgreementStatus(nsi_uuid);
+						// }
 						db_operations.closePostgreSQL();
 
 						try {
 							JSONObject violationMessage = ViolationsProducer.createViolationMessage(nsi_uuid, sla_uuid,
 									alert_time, alert_state, cust_uuid, connection);
 						} catch (Exception e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
+							Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+							String timestamps = timestamp.toString();
+							String type = "E";
+							String operation = "Parse message from Monitoring through RabbitMQ";
+							String messageLog = e.getMessage();
+							String status = "";
+							logger.error(
+									"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+									type, timestamps, operation, messageLog, status);
 						}
 
 					} catch (JSONException e) {
-						// TODO Auto-generated catch block
-						System.out.println("ERROR: " + e.getMessage());
+						Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+						String timestamps = timestamp.toString();
+						String type = "E";
+						String operation = "Parse message from Monitoring through RabbitMQ";
+						String messageLog = e.getMessage();
+						String status = "";
+						logger.error(
+								"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+								type, timestamps, operation, messageLog, status);
 					}
 				}
 
@@ -147,8 +203,15 @@ public class MqMonitoringConsumer implements ServletContextListener {
 			channel_monitor.basicConsume(queueName_monitor, true, consumer_monitor);
 
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			System.out.println("ERROR Connecting to MQ!" + e.getMessage());
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			String timestamps = timestamp.toString();
+			String type = "E";
+			String operation = "Parse message from Monitoring through RabbitMQ";
+			String messageLog = e.getMessage();
+			String status = "";
+			logger.error(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, messageLog, status);
 		}
 	}
 

@@ -36,13 +36,15 @@
 package eu.tng.messaging;
 
 import java.io.IOException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Logger;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.yaml.snakeyaml.Yaml;
@@ -56,6 +58,8 @@ import eu.tng.rules.MonitoringRules;
 
 public class MqServiceInstantiateConsumer implements ServletContextListener {
 
+	static Logger logger = LogManager.getLogger();
+
 	private static final String EXCHANGE_NAME = System.getenv("BROKER_EXCHANGE");
 	// private static final String EXCHANGE_NAME = "son-kernel";
 
@@ -63,8 +67,18 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 	 * @see ServletContextListener#contextDestroyed(ServletContextEvent)
 	 */
 	public void contextDestroyed(ServletContextEvent event) {
-		System.out.println("Listener Service Instances Create stopped");
-		System.out.println("Listener restarting");
+
+		// logging
+		Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+		String timestamps = timestamp.toString();
+		String type = "I";
+		String operation = "RabbitMQ Listener";
+		String message = "[*] Listener Service Instances Create stopped - Restarting....";
+		String status = "";
+		logger.info(
+				"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+				type, timestamps, operation, message, status);
+
 		contextInitialized(event);
 	}
 
@@ -85,10 +99,38 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 			channel_service_instance.exchangeDeclare(EXCHANGE_NAME, "topic");
 			queueName_service_instance = "slas.service.instances.create";
 			channel_service_instance.queueDeclare(queueName_service_instance, true, false, false, null);
-			System.out.println(" [*]  Binding queue to topics...");
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			String timestamps = timestamp.toString();
+			String type = "I";
+			String operation = "RabbitMQ Listener";
+			String message = "[*] Binding queue to topic...";
+			String status = "";
+			logger.info(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
+
 			channel_service_instance.queueBind(queueName_service_instance, EXCHANGE_NAME, "service.instances.create");
-			System.out.println(" [*] Bound to topic \"service.instances.create\"");
-			System.out.println(" [*] Waiting for messages.");
+			// logging
+			Timestamp timestamp1 = new Timestamp(System.currentTimeMillis());
+			String timestamps1 = timestamp1.toString();
+			String type1 = "I";
+			String operation1 = "RabbitMQ Listener";
+			String message1 = "[*] Bound to topic \"service.instances.create\"\"";
+			String status1 = "";
+			logger.info(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type1, timestamps1, operation1, message1, status1);
+
+			Timestamp timestamp2 = new Timestamp(System.currentTimeMillis());
+			String timestamps2 = timestamp2.toString();
+			String type2 = "I";
+			String operation2 = "RabbitMQ Listener";
+			String message2 = "[*] Waiting for messages.";
+			String status2 = "";
+			logger.info(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type2, timestamps2, operation2, message2, status2);
 
 			Consumer consumer_service_instance = new DefaultConsumer(channel_service_instance) {
 
@@ -102,30 +144,46 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 					Object sla_id = null;
 					ArrayList<String> vc_id_list = new ArrayList<String>();
 					ArrayList<String> vnfr_id_list = new ArrayList<String>();
-				
+
 					// Parse message payload
 					String message = new String(body, "UTF-8");
 					// parse the yaml and convert it to json
 					Yaml yaml = new Yaml();
 					Map<String, Object> map = (Map<String, Object>) yaml.load(message);
-					
-					sla_id =  map.get("sla_id");
-					
+
+					sla_id = map.get("sla_id");
+
 					jsonObjectMessage = new JSONObject(map);
 
-					System.out.println("START READING HEADERS FROM MESSAGE.....");
 					correlation_id = (String) properties.getCorrelationId();
-					System.out.println(" [*] Correlation_id ==> " + correlation_id);
+				
+					// logging
+					Timestamp timestamp1 = new Timestamp(System.currentTimeMillis());
+					String timestamps1 = timestamp1.toString();
+					String type1 = "I";
+					String operation1 = "RabbitMQ Listener - NS Instantiation";
+					String message1 = "[*] Correlation_id ==> " + correlation_id;
+					String status1 = "";
+					logger.info(
+							"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+							type1, timestamps1, operation1, message1, status1);
 
 					/** if message coming from the MANO - contain status key **/
 					if (jsonObjectMessage.has("status")) {
-						System.out.println(" [*] Message coming from MANO.....");
-						System.out.println(" [*] Message as JSONObject ==> " + jsonObjectMessage);
 						status = (String) jsonObjectMessage.get("status");
-						System.out.println(" [*] STATUS ==> " + status);
+						
+	    				// logging
+						Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+						String timestamps = timestamp.toString();
+						String type = "I";
+						String operation = "RabbitMQ Listener - NS Instantiation";
+						String message2 = "[*] Message coming from MANO - STATUS= " +status ;
+						String status2 = "";
+						logger.info(
+								"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+								type, timestamps, operation, message2, status2);
 
 						if (status.equals("READY")) {
-							System.out.println(" [*] Entered if status equals ready");
 							// get info for the monitoring metrics
 							if (sla_id != null) {
 								// Get service uuid
@@ -135,43 +193,48 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 								JSONArray vnfrs = (JSONArray) jsonObjectMessage.getJSONArray("vnfrs");
 								for (int i = 0; i < (vnfrs).length(); i++) {
 									// Get vdus_reference foreach vnfr
-									JSONArray vdus = (JSONArray) ((JSONObject) vnfrs.getJSONObject(i)).getJSONArray("virtual_deployment_units");
+									JSONArray vdus = (JSONArray) ((JSONObject) vnfrs.getJSONObject(i))
+											.getJSONArray("virtual_deployment_units");
 									for (int j = 0; j < vdus.length(); j++) {
-										String vdu_reference = (String) ((JSONObject) vdus.getJSONObject(j)).get("vdu_reference");									
+										String vdu_reference = (String) ((JSONObject) vdus.getJSONObject(j))
+												.get("vdu_reference");
 										// if vnfr is the haproxy function - continue to the monitoring creation
 										// metrics
 										if (vdu_reference.startsWith("haproxy") == true) {
 											// get vnfr id
 											String vnfr_id = (String) ((JSONObject) vnfrs.get(i)).get("id");
-											vnfr_id_list.add(vnfr_id);	
+											vnfr_id_list.add(vnfr_id);
 											// get vdu id (vc_id)
-											JSONArray vnfc_instance = (JSONArray) ((JSONObject) vdus.getJSONObject(j)).getJSONArray("vnfc_instance");
+											JSONArray vnfc_instance = (JSONArray) ((JSONObject) vdus.getJSONObject(j))
+													.getJSONArray("vnfc_instance");
 											for (int k = 0; k < vnfc_instance.length(); k++) {
-												String vc_id = (String) ((JSONObject) vnfc_instance.getJSONObject(j)).get("vc_id");
-												vc_id_list.add(vc_id);	
+												String vc_id = (String) ((JSONObject) vnfc_instance.getJSONObject(j))
+														.get("vc_id");
+												vc_id_list.add(vc_id);
 											}
-										}										
+										}
 									}
 								}
 
 								// Update NSI Records - to create agreement
-								System.out.println(" [*] Start inserting record to dbv for agreement.... ");
 								db_operations dbo = new db_operations();
 								db_operations.connectPostgreSQL();
 								db_operations.UpdateRecordAgreement(status, correlation_id, nsi_id);
 								db_operations.closePostgreSQL();
-								
-								// Create rules
-								System.out.println(" [*] Start creating monitoring rules... ");
-								System.out.println(" [*] NSI ID ==> "+ nsi_id );
-								System.out.println(" [*] VNFRS_ID LIST ==>  " + vnfr_id_list);
-								System.out.println(" [*] VDUS_ID LIST ==>  " + vc_id_list);
-
 								MonitoringRules mr = new MonitoringRules();
-								MonitoringRules.createMonitroingRules(String.valueOf(sla_id), vnfr_id_list, vc_id_list, nsi_id); 
-							}
-							else {
-								System.out.println("[*] Instantiation without SLA. Message aborted.");
+								MonitoringRules.createMonitroingRules(String.valueOf(sla_id), vnfr_id_list, vc_id_list,
+										nsi_id);
+							} else {
+								// logging
+								Timestamp timestamp3 = new Timestamp(System.currentTimeMillis());
+								String timestamps3 = timestamp1.toString();
+								String type3 = "I";
+								String operation3 = "RabbitMQ Listener - NS Instantiation";
+								String message3 = "[*] Instantiation without SLA. Message aborted.";
+								String status3 = "";
+								logger.info(
+										"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+										type1, timestamps1, operation1, message1, status1);
 							}
 
 						}
@@ -180,10 +243,17 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 
 					/** if message coming from the GK - doesn't contain status key **/
 					else {
-						System.out.println(" [*] Message coming from Gatekeeper.....");
-						System.out.println(" [*] Message as JSONObject ==> " + jsonObjectMessage);
-						// status = (String) jsonObjectMessage.get("status");
-						System.out.println(" [*] STATUS ==> " + status);
+
+						// logging
+						Timestamp timestamp4 = new Timestamp(System.currentTimeMillis());
+						String timestamps4 = timestamp4.toString();
+						String type4 = "I";
+						String operation4 = "RabbitMQ Listener";
+						String message4 = "[*] Message coming from Gatekeeper - Instantiation status= " + status;
+						String status4 = "";
+						logger.info(
+								"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+								type4, timestamps4, operation4, message4, status4);
 
 						// Initialize valiables
 						String sla_uuid = null;
@@ -198,8 +268,6 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 						JSONObject nsd = jsonObjectMessage.getJSONObject("NSD");
 						ns_name = (String) nsd.get("name");
 						ns_uuid = (String) nsd.get("uuid");
-						System.out.println(" NS NAME ==> " + ns_name);
-						System.out.println(" NS UUID ==> " + ns_uuid);
 
 						// Parse customer data + sla uuid
 						JSONObject user_data = (JSONObject) jsonObjectMessage.getJSONObject("user_data");
@@ -207,10 +275,6 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 						cust_uuid = (String) customer.get("uuid");
 						cust_email = (String) customer.get("email");
 						sla_uuid = (String) customer.get("sla_id");
-						System.out.println(" Cust id  ==> " + cust_uuid);
-						System.out.println("Cust email  ==> " + cust_email);
-						System.out.println("SLA uuid  ==> " + sla_uuid);
-
 						// if sla exists create record in database
 						if (sla_uuid != null && !sla_uuid.isEmpty()) {
 
@@ -219,9 +283,6 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 							ArrayList<String> SLADetails = cust_sla.getSLAdetails(sla_uuid);
 							sla_name = (String) SLADetails.get(1);
 							sla_status = (String) SLADetails.get(0);
-
-							System.out.println("SLA name  ==> " + sla_name);
-							System.out.println("SLA status  ==> " + sla_status);
 							String inst_status = "PENDING";
 
 							cust_sla_corr.createCustSlaCorr(sla_uuid, sla_name, sla_status, ns_uuid, ns_name, cust_uuid,
@@ -238,8 +299,17 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 			channel_service_instance.basicConsume(queueName_service_instance, true, consumer_service_instance);
 
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			System.out.println(" [*] ERROR Connecting to MQ!" + e.getMessage());
+
+			// logging
+			Timestamp timestamp1 = new Timestamp(System.currentTimeMillis());
+			String timestamps1 = timestamp1.toString();
+			String type1 = "E";
+			String operation1 = "RabbitMQ Listener";
+			String message1 = "[*] ERROR Connecting to MQ!" + e.getMessage();
+			String status1 = "";
+			logger.error(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type1, timestamps1, operation1, message1, status1);
 		}
 
 	}
