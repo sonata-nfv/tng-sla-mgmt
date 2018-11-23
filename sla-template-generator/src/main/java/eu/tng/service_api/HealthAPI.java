@@ -262,7 +262,7 @@ public class HealthAPI {
 			}
 		}
 		org.json.simple.JSONObject returnResult = new org.json.simple.JSONObject();
-		if (counter == 4) {
+		if (counter == 3) {
 			returnResult.put("Alive", "true");
 		} else {
 
