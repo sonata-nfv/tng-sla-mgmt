@@ -89,6 +89,24 @@ The database includes the following tables:
 *  `cust_sla` - stores and manages correlations between slas, instatiated network services and the customers. it is also used to manage the Agreements's informations.
 *  `sla_violations` - stores and manages all the SLA violations information per network service instance.
 
+### Logging 
+
+`tng-sla-mgmt` uses the [Apache Log4j 2](http://logging.apache.org/log4j/2.x/) logging services, to produce logs in the 5GTANGO JSON format as described [here](https://git.cs.upb.de/5gtango/UserStories/issues/376) (authentication needed).       
+
+```json
+{
+  "type": "I",
+  "timestamp": "2018-11-26 10:0:00 UTC",
+  "component": "tng-sla-mgmt",
+  "operation": "sla template creation",
+  "message": "temlate created",
+  "status": "201"
+}
+```     
+
+More details can be found in the Wiki page [here](https://github.com/sonata-nfv/tng-sla-mgmt/wiki/Logging) 
+    
+
 
 ## Style guide
 
