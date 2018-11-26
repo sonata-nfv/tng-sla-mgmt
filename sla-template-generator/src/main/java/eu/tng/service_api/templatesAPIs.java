@@ -228,12 +228,6 @@ public class templatesAPIs {
 		ArrayList<String> guarantees = new ArrayList<String>();
 		guarantees.addAll(formParams.get("guaranteeId"));
 
-		System.out.println("service_licence_type ==> " + service_licence_type);
-		System.out.println("service_licence_instances ==> " + service_licence_instances);
-		System.out.println("service_licence_expiration_date ==> " + service_licence_expiration_date);
-		System.out.println("service_licence_period ==> " + service_licence_period);
-
-
 		// call CreateTemplate method
 		CreateTemplate ct = new CreateTemplate();
 		JSONObject template = ct.createTemplate(nsd_uuid.get(0), templateName.get(0), expireDate.get(0), guarantees,service_licence_type.get(0),service_licence_instances.get(0), service_licence_expiration_date.get(0),service_licence_period.get(0));
