@@ -246,12 +246,12 @@ public class templatesAPIs {
 			apiresponse.header("Content-Length", error.toJSONString().length());
 
 			// logging
-			timestamp = new Timestamp(System.currentTimeMillis());
-			timestamps = timestamp.toString();
-			type = "D";
-			operation = "Generate SLA Template";
-			message = "ERROR: Corresponding NSD = " + nsd_uuid.get(0) + " Not Found!";
-			status = String.valueOf(404);
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			String timestamps = timestamp.toString();
+			String type = "D";
+			String operation = "Generate SLA Template";
+			String message = "ERROR: Corresponding NSD = " + nsd_uuid.get(0) + " Not Found!";
+			String status = String.valueOf(404);
 			logger.debug(
 					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 					type, timestamps, operation, message, status);
@@ -273,12 +273,12 @@ public class templatesAPIs {
 				apiresponse.header("Content-Length", error.toJSONString().length());
 
 				// logging
-				timestamp = new Timestamp(System.currentTimeMillis());
-				timestamps = timestamp.toString();
-				type = "D";
-				operation = "Validating the SLA Template";
-				message = "Error: Invalid expire date format. The format should be dd/mm/YYY";
-				status = String.valueOf(400);
+				Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+				String timestamps = timestamp.toString();
+				String type = "D";
+				String operation = "Validating the SLA Template";
+				String message = "Error: Invalid expire date format. The format should be dd/mm/YYY";
+				String status = String.valueOf(400);
 				logger.debug(
 						"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 						type, timestamps, operation, message, status);
@@ -294,12 +294,12 @@ public class templatesAPIs {
 				apiresponse.header("Content-Length", error.toJSONString().length());
 
 				// logging
-				timestamp = new Timestamp(System.currentTimeMillis());
-				timestamps = timestamp.toString();
-				type = "D";
-				operation = "Validating the SLA Template";
-				message = "Error: The expire date is not a future date.";
-				status = String.valueOf(400);
+				Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+				String timestamps = timestamp.toString();
+				String type = "D";
+				String operation = "Validating the SLA Template";
+				String message = "Error: The expire date is not a future date.";
+				String status = String.valueOf(400);
 				logger.debug(
 						"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 						type, timestamps, operation, message, status);
@@ -316,12 +316,12 @@ public class templatesAPIs {
 				apiresponse.header("Content-Length", error.toJSONString().length() - 2);
 
 				// logging
-				timestamp = new Timestamp(System.currentTimeMillis());
-				timestamps = timestamp.toString();
-				type = "D";
-				operation = "Validating the SLA Template";
-				message = "Error: There is a problem with the guarantee terms. You should select at least one guarantee id, and avoid duplicates.";
-				status = String.valueOf(400);
+				Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+				String timestamps = timestamp.toString();
+				String type = "D";
+				String operation = "Validating the SLA Template";
+				String message = "Error: There is a problem with the guarantee terms. You should select at least one guarantee id, and avoid duplicates.";
+				String status = String.valueOf(400);
 				logger.debug(
 						"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 						type, timestamps, operation, message, status);
@@ -337,12 +337,12 @@ public class templatesAPIs {
 				apiresponse.header("Content-Length", error.toJSONString().length() - 2);
 
 				// logging
-				timestamp = new Timestamp(System.currentTimeMillis());
-				timestamps = timestamp.toString();
-				type = "D";
-				operation = "Validating the SLA Template";
-				message = "Error: No SLA name specified.";
-				status = String.valueOf(400);
+				Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+				String timestamps = timestamp.toString();
+				String type = "D";
+				String operation = "Validating the SLA Template";
+				String message = "Error: No SLA name specified.";
+				String status = String.valueOf(400);
 				logger.debug(
 						"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 						type, timestamps, operation, message, status);
@@ -396,12 +396,12 @@ public class templatesAPIs {
 						apiresponse.header("Content-Length", response_length);
 
 						// logging
-						timestamp = new Timestamp(System.currentTimeMillis());
-						timestamps = timestamp.toString();
-						type = "I";
-						operation = "Generate the SLA Template";
-						message = "SLA was generated succesfully";
-						status = String.valueOf(201);
+						Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+						String timestamps = timestamp.toString();
+						String type = "I";
+						String operation = "Generate the SLA Template";
+						String message = "SLA was generated succesfully";
+						String status = String.valueOf(201);
 						logger.info(
 								"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 								type, timestamps, operation, message, status);
@@ -416,12 +416,12 @@ public class templatesAPIs {
 						apiresponse.header("Content-Length", error.toJSONString().length());
 
 						// logging
-						timestamp = new Timestamp(System.currentTimeMillis());
-						timestamps = timestamp.toString();
-						type = "I";
-						operation = "Generate the SLA Template";
-						message = "Error uploding to Catalogue : " + con.getResponseMessage();
-						status = String.valueOf(400);
+						Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+						String timestamps = timestamp.toString();
+						String type = "I";
+						String operation = "Generate the SLA Template";
+						String message = "Error uploding to Catalogue : " + con.getResponseMessage();
+						String status = String.valueOf(400);
 						logger.warn(
 								"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 								type, timestamps, operation, message, status);
@@ -436,12 +436,12 @@ public class templatesAPIs {
 					apiresponse.header("Content-Length", error.toJSONString().length());
 
 					// logging
-					timestamp = new Timestamp(System.currentTimeMillis());
-					timestamps = timestamp.toString();
-					type = "W";
-					operation = "Generate the SLA Template";
-					message = "Error uploding to Catalogue : URL invalid";
-					status = String.valueOf(404);
+					Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+					String timestamps = timestamp.toString();
+					String type = "W";
+					String operation = "Generate the SLA Template";
+					String message = "Error uploding to Catalogue : URL invalid";
+					String status = String.valueOf(404);
 					logger.warn(
 							"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 							type, timestamps, operation, message, status);
