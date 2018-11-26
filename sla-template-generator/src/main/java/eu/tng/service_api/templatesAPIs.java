@@ -230,9 +230,7 @@ public class templatesAPIs {
 
 		// call CreateTemplate method
 		CreateTemplate ct = new CreateTemplate();
-		JSONObject template = ct.createTemplate(nsd_uuid.get(0), templateName.get(0), expireDate.get(0), guarantees,
-				service_licence_type.get(0), service_licence_instances.get(0), service_licence_expiration_date.get(0),
-				service_licence_period.get(0));
+		JSONObject template = ct.createTemplate(nsd_uuid.get(0), templateName.get(0), expireDate.get(0), guarantees,service_licence_type.get(0),service_licence_instances.get(0), service_licence_expiration_date.get(0),service_licence_period.get(0));
 
 		if (template == null) {
 			String dr = null;
