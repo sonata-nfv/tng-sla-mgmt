@@ -56,7 +56,8 @@ public class CreateTemplate {
 
 	@SuppressWarnings("unchecked")
 	public JSONObject createTemplate(String nsd_uuid, String templateName, String expireDate,
-			ArrayList<String> guarantees) {
+			ArrayList<String> guarantees, String service_licence_type, String service_licence_instances,
+			String service_licence_expiration_date, String service_licence_period) {
 
 		GetGuarantee guarantee = new GetGuarantee();
 		ArrayList<JSONObject> guaranteeArr = guarantee.getGuarantee(guarantees);
@@ -94,7 +95,6 @@ public class CreateTemplate {
 			/** valid until date */
 			SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 			String dateInString = expireDate;
-			System.out.println(dateInString);
 			Date date2 = null;
 			try {
 				date2 = formatter.parse(dateInString);
@@ -103,6 +103,25 @@ public class CreateTemplate {
 				e.printStackTrace();
 			}
 			String validUntil = df.format(date2);
+
+			/** valid until date */
+			String dateInString_license = service_licence_expiration_date;
+			Date date_license = null;
+			try {
+				date_license = formatter.parse(dateInString_license);
+			} catch (ParseException e) {
+				// logging
+				Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+				String timestamps = timestamp.toString();
+				String type = "D";
+				String operation = "Create SLA Template";
+				String message = e.getMessage();
+				String status = "";
+				logger.debug(
+						"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+						type, timestamps, operation, message, status);
+			}
+			String license_exp_date = df.format(date_license);
 
 			/** generate the template */
 			// ** root element **/
@@ -134,14 +153,34 @@ public class CreateTemplate {
 				guaranteeTerms.add(guaranteeArr.get(counter));
 			}
 			ns.put("guaranteeTerms", guaranteeTerms);
+			/** licences object **/
+			JSONObject licences = new JSONObject();
+			JSONObject service_based = new JSONObject();
+			service_based.put("service_licence_type", service_licence_type);
+			service_based.put("service_licence_instances", service_licence_instances);
+			service_based.put("service_licence_period", service_licence_period);
+			service_based.put("service_licence_expiration_date", license_exp_date);
+			licences.put("service_based", service_based);
+			root.put("licences", licences);
 
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 			String timestamps = timestamp.toString();
-			String type = "I";
+			String type = "D";
 			String operation = "Create SLA Template";
-			String message = "Succesfully created the template";
+			String message = "Licenses Object ==> " + licences.toString();
 			String status = "";
+			logger.debug(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
+
+			// logging
+			timestamp = new Timestamp(System.currentTimeMillis());
+			timestamps = timestamp.toString();
+			type = "I";
+			operation = "Create SLA Template";
+			message = "Succesfully created the template";
+			status = "";
 			logger.info(
 					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 					type, timestamps, operation, message, status);
