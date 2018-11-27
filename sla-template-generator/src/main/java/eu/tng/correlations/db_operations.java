@@ -1199,7 +1199,7 @@ public class db_operations {
 				c.commit();
 				stmt.close();
 				result = true;
-			} catch (Exception e) {			
+			} catch (Exception e) {
 				// logging
 				Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 				String timestamps = timestamp.toString();
@@ -1210,8 +1210,7 @@ public class db_operations {
 				logger.warn(
 						"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 						type, timestamps, operation, message, status);
-				
-				
+
 			}
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
@@ -1223,7 +1222,7 @@ public class db_operations {
 			logger.info(
 					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 					type, timestamps, operation, message, status);
-		} else {			
+		} else {
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 			String timestamps = timestamp.toString();
@@ -1324,6 +1323,109 @@ public class db_operations {
 
 		}
 		return root;
+	}
+
+	/*******************************/
+	/** OPERATIONS FOR LICENSING **/
+	/*******************************/
+	
+	
+	/**
+	 * Create table sla_licensing for storing licensing records
+	 */
+	public static void createTableLicensing() {
+		try {
+			stmt = c.createStatement();
+			String sql = "CREATE TABLE IF NOT EXISTS sla_licensing " + "(ID  SERIAL," + " NSI_UUID TEXT PRIMARY KEY, "
+					+ "SLA_UUID TEXT NOT NULL," + "NS_UUID TEXT NOT NULL," + "CUST_UUID TEXT NOT NULL,"
+					+ "CUST_EMAIL  TEXT NOT NULL," + "license_type  TEXT NOT NULL," + "license_exp_date  TEXT NOT NULL,"
+					+ "license_period  TEXT NOT NULL," + "allowed_instances  TEXT NOT NULL,"
+					+ "current_instances  TEXT NOT NULL," + "license_status  TEXT NOT NULL )";
+			stmt.executeUpdate(sql);
+			stmt.close();
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			String timestamps = timestamp.toString();
+			String type = "I";
+			String operation = "Create table for Licensing records";
+			String message = ("Table sla_licensing created successfully");
+			String status = "";
+			logger.info(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
+
+		} catch (Exception e) {
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			String timestamps = timestamp.toString();
+			String type = "W";
+			String operation = "Create table for Licensing records";
+			String message = ("Error creating table sla_licensing");
+			String status = "";
+			logger.warn(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
+		}
+	}
+
+	/**
+	 * Get a list with licensing information
+	 * @return licenses
+	 */
+	@SuppressWarnings("unchecked")
+	public JSONArray getAllLicenses() {
+
+		JSONArray licenses = new JSONArray();
+		Statement stmt = null;
+		try {
+			c.setAutoCommit(false);
+			stmt = c.createStatement();
+			ResultSet rs = stmt.executeQuery("SELECT * FROM sla_licensing;");
+			while (rs.next()) {
+				String sla_uuid = rs.getString("sla_uuid");
+				String ns_uuid = rs.getString("ns_uuid");
+				String nsi_uuid = rs.getString("nsi_uuid");
+				String cust_uuid = rs.getString("cust_uuid");
+				String cust_email = rs.getString("cust_email");
+				String license_type = rs.getString("license_type");
+				String license_exp_date = rs.getString("license_exp_date");
+				String license_period = rs.getString("license_period");
+				String allowed_instances = rs.getString("allowed_instances");
+				String current_instances = rs.getString("current_instances");
+				String license_status = rs.getString("license_status");
+
+				JSONObject licenses_data = new JSONObject();
+				licenses_data.put("sla_uuid", sla_uuid);
+				licenses_data.put("ns_uuid", ns_uuid);
+				licenses_data.put("nsi_uuid", nsi_uuid);
+				licenses_data.put("cust_uuid", cust_uuid);
+				licenses_data.put("cust_email", cust_email);
+				licenses_data.put("license_type", license_type);
+				licenses_data.put("license_exp_date", license_exp_date);
+				licenses_data.put("license_period", license_period);
+				licenses_data.put("allowed_instances", allowed_instances);
+				licenses_data.put("current_instances", current_instances);
+				licenses_data.put("license_status", license_status);
+
+				licenses.add(licenses_data);
+
+			}
+			rs.close();
+			stmt.close();
+
+		} catch (Exception e) {
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			String timestamps = timestamp.toString();
+			String type = "W";
+			String operation = "Get licensing information";
+			String message = ("Error getting licensing information ==> " + e.getMessage());
+			String status = "";
+			logger.warn(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
+		}
+		return licenses;
 	}
 
 }
