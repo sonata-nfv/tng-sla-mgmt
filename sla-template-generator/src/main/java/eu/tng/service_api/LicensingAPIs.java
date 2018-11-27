@@ -185,39 +185,20 @@ public class LicensingAPIs {
 		String license_status = db_operations.getLicenseStatus(sla_uuid.get(0), cust_uuid.get(0), ns_uuid.get(0));
 		dbo.closePostgreSQL();
 
-		if (license_status.isEmpty() == true) {
-			apiresponse = Response.ok(license_status);
-			apiresponse.header("Content-Length", license_status.length());
-			// logging
-			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-			String timestamps = timestamp.toString();
-			String type = "E";
-			String operation = "Get License Status";
-			String message = ("License status for cust_uuid=" + cust_uuid + " and ns_uuid=" + ns_uuid + "==> "
-					+ license_status);
-			String status = "404";
-			logger.error(
-					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
-					type, timestamps, operation, message, status);
-			return apiresponse.status(404).build();
-		} 
-		else {
-			apiresponse = Response.ok(license_status);
-			apiresponse.header("Content-Length", license_status.length());
-			// logging
-			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-			String timestamps = timestamp.toString();
-			String type = "I";
-			String operation = "Get License Status";
-			String message = ("License status for cust_uuid=" + cust_uuid + " and ns_uuid=" + ns_uuid + "==> "
-					+ license_status);
-			String status = "200";
-			logger.info(
-					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
-					type, timestamps, operation, message, status);
-			return apiresponse.status(200).build();
-			
-		}
+		apiresponse = Response.ok(license_status);
+		apiresponse.header("Content-Length", license_status.length());
+		// logging
+		Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+		String timestamps = timestamp.toString();
+		String type = "I";
+		String operation = "Get License Status";
+		String message = ("License status for cust_uuid=" + cust_uuid + " and ns_uuid=" + ns_uuid + "==> "
+				+ license_status);
+		String status = "200";
+		logger.info(
+				"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+				type, timestamps, operation, message, status);
+		return apiresponse.status(200).build();
 
 	}
 
