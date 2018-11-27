@@ -36,12 +36,16 @@
 package eu.tng.service_api;
 
 import java.sql.Timestamp;
+import java.util.List;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 
@@ -74,11 +78,12 @@ public class LicensingAPIs {
 		String allowed_instances = "allowed_instances_test";
 		String current_instances = "current_instances_test";
 		String license_status = "license_status_test";
-		
+
 		db_operations dbo = new db_operations();
 		dbo.connectPostgreSQL();
 		dbo.createTableLicensing();
-		dbo.insertLicenseRecord(sla_uuid, ns_uuid, nsi_uuid, cust_uuid, cust_email, license_type, license_exp_date, license_period, allowed_instances, current_instances, license_status);
+		db_operations.insertLicenseRecord(sla_uuid, ns_uuid, nsi_uuid, cust_uuid, cust_email, license_type,
+				license_exp_date, license_period, allowed_instances, current_instances, license_status);
 		JSONArray all_licenses = dbo.getAllLicenses();
 		dbo.closePostgreSQL();
 
@@ -98,6 +103,62 @@ public class LicensingAPIs {
 
 		return apiresponse.status(200).build();
 	}
-	
+
+	/**
+	 * delete Licensing record
+	 */
+	@SuppressWarnings("static-access")
+	@Produces(MediaType.TEXT_PLAIN)
+	@Consumes("application/x-www-form-urlencoded")
+	@DELETE
+	public Response deletecCustSlaCorrelation(final MultivaluedMap<String, String> formParams) {
+		ResponseBuilder apiresponse = null;
+
+		List<String> sla_uuid = formParams.get("sla_uuid");
+		List<String> cust_uuid = formParams.get("cust_uuid");
+		List<String> ns_uuid = formParams.get("ns_uuid");
+
+		db_operations db = new db_operations();
+		db.connectPostgreSQL();
+		boolean delete = db.deleteLicenseRecord(sla_uuid.get(0), cust_uuid.get(0), ns_uuid.get(0));
+		db.closePostgreSQL();
+
+		if (delete == true) {
+
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			String timestamps = timestamp.toString();
+			String type = "I";
+			String operation = "Delete license record";
+			String message = ("[*] Success! License record was deleted!");
+			String status = "200";
+			logger.info(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
+
+			String response = "Agreement deleted Succesfully";
+			apiresponse = Response.ok((response));
+			apiresponse.header("Content-Length", response.length());
+			return apiresponse.status(200).build();
+		} else {
+
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			String timestamps = timestamp.toString();
+			String type = "W";
+			String operation = "Delete license record";
+			String message = ("[*] Error! License record was not deleted!");
+			String status = "404";
+			logger.info(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
+
+			String response = "License was not deleted";
+			apiresponse = Response.ok((response));
+			apiresponse.header("Content-Length", response.length());
+			return apiresponse.status(404).build();
+		}
+
+	}
 
 }

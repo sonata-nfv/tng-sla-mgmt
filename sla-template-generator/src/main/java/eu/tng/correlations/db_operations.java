@@ -42,6 +42,14 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
 
+import javax.ws.rs.DELETE;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.ResponseBuilder;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.ThreadContext;
@@ -820,7 +828,7 @@ public class db_operations {
 		try {
 			c.setAutoCommit(false);
 			stmt = c.createStatement();
-			String sql = "DELETE FROM WHERE NSI_UUID='" + nsi_uuid + "';";
+			String sql = "DELETE FROM  cust_sla WHERE NSI_UUID='" + nsi_uuid + "';";
 			stmt.executeUpdate(sql);
 			c.commit();
 			stmt.close();
@@ -1428,7 +1436,21 @@ public class db_operations {
 		return licenses;
 	}
 
-	public void insertLicenseRecord(String sla_uuid, String ns_uuid, String nsi_uuid, String cust_uuid,
+	/**
+	 * Insert  licence record in sla_licensing table
+	 * @param sla_uuid
+	 * @param ns_uuid
+	 * @param nsi_uuid
+	 * @param cust_uuid
+	 * @param cust_email
+	 * @param license_type
+	 * @param license_exp_date
+	 * @param license_period
+	 * @param allowed_instances
+	 * @param current_instances
+	 * @param license_status
+	 */
+	public static void insertLicenseRecord(String sla_uuid, String ns_uuid, String nsi_uuid, String cust_uuid,
 			String cust_email, String license_type, String license_exp_date, String license_period,
 			String allowed_instances, String current_instances, String license_status) {
 
@@ -1468,5 +1490,45 @@ public class db_operations {
 					type, timestamps, operation, message, status);
 		}
 	}
+	
+
+	public boolean deleteLicenseRecord(String sla_uuid, String cust_uuid, String ns_uuid) {
+		Statement stmt = null;
+		boolean result = false;
+		try {
+			c.setAutoCommit(false);
+			stmt = c.createStatement();
+			String sql = "DELETE FROM sla_licensing WHERE NS_UUID='" + ns_uuid + "' AND sla_uuid='" + sla_uuid + "' AND cust_uuid='" + cust_uuid + "';";
+			stmt.executeUpdate(sql);
+			c.commit();
+			stmt.close();
+			result = true;
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			String timestamps = timestamp.toString();
+			String type = "I";
+			String operation = "Delete License record";
+			String message = ("License deleted succesfully!");
+			String status = "";
+			logger.info(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
+
+		} catch (Exception e) {
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			String timestamps = timestamp.toString();
+			String type = "W";
+			String operation = "Delete License record";
+			String message = ("Error deleting licensing record ==> " + e.getMessage());
+			String status = "";
+			logger.warn(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
+		}
+
+		return result;
+	}
+	
 
 }
