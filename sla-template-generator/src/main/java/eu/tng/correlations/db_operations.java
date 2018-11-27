@@ -1530,5 +1530,38 @@ public class db_operations {
 		return result;
 	}
 	
+	public static String getLicenseStatus (String sla_uuid, String cust_uuid, String ns_uuid) {
+		
+		String license_status = "";
+	
+		Statement stmt = null;
+		JSONObject root = new JSONObject();
+
+		try {
+			c.setAutoCommit(false);
+			stmt = c.createStatement();
+			ResultSet rs = stmt.executeQuery("SELECT license_status FROM sla_licensing WHERE sla_uuid = '" + sla_uuid + "' AND ns_uuid='"
+					+ ns_uuid + "' AND  cust_uuid='"+cust_uuid+"';");
+
+			while (rs.next()) {
+				license_status = rs.getString("license_status");
+			}
+			rs.close();
+			stmt.close();
+		} catch (Exception e) {
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			String timestamps = timestamp.toString();
+			String type = "W";
+			String operation = "Get license status";
+			String message = ("Error Getting license status ==> " + e.getMessage());
+			String status = "";
+			logger.warn(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
+		}
+		
+		return license_status;
+	}
 
 }
