@@ -167,38 +167,58 @@ public class LicensingAPIs {
 	 * delete cust-ns-sla correlation based on sla uuid
 	 */
 
-	@SuppressWarnings("static-access")
-	@Path("/licenses/status")
+	@SuppressWarnings({ "static-access", "unchecked" })
+	@Path("/licenses/status/{sla_uud}/{cust_uuid}/{ns_uuid}")
 	@Produces(MediaType.TEXT_PLAIN)
-	@Consumes("application/x-www-form-urlencoded")
 	@GET
-	public Response getLicense(final MultivaluedMap<String, String> formParams) {
+	public Response getLicense(@PathParam("sla_uuid") String sla_uuid, @PathParam("cust_uuid") String cust_uuid,
+			@PathParam("ns_uuid") String ns_uuid) {
 
 		ResponseBuilder apiresponse = null;
 
-		List<String> sla_uuid = formParams.get("sla_uuid");
-		List<String> cust_uuid = formParams.get("cust_uuid");
-		List<String> ns_uuid = formParams.get("ns_uuid");
-
 		db_operations dbo = new db_operations();
 		db_operations.connectPostgreSQL();
-		String license_status = db_operations.getLicenseStatus(sla_uuid.get(0), cust_uuid.get(0), ns_uuid.get(0));
+		String license_status = db_operations.getLicenseStatus(sla_uuid, cust_uuid, ns_uuid);
 		dbo.closePostgreSQL();
 
-		apiresponse = Response.ok(license_status);
-		apiresponse.header("Content-Length", license_status.length());
-		// logging
-		Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-		String timestamps = timestamp.toString();
-		String type = "I";
-		String operation = "Get License Status";
-		String message = ("License status for cust_uuid=" + cust_uuid + " and ns_uuid=" + ns_uuid + "==> "
-				+ license_status);
-		String status = "200";
-		logger.info(
-				"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
-				type, timestamps, operation, message, status);
-		return apiresponse.status(200).build();
+		if (license_status.isEmpty() == true) {
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			String timestamps = timestamp.toString();
+			String type = "E";
+			String operation = "Get License Status";
+			String message = ("Error getting license status for cust_uuid=" + cust_uuid + " and ns_uuid=" + ns_uuid );
+			String status = "404";
+			logger.error(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
+
+			JSONObject success = new JSONObject();
+			success.put("Error", "License status not received");
+			apiresponse = Response.ok((Object) success);
+			apiresponse.header("Content-Length", license_status.length());
+			return apiresponse.status(404).build();
+		} 
+		else {
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			String timestamps = timestamp.toString();
+			String type = "I";
+			String operation = "Get License Status";
+			String message = ("License status for cust_uuid=" + cust_uuid + " and ns_uuid=" + ns_uuid + "==> "
+					+ license_status);
+			String status = "200";
+			logger.info(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
+
+
+			JSONObject success = new JSONObject();
+			success.put("Licence status: ", license_status);
+			apiresponse = Response.ok((Object) success);
+			apiresponse.header("Content-Length", license_status.length());
+			return apiresponse.status(200).build();
+		}
 
 	}
 
