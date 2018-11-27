@@ -1328,8 +1328,7 @@ public class db_operations {
 	/*******************************/
 	/** OPERATIONS FOR LICENSING **/
 	/*******************************/
-	
-	
+
 	/**
 	 * Create table sla_licensing for storing licensing records
 	 */
@@ -1370,6 +1369,7 @@ public class db_operations {
 
 	/**
 	 * Get a list with licensing information
+	 * 
 	 * @return licenses
 	 */
 	@SuppressWarnings("unchecked")
@@ -1426,6 +1426,47 @@ public class db_operations {
 					type, timestamps, operation, message, status);
 		}
 		return licenses;
+	}
+
+	public void insertLicenseRecord(String sla_uuid, String ns_uuid, String nsi_uuid, String cust_uuid,
+			String cust_email, String license_type, String license_exp_date, String license_period,
+			String allowed_instances, String current_instances, String license_status) {
+
+		try {
+			c.setAutoCommit(false);
+			Statement stmt = c.createStatement();
+			String sql = "INSERT INTO sla_licensing  (sla_uuid, ns_uuid,nsi_uuid, cust_uuid, cust_email, license_type, license_exp_date, license_period, allowed_instances, current_instances, license_status) VALUES ('"
+					+ sla_uuid + "', '" + ns_uuid + "', '" + nsi_uuid + "','" + cust_uuid + "', '" + cust_email + "' ,'"
+					+ license_type + "','" + license_exp_date + "','" + license_period + "','" + allowed_instances
+					+ "','" + current_instances + "','" + license_status + "');  ";
+			stmt.executeUpdate(sql);
+			stmt.close();
+			c.commit();
+
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			String timestamps = timestamp.toString();
+			String type = "I";
+			String operation = "Insert license record";
+			String message = ("License record for sla_uuid = "+ sla_uuid + " and cust_uuid= "+ cust_uuid+"  created successfully");
+			String status = "";
+			logger.info(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
+
+		} catch (Exception e) {
+
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			String timestamps = timestamp.toString();
+			String type = "W";
+			String operation = "Insert license record";
+			String message = ("Error creating license record ==> " + e.getMessage());
+			String status = "";
+			logger.warn(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
+		}
 	}
 
 }
