@@ -221,22 +221,16 @@ public class templatesAPIs {
 		List<String> templateName = formParams.get("templateName");
 
 		List<String> service_licence_type = formParams.get("service_licence_type");
-		List<String> service_licence_instances = formParams.get("service_licence_instances");
+		List<String> allowed_service_instances = formParams.get("allowed_service_instances");
 		List<String> service_licence_expiration_date = formParams.get("service_licence_expiration_date");
 		List<String> service_licence_period = formParams.get("service_licence_period");
 
 		ArrayList<String> guarantees = new ArrayList<String>();
 		guarantees.addAll(formParams.get("guaranteeId"));
 
-		System.out.println("service_licence_type ==> " + service_licence_type);
-		System.out.println("service_licence_instances ==> " + service_licence_instances);
-		System.out.println("service_licence_expiration_date ==> " + service_licence_expiration_date);
-		System.out.println("service_licence_period ==> " + service_licence_period);
-
-
 		// call CreateTemplate method
 		CreateTemplate ct = new CreateTemplate();
-		JSONObject template = ct.createTemplate(nsd_uuid.get(0), templateName.get(0), expireDate.get(0), guarantees,service_licence_type.get(0),service_licence_instances.get(0), service_licence_expiration_date.get(0),service_licence_period.get(0));
+		JSONObject template = ct.createTemplate(nsd_uuid.get(0), templateName.get(0), expireDate.get(0), guarantees,service_licence_type.get(0),allowed_service_instances.get(0), service_licence_expiration_date.get(0),service_licence_period.get(0));
 
 		if (template == null) {
 			String dr = null;
