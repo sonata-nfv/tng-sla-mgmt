@@ -197,7 +197,7 @@ public class LicensingAPIs {
 			JSONObject success = new JSONObject();
 			success.put("Licence status: ", license_status);
 			apiresponse = Response.ok((Object) success);
-			apiresponse.header("Content-Length", license_status.length());
+			apiresponse.header("Content-Length", success.toJSONString().length());
 			return apiresponse.status(200).build();
 
 
