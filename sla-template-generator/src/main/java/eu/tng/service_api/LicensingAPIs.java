@@ -69,23 +69,9 @@ public class LicensingAPIs {
 	public Response getTemplates() {
 		ResponseBuilder apiresponse = null;
 
-		String cust_uuid = "cust_uuid_test";
-		String cust_email = "cust_email_test";
-		String sla_uuid = "sla_uuid_test";
-		String ns_uuid = "ns_uuid_test";
-		String nsi_uuid = "nsi_uuid_test";
-		String license_type = "license_type_type";
-		String license_exp_date = "license_exp_date_test";
-		String license_period = "license_period_test";
-		String allowed_instances = "allowed_instances_test";
-		String current_instances = "current_instances_test";
-		String license_status = "license_status_test";
-
 		db_operations dbo = new db_operations();
 		dbo.connectPostgreSQL();
 		dbo.createTableLicensing();
-		db_operations.insertLicenseRecord(sla_uuid, ns_uuid, nsi_uuid, cust_uuid, cust_email, license_type,
-				license_exp_date, license_period, allowed_instances, current_instances, license_status);
 		JSONArray all_licenses = dbo.getAllLicenses();
 		dbo.closePostgreSQL();
 
