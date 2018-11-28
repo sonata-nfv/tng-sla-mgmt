@@ -357,7 +357,7 @@ public class AgreementsAPIs {
 			existingTemplates = agreement;
 
 			apiresponse = Response.ok((Object) existingTemplates);
-			apiresponse.header("Content-Length", agreement.toJSONString().length());
+			apiresponse.header("Content-Length", agreement.toJSONString().length() - 7);
 
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
