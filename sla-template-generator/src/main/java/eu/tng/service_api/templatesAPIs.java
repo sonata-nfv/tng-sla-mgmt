@@ -56,6 +56,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import eu.tng.template_gen.*;
@@ -230,7 +231,9 @@ public class templatesAPIs {
 
 		// call CreateTemplate method
 		CreateTemplate ct = new CreateTemplate();
-		JSONObject template = ct.createTemplate(nsd_uuid.get(0), templateName.get(0), expireDate.get(0), guarantees,service_licence_type.get(0),allowed_service_instances.get(0), service_licence_expiration_date.get(0),service_licence_period.get(0));
+		JSONObject template = ct.createTemplate(nsd_uuid.get(0), templateName.get(0), expireDate.get(0), guarantees,
+				service_licence_type.get(0), allowed_service_instances.get(0), service_licence_expiration_date.get(0),
+				service_licence_period.get(0));
 
 		if (template == null) {
 			String dr = null;
@@ -380,9 +383,16 @@ public class templatesAPIs {
 						createdTemplate = parser.parse(sb.toString());
 						JSONObject responseSLA = (JSONObject) createdTemplate;
 						String sla_uuid = (String) responseSLA.get("uuid");
-
 						ns_template_corr nstemplcorr = new ns_template_corr();
 						nstemplcorr.createNsTempCorr(nsd_uuid.get(0), sla_uuid);
+
+						// create correlation between ns-sla-license template
+						db_operations dbo = new db_operations();
+						db_operations.connectPostgreSQL();
+						db_operations.insertLicenseRecord(sla_uuid, nsd_uuid.get(0), "", "", "",
+								service_licence_type.get(0), service_licence_expiration_date.get(0),
+								service_licence_period.get(0), allowed_service_instances.get(0), "", "inactive");
+						db_operations.closePostgreSQL();
 
 						br.close();
 
