@@ -1584,42 +1584,41 @@ public class db_operations {
 		return license_info;
 	}
 	
-//	public static void InstantiateLicenseRecord(String sla_uuid, String ns_uuid) {
-//
-//		String SQL = "UPDATE sla_licensing " + "SET nsi_uuid = ?, cust_uuid = ?, cust_email = ?" + "WHERE sla_uuid = ? AND ns_uuid=";
-//		boolean result = false;
-//		try {
-//			PreparedStatement pstmt = c.prepareStatement(SQL);
-//			pstmt.setString(1, inst_status);
-//			pstmt.setString(2, nsi_uuid);
-//			pstmt.setString(3, correlation_id);
-//			pstmt.executeUpdate();
-//			result = true;
-//
-//			// logging
-//			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-//			String timestamps = timestamp.toString();
-//			String type = "I";
-//			String operation = "Updating SLA Agreement status";
-//			String message = "Set status READY?" + result;
-//			String status = "";
-//			logger.info(
-//					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
-//					type, timestamps, operation, message, status);
-//
-//		} catch (SQLException e) {
-//			// logging
-//			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-//			String timestamps = timestamp.toString();
-//			String type = "I";
-//			String operation = "Updating SLA Agreement status";
-//			String message = "Set status READY?" + result + " ==> " + e.getMessage();
-//			String status = "";
-//			logger.info(
-//					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
-//					type, timestamps, operation, message, status);
-//		}
-//
-//	}
+	@SuppressWarnings("unchecked")
+	public static int countLicensePerCustSLA(String cust_uuid, String sla_uuid) {
+
+		String SQL = "SELECT count(*) FROM sla_licensing WHERE cust_uuid = '" + cust_uuid + "' AND sla_uuid = '"+sla_uuid+" '";
+		int count_licenses = 0;
+		try {
+			stmt = c.createStatement();
+			ResultSet rs = stmt.executeQuery(SQL);
+			while (rs.next()) {
+				count_licenses = rs.getInt(1);
+			}
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			String timestamps = timestamp.toString();
+			String type = "I";
+			String operation = "Counting Licenses per customer and sla";
+			String message = ("Number of Licenses  ==> " + count_licenses);
+			String status = "";
+			logger.info(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
+		} catch (SQLException e) {
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			String timestamps = timestamp.toString();
+			String type = "W";
+			String operation = "Counting Licenses";
+			String message = ("Error counting the Licenses ==> " + e.getMessage());
+			String status = "";
+			logger.warn(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
+		}
+		return count_licenses;
+
+	}
 
 }

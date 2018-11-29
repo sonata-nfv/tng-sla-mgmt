@@ -163,30 +163,38 @@ public class LicensingAPIs {
 		boolean connect = db_operations.connectPostgreSQL();
 
 		if (connect == true) {
+			
+			// check if this customer has already a license for this SLA
 			db_operations.createTableLicensing();
-			JSONObject license_info = db_operations.getLicenseInfo(sla_uuid, cust_uuid, ns_uuid);
+			int count_licenses = db_operations.countLicensePerCustSLA(cust_uuid, sla_uuid);
 			db_operations.closePostgreSQL();
+						
+			// if the customer does not have a license instance already - 1st instantiation
+			if (count_licenses == 0) {
+				
+			}			
+			// if customer has already a license instance
+			else {
+			}		
+			
 
-			String license_status = (String) license_info.get("license_status");
-      
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 			String timestamps = timestamp.toString();
 			String type = "I";
 			String operation = "Get License Status";
-			String message = ("License info for cust_uuid=" + cust_uuid + " and ns_uuid=" + ns_uuid + "==> " + license_info.toString());
+			String message = ("License status received");
 			String status = "200";
 			logger.info(
 					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 					type, timestamps, operation, message, status);
-			
+
 			// API Response
 			JSONObject success = new JSONObject();
-			success.put("Licence status: ", license_status);
+			success.put("Licence status: ", "");
 			apiresponse = Response.ok((Object) success);
 			apiresponse.header("Content-Length", success.toJSONString().length());
 			return apiresponse.status(200).build();
-
 
 		} else {
 			dbo.closePostgreSQL();
@@ -199,6 +207,34 @@ public class LicensingAPIs {
 		}
 
 	}
+
+	private String isInstantiationAllowed(String license_status, String license_type) {
+		String allowed_to_instantiate = "";   
+		
+		boolean statusOK = isStatusOK(license_status, license_type);
+		boolean instancesOK = isInstancesOK();
+		
+		return allowed_to_instantiate;
+	}
+
+
+	private boolean isStatusOK(String license_status, String license_type) {
+		boolean statusOK = false;	
+		if ((license_status == "inactive" || license_status == "active") && license_type == "public") {
+			statusOK = true;
+		}
+		if ((license_status == "inactive" || license_status == "active") && license_type == "trial") {
+			statusOK = true;
+		}
+		if ((license_status == "bought" || license_status == "active")  && license_type == "private") {
+			statusOK = true;
+		}
+		return statusOK;
+	}
 	
+	
+	private boolean isInstancesOK() {
+		return false;
+	}
 
 }
