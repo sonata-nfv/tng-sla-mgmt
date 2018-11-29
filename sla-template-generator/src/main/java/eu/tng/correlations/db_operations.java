@@ -163,7 +163,9 @@ public class db_operations {
 		try {
 			stmt = c.createStatement();
 			String sql = "CREATE TABLE IF NOT EXISTS ns_template" + "(ID  SERIAL PRIMARY KEY,"
-					+ " NS_UUID TEXT NOT NULL, " + "SLA_UUID  TEXT NOT NULL )";
+					+ " NS_UUID TEXT NOT NULL, " + "SLA_UUID  TEXT NOT NULL," + "license_type  TEXT NOT NULL,"
+					+ "license_exp_date  TEXT NOT NULL," + "license_period  TEXT NOT NULL,"
+					+ "allowed_instances  TEXT NOT NULL," + "license_status  TEXT NOT NULL )";
 			stmt.executeUpdate(sql);
 			stmt.close();
 			result = true;
@@ -198,14 +200,16 @@ public class db_operations {
 	/**
 	 * Insert Record ns-template correlation
 	 */
-	public boolean insertRecord(String tablename, String ns_uuid, String sla_uuid, String license_type, String license_exp_date, String license_period,
-			String allowed_instances, String license_status) {
+	public boolean insertRecord(String tablename, String ns_uuid, String sla_uuid, String license_type,
+			String license_exp_date, String license_period, String allowed_instances, String license_status) {
 		boolean result = false;
 		try {
 			c.setAutoCommit(false);
 			Statement stmt = c.createStatement();
-			String sql = "INSERT INTO " + tablename + " (ns_uuid,sla_uuid, license_type, license_exp_date, license_period, allowed_instances, license_status) " + "VALUES ('" + ns_uuid + "','" + sla_uuid
-					+"', '"+ license_type + "','" + license_exp_date + "','" + license_period + "','" + allowed_instances + "','" + license_status + "');";
+			String sql = "INSERT INTO " + tablename
+					+ " (ns_uuid,sla_uuid, license_type, license_exp_date, license_period, allowed_instances, license_status) "
+					+ "VALUES ('" + ns_uuid + "','" + sla_uuid + "', '" + license_type + "','" + license_exp_date
+					+ "','" + license_period + "','" + allowed_instances + "','" + license_status + "');";
 			stmt.executeUpdate(sql);
 			stmt.close();
 			c.commit();
@@ -1438,7 +1442,8 @@ public class db_operations {
 	}
 
 	/**
-	 * Insert  licence record in sla_licensing table
+	 * Insert licence record in sla_licensing table
+	 * 
 	 * @param sla_uuid
 	 * @param ns_uuid
 	 * @param nsi_uuid
@@ -1471,7 +1476,8 @@ public class db_operations {
 			String timestamps = timestamp.toString();
 			String type = "I";
 			String operation = "Insert license record";
-			String message = ("License record for sla_uuid = "+ sla_uuid + " and cust_uuid= "+ cust_uuid+"  created successfully");
+			String message = ("License record for sla_uuid = " + sla_uuid + " and cust_uuid= " + cust_uuid
+					+ "  created successfully");
 			String status = "";
 			logger.info(
 					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
@@ -1491,7 +1497,6 @@ public class db_operations {
 					type, timestamps, operation, message, status);
 		}
 	}
-	
 
 	public boolean deleteLicenseRecord(String sla_uuid, String cust_uuid, String ns_uuid) {
 		Statement stmt = null;
@@ -1499,7 +1504,8 @@ public class db_operations {
 		try {
 			c.setAutoCommit(false);
 			stmt = c.createStatement();
-			String sql = "DELETE FROM sla_licensing WHERE NS_UUID='" + ns_uuid + "' AND sla_uuid='" + sla_uuid + "' AND cust_uuid='" + cust_uuid + "';";
+			String sql = "DELETE FROM sla_licensing WHERE NS_UUID='" + ns_uuid + "' AND sla_uuid='" + sla_uuid
+					+ "' AND cust_uuid='" + cust_uuid + "';";
 			stmt.executeUpdate(sql);
 			c.commit();
 			stmt.close();
@@ -1530,10 +1536,10 @@ public class db_operations {
 
 		return result;
 	}
-	
+
 	@SuppressWarnings("unchecked")
-	public static JSONObject getLicenseInfo (String sla_uuid, String cust_uuid, String ns_uuid) {
-		
+	public static JSONObject getLicenseInfo(String sla_uuid, String cust_uuid, String ns_uuid) {
+
 		JSONObject license_info = new JSONObject();
 		String license_status = "";
 		String license_type = "";
@@ -1541,15 +1547,15 @@ public class db_operations {
 		String license_period = "";
 		String allowed_instances = "";
 		String current_instances = "";
-	
+
 		Statement stmt = null;
 		JSONObject root = new JSONObject();
 
 		try {
 			c.setAutoCommit(false);
 			stmt = c.createStatement();
-			ResultSet rs = stmt.executeQuery("SELECT * FROM sla_licensing WHERE sla_uuid = '" + sla_uuid + "' AND ns_uuid='"
-					+ ns_uuid + "' AND  cust_uuid='"+cust_uuid+"';");
+			ResultSet rs = stmt.executeQuery("SELECT * FROM sla_licensing WHERE sla_uuid = '" + sla_uuid
+					+ "' AND ns_uuid='" + ns_uuid + "' AND  cust_uuid='" + cust_uuid + "';");
 
 			while (rs.next()) {
 				license_status = rs.getString("license_status");
@@ -1558,10 +1564,10 @@ public class db_operations {
 				license_period = rs.getString("license_period");
 				allowed_instances = rs.getString("allowed_instances");
 				current_instances = rs.getString("current_instances");
-				
+
 				license_info.put("license_status", license_status);
 				license_info.put("license_type", license_type);
-				license_info.put("license_expiration_date", license_expiration_date);				
+				license_info.put("license_expiration_date", license_expiration_date);
 				license_info.put("license_period", license_period);
 				license_info.put("allowed_instances", allowed_instances);
 				license_info.put("allowed_instances", allowed_instances);
@@ -1581,14 +1587,15 @@ public class db_operations {
 					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 					type, timestamps, operation, message, status);
 		}
-		
+
 		return license_info;
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public static int countLicensePerCustSLA(String cust_uuid, String sla_uuid) {
 
-		String SQL = "SELECT count(*) FROM sla_licensing WHERE cust_uuid = '" + cust_uuid + "' AND sla_uuid = '"+sla_uuid+" '";
+		String SQL = "SELECT count(*) FROM sla_licensing WHERE cust_uuid = '" + cust_uuid + "' AND sla_uuid = '"
+				+ sla_uuid + " '";
 		int count_licenses = 0;
 		try {
 			stmt = c.createStatement();
