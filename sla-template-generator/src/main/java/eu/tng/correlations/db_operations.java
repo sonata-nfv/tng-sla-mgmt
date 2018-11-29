@@ -1530,9 +1530,16 @@ public class db_operations {
 		return result;
 	}
 	
-	public static String getLicenseStatus (String sla_uuid, String cust_uuid, String ns_uuid) {
+	@SuppressWarnings("unchecked")
+	public static JSONObject getLicenseInfo (String sla_uuid, String cust_uuid, String ns_uuid) {
 		
+		JSONObject license_info = new JSONObject();
 		String license_status = "";
+		String license_type = "";
+		String license_expiration_date = "";
+		String license_period = "";
+		String allowed_instances = "";
+		String current_instances = "";
 	
 		Statement stmt = null;
 		JSONObject root = new JSONObject();
@@ -1540,11 +1547,24 @@ public class db_operations {
 		try {
 			c.setAutoCommit(false);
 			stmt = c.createStatement();
-			ResultSet rs = stmt.executeQuery("SELECT license_status FROM sla_licensing WHERE sla_uuid = '" + sla_uuid + "' AND ns_uuid='"
+			ResultSet rs = stmt.executeQuery("SELECT * FROM sla_licensing WHERE sla_uuid = '" + sla_uuid + "' AND ns_uuid='"
 					+ ns_uuid + "' AND  cust_uuid='"+cust_uuid+"';");
 
 			while (rs.next()) {
 				license_status = rs.getString("license_status");
+				license_type = rs.getString("license_type");
+				license_expiration_date = rs.getString("license_exp_date");
+				license_period = rs.getString("license_period");
+				allowed_instances = rs.getString("service_allowed_instances");
+				current_instances = rs.getString("current_instances");
+				
+				license_info.put("license_status", license_status);
+				license_info.put("license_type", license_type);
+				license_info.put("license_expiration_date", license_expiration_date);				
+				license_info.put("license_period", license_period);
+				license_info.put("allowed_instances", allowed_instances);
+				license_info.put("allowed_instances", allowed_instances);
+
 			}
 			rs.close();
 			stmt.close();
@@ -1561,7 +1581,45 @@ public class db_operations {
 					type, timestamps, operation, message, status);
 		}
 		
-		return license_status;
+		return license_info;
 	}
+	
+//	public static void InstantiateLicenseRecord(String sla_uuid, String ns_uuid) {
+//
+//		String SQL = "UPDATE sla_licensing " + "SET nsi_uuid = ?, cust_uuid = ?, cust_email = ?" + "WHERE sla_uuid = ? AND ns_uuid=";
+//		boolean result = false;
+//		try {
+//			PreparedStatement pstmt = c.prepareStatement(SQL);
+//			pstmt.setString(1, inst_status);
+//			pstmt.setString(2, nsi_uuid);
+//			pstmt.setString(3, correlation_id);
+//			pstmt.executeUpdate();
+//			result = true;
+//
+//			// logging
+//			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+//			String timestamps = timestamp.toString();
+//			String type = "I";
+//			String operation = "Updating SLA Agreement status";
+//			String message = "Set status READY?" + result;
+//			String status = "";
+//			logger.info(
+//					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+//					type, timestamps, operation, message, status);
+//
+//		} catch (SQLException e) {
+//			// logging
+//			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+//			String timestamps = timestamp.toString();
+//			String type = "I";
+//			String operation = "Updating SLA Agreement status";
+//			String message = "Set status READY?" + result + " ==> " + e.getMessage();
+//			String status = "";
+//			logger.info(
+//					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+//					type, timestamps, operation, message, status);
+//		}
+//
+//	}
 
 }

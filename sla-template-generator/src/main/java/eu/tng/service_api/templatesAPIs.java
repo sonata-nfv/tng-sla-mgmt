@@ -386,14 +386,6 @@ public class templatesAPIs {
 						ns_template_corr nstemplcorr = new ns_template_corr();
 						nstemplcorr.createNsTempCorr(nsd_uuid.get(0), sla_uuid);
 
-						// create correlation between ns-sla-license template
-						db_operations dbo = new db_operations();
-						db_operations.connectPostgreSQL();
-						db_operations.insertLicenseRecord(sla_uuid, nsd_uuid.get(0), "", "", "",
-								service_licence_type.get(0), service_licence_expiration_date.get(0),
-								service_licence_period.get(0), allowed_service_instances.get(0), "", "inactive");
-						db_operations.closePostgreSQL();
-
 						br.close();
 
 						apiresponse = Response.ok(responseSLA);

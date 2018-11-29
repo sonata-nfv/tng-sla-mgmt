@@ -164,16 +164,17 @@ public class LicensingAPIs {
 
 		if (connect == true) {
 			db_operations.createTableLicensing();
-			String license_status = db_operations.getLicenseStatus(sla_uuid, cust_uuid, ns_uuid);
-			dbo.closePostgreSQL();
+			JSONObject license_info = db_operations.getLicenseInfo(sla_uuid, cust_uuid, ns_uuid);
+			db_operations.closePostgreSQL();
 
+			String license_status = (String) license_info.get("license_status");
+      
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 			String timestamps = timestamp.toString();
 			String type = "I";
 			String operation = "Get License Status";
-			String message = ("License status for cust_uuid=" + cust_uuid + " and ns_uuid=" + ns_uuid + "==> "
-					+ license_status);
+			String message = ("License info for cust_uuid=" + cust_uuid + " and ns_uuid=" + ns_uuid + "==> " + license_info.toString());
 			String status = "200";
 			logger.info(
 					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
@@ -198,4 +199,6 @@ public class LicensingAPIs {
 		}
 
 	}
+	
+
 }
