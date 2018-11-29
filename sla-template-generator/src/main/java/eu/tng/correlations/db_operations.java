@@ -1555,7 +1555,7 @@ public class db_operations {
 				license_type = rs.getString("license_type");
 				license_expiration_date = rs.getString("license_exp_date");
 				license_period = rs.getString("license_period");
-				allowed_instances = rs.getString("service_allowed_instances");
+				allowed_instances = rs.getString("allowed_instances");
 				current_instances = rs.getString("current_instances");
 				
 				license_info.put("license_status", license_status);
