@@ -198,13 +198,14 @@ public class db_operations {
 	/**
 	 * Insert Record ns-template correlation
 	 */
-	public boolean insertRecord(String tablename, String ns_uuid, String sla_uuid) {
+	public boolean insertRecord(String tablename, String ns_uuid, String sla_uuid, String license_type, String license_exp_date, String license_period,
+			String allowed_instances, String license_status) {
 		boolean result = false;
 		try {
 			c.setAutoCommit(false);
 			Statement stmt = c.createStatement();
-			String sql = "INSERT INTO " + tablename + " (ns_uuid,sla_uuid) " + "VALUES ('" + ns_uuid + "','" + sla_uuid
-					+ "');";
+			String sql = "INSERT INTO " + tablename + " (ns_uuid,sla_uuid, license_type, license_exp_date, license_period, allowed_instances, license_status) " + "VALUES ('" + ns_uuid + "','" + sla_uuid
+					+"', '"+ license_type + "','" + license_exp_date + "','" + license_period + "','" + allowed_instances + "','" + license_status + "');";
 			stmt.executeUpdate(sql);
 			stmt.close();
 			c.commit();

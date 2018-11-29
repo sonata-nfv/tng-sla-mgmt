@@ -217,7 +217,6 @@ public class LicensingAPIs {
 		return allowed_to_instantiate;
 	}
 
-
 	private boolean isStatusOK(String license_status, String license_type) {
 		boolean statusOK = false;	
 		if ((license_status == "inactive" || license_status == "active") && license_type == "public") {
@@ -231,7 +230,6 @@ public class LicensingAPIs {
 		}
 		return statusOK;
 	}
-	
 	
 	private boolean isInstancesOK() {
 		return false;

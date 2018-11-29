@@ -58,7 +58,7 @@ public class ns_template_corr {
 	/**
 	 * Create a correlation between a network service and a sla template
 	 */
-	public void createNsTempCorr(String ns_uuid, String sla_uuid) {
+	public void createNsTempCorr(String ns_uuid, String sla_uuid, String license_type, String license_exp_date, String license_period, String allowed_instances, String license_status ) {
 
 		String tablename = "ns_template";
 
@@ -66,7 +66,7 @@ public class ns_template_corr {
 
 		db_operations.connectPostgreSQL();
 		dbo.createTableNSTemplate();
-		dbo.insertRecord(tablename, ns_uuid, sla_uuid);
+		dbo.insertRecord(tablename, ns_uuid, sla_uuid, license_type, license_exp_date, license_period, allowed_instances, license_status);
 		dbo.closePostgreSQL();
 
 	}
