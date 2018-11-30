@@ -203,9 +203,9 @@ public class LicensingAPIs {
 				String license_allowed_instances = (String) license_info_record.get("allowed_instances");
 				String license_current_instances = (String) license_info_record.get("current instances");
 				
-				boolean allowed_to_instantiate = allowedToInstantiate(license_status, license_type, license_allowed_instances, license_current_instances);
-				license_info_record.put("allowed_to_instantiate", String.valueOf(allowed_to_instantiate));
-				license_info_response = license_info_record;
+				//boolean allowed_to_instantiate = allowedToInstantiate(license_status, license_type, license_allowed_instances, license_current_instances);
+				///license_info_record.put("allowed_to_instantiate", String.valueOf(allowed_to_instantiate));
+				//license_info_response = license_info_record;
 				System.out.println("Response ==> " + license_info_response.toString());
 
 			}	
@@ -276,7 +276,7 @@ public class LicensingAPIs {
 	
 	private boolean isInstancesOK(String license_allowed_instances, String license_current_instances) {
 		boolean instancesOK = false;
-		if (Integer.parseInt(license_allowed_instances) < Integer.parseInt(license_current_instances) ) {
+		if (Integer.parseInt(license_allowed_instances) > Integer.parseInt(license_current_instances) ) {
 			instancesOK = true;
 		} 
 		else {
