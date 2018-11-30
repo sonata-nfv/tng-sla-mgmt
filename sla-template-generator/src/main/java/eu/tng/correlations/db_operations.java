@@ -1656,15 +1656,13 @@ public class db_operations {
 	@SuppressWarnings("unchecked")
 	public static int countLicensePerCustSLA(String cust_uuid, String sla_uuid) {
 
-		String SQL = "SELECT count(*) FROM sla_licensing WHERE cust_uuid = '" + cust_uuid + "' AND sla_uuid = '"
-				+ sla_uuid + " '";
+		String SQL = "SELECT count(*) FROM sla_licensing WHERE cust_uuid = '" + cust_uuid + "' AND sla_uuid = '"+ sla_uuid + " '";
 		int count_licenses = 0;
 		try {
 			stmt = c.createStatement();
 			ResultSet rs = stmt.executeQuery(SQL);
-			while (rs.next()) {
-				count_licenses = rs.getInt(1);
-			}
+			rs.next();
+			count_licenses = rs.getInt(1);
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 			String timestamps = timestamp.toString();
