@@ -186,8 +186,9 @@ public class LicensingAPIs {
 				if (license_type == "private"){
 					license_info_template.put("allowed_to_instantiate", "false");
 				}
-				System.out.println("Response ==> " + license_info_template.toString());
 				license_info_response = license_info_template;
+				System.out.println("Response ==> " + license_info_response.toString());
+
 			}			
 			// if customer has already a license instance
 			else {
