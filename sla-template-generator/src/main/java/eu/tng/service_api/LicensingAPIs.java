@@ -204,7 +204,7 @@ public class LicensingAPIs {
 				String license_current_instances = (String) license_info_record.get("current instances");
 				
 				//boolean allowed_to_instantiate = allowedToInstantiate(license_status, license_type, license_allowed_instances, license_current_instances);
-				///license_info_record.put("allowed_to_instantiate", String.valueOf(allowed_to_instantiate));
+				//license_info_record.put("allowed_to_instantiate", String.valueOf(allowed_to_instantiate));
 				//license_info_response = license_info_record;
 				System.out.println("Response ==> " + license_info_response.toString());
 
@@ -224,8 +224,6 @@ public class LicensingAPIs {
 					type, timestamps, operation, message, status);
 
 			// API Response
-			///JSONObject success = new JSONObject();
-			//success.put("Licence status: ", "");
 			apiresponse = Response.ok((Object) license_info_response);
 			apiresponse.header("Content-Length", license_info_response.toJSONString().length());
 			return apiresponse.status(200).build();

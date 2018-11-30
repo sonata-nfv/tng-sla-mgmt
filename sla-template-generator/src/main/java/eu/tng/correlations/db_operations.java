@@ -1657,7 +1657,7 @@ public class db_operations {
 	public static int countLicensePerCustSLA(String cust_uuid, String sla_uuid) {
 
 		//String SQL = "SELECT count(*) FROM sla_licensing WHERE cust_uuid = '" + cust_uuid + "' AND sla_uuid = '"+ sla_uuid + " '";
-		String SQL = "SELECT count(*) FROM sla_licensing WHERE cust_uuid='c58a8b06-1bf8-46c7-a344-1d228ab8ba33' AND sla_uuid='063c642e-c329-4cbb-8fb9-ede4da93a119'";
+		String SQL = "SELECT count(*) FROM sla_licensing WHERE cust_uuid='"+cust_uuid+"' AND sla_uuid='"+sla_uuid+"'";
 		int count_licenses = 0;
 		try {
 			stmt = c.createStatement();
