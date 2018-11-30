@@ -201,7 +201,7 @@ public class LicensingAPIs {
 				String license_type = (String) license_info_record.get("license_type");
 				String license_status = (String) license_info_record.get("license_status");
 				String license_allowed_instances = (String) license_info_record.get("allowed_instances");
-				String license_current_instances = (String) license_info_record.get("current instances");
+				String license_current_instances = (String) license_info_record.get("current_instances");
 				
 				System.out.println("DEBUG  LICENSE TYPE " + license_type);
 				System.out.println("DEBUG  LICENSE STATUS " +license_status);
@@ -264,22 +264,13 @@ public class LicensingAPIs {
 
 	private boolean isStatusOK(String license_status, String license_type) {
 		boolean statusOK = false;	
-		if (license_status == "inactive"  && license_type == "public") {
+		if ((license_status.equals("inactive") || (license_status.equals("active"))  && license_type.equals("public"))) {
 			statusOK = true;
 		}
-		if (license_status == "active" && license_type == "public") {
+		if ((license_status.equals("inactive") || (license_status.equals("active"))  && license_type.equals("trial"))) {
 			statusOK = true;
 		}
-		if (license_status == "inactive"  && license_type == "trial") {
-			statusOK = true;
-		}
-		if (license_status == "active" && license_type == "trial") {
-			statusOK = true;
-		}
-		if (license_status == "bought"  && license_type == "private") {
-			statusOK = true;
-		}
-		if (license_status == "active" && license_type == "private") {
+		if ((license_status.equals("bought") || (license_status.equals("active"))  && license_type.equals("private"))) {
 			statusOK = true;
 		}
 		System.out.println("[*] Is status ok??? " + statusOK);
@@ -290,7 +281,11 @@ public class LicensingAPIs {
 	private boolean isInstancesOK(String license_allowed_instances, String license_current_instances) {
 		boolean instancesOK = false;
 		int ai = Integer.parseInt(license_allowed_instances);
-		int ci = Integer.parseInt(license_allowed_instances);
+		int ci = Integer.parseInt(license_current_instances);
+		
+		System.out.println("[*] INT ALL INS " + ai);
+		System.out.println("[*] int ci " + ci);
+	
 		if (ci < ai) {
 			instancesOK = true;
 		} 
