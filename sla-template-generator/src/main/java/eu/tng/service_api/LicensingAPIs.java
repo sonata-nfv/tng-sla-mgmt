@@ -203,6 +203,12 @@ public class LicensingAPIs {
 				String license_allowed_instances = (String) license_info_record.get("allowed_instances");
 				String license_current_instances = (String) license_info_record.get("current instances");
 				
+				System.out.println("DEBUG  LICENSE TYPE " + license_type);
+				System.out.println("DEBUG  LICENSE STATUS " +license_status);
+				System.out.println("DEBUG  LICENSE ALL INST " +license_allowed_instances);
+				System.out.println("DEBUG  LICENSE CURR INST " +license_current_instances);
+
+				
 				boolean allowed_to_instantiate = allowedToInstantiate(license_status, license_type, license_allowed_instances, license_current_instances);
 				license_info_record.put("allowed_to_instantiate", String.valueOf(allowed_to_instantiate));
 				license_info_response = license_info_record;
