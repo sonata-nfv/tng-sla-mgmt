@@ -163,7 +163,9 @@ public class db_operations {
 		try {
 			stmt = c.createStatement();
 			String sql = "CREATE TABLE IF NOT EXISTS ns_template" + "(ID  SERIAL PRIMARY KEY,"
-					+ " NS_UUID TEXT NOT NULL, " + "SLA_UUID  TEXT NOT NULL )";
+					+ " NS_UUID TEXT NOT NULL, " + "SLA_UUID  TEXT NOT NULL," + "license_type  TEXT NOT NULL,"
+					+ "license_exp_date  TEXT NOT NULL," + "license_period  TEXT NOT NULL,"
+					+ "allowed_instances  TEXT NOT NULL," + "license_status  TEXT NOT NULL )";
 			stmt.executeUpdate(sql);
 			stmt.close();
 			result = true;
@@ -198,13 +200,16 @@ public class db_operations {
 	/**
 	 * Insert Record ns-template correlation
 	 */
-	public boolean insertRecord(String tablename, String ns_uuid, String sla_uuid) {
+	public boolean insertRecord(String tablename, String ns_uuid, String sla_uuid, String license_type,
+			String license_exp_date, String license_period, String allowed_instances, String license_status) {
 		boolean result = false;
 		try {
 			c.setAutoCommit(false);
 			Statement stmt = c.createStatement();
-			String sql = "INSERT INTO " + tablename + " (ns_uuid,sla_uuid) " + "VALUES ('" + ns_uuid + "','" + sla_uuid
-					+ "');";
+			String sql = "INSERT INTO " + tablename
+					+ " (ns_uuid,sla_uuid, license_type, license_exp_date, license_period, allowed_instances, license_status) "
+					+ "VALUES ('" + ns_uuid + "','" + sla_uuid + "', '" + license_type + "','" + license_exp_date
+					+ "','" + license_period + "','" + allowed_instances + "','" + license_status + "');";
 			stmt.executeUpdate(sql);
 			stmt.close();
 			c.commit();
@@ -236,6 +241,55 @@ public class db_operations {
 		}
 
 		return result;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static JSONObject getLicenseinfoTemplates(String sla_uuid, String ns_uuid) {
+
+		JSONObject license_info = new JSONObject();
+		String license_status = "";
+		String license_type = "";
+		String license_exp_date = "";
+		String license_period = "";
+		String allowed_instances = "";
+		
+		Statement stmt = null;
+		JSONObject root = new JSONObject();
+
+		try {
+			c.setAutoCommit(false);
+			stmt = c.createStatement();
+			ResultSet rs = stmt.executeQuery("SELECT * FROM ns_template WHERE sla_uuid = '" + sla_uuid + "' AND ns_uuid='" + ns_uuid + "';");
+
+			while (rs.next()) {
+				license_status = rs.getString("license_status");
+				license_type = rs.getString("license_type");
+				license_exp_date = rs.getString("license_exp_date");
+				license_period = rs.getString("license_period");
+				allowed_instances = rs.getString("allowed_instances");
+
+				license_info.put("license_status", license_status);
+				license_info.put("license_type", license_type);
+				license_info.put("license_exp_date", license_exp_date);
+				license_info.put("license_period", license_period);
+				license_info.put("allowed_instances", allowed_instances);
+			}
+			rs.close();
+			stmt.close();
+		} catch (Exception e) {
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			String timestamps = timestamp.toString();
+			String type = "W";
+			String operation = "Get license status";
+			String message = ("Error Getting license status ==> " + e.getMessage());
+			String status = "";
+			logger.warn(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
+		}
+
+		return license_info;
 	}
 
 	/*******************************/
@@ -535,7 +589,6 @@ public class db_operations {
 				String cust_email = rs.getString("cust_email");
 				String cust_uuid = rs.getString("cust_uuid");
 				String inst_status = rs.getString("inst_status");
-				System.out.print("STATUS ======" + inst_status);
 				String inst_id = rs.getString("inst_id");
 				String nsi_uuid = rs.getString("nsi_uuid");
 
@@ -612,7 +665,6 @@ public class db_operations {
 				String cust_email = rs.getString("cust_email");
 				String cust_uuid = rs.getString("cust_uuid");
 				String inst_status = rs.getString("inst_status");
-				System.out.print("STATUS ======" + inst_status);
 				String inst_id = rs.getString("inst_id");
 				String nsi_uuid = rs.getString("nsi_uuid");
 
@@ -1258,7 +1310,6 @@ public class db_operations {
 		JSONArray ns_template = new JSONArray();
 		JSONArray cust_sla = new JSONArray();
 
-		System.out.println(tablename);
 		if (tablename == "ns_template") {
 
 			try {
@@ -1268,9 +1319,22 @@ public class db_operations {
 				while (rs.next()) {
 					String ns_uuid = rs.getString("ns_uuid");
 					String sla_uuid = rs.getString("sla_uuid");
+					String license_type = rs.getString("license_type");
+					String license_exp_type = rs.getString("license_exp_type");
+					String license_period = rs.getString("license_period");
+					String allowed_instances = rs.getString("allowed_instances");
+					String license_status = rs.getString("license_status");
+
+
 					JSONObject obj = new JSONObject();
 					obj.put("ns_uuid", ns_uuid);
 					obj.put("sla_uuid", sla_uuid);
+					obj.put("license_type", license_type);
+					obj.put("license_exp_type", license_exp_type);
+					obj.put("license_period", license_period);
+					obj.put("allowed_instances", allowed_instances);
+					obj.put("license_status", license_status);
+					
 					ns_template.add(obj);
 				}
 
@@ -1437,7 +1501,8 @@ public class db_operations {
 	}
 
 	/**
-	 * Insert  licence record in sla_licensing table
+	 * Insert licence record in sla_licensing table
+	 * 
 	 * @param sla_uuid
 	 * @param ns_uuid
 	 * @param nsi_uuid
@@ -1470,7 +1535,8 @@ public class db_operations {
 			String timestamps = timestamp.toString();
 			String type = "I";
 			String operation = "Insert license record";
-			String message = ("License record for sla_uuid = "+ sla_uuid + " and cust_uuid= "+ cust_uuid+"  created successfully");
+			String message = ("License record for sla_uuid = " + sla_uuid + " and cust_uuid= " + cust_uuid
+					+ "  created successfully");
 			String status = "";
 			logger.info(
 					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
@@ -1490,7 +1556,6 @@ public class db_operations {
 					type, timestamps, operation, message, status);
 		}
 	}
-	
 
 	public boolean deleteLicenseRecord(String sla_uuid, String cust_uuid, String ns_uuid) {
 		Statement stmt = null;
@@ -1498,7 +1563,8 @@ public class db_operations {
 		try {
 			c.setAutoCommit(false);
 			stmt = c.createStatement();
-			String sql = "DELETE FROM sla_licensing WHERE NS_UUID='" + ns_uuid + "' AND sla_uuid='" + sla_uuid + "' AND cust_uuid='" + cust_uuid + "';";
+			String sql = "DELETE FROM sla_licensing WHERE NS_UUID='" + ns_uuid + "' AND sla_uuid='" + sla_uuid
+					+ "' AND cust_uuid='" + cust_uuid + "';";
 			stmt.executeUpdate(sql);
 			c.commit();
 			stmt.close();
@@ -1529,22 +1595,42 @@ public class db_operations {
 
 		return result;
 	}
-	
-	public static String getLicenseStatus (String sla_uuid, String cust_uuid, String ns_uuid) {
-		
+
+	@SuppressWarnings("unchecked")
+	public static JSONObject getLicenseInfo(String sla_uuid, String cust_uuid, String ns_uuid) {
+
+		JSONObject license_info = new JSONObject();
 		String license_status = "";
-	
+		String license_type = "";
+		String license_expiration_date = "";
+		String license_period = "";
+		String allowed_instances = "";
+		String current_instances = "";
+
 		Statement stmt = null;
 		JSONObject root = new JSONObject();
 
 		try {
 			c.setAutoCommit(false);
 			stmt = c.createStatement();
-			ResultSet rs = stmt.executeQuery("SELECT license_status FROM sla_licensing WHERE sla_uuid = '" + sla_uuid + "' AND ns_uuid='"
-					+ ns_uuid + "' AND  cust_uuid='"+cust_uuid+"';");
+			ResultSet rs = stmt.executeQuery("SELECT * FROM sla_licensing WHERE sla_uuid = '" + sla_uuid
+					+ "' AND ns_uuid='" + ns_uuid + "' AND  cust_uuid='" + cust_uuid + "';");
 
 			while (rs.next()) {
 				license_status = rs.getString("license_status");
+				license_type = rs.getString("license_type");
+				license_expiration_date = rs.getString("license_exp_date");
+				license_period = rs.getString("license_period");
+				allowed_instances = rs.getString("allowed_instances");
+				current_instances = rs.getString("current_instances");
+
+				license_info.put("license_status", license_status);
+				license_info.put("license_type", license_type);
+				license_info.put("license_expiration_date", license_expiration_date);
+				license_info.put("license_period", license_period);
+				license_info.put("allowed_instances", allowed_instances);
+				license_info.put("current_instances", current_instances);
+
 			}
 			rs.close();
 			stmt.close();
@@ -1560,8 +1646,44 @@ public class db_operations {
 					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 					type, timestamps, operation, message, status);
 		}
-		
-		return license_status;
+
+		return license_info;
+	}
+
+	@SuppressWarnings("unchecked")
+	public static int countLicensePerCustSLA(String cust_uuid, String sla_uuid) {
+
+		String SQL = "SELECT count(*) FROM sla_licensing WHERE cust_uuid='"+cust_uuid+"' AND sla_uuid='"+sla_uuid+"'";
+		int count_licenses = 0;
+		try {
+			stmt = c.createStatement();
+			ResultSet rs = stmt.executeQuery(SQL);
+			rs.next();
+			count_licenses = rs.getInt(1);
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			String timestamps = timestamp.toString();
+			String type = "I";
+			String operation = "Counting Licenses per customer and sla";
+			String message = ("Number of Licenses  ==> " + count_licenses);
+			String status = "";
+			logger.info(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
+		} catch (SQLException e) {
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			String timestamps = timestamp.toString();
+			String type = "W";
+			String operation = "Counting Licenses";
+			String message = ("Error counting the Licenses ==> " + e.getMessage());
+			String status = "";
+			logger.warn(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
+		}
+		return count_licenses;
+
 	}
 
 }

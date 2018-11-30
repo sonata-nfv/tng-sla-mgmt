@@ -66,7 +66,7 @@ public class LicensingAPIs {
 
 	@Produces(MediaType.APPLICATION_JSON)
 	@GET
-	public Response getTemplates() {
+	public Response getLicenses() {
 		ResponseBuilder apiresponse = null;
 
 		db_operations dbo = new db_operations();
@@ -83,7 +83,7 @@ public class LicensingAPIs {
 		String timestamps = timestamp.toString();
 		String type = "I";
 		String operation = "Getting all licensing information";
-		String message = ("[*] Success! all licensing information received ==> " + all_licenses.toString());
+		String message = ("[*] Success! all licensing information received");
 		String status = "200";
 		logger.info(
 				"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
@@ -137,7 +137,7 @@ public class LicensingAPIs {
 			String operation = "Delete license record";
 			String message = ("[*] Error! License record was not deleted!");
 			String status = "404";
-			logger.info(
+			logger.warn(
 					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 					type, timestamps, operation, message, status);
 
@@ -150,46 +150,125 @@ public class LicensingAPIs {
 	}
 
 	/**
-	 * Get license status
+	 * Check if instantiation is allowed based on license status
 	 */
+	@SuppressWarnings("unchecked")
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/status/{sla_uuid}/{cust_uuid}/{ns_uuid}")
-	public Response getAgreementsPerCustonmer(@PathParam("sla_uuid") String sla_uuid,
+	public Response getLicenseInfoPerCustomer(@PathParam("sla_uuid") String sla_uuid,
 			@PathParam("cust_uuid") String cust_uuid, @PathParam("ns_uuid") String ns_uuid) {
 
 		ResponseBuilder apiresponse = null;
 		db_operations dbo = new db_operations();
 		boolean connect = db_operations.connectPostgreSQL();
 
+		JSONObject license_info_response = new JSONObject();
+
 		if (connect == true) {
+
+			// check if this customer has already a license for this SLA
 			db_operations.createTableLicensing();
-			String license_status = db_operations.getLicenseStatus(sla_uuid, cust_uuid, ns_uuid);
+			int count_licenses = db_operations.countLicensePerCustSLA(cust_uuid, sla_uuid);
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			String timestamps = timestamp.toString();
+			String type = "I";
+			String operation = "Check if instantiation is allowed based on license status";
+			String message = ("[*] Number of instances for this customer/ns/sla ==> " + count_licenses);
+			String status = "";
+			logger.info(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
+			
+			// if the customer does not have a license instance already - 1st instantiation
+			if (count_licenses == 0) {
+				// logging
+				timestamp = new Timestamp(System.currentTimeMillis());
+				timestamps = timestamp.toString();
+				type = "I";
+				operation = "Check if instantiation is allowed based on license status";
+				message = ("First instantiation for this customer and this NS");
+				status = "";
+				logger.info(
+						"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+						type, timestamps, operation, message, status);
+
+				JSONObject license_info_template = db_operations.getLicenseinfoTemplates(sla_uuid, ns_uuid);
+				String license_type = (String) license_info_template.get("license_type");
+
+				if (license_type.equals("public")) {
+					license_info_template.put("allowed_to_instantiate", "true");
+				}
+				if (license_type.equals("trial")) {
+					license_info_template.put("allowed_to_instantiate", "true");
+				}
+				if (license_type.equals("private")) {
+					license_info_template.put("allowed_to_instantiate", "false");
+				}
+				license_info_response = license_info_template;
+
+				// logging
+				timestamp = new Timestamp(System.currentTimeMillis());
+				timestamps = timestamp.toString();
+				type = "I";
+				operation = "Check if instantiation is allowed based on license status";
+				message = ("License Type: " + license_type);
+				status = "";
+				logger.info(
+						"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+						type, timestamps, operation, message, status);
+			}
+			// if customer has already a license instance
+			else {
+				JSONObject license_info_record = db_operations.getLicenseInfo(sla_uuid, cust_uuid, ns_uuid);
+				String license_type = (String) license_info_record.get("license_type");
+				String license_status = (String) license_info_record.get("license_status");
+				String license_allowed_instances = (String) license_info_record.get("allowed_instances");
+				String license_current_instances = (String) license_info_record.get("current_instances");
+
+				boolean allowed_to_instantiate = allowedToInstantiate(license_status, license_type,
+						license_allowed_instances, license_current_instances);
+				license_info_record.put("allowed_to_instantiate", String.valueOf(allowed_to_instantiate));
+				license_info_response = license_info_record;
+
+				// logging
+				timestamp = new Timestamp(System.currentTimeMillis());
+				timestamps = timestamp.toString();
+				type = "I";
+				operation = "Check if instantiation is allowed based on license status";
+				message = ("License Type: " + license_type + " License Status: " + license_status
+						+ "Allowed instances: " + license_allowed_instances + " Current instances: "
+						+ license_current_instances + " Allowed to be instantiated?? "
+						+ String.valueOf(allowed_to_instantiate));
+				status = "";
+				logger.info(
+						"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+						type, timestamps, operation, message, status);
+
+			}
+
+			// close db connection
+			db_operations.closePostgreSQL();
+			// API Response
+			apiresponse = Response.ok((Object) license_info_response);
+			apiresponse.header("Content-Length", license_info_response.toJSONString().length());
+			return apiresponse.status(200).build();
+
+		} else {
 			dbo.closePostgreSQL();
 
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 			String timestamps = timestamp.toString();
-			String type = "I";
-			String operation = "Get License Status";
-			String message = ("License status for cust_uuid=" + cust_uuid + " and ns_uuid=" + ns_uuid + "==> "
-					+ license_status);
-			String status = "200";
-			logger.info(
+			String type = "W";
+			String operation = "Check if instantiation is allowed based on license status";
+			String message = ("Error connecting to database");
+			String status = "";
+			logger.warn(
 					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 					type, timestamps, operation, message, status);
 			
-			// API Response
-			JSONObject success = new JSONObject();
-			success.put("Licence status: ", license_status);
-			apiresponse = Response.ok((Object) success);
-			apiresponse.header("Content-Length", success.toJSONString().length());
-			return apiresponse.status(200).build();
-
-
-		} else {
-			dbo.closePostgreSQL();
-
 			JSONObject error = new JSONObject();
 			error.put("ERROR: ", "connecting to database");
 			apiresponse = Response.ok((Object) error);
@@ -198,4 +277,68 @@ public class LicensingAPIs {
 		}
 
 	}
+
+	private boolean allowedToInstantiate(String license_status, String license_type, String license_allowed_instances,
+			String license_current_instances) {
+		boolean allowed_to_instantiate = false;
+
+		boolean statusOK = isStatusOK(license_status, license_type);
+		boolean instancesOK = isInstancesOK(license_allowed_instances, license_current_instances);
+
+		if (statusOK && instancesOK) {
+			allowed_to_instantiate = true;
+		} else {
+			allowed_to_instantiate = false;
+		}
+		return allowed_to_instantiate;
+	}
+
+	private boolean isStatusOK(String license_status, String license_type) {
+		boolean statusOK = false;
+		if ((license_status.equals("inactive") || (license_status.equals("active")) && license_type.equals("public"))) {
+			statusOK = true;
+		}
+		if ((license_status.equals("inactive") || (license_status.equals("active")) && license_type.equals("trial"))) {
+			statusOK = true;
+		}
+		if ((license_status.equals("bought") || (license_status.equals("active")) && license_type.equals("private"))) {
+			statusOK = true;
+		}
+		// logging
+		Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+		String timestamps = timestamp.toString();
+		String type = "I";
+		String operation = "Check if instantiation is allowed based on license status";
+		String message = ("[*] Is status ok??? " + statusOK);
+		String status = "";
+		logger.info(
+				"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+				type, timestamps, operation, message, status);
+
+		return statusOK;
+	}
+
+	private boolean isInstancesOK(String license_allowed_instances, String license_current_instances) {
+		boolean instancesOK = false;
+		int ai = Integer.parseInt(license_allowed_instances);
+		int ci = Integer.parseInt(license_current_instances);
+		if (ci < ai) {
+			instancesOK = true;
+		} else {
+			instancesOK = false;
+		}
+		// logging
+		Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+		String timestamps = timestamp.toString();
+		String type = "I";
+		String operation = "Check if instantiation is allowed based on license status";
+		String message = ("[*] Are instances ok??? " + instancesOK);
+		String status = "";
+		logger.info(
+				"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+				type, timestamps, operation, message, status);
+		
+		return instancesOK;
+	}
+
 }
