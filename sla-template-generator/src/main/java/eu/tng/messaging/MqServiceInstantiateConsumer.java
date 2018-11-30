@@ -297,6 +297,7 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 									cust_email, inst_status, correlation_id);
 							
 							// Create license record
+							db_operations.createTableLicensing();
 							db_operations.insertLicenseRecord(sla_uuid, ns_uuid, "", cust_uuid, cust_email, license_type, license_exp_date, license_period, allowed_instances, "0", "inactive", correlation_id);
 
 						}
