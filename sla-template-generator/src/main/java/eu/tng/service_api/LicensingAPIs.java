@@ -170,7 +170,7 @@ public class LicensingAPIs {
 			// check if this customer has already a license for this SLA
 			db_operations.createTableLicensing();
 			int count_licenses = db_operations.countLicensePerCustSLA(cust_uuid, sla_uuid);
-						
+			System.out.println("[**] Number of licenses ==> "+count_licenses);		
 			// if the customer does not have a license instance already - 1st instantiation
 			if (count_licenses == 0) {
 				
