@@ -163,6 +163,7 @@ public class LicensingAPIs {
 		db_operations dbo = new db_operations();
 		boolean connect = db_operations.connectPostgreSQL();
 				
+		JSONObject license_info_response = new JSONObject();
 		if (connect == true) {
 						
 			// check if this customer has already a license for this SLA
@@ -184,7 +185,7 @@ public class LicensingAPIs {
 				if (license_type == "private"){
 					license_info_template.put("allowed_to_instantiate", "false");
 				}
-				JSONObject license_info_response = new JSONObject(license_info_template);
+				license_info_response = new JSONObject(license_info_template);
 				
 				System.out.println("Response ==> " + license_info_response.toString());
 
