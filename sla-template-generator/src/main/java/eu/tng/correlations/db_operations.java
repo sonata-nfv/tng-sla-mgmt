@@ -242,6 +242,55 @@ public class db_operations {
 
 		return result;
 	}
+	
+	@SuppressWarnings("unchecked")
+	public static JSONObject getLicenseinfoTemplates(String sla_uuid, String ns_uuid) {
+
+		JSONObject license_info = new JSONObject();
+		String license_status = "";
+		String license_type = "";
+		String license_exp_date = "";
+		String license_period = "";
+		String allowed_instances = "";
+		
+		Statement stmt = null;
+		JSONObject root = new JSONObject();
+
+		try {
+			c.setAutoCommit(false);
+			stmt = c.createStatement();
+			ResultSet rs = stmt.executeQuery("SELECT * FROM ns_template WHERE sla_uuid = '" + sla_uuid + "' AND ns_uuid='" + ns_uuid + "';");
+
+			while (rs.next()) {
+				license_status = rs.getString("license_status");
+				license_type = rs.getString("license_type");
+				license_exp_date = rs.getString("license_exp_date");
+				license_period = rs.getString("license_period");
+				allowed_instances = rs.getString("allowed_instances");
+
+				license_info.put("license_status", license_status);
+				license_info.put("license_type", license_type);
+				license_info.put("license_exp_date", license_exp_date);
+				license_info.put("license_period", license_period);
+				license_info.put("allowed_instances", allowed_instances);
+			}
+			rs.close();
+			stmt.close();
+		} catch (Exception e) {
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			String timestamps = timestamp.toString();
+			String type = "W";
+			String operation = "Get license status";
+			String message = ("Error Getting license status ==> " + e.getMessage());
+			String status = "";
+			logger.warn(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
+		}
+
+		return license_info;
+	}
 
 	/*******************************/
 	/** OPERATIONS FOR AGREEMENTS **/
@@ -1273,9 +1322,22 @@ public class db_operations {
 				while (rs.next()) {
 					String ns_uuid = rs.getString("ns_uuid");
 					String sla_uuid = rs.getString("sla_uuid");
+					String license_type = rs.getString("license_type");
+					String license_exp_type = rs.getString("license_exp_type");
+					String license_period = rs.getString("license_period");
+					String allowed_instances = rs.getString("allowed_instances");
+					String license_status = rs.getString("license_status");
+
+
 					JSONObject obj = new JSONObject();
 					obj.put("ns_uuid", ns_uuid);
 					obj.put("sla_uuid", sla_uuid);
+					obj.put("license_type", license_type);
+					obj.put("license_exp_type", license_exp_type);
+					obj.put("license_period", license_period);
+					obj.put("allowed_instances", allowed_instances);
+					obj.put("license_status", license_status);
+					
 					ns_template.add(obj);
 				}
 

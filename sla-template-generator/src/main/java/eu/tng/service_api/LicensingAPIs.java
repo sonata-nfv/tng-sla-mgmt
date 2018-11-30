@@ -66,7 +66,7 @@ public class LicensingAPIs {
 
 	@Produces(MediaType.APPLICATION_JSON)
 	@GET
-	public Response getTemplates() {
+	public Response getLicenses() {
 		ResponseBuilder apiresponse = null;
 
 		db_operations dbo = new db_operations();
@@ -83,7 +83,7 @@ public class LicensingAPIs {
 		String timestamps = timestamp.toString();
 		String type = "I";
 		String operation = "Getting all licensing information";
-		String message = ("[*] Success! all licensing information received ==> " + all_licenses.toString());
+		String message = ("[*] Success! all licensing information received");
 		String status = "200";
 		logger.info(
 				"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
@@ -150,8 +150,9 @@ public class LicensingAPIs {
 	}
 
 	/**
-	 * Get license status
+	 * Check if instantiation is allowed based on license status
 	 */
+	@SuppressWarnings("unchecked")
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/status/{sla_uuid}/{cust_uuid}/{ns_uuid}")
@@ -161,23 +162,40 @@ public class LicensingAPIs {
 		ResponseBuilder apiresponse = null;
 		db_operations dbo = new db_operations();
 		boolean connect = db_operations.connectPostgreSQL();
-
+		
+		JSONObject license_info_response = new JSONObject();
+		
 		if (connect == true) {
-			
+						
 			// check if this customer has already a license for this SLA
 			db_operations.createTableLicensing();
 			int count_licenses = db_operations.countLicensePerCustSLA(cust_uuid, sla_uuid);
-			db_operations.closePostgreSQL();
 						
 			// if the customer does not have a license instance already - 1st instantiation
 			if (count_licenses == 0) {
-				
+				System.out.println("First instantiation for this customer");
+				//JSONObject license_info = db_operations.selectAllRecords();
+				JSONObject license_info_template = db_operations.getLicenseinfoTemplates(sla_uuid, ns_uuid);
+				String license_type = (String) license_info_template.get("license_type");
+				System.out.println("License Type ==> " + license_type);
+				if (license_type == "public") {
+					license_info_template.put("allowed_to_instantiate", "true");
+				}
+				if (license_type == "trial") {
+					license_info_template.put("allowed_to_instantiate", "true");
+				}
+				if (license_type == "private"){
+					license_info_template.put("allowed_to_instantiate", "false");
+				}
+				System.out.println("Response ==> " + license_info_template.toString());
 			}			
 			// if customer has already a license instance
 			else {
-			}		
+				System.out.println("Not the first instantiation for this   ");        
+			}	
 			
-
+			db_operations.closePostgreSQL();
+			
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 			String timestamps = timestamp.toString();
@@ -190,10 +208,10 @@ public class LicensingAPIs {
 					type, timestamps, operation, message, status);
 
 			// API Response
-			JSONObject success = new JSONObject();
-			success.put("Licence status: ", "");
-			apiresponse = Response.ok((Object) success);
-			apiresponse.header("Content-Length", success.toJSONString().length());
+			///JSONObject success = new JSONObject();
+			//success.put("Licence status: ", "");
+			apiresponse = Response.ok((Object) license_info_response);
+			apiresponse.header("Content-Length", license_info_response.toJSONString().length());
 			return apiresponse.status(200).build();
 
 		} else {
@@ -207,6 +225,9 @@ public class LicensingAPIs {
 		}
 
 	}
+	
+	
+	
 
 	private String isInstantiationAllowed(String license_status, String license_type) {
 		String allowed_to_instantiate = "";   
