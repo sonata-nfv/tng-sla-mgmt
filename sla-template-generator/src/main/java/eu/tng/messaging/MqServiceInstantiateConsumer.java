@@ -221,6 +221,8 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 								db_operations.connectPostgreSQL();
 								db_operations.UpdateRecordAgreement(status, correlation_id, nsi_id);
 								db_operations.closePostgreSQL();
+															
+								// create monitoring rules to check sla violations
 								MonitoringRules mr = new MonitoringRules();
 								MonitoringRules.createMonitroingRules(String.valueOf(sla_id), vnfr_id_list, vc_id_list,
 										nsi_id);
@@ -284,9 +286,19 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 							sla_name = (String) SLADetails.get(1);
 							sla_status = (String) SLADetails.get(0);
 							String inst_status = "PENDING";
-
+							
+							String license_type = (String) SLADetails.get(2);
+							String license_period = (String) SLADetails.get(3);
+							String license_exp_date = (String) SLADetails.get(4);
+							String allowed_instances = (String) SLADetails.get(5);
+							
+							// create agreement record
 							cust_sla_corr.createCustSlaCorr(sla_uuid, sla_name, sla_status, ns_uuid, ns_name, cust_uuid,
 									cust_email, inst_status, correlation_id);
+							
+							// Create license record
+							db_operations.insertLicenseRecord(sla_uuid, ns_uuid, "", cust_uuid, cust_email, license_type, license_exp_date, license_period, allowed_instances, "0", "inactive", correlation_id);
+
 						}
 
 					}

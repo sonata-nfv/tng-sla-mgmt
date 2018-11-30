@@ -1517,7 +1517,7 @@ public class db_operations {
 	 */
 	public static void insertLicenseRecord(String sla_uuid, String ns_uuid, String nsi_uuid, String cust_uuid,
 			String cust_email, String license_type, String license_exp_date, String license_period,
-			String allowed_instances, String current_instances, String license_status) {
+			String allowed_instances, String current_instances, String license_status, String correlation_id) {
 
 		try {
 			c.setAutoCommit(false);
