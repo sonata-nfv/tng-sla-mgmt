@@ -189,7 +189,7 @@ public class LicensingAPIs {
 				if (license_type.equals("private")){
 					license_info_template.put("allowed_to_instantiate", "false");
 				}
-				
+				license_info_response = license_info_template;
 			
 				System.out.println("Response ==> " + license_info_response.toString());
 
@@ -203,7 +203,11 @@ public class LicensingAPIs {
 				String license_allowed_instances = (String) license_info_record.get("allowed_instances");
 				String license_current_instances = (String) license_info_record.get("current instances");
 				
-				allowedToInstantiate(license_status, license_type, license_allowed_instances, license_current_instances);
+				boolean allowed_to_instantiate = allowedToInstantiate(license_status, license_type, license_allowed_instances, license_current_instances);
+				license_info_record.put("allowed_to_instantiate", String.valueOf(allowed_to_instantiate));
+				license_info_response = license_info_record;
+				System.out.println("Response ==> " + license_info_response.toString());
+
 			}	
 			
 			db_operations.closePostgreSQL();
@@ -249,7 +253,8 @@ public class LicensingAPIs {
 		} else {
 			allowed_to_instantiate = false;
 		}
-		
+		System.out.println("[*] Is instantiation allowed?? " + allowed_to_instantiate);
+
 		return allowed_to_instantiate;
 	}
 
@@ -264,6 +269,8 @@ public class LicensingAPIs {
 		if ((license_status == "bought" || license_status == "active")  && license_type == "private") {
 			statusOK = true;
 		}
+		System.out.println("[*] Is status ok??? " + statusOK);
+
 		return statusOK;
 	}
 	
@@ -275,6 +282,7 @@ public class LicensingAPIs {
 		else {
 			instancesOK = false;
 		}
+		System.out.println("[*] Are instances ok??? " + instancesOK);
 		return instancesOK;
 	}
 
