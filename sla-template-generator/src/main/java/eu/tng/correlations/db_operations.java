@@ -589,7 +589,6 @@ public class db_operations {
 				String cust_email = rs.getString("cust_email");
 				String cust_uuid = rs.getString("cust_uuid");
 				String inst_status = rs.getString("inst_status");
-				System.out.print("STATUS ======" + inst_status);
 				String inst_id = rs.getString("inst_id");
 				String nsi_uuid = rs.getString("nsi_uuid");
 
@@ -666,7 +665,6 @@ public class db_operations {
 				String cust_email = rs.getString("cust_email");
 				String cust_uuid = rs.getString("cust_uuid");
 				String inst_status = rs.getString("inst_status");
-				System.out.print("STATUS ======" + inst_status);
 				String inst_id = rs.getString("inst_id");
 				String nsi_uuid = rs.getString("nsi_uuid");
 
@@ -1312,7 +1310,6 @@ public class db_operations {
 		JSONArray ns_template = new JSONArray();
 		JSONArray cust_sla = new JSONArray();
 
-		System.out.println(tablename);
 		if (tablename == "ns_template") {
 
 			try {
@@ -1632,7 +1629,7 @@ public class db_operations {
 				license_info.put("license_expiration_date", license_expiration_date);
 				license_info.put("license_period", license_period);
 				license_info.put("allowed_instances", allowed_instances);
-				license_info.put("allowed_instances", allowed_instances);
+				license_info.put("current_instances", current_instances);
 
 			}
 			rs.close();
@@ -1656,7 +1653,6 @@ public class db_operations {
 	@SuppressWarnings("unchecked")
 	public static int countLicensePerCustSLA(String cust_uuid, String sla_uuid) {
 
-		//String SQL = "SELECT count(*) FROM sla_licensing WHERE cust_uuid = '" + cust_uuid + "' AND sla_uuid = '"+ sla_uuid + " '";
 		String SQL = "SELECT count(*) FROM sla_licensing WHERE cust_uuid='"+cust_uuid+"' AND sla_uuid='"+sla_uuid+"'";
 		int count_licenses = 0;
 		try {
