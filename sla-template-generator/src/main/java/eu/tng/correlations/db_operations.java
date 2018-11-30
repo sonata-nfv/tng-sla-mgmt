@@ -1409,9 +1409,9 @@ public class db_operations {
 			stmt = c.createStatement();
 			String sql = "CREATE TABLE IF NOT EXISTS sla_licensing " + "(ID  SERIAL," + " NSI_UUID TEXT PRIMARY KEY, "
 					+ "SLA_UUID TEXT NOT NULL," + "NS_UUID TEXT NOT NULL," + "CUST_UUID TEXT NOT NULL,"
-					+ "CUST_EMAIL  TEXT NOT NULL," + "license_type  TEXT NOT NULL," + "license_exp_date  TEXT NOT NULL,"
-					+ "license_period  TEXT NOT NULL," + "allowed_instances  TEXT NOT NULL,"
-					+ "current_instances  TEXT NOT NULL," + "license_status  TEXT NOT NULL )";
+					+ "CUST_EMAIL  TEXT NOT NULL," + "license_type  TEXT NOT NULL," + "license_exp_date  TEXT,"
+					+ "license_period  TEXT," + "allowed_instances  TEXT NOT NULL,"
+					+ "current_instances  TEXT NOT NULL," + "license_status  TEXT," +"correlation_id TEXT)";
 			stmt.executeUpdate(sql);
 			stmt.close();
 			// logging
@@ -1522,10 +1522,10 @@ public class db_operations {
 		try {
 			c.setAutoCommit(false);
 			Statement stmt = c.createStatement();
-			String sql = "INSERT INTO sla_licensing  (sla_uuid, ns_uuid,nsi_uuid, cust_uuid, cust_email, license_type, license_exp_date, license_period, allowed_instances, current_instances, license_status) VALUES ('"
+			String sql = "INSERT INTO sla_licensing  (sla_uuid, ns_uuid,nsi_uuid, cust_uuid, cust_email, license_type, license_exp_date, license_period, allowed_instances, current_instances, license_status,correlation_id) VALUES ('"
 					+ sla_uuid + "', '" + ns_uuid + "', '" + nsi_uuid + "','" + cust_uuid + "', '" + cust_email + "' ,'"
 					+ license_type + "','" + license_exp_date + "','" + license_period + "','" + allowed_instances
-					+ "','" + current_instances + "','" + license_status + "');  ";
+					+ "','" + current_instances + "','" + license_status + "', '');  ";
 			stmt.executeUpdate(sql);
 			stmt.close();
 			c.commit();
