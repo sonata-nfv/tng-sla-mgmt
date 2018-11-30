@@ -258,13 +258,22 @@ public class LicensingAPIs {
 
 	private boolean isStatusOK(String license_status, String license_type) {
 		boolean statusOK = false;	
-		if ((license_status == "inactive" || license_status == "active") && license_type == "public") {
+		if (license_status == "inactive"  && license_type == "public") {
 			statusOK = true;
 		}
-		if ((license_status == "inactive" || license_status == "active") && license_type == "trial") {
+		if (license_status == "active" && license_type == "public") {
 			statusOK = true;
 		}
-		if ((license_status == "bought" || license_status == "active")  && license_type == "private") {
+		if (license_status == "inactive"  && license_type == "trial") {
+			statusOK = true;
+		}
+		if (license_status == "active" && license_type == "trial") {
+			statusOK = true;
+		}
+		if (license_status == "bought"  && license_type == "private") {
+			statusOK = true;
+		}
+		if (license_status == "active" && license_type == "private") {
 			statusOK = true;
 		}
 		System.out.println("[*] Is status ok??? " + statusOK);
