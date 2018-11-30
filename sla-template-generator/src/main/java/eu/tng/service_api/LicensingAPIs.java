@@ -175,17 +175,27 @@ public class LicensingAPIs {
 				System.out.println("First instantiation for this customer");
 				JSONObject license_info_template = db_operations.getLicenseinfoTemplates(sla_uuid, ns_uuid);
 				String license_type = (String) license_info_template.get("license_type");
+				String license_status = (String) license_info_template.get("license_status");
+				String license_exp_date = (String) license_info_template.get("license_exp_date");
+				String license_period = (String) license_info_template.get("license_period");
+				String allowed_instances = (String) license_info_template.get("allowed_instances");
+
 				System.out.println("License Type ==> " + license_type);
 				if (license_type == "public") {
-					license_info_template.put("allowed_to_instantiate", "true");
+					license_info_response.put("allowed_to_instantiate", "true");
 				}
 				if (license_type == "trial") {
-					license_info_template.put("allowed_to_instantiate", "true");
+					license_info_response.put("allowed_to_instantiate", "true");
 				}
 				if (license_type == "private"){
-					license_info_template.put("allowed_to_instantiate", "false");
+					license_info_response.put("allowed_to_instantiate", "false");
 				}
-				license_info_response = new JSONObject(license_info_template);
+				
+				license_info_response.put("license_status", license_status);
+				license_info_response.put("license_type", license_type);
+				license_info_response.put("license_exp_date", license_exp_date);
+				license_info_response.put("license_period", license_period);
+				license_info_response.put("allowed_instances", allowed_instances);
 				
 				System.out.println("Response ==> " + license_info_response.toString());
 
