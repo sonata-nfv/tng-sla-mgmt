@@ -156,15 +156,13 @@ public class LicensingAPIs {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/status/{sla_uuid}/{cust_uuid}/{ns_uuid}")
-	public Response getAgreementsPerCustonmer(@PathParam("sla_uuid") String sla_uuid,
+	public Response getLicenseInfoPerCustomer(@PathParam("sla_uuid") String sla_uuid,
 			@PathParam("cust_uuid") String cust_uuid, @PathParam("ns_uuid") String ns_uuid) {
 
 		ResponseBuilder apiresponse = null;
 		db_operations dbo = new db_operations();
 		boolean connect = db_operations.connectPostgreSQL();
-		
-		JSONObject license_info_response = new JSONObject();
-		
+				
 		if (connect == true) {
 						
 			// check if this customer has already a license for this SLA
@@ -186,7 +184,8 @@ public class LicensingAPIs {
 				if (license_type == "private"){
 					license_info_template.put("allowed_to_instantiate", "false");
 				}
-				license_info_response = license_info_template;
+				JSONObject license_info_response = new JSONObject(license_info_template);
+				
 				System.out.println("Response ==> " + license_info_response.toString());
 
 			}			
