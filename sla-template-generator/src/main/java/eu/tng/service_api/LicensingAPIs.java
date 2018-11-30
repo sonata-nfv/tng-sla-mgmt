@@ -201,7 +201,8 @@ public class LicensingAPIs {
 				String license_type = (String) license_info_record.get("license_type");
 				String license_status = (String) license_info_record.get("license_status");
 				String license_allowed_instances = (String) license_info_record.get("allowed_instances");
-				String license_current_instances = (String) license_info_record.get("current_instances");
+				//String license_current_instances = (String) license_info_record.get("current_instances");
+				String license_current_instances = "1";
 				
 				System.out.println("DEBUG  LICENSE TYPE " + license_type);
 				System.out.println("DEBUG  LICENSE STATUS " +license_status);
