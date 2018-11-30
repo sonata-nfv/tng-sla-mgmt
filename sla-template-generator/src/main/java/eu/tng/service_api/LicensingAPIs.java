@@ -174,7 +174,6 @@ public class LicensingAPIs {
 			// if the customer does not have a license instance already - 1st instantiation
 			if (count_licenses == 0) {
 				System.out.println("First instantiation for this customer");
-				//JSONObject license_info = db_operations.selectAllRecords();
 				JSONObject license_info_template = db_operations.getLicenseinfoTemplates(sla_uuid, ns_uuid);
 				String license_type = (String) license_info_template.get("license_type");
 				System.out.println("License Type ==> " + license_type);
@@ -188,10 +187,18 @@ public class LicensingAPIs {
 					license_info_template.put("allowed_to_instantiate", "false");
 				}
 				System.out.println("Response ==> " + license_info_template.toString());
+				license_info_response = license_info_template;
 			}			
 			// if customer has already a license instance
 			else {
-				System.out.println("Not the first instantiation for this   ");        
+				System.out.println("Not the first instantiation for this");   
+				JSONObject license_info_record = db_operations.getLicenseInfo(sla_uuid, cust_uuid, ns_uuid);
+				String license_type = (String) license_info_record.get("license_type");
+				String license_status = (String) license_info_record.get("license_status");
+				String license_allowed_instances = (String) license_info_record.get("allowed_instances");
+				String license_current_instances = (String) license_info_record.get("current instances");
+				
+				allowedToInstantiate(license_status, license_type, license_allowed_instances, license_current_instances);
 			}	
 			
 			db_operations.closePostgreSQL();
@@ -201,7 +208,7 @@ public class LicensingAPIs {
 			String timestamps = timestamp.toString();
 			String type = "I";
 			String operation = "Get License Status";
-			String message = ("License status received");
+			String message = ("License status received");   
 			String status = "200";
 			logger.info(
 					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
@@ -226,14 +233,17 @@ public class LicensingAPIs {
 
 	}
 	
-	
-	
-
-	private String isInstantiationAllowed(String license_status, String license_type) {
-		String allowed_to_instantiate = "";   
+	private boolean allowedToInstantiate(String license_status, String license_type, String license_allowed_instances, String license_current_instances) {
+		boolean allowed_to_instantiate = false;   
 		
 		boolean statusOK = isStatusOK(license_status, license_type);
-		boolean instancesOK = isInstancesOK();
+		boolean instancesOK = isInstancesOK(license_allowed_instances, license_current_instances);
+		
+		if (statusOK && instancesOK) {
+			allowed_to_instantiate = true;
+		} else {
+			allowed_to_instantiate = false;
+		}
 		
 		return allowed_to_instantiate;
 	}
@@ -252,8 +262,15 @@ public class LicensingAPIs {
 		return statusOK;
 	}
 	
-	private boolean isInstancesOK() {
-		return false;
+	private boolean isInstancesOK(String license_allowed_instances, String license_current_instances) {
+		boolean instancesOK = false;
+		if (Integer.parseInt(license_allowed_instances) < Integer.parseInt(license_current_instances) ) {
+			instancesOK = true;
+		} 
+		else {
+			instancesOK = false;
+		}
+		return instancesOK;
 	}
 
 }
