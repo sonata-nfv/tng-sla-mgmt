@@ -1650,6 +1650,12 @@ public class db_operations {
 		return license_info;
 	}
 
+	/**
+	 * Count license records per customer
+	 * @param cust_uuid
+	 * @param sla_uuid
+	 * @return
+	 */
 	@SuppressWarnings("unchecked")
 	public static int countLicensePerCustSLA(String cust_uuid, String sla_uuid) {
 
@@ -1683,6 +1689,46 @@ public class db_operations {
 					type, timestamps, operation, message, status);
 		}
 		return count_licenses;
+
+	}
+	
+	public static boolean UpdateLicenseStatus(String sla_uuid, String ns_uuid, String cust_uuid, String license_status) {
+
+		String SQL = "UPDATE sla_licensing " + "SET license_status = ?" + "WHERE sla_uuid = ? AND ns_uuid=? AND cust_uuid=?";
+		boolean result = false;
+		try {
+			PreparedStatement pstmt = c.prepareStatement(SQL);
+			pstmt.setString(1, license_status);
+			pstmt.setString(2, sla_uuid);
+			pstmt.setString(3, ns_uuid);
+			pstmt.setString(3, cust_uuid);
+			pstmt.executeUpdate();
+			result = true;
+
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			String timestamps = timestamp.toString();
+			String type = "I";
+			String operation = "Updating SLA Licensing status";
+			String message = "License bought?" + result;
+			String status = "";
+			logger.info(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
+
+		} catch (SQLException e) {
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			String timestamps = timestamp.toString();
+			String type = "I";
+			String operation = "Updating SLA Licensing status";
+			String message = "Set status READY?" + result + " ==> " + e.getMessage();
+			String status = "";
+			logger.info(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
+		}
+		return result;
 
 	}
 

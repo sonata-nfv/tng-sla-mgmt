@@ -42,6 +42,7 @@ import java.util.List;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -180,7 +181,7 @@ public class LicensingAPIs {
 			logger.info(
 					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 					type, timestamps, operation, message, status);
-			
+
 			// if the customer does not have a license instance already - 1st instantiation
 			if (count_licenses == 0) {
 				// logging
@@ -268,7 +269,7 @@ public class LicensingAPIs {
 			logger.warn(
 					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 					type, timestamps, operation, message, status);
-			
+
 			JSONObject error = new JSONObject();
 			error.put("ERROR: ", "connecting to database");
 			apiresponse = Response.ok((Object) error);
@@ -291,6 +292,65 @@ public class LicensingAPIs {
 			allowed_to_instantiate = false;
 		}
 		return allowed_to_instantiate;
+	}
+
+	/**
+	 * api call in order to generate a sla template
+	 */
+	@SuppressWarnings("null")
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes("application/x-www-form-urlencoded")
+	@Path("/buy/{sla_uuid}/{cust_uuid}/{ns_uuid}")
+	@POST
+	public Response LicenseBought(final MultivaluedMap<String, String> formParams) {
+
+		ResponseBuilder apiresponse = null;
+
+		List<String> ns_uuid = formParams.get("ns_uuid");
+		List<String> sla_uuid = formParams.get("sla_uuid");
+		List<String> cust_uuid = formParams.get("cust_uuid");
+
+		db_operations dbo = new db_operations();
+		boolean connect = db_operations.connectPostgreSQL();
+		boolean update = db_operations.UpdateLicenseStatus(sla_uuid.get(0), ns_uuid.get(0), cust_uuid.get(0), "bought");
+		db_operations.closePostgreSQL();
+
+		if (update == true) {
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			String timestamps = timestamp.toString();
+			String type = "I";
+			String operation = "Updating Licensing status";
+			String message = ("Update License status? ==> " + update);
+			String status = "200";
+			logger.info(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
+
+			JSONObject success = new JSONObject();
+			success.put("Succes: ", "License status updated");
+			apiresponse = Response.ok((Object) success);
+			apiresponse.header("Content-Length", success.toJSONString().length());
+			return apiresponse.status(200).build();
+		} else {
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			String timestamps = timestamp.toString();
+			String type = "W";
+			String operation = "Updating Licensing status";
+			String message = ("Update License status? ==> " + update);
+			String status = "404";
+			logger.warn(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
+
+			JSONObject error = new JSONObject();
+			error.put("Error: ", "License status was not updated");
+			apiresponse = Response.ok((Object) error);
+			apiresponse.header("Content-Length", error.toJSONString().length());
+			return apiresponse.status(404).build();
+		}
+
 	}
 
 	private boolean isStatusOK(String license_status, String license_type) {
@@ -337,7 +397,7 @@ public class LicensingAPIs {
 		logger.info(
 				"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 				type, timestamps, operation, message, status);
-		
+
 		return instancesOK;
 	}
 
