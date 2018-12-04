@@ -242,7 +242,7 @@ public class db_operations {
 
 		return result;
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public static JSONObject getLicenseinfoTemplates(String sla_uuid, String ns_uuid) {
 
@@ -252,14 +252,15 @@ public class db_operations {
 		String license_exp_date = "";
 		String license_period = "";
 		String allowed_instances = "";
-		
+
 		Statement stmt = null;
 		JSONObject root = new JSONObject();
 
 		try {
 			c.setAutoCommit(false);
 			stmt = c.createStatement();
-			ResultSet rs = stmt.executeQuery("SELECT * FROM ns_template WHERE sla_uuid = '" + sla_uuid + "' AND ns_uuid='" + ns_uuid + "';");
+			ResultSet rs = stmt.executeQuery(
+					"SELECT * FROM ns_template WHERE sla_uuid = '" + sla_uuid + "' AND ns_uuid='" + ns_uuid + "';");
 
 			while (rs.next()) {
 				license_status = rs.getString("license_status");
@@ -1325,7 +1326,6 @@ public class db_operations {
 					String allowed_instances = rs.getString("allowed_instances");
 					String license_status = rs.getString("license_status");
 
-
 					JSONObject obj = new JSONObject();
 					obj.put("ns_uuid", ns_uuid);
 					obj.put("sla_uuid", sla_uuid);
@@ -1334,7 +1334,7 @@ public class db_operations {
 					obj.put("license_period", license_period);
 					obj.put("allowed_instances", allowed_instances);
 					obj.put("license_status", license_status);
-					
+
 					ns_template.add(obj);
 				}
 
@@ -1409,9 +1409,9 @@ public class db_operations {
 			stmt = c.createStatement();
 			String sql = "CREATE TABLE IF NOT EXISTS sla_licensing " + "(ID  SERIAL," + " NSI_UUID TEXT PRIMARY KEY, "
 					+ "SLA_UUID TEXT NOT NULL," + "NS_UUID TEXT NOT NULL," + "CUST_UUID TEXT NOT NULL,"
-					+ "CUST_EMAIL  TEXT NOT NULL," + "license_type  TEXT NOT NULL," + "license_exp_date  TEXT NOT NULL,"
-					+ "license_period  TEXT NOT NULL," + "allowed_instances  TEXT NOT NULL,"
-					+ "current_instances  TEXT NOT NULL," + "license_status  TEXT NOT NULL )";
+					+ "CUST_EMAIL  TEXT NOT NULL," + "license_type  TEXT NOT NULL," + "license_exp_date  TEXT,"
+					+ "license_period  TEXT," + "allowed_instances  TEXT NOT NULL,"
+					+ "current_instances  TEXT NOT NULL," + "license_status  TEXT," + "correlation_id TEXT)";
 			stmt.executeUpdate(sql);
 			stmt.close();
 			// logging
@@ -1517,15 +1517,15 @@ public class db_operations {
 	 */
 	public static void insertLicenseRecord(String sla_uuid, String ns_uuid, String nsi_uuid, String cust_uuid,
 			String cust_email, String license_type, String license_exp_date, String license_period,
-			String allowed_instances, String current_instances, String license_status) {
+			String allowed_instances, String current_instances, String license_status, String correlation_id) {
 
 		try {
 			c.setAutoCommit(false);
 			Statement stmt = c.createStatement();
-			String sql = "INSERT INTO sla_licensing  (sla_uuid, ns_uuid,nsi_uuid, cust_uuid, cust_email, license_type, license_exp_date, license_period, allowed_instances, current_instances, license_status) VALUES ('"
+			String sql = "INSERT INTO sla_licensing  (sla_uuid, ns_uuid,nsi_uuid, cust_uuid, cust_email, license_type, license_exp_date, license_period, allowed_instances, current_instances, license_status,correlation_id) VALUES ('"
 					+ sla_uuid + "', '" + ns_uuid + "', '" + nsi_uuid + "','" + cust_uuid + "', '" + cust_email + "' ,'"
 					+ license_type + "','" + license_exp_date + "','" + license_period + "','" + allowed_instances
-					+ "','" + current_instances + "','" + license_status + "');  ";
+					+ "','" + current_instances + "','" + license_status + "', '');  ";
 			stmt.executeUpdate(sql);
 			stmt.close();
 			c.commit();
@@ -1650,10 +1650,18 @@ public class db_operations {
 		return license_info;
 	}
 
+	/**
+	 * Count license records per customer
+	 * 
+	 * @param cust_uuid
+	 * @param sla_uuid
+	 * @return
+	 */
 	@SuppressWarnings("unchecked")
 	public static int countLicensePerCustSLA(String cust_uuid, String sla_uuid) {
 
-		String SQL = "SELECT count(*) FROM sla_licensing WHERE cust_uuid='"+cust_uuid+"' AND sla_uuid='"+sla_uuid+"'";
+		String SQL = "SELECT count(*) FROM sla_licensing WHERE cust_uuid='" + cust_uuid + "' AND sla_uuid='" + sla_uuid
+				+ "'";
 		int count_licenses = 0;
 		try {
 			stmt = c.createStatement();
@@ -1683,6 +1691,39 @@ public class db_operations {
 					type, timestamps, operation, message, status);
 		}
 		return count_licenses;
+
+	}
+
+	public static boolean UpdateLicenseStatus(String sla_uuid, String ns_uuid, String cust_uuid,
+			String license_status) {
+
+		Statement stmt = null;
+		boolean result = false;
+		try {
+			c.setAutoCommit(false);
+			stmt = c.createStatement();
+			String sql = "UPDATE sla_licensing SET license_status='" + license_status + "' WHERE sla_uuid='" + sla_uuid+ "' AND ns_uuid='" + ns_uuid + "' AND cust_uuid='"+cust_uuid+"';";
+			stmt.executeUpdate(sql);
+			c.commit();
+			stmt.close();
+			result = true;
+
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			String timestamps = timestamp.toString();
+			String type = "I";
+			String operation = "Updating SLA Licensing status";
+			String message = "License bought?" + result;
+			String status = "";
+			logger.info(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
+
+		} catch (Exception e) {
+
+		}
+
+		return result;
 
 	}
 

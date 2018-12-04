@@ -135,22 +135,22 @@ public class CreateTemplate {
 				guaranteeTerms.add(guaranteeArr.get(counter));
 			}
 			ns.put("guaranteeTerms", guaranteeTerms);
-			/** licences object **/
-			JSONObject licences = new JSONObject();
+			/** licenses object **/
+			JSONObject licenses = new JSONObject();
 			JSONObject service_based = new JSONObject();
 			service_based.put("service_licence_type", service_licence_type);
 			service_based.put("allowed_service_instances", allowed_service_instances);
 			service_based.put("service_licence_period", service_licence_period);
 			service_based.put("service_licence_expiration_date", service_licence_expiration_date);
-			licences.put("service_based", service_based);
-			root.put("licences", licences);
+			licenses.put("service_based", service_based);
+			root.put("licences", licenses);
 
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 			String timestamps = timestamp.toString();
 			String type = "D";
 			String operation = "Create SLA Template";
-			String message = "Licenses Object ==> " + licences.toString();
+			String message = "Licenses Object ==> " + licenses.toString();
 			String status = "";
 			logger.debug(
 					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
