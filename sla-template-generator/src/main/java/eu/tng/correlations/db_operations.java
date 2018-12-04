@@ -1694,7 +1694,7 @@ public class db_operations {
 	
 	public static boolean UpdateLicenseStatus(String sla_uuid, String ns_uuid, String cust_uuid, String license_status) {
 
-		String SQL = "UPDATE sla_licensing " + "SET license_status = ?" + "WHERE sla_uuid = ? AND ns_uuid=? AND cust_uuid=?";
+		String SQL = "UPDATE sla_licensing " + "SET license_status = ?" + "WHERE sla_uuid = ?, ns_uuid=?, cust_uuid=?";
 		boolean result = false;
 		try {
 			PreparedStatement pstmt = c.prepareStatement(SQL);
