@@ -295,12 +295,12 @@ public class LicensingAPIs {
 	}
 
 	/**
-	 * api call in order to generate a sla template
+	 * api for buying a private license
 	 */
 	@SuppressWarnings("null")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes("application/x-www-form-urlencoded")
-	@Path("/buy/{sla_uuid}/{cust_uuid}/{ns_uuid}")
+	@Path("/buy")
 	@POST
 	public Response LicenseBought(final MultivaluedMap<String, String> formParams) {
 
