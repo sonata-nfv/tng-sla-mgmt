@@ -309,10 +309,21 @@ public class LicensingAPIs {
 		List<String> ns_uuid = formParams.get("ns_uuid");
 		List<String> sla_uuid = formParams.get("sla_uuid");
 		List<String> cust_uuid = formParams.get("cust_uuid");
+		List<String> cust_email = formParams.get("cust_email");
 
 		db_operations.connectPostgreSQL();
+		db_operations.createTableLicensing();
+		
+		JSONObject LicenseinfoTemplate = db_operations.getLicenseinfoTemplates(sla_uuid.get(0), ns_uuid.get(0));
+		String license_type = (String) LicenseinfoTemplate.get("license_type");
+		String license_exp_date = (String) LicenseinfoTemplate.get("license_exp_date");
+		String license_period = (String) LicenseinfoTemplate.get("license_period");
+		String allowed_instances = (String) LicenseinfoTemplate.get("allowed_instances");
+		String current_instances = "0";
+		
+		db_operations.insertLicenseRecord(sla_uuid.get(0), ns_uuid.get(0), "", cust_uuid.get(0), cust_email.get(0), license_type, license_exp_date, license_period, allowed_instances, current_instances, "", "");
+		
 		boolean update = db_operations.UpdateLicenseStatus(sla_uuid.get(0), ns_uuid.get(0), cust_uuid.get(0), "bought");
-		System.out.println(update);
 		db_operations.closePostgreSQL();
 
 		if (update == true) {
