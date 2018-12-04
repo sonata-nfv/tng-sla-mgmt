@@ -1696,13 +1696,15 @@ public class db_operations {
 
 		String SQL = "UPDATE sla_licensing " + "SET license_status = ?" + "WHERE sla_uuid = ? AND ns_uuid=? AND cust_uuid=?";
 		boolean result = false;
+		
 		try {
-			PreparedStatement pstmt = c.prepareStatement(SQL);
-			pstmt.setString(1, license_status);
-			pstmt.setString(2, sla_uuid);
-			pstmt.setString(3, ns_uuid);
-			pstmt.setString(3, cust_uuid);
-			pstmt.executeUpdate();
+			c.setAutoCommit(false);
+			stmt = c.createStatement();
+			String sql = "UPDATE sla_licensing SET license_status='bought' WHERE sla_uuid='"+sla_uuid+"' AND ns_uuid='"+ns_uuid+"' AND cust_uuid='"+cust_uuid+"';";
+			System.out.println(sql);
+			stmt.executeUpdate(sql);
+			c.commit();
+			stmt.close();
 			result = true;
 
 			// logging
@@ -1716,7 +1718,7 @@ public class db_operations {
 					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 					type, timestamps, operation, message, status);
 
-		} catch (SQLException e) {
+		} catch (Exception e) {
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 			String timestamps = timestamp.toString();

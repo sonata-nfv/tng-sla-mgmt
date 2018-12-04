@@ -310,9 +310,9 @@ public class LicensingAPIs {
 		List<String> sla_uuid = formParams.get("sla_uuid");
 		List<String> cust_uuid = formParams.get("cust_uuid");
 
-		db_operations dbo = new db_operations();
-		boolean connect = db_operations.connectPostgreSQL();
+		db_operations.connectPostgreSQL();
 		boolean update = db_operations.UpdateLicenseStatus(sla_uuid.get(0), ns_uuid.get(0), cust_uuid.get(0), "bought");
+		System.out.println(update);
 		db_operations.closePostgreSQL();
 
 		if (update == true) {
