@@ -1702,7 +1702,7 @@ public class db_operations {
 		try {
 			c.setAutoCommit(false);
 			stmt = c.createStatement();
-			String sql = "UPDATE sla_licensing SET license_status='" + license_status + "' WHERE sla_uuid='" + sla_uuid+ "' AND ns_uuid='" + sla_uuid + "' AND cust_uuid='"+cust_uuid+"';";
+			String sql = "UPDATE sla_licensing SET license_status='" + license_status + "' WHERE sla_uuid='" + sla_uuid+ "' AND ns_uuid='" + ns_uuid + "' AND cust_uuid='"+cust_uuid+"';";
 			stmt.executeUpdate(sql);
 			c.commit();
 			stmt.close();
