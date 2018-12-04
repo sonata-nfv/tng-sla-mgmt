@@ -242,7 +242,7 @@ public class db_operations {
 
 		return result;
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public static JSONObject getLicenseinfoTemplates(String sla_uuid, String ns_uuid) {
 
@@ -252,14 +252,15 @@ public class db_operations {
 		String license_exp_date = "";
 		String license_period = "";
 		String allowed_instances = "";
-		
+
 		Statement stmt = null;
 		JSONObject root = new JSONObject();
 
 		try {
 			c.setAutoCommit(false);
 			stmt = c.createStatement();
-			ResultSet rs = stmt.executeQuery("SELECT * FROM ns_template WHERE sla_uuid = '" + sla_uuid + "' AND ns_uuid='" + ns_uuid + "';");
+			ResultSet rs = stmt.executeQuery(
+					"SELECT * FROM ns_template WHERE sla_uuid = '" + sla_uuid + "' AND ns_uuid='" + ns_uuid + "';");
 
 			while (rs.next()) {
 				license_status = rs.getString("license_status");
@@ -1325,7 +1326,6 @@ public class db_operations {
 					String allowed_instances = rs.getString("allowed_instances");
 					String license_status = rs.getString("license_status");
 
-
 					JSONObject obj = new JSONObject();
 					obj.put("ns_uuid", ns_uuid);
 					obj.put("sla_uuid", sla_uuid);
@@ -1334,7 +1334,7 @@ public class db_operations {
 					obj.put("license_period", license_period);
 					obj.put("allowed_instances", allowed_instances);
 					obj.put("license_status", license_status);
-					
+
 					ns_template.add(obj);
 				}
 
@@ -1411,7 +1411,7 @@ public class db_operations {
 					+ "SLA_UUID TEXT NOT NULL," + "NS_UUID TEXT NOT NULL," + "CUST_UUID TEXT NOT NULL,"
 					+ "CUST_EMAIL  TEXT NOT NULL," + "license_type  TEXT NOT NULL," + "license_exp_date  TEXT,"
 					+ "license_period  TEXT," + "allowed_instances  TEXT NOT NULL,"
-					+ "current_instances  TEXT NOT NULL," + "license_status  TEXT," +"correlation_id TEXT)";
+					+ "current_instances  TEXT NOT NULL," + "license_status  TEXT," + "correlation_id TEXT)";
 			stmt.executeUpdate(sql);
 			stmt.close();
 			// logging
@@ -1652,6 +1652,7 @@ public class db_operations {
 
 	/**
 	 * Count license records per customer
+	 * 
 	 * @param cust_uuid
 	 * @param sla_uuid
 	 * @return
@@ -1659,7 +1660,8 @@ public class db_operations {
 	@SuppressWarnings("unchecked")
 	public static int countLicensePerCustSLA(String cust_uuid, String sla_uuid) {
 
-		String SQL = "SELECT count(*) FROM sla_licensing WHERE cust_uuid='"+cust_uuid+"' AND sla_uuid='"+sla_uuid+"'";
+		String SQL = "SELECT count(*) FROM sla_licensing WHERE cust_uuid='" + cust_uuid + "' AND sla_uuid='" + sla_uuid
+				+ "'";
 		int count_licenses = 0;
 		try {
 			stmt = c.createStatement();
@@ -1691,18 +1693,20 @@ public class db_operations {
 		return count_licenses;
 
 	}
-	
-	public static boolean UpdateLicenseStatus(String sla_uuid, String ns_uuid, String cust_uuid, String license_status) {
 
-		String SQL = "UPDATE sla_licensing " + "SET license_status = ?" + "WHERE sla_uuid = ?, ns_uuid=?, cust_uuid=?";
+	public static boolean UpdateLicenseStatus(String sla_uuid, String ns_uuid, String cust_uuid,
+			String license_status) {
+
+		Statement stmt = null;
 		boolean result = false;
 		try {
-			PreparedStatement pstmt = c.prepareStatement(SQL);
-			pstmt.setString(1, license_status);
-			pstmt.setString(2, sla_uuid);
-			pstmt.setString(3, ns_uuid);
-			pstmt.setString(4, cust_uuid);
-			pstmt.executeUpdate();
+			c.setAutoCommit(false);
+			stmt = c.createStatement();
+			String sql = "UPDATE sla_licensing SET license_status='" + license_status + "' WHERE sla_uuid='" + sla_uuid
+					+ "';";
+			stmt.executeUpdate(sql);
+			c.commit();
+			stmt.close();
 			result = true;
 
 			// logging
@@ -1716,18 +1720,10 @@ public class db_operations {
 					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 					type, timestamps, operation, message, status);
 
-		} catch (SQLException e) {
-			// logging
-			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-			String timestamps = timestamp.toString();
-			String type = "I";
-			String operation = "Updating SLA Licensing status";
-			String message = "Set status READY?" + result + " ==> " + e.getMessage();
-			String status = "";
-			logger.info(
-					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
-					type, timestamps, operation, message, status);
+		} catch (Exception e) {
+
 		}
+
 		return result;
 
 	}
