@@ -127,6 +127,7 @@ public class cust_sla_corr {
 
 								}
 							}
+							System.out.println("SLA DETAILS ==> " + details.toString());
 						}
 
 					} catch (ParseException e) {
