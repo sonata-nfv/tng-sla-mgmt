@@ -60,8 +60,11 @@ public class GetGuarantee_Test {
 		guarantees.add("g7");
 		guarantees.add("g8");
 		guarantees.add("g9");
+		guarantees.add("g10");
+		guarantees.add("g11");
+		guarantees.add("g12");
 
-		assertTrue(gt.getGuarantee(guarantees).size() == 9);
+		assertTrue(gt.getGuarantee(guarantees).size() == 12);
 
 	}
 
