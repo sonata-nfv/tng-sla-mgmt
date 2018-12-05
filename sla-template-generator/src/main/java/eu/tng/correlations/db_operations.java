@@ -1407,7 +1407,7 @@ public class db_operations {
 	public static void createTableLicensing() {
 		try {
 			stmt = c.createStatement();
-			String sql = "CREATE TABLE IF NOT EXISTS sla_licensing " + "(ID  SERIAL," + " NSI_UUID TEXT PRIMARY KEY, "
+			String sql = "CREATE TABLE IF NOT EXISTS sla_licensing " + "(ID  SERIAL," + " NSI_UUID TEXT, "
 					+ "SLA_UUID TEXT NOT NULL," + "NS_UUID TEXT NOT NULL," + "CUST_UUID TEXT NOT NULL,"
 					+ "CUST_EMAIL  TEXT NOT NULL," + "license_type  TEXT NOT NULL," + "license_exp_date  TEXT,"
 					+ "license_period  TEXT," + "allowed_instances  TEXT NOT NULL,"
