@@ -145,10 +145,6 @@ public class MgmtAPIs {
 		try {
 			File testf = new File(this.getClass().getResource("/slos_list_Y2.json").toURI());
 			jsonObject = (JSONObject) parser.parse(new FileReader(testf));
-			System.out.println(jsonObject.toJSONString().length());
-
-			apiresponse = Response.ok(jsonObject);
-			apiresponse.header("Content-Length", jsonObject.toJSONString().length());
 
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
@@ -160,7 +156,10 @@ public class MgmtAPIs {
 			logger.info(
 					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 					type, timestamps, operation, message, status);
-
+			
+			String guarantees = jsonObject.toString();
+			apiresponse = Response.ok((Object) guarantees);
+			apiresponse.header("Content-Length", guarantees.length());
 			return apiresponse.status(200).build();
 
 		} catch (Exception e) {
