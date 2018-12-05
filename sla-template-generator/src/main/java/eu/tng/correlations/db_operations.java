@@ -1525,7 +1525,7 @@ public class db_operations {
 			String sql = "INSERT INTO sla_licensing  (sla_uuid, ns_uuid,nsi_uuid, cust_uuid, cust_email, license_type, license_exp_date, license_period, allowed_instances, current_instances, license_status,correlation_id) VALUES ('"
 					+ sla_uuid + "', '" + ns_uuid + "', '" + nsi_uuid + "','" + cust_uuid + "', '" + cust_email + "' ,'"
 					+ license_type + "','" + license_exp_date + "','" + license_period + "','" + allowed_instances
-					+ "','" + current_instances + "','" + license_status + "', '');  ";
+					+ "','" + current_instances + "','" + license_status + "', '"+correlation_id+"');  ";
 			stmt.executeUpdate(sql);
 			stmt.close();
 			c.commit();

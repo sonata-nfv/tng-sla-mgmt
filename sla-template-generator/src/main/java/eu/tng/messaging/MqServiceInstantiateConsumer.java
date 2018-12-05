@@ -294,7 +294,13 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 									cust_email, inst_status, correlation_id);
 							
 							// CREATE LICENSE RECORD IN THE SLA_LICENSING TABLE
-							//get licensing information					
+							//get licensing information		
+							String license_type = (String) SLADetails.get(2);
+							String license_exp_date = (String) SLADetails.get(4);
+							String license_period = (String) SLADetails.get(3);
+							String allowed_instances = (String) SLADetails.get(5);
+							String current_instances = "0";
+							
 							/*
 							org.json.simple.JSONObject LicenseinfoTemplate = db_operations.getLicenseinfoTemplates(sla_uuid, ns_uuid);
 							String license_type = (String) LicenseinfoTemplate.get("license_type");
@@ -303,16 +309,20 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 							String allowed_instances = (String) LicenseinfoTemplate.get("allowed_instances");
 							String current_instances = "0";
 							*/
+							
+							/*
 							String license_type = "license_type_test";
 							String license_exp_date = "license_exp_date_test";
 							String license_period = "license_period_test";
 							String allowed_instances = "allowed_instances_test";
 							String current_instances = "0";
+							*/
 								
 							db_operations.connectPostgreSQL();
 							if (license_type.equals("private")) {								
 							} 
 							else {
+								System.out.println("Correlation id ==> " + correlation_id);
 								db_operations.createTableLicensing();
 								db_operations.insertLicenseRecord(sla_uuid, ns_uuid, "", cust_uuid, cust_email, license_type, license_exp_date, license_period, allowed_instances, current_instances, "inactive", correlation_id);
 							}
