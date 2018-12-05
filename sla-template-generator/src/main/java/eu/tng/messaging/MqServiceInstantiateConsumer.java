@@ -220,12 +220,15 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 								db_operations dbo = new db_operations();
 								db_operations.connectPostgreSQL();
 								db_operations.UpdateRecordAgreement(status, correlation_id, nsi_id);
-								db_operations.closePostgreSQL();
+								
 															
 								// create monitoring rules to check sla violations
 								MonitoringRules mr = new MonitoringRules();
-								MonitoringRules.createMonitroingRules(String.valueOf(sla_id), vnfr_id_list, vc_id_list,
-										nsi_id);
+								MonitoringRules.createMonitroingRules(String.valueOf(sla_id), vnfr_id_list, vc_id_list,nsi_id);
+								
+								// UPDATE LIcense record with NSI - to create license instance
+								db_operations.CreateLicenseInstance(correlation_id, "active", nsi_id);
+								db_operations.closePostgreSQL();
 							} else {
 								// logging
 								Timestamp timestamp3 = new Timestamp(System.currentTimeMillis());
@@ -280,27 +283,34 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 						// if sla exists create record in database
 						if (sla_uuid != null && !sla_uuid.isEmpty()) {
 
+							// CREATE AGREEMENT RECORD IN THE CUST_SLA TABLE
 							cust_sla_corr cust_sla = new cust_sla_corr();
 							@SuppressWarnings("unchecked")
 							ArrayList<String> SLADetails = cust_sla.getSLAdetails(sla_uuid);
 							sla_name = (String) SLADetails.get(1);
 							sla_status = (String) SLADetails.get(0);
-							String inst_status = "PENDING";
-							
-							String license_type = (String) SLADetails.get(2);
-							String license_period = (String) SLADetails.get(3);
-							String license_exp_date = (String) SLADetails.get(4);
-							String allowed_instances = (String) SLADetails.get(5);
-							
-							// create agreement record
+							String inst_status = "PENDING";						
 							cust_sla_corr.createCustSlaCorr(sla_uuid, sla_name, sla_status, ns_uuid, ns_name, cust_uuid,
 									cust_email, inst_status, correlation_id);
 							
-							// Create license record
+							// CREATE LICENSE RECORD IN THE SLA_LICENSING TABLE
+							//get licensing information						
+							org.json.simple.JSONObject LicenseinfoTemplate = db_operations.getLicenseinfoTemplates(sla_uuid, ns_uuid);
+							String license_type = (String) LicenseinfoTemplate.get("license_type");
+							String license_exp_date = (String) LicenseinfoTemplate.get("license_exp_date");
+							String license_period = (String) LicenseinfoTemplate.get("license_period");
+							String allowed_instances = (String) LicenseinfoTemplate.get("allowed_instances");
+							String current_instances = "0";
+								
 							db_operations.connectPostgreSQL();
-							db_operations.createTableLicensing();
-							db_operations.insertLicenseRecord(sla_uuid, ns_uuid, "", cust_uuid, cust_email, license_type, license_exp_date, license_period, allowed_instances, "0", "inactive", correlation_id);
-
+							if (license_type.equals("private")) {								
+							} 
+							else {
+								db_operations.createTableLicensing();
+								db_operations.insertLicenseRecord(sla_uuid, ns_uuid, "", cust_uuid, cust_email, license_type, license_exp_date, license_period, allowed_instances, current_instances, "inactive", correlation_id);
+							}
+							db_operations.closePostgreSQL();
+				
 						}
 
 					}
