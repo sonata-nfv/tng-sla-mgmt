@@ -295,7 +295,8 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 							
 							// CREATE LICENSE RECORD IN THE SLA_LICENSING TABLE
 							//get licensing information		
-							
+							db_operations.connectPostgreSQL();
+
 							org.json.simple.JSONObject LicenseinfoTemplate = db_operations.getLicenseinfoTemplates(sla_uuid, ns_uuid);
 							String license_type = (String) LicenseinfoTemplate.get("license_type");
 							String license_exp_date = (String) LicenseinfoTemplate.get("license_exp_date");
@@ -309,7 +310,6 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 							System.out.println("allowed_instances ==> " + allowed_instances);
 							System.out.println("current_instances ==> " + current_instances);
 								
-							db_operations.connectPostgreSQL();
 							if (license_type.equals("private")) {								
 							} 
 							else {
