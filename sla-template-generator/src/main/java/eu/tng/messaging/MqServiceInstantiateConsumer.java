@@ -305,7 +305,7 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 							String allowed_instances = (String) LicenseinfoTemplate.get("allowed_instances");
 							
 							//check if there are already instances for this ns_uuid - cust_uuid
-							int active_licenses = db_operations.countActiveLicensePerCustSLA(cust_uuid, sla_uuid, "active");
+							Integer active_licenses = db_operations.countActiveLicensePerCustSLA(cust_uuid, sla_uuid, "active");
 							String current_instances = String.valueOf(active_licenses+1);
 							System.out.println("Current instances ==> " + current_instances);
 							
@@ -319,12 +319,15 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 							if (license_type.equals("private")) {	
 								// in this stage the license status should be "bought"
 								// an einai to prwto instantiation enos prwtou private license
-								if (toString().valueOf(active_licenses).equals("1")) {
+								if (active_licenses == 1) {
+									System.out.println("Mpike mesa sto if aactive l einai 1");
+
 									db_operations.UpdateLicenseCorrelationID(sla_uuid, ns_uuid, cust_uuid, correlation_id);			
 									db_operations.UpdateLicenseCurrentInstances(sla_uuid, ns_uuid, cust_uuid, current_instances);
 								} 
 								// an den einai to prwto instantiation enos prwtou private license - prepei n prostethei epipleon instance mesa sto pinaka kai na ginoun ola t arecords update me right current instances
 								else {
+									System.out.println("DEN Mpike mesa sto if active l einai 1");
 									db_operations.insertLicenseRecord(sla_uuid, ns_uuid, "", cust_uuid, cust_email, license_type, license_exp_date, license_period, allowed_instances, current_instances, "bought", correlation_id);
 								}								
 								
