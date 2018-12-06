@@ -1698,8 +1698,7 @@ public class db_operations {
 	@SuppressWarnings("unchecked")
 	public static int countLicensePerCustSLA(String cust_uuid, String sla_uuid) {
 
-		String SQL = "SELECT count(*) FROM sla_licensing WHERE cust_uuid='" + cust_uuid + "' AND sla_uuid='" + sla_uuid
-				+ "'";
+		String SQL = "SELECT count(*) FROM sla_licensing WHERE cust_uuid='" + cust_uuid + "' AND sla_uuid='" + sla_uuid+ "'";
 		int count_licenses = 0;
 		try {
 			stmt = c.createStatement();
@@ -1804,6 +1803,90 @@ public class db_operations {
 			String timestamps = timestamp.toString();
 			String type = "W";
 			String operation = "Updating SLA Licensing correlation id";
+			String message = e.getMessage();
+			String status = "";
+			logger.warn(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
+		}
+		return result;
+
+	}
+	
+	public static int countActiveLicensePerCustSLA(String cust_uuid, String sla_uuid, String license_status) {
+
+		String SQL = "SELECT count(*) FROM sla_licensing WHERE cust_uuid='" + cust_uuid + "' AND sla_uuid='" + sla_uuid+ "' AND license_status='active'";
+		int count_active_licenses = 0;
+		try {
+			stmt = c.createStatement();
+			ResultSet rs = stmt.executeQuery(SQL);
+			rs.next();
+			count_active_licenses = rs.getInt(1);
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			String timestamps = timestamp.toString();
+			String type = "I";
+			String operation = "Counting active Licenses per customer and sla";
+			String message = ("Number of Licenses  ==> " + count_active_licenses);
+			String status = "";
+			logger.info(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
+		} catch (SQLException e) {
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			String timestamps = timestamp.toString();
+			String type = "W";
+			String operation = "Counting Active Licenses";
+			String message = ("Error counting the Licenses ==> " + e.getMessage());
+			String status = "";
+			logger.warn(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
+		}
+		return count_active_licenses;
+
+	}
+	
+	/**
+	 * 
+	 * @param sla_uuid
+	 * @param ns_uuid
+	 * @param cust_uuid
+	 * @param current_instances
+	 * @return
+	 */
+	public static boolean UpdateLicenseCurrentInstances(String sla_uuid, String ns_uuid, String cust_uuid, String current_instances) {
+
+		Statement stmt = null;
+		boolean result = false;
+		try {
+			c.setAutoCommit(false);
+			stmt = c.createStatement();
+			String sql = "UPDATE sla_licensing SET current_instances='" + current_instances + "' WHERE sla_uuid='" + sla_uuid
+					+ "' AND ns_uuid='" + ns_uuid + "' AND cust_uuid='" + cust_uuid + "';";
+			stmt.executeUpdate(sql);
+			c.commit();
+			stmt.close();
+			result = true;
+
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			String timestamps = timestamp.toString();
+			String type = "I";
+			String operation = "Updating SLA Licensing current instances";
+			String message = "License current instances updated?" + result + " The current instances for NS_UUID="+ns_uuid+" and CUST_UUID="+cust_uuid+" are="+current_instances;
+			String status = "";
+			logger.info(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
+
+		} catch (Exception e) {
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			String timestamps = timestamp.toString();
+			String type = "W";
+			String operation = "Updating SLA Licensing current instances";
 			String message = e.getMessage();
 			String status = "";
 			logger.warn(

@@ -199,7 +199,7 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 										System.out.println("vdu reference ==> " + vdu_reference);
 										// if vnfr is the haproxy function - continue to the monitoring creation
 										// metrics
-										if (vdu_reference.startsWith("haproxy") == true || vdu_reference.startsWith("ns-squid") == true) {
+										if (vdu_reference.startsWith("haproxy") == true) {
 											// get vnfr id
 											String vnfr_id = (String) ((JSONObject) vnfrs.get(i)).get("id");
 											vnfr_id_list.add(vnfr_id);
@@ -224,7 +224,8 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 								//MonitoringRules.createMonitroingRules(String.valueOf(sla_id), vnfr_id_list, vc_id_list,nsi_id);
 								
 								// UPDATE LIcense record with NSI - to create license instance
-								db_operations.CreateLicenseInstance(correlation_id, "active", nsi_id);
+								//check if there are already instances for this ns_uuid - cust_uuid
+								db_operations.CreateLicenseInstance(correlation_id, "active", nsi_id);						
 								db_operations.closePostgreSQL();
 								
 							} 
@@ -302,7 +303,11 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 							String license_exp_date = (String) LicenseinfoTemplate.get("license_exp_date");
 							String license_period = (String) LicenseinfoTemplate.get("license_period");
 							String allowed_instances = (String) LicenseinfoTemplate.get("allowed_instances");
-							String current_instances = "0";
+							
+							//check if there are already instances for this ns_uuid - cust_uuid
+							int active_licenses = db_operations.countActiveLicensePerCustSLA(cust_uuid, sla_uuid, "active");
+							String current_instances = String.valueOf(active_licenses);
+							System.out.println("Current instances ==> " + current_instances);
 							
 							System.out.println("license_type ==> " + license_type);
 							System.out.println("license_exp_date ==> " + license_exp_date);
@@ -311,13 +316,14 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 							System.out.println("current_instances ==> " + current_instances);
 								
 							if (license_type.equals("private")) {	
-								db_operations.createTableLicensing();
 								// in this stage the license status should be "bought"
-								db_operations.UpdateLicenseCorrelationID(sla_uuid, ns_uuid, cust_uuid, correlation_id);
+								db_operations.UpdateLicenseCorrelationID(sla_uuid, ns_uuid, cust_uuid, correlation_id);			
+								db_operations.UpdateLicenseCurrentInstances(sla_uuid, ns_uuid, cust_uuid, (current_instances+1));
+								
 							} 
 							else {
 								db_operations.createTableLicensing();
-								db_operations.insertLicenseRecord(sla_uuid, ns_uuid, "", cust_uuid, cust_email, license_type, license_exp_date, license_period, allowed_instances, current_instances, "inactive", correlation_id);
+								db_operations.insertLicenseRecord(sla_uuid, ns_uuid, "", cust_uuid, cust_email, license_type, license_exp_date, license_period, allowed_instances, (current_instances+1), "inactive", correlation_id);
 							}
 							db_operations.closePostgreSQL();
 				
