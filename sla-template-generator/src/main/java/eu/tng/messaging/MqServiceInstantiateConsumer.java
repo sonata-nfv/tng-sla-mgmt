@@ -171,7 +171,7 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 					/** if message coming from the MANO - contain status key **/
 					if (jsonObjectMessage.has("status")) {
 						status = (String) jsonObjectMessage.get("status");
-						
+
 	    				// logging
 						Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 						String timestamps = timestamp.toString();
@@ -193,23 +193,20 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 								JSONArray vnfrs = (JSONArray) jsonObjectMessage.getJSONArray("vnfrs");
 								for (int i = 0; i < (vnfrs).length(); i++) {
 									// Get vdus_reference foreach vnfr
-									JSONArray vdus = (JSONArray) ((JSONObject) vnfrs.getJSONObject(i))
-											.getJSONArray("virtual_deployment_units");
+									JSONArray vdus = (JSONArray) ((JSONObject) vnfrs.getJSONObject(i)).getJSONArray("virtual_deployment_units");
 									for (int j = 0; j < vdus.length(); j++) {
-										String vdu_reference = (String) ((JSONObject) vdus.getJSONObject(j))
-												.get("vdu_reference");
+										String vdu_reference = (String) ((JSONObject) vdus.getJSONObject(j)).get("vdu_reference");
+										System.out.println("vdu reference ==> " + vdu_reference);
 										// if vnfr is the haproxy function - continue to the monitoring creation
 										// metrics
-										if (vdu_reference.startsWith("haproxy") == true) {
+										if (vdu_reference.startsWith("haproxy") == true || vdu_reference.startsWith("ns-squid") == true) {
 											// get vnfr id
 											String vnfr_id = (String) ((JSONObject) vnfrs.get(i)).get("id");
 											vnfr_id_list.add(vnfr_id);
 											// get vdu id (vc_id)
-											JSONArray vnfc_instance = (JSONArray) ((JSONObject) vdus.getJSONObject(j))
-													.getJSONArray("vnfc_instance");
+											JSONArray vnfc_instance = (JSONArray) ((JSONObject) vdus.getJSONObject(j)).getJSONArray("vnfc_instance");
 											for (int k = 0; k < vnfc_instance.length(); k++) {
-												String vc_id = (String) ((JSONObject) vnfc_instance.getJSONObject(j))
-														.get("vc_id");
+												String vc_id = (String) ((JSONObject) vnfc_instance.getJSONObject(j)).get("vc_id");
 												vc_id_list.add(vc_id);
 											}
 										}
@@ -229,7 +226,10 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 								// UPDATE LIcense record with NSI - to create license instance
 								db_operations.CreateLicenseInstance(correlation_id, "active", nsi_id);
 								db_operations.closePostgreSQL();
-							} else {
+								
+							} 
+							else 
+							{
 								// logging
 								Timestamp timestamp3 = new Timestamp(System.currentTimeMillis());
 								String timestamps3 = timestamp1.toString();
@@ -254,7 +254,7 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 						String timestamps4 = timestamp4.toString();
 						String type4 = "I";
 						String operation4 = "RabbitMQ Listener";
-						String message4 = "[*] Message coming from Gatekeeper - Instantiation status= " + status;
+						String message4 = "[*] Message coming from Gatekeeper";
 						String status4 = "";
 						logger.info(
 								"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
