@@ -1860,16 +1860,27 @@ public class db_operations {
 
 		Statement stmt = null;
 		boolean result = false;
+		//String sql = "UPDATE sla_licensing SET current_instances='" + current_instances + "' WHERE sla_uuid='" + sla_uuid
+		//		+ "' AND ns_uuid='" + ns_uuid + "' AND cust_uuid='" + cust_uuid + "';";
+		String sql = "UPDATE sla_licensing SET current_instances= ? WHERE sla_uuid= ? AND ns_uuid= ? AND cust_uuid= ? ;";
 		try {
-			c.setAutoCommit(false);
-			stmt = c.createStatement();
-			String sql = "UPDATE sla_licensing SET current_instances='" + current_instances + "' WHERE sla_uuid='" + sla_uuid
-					+ "' AND ns_uuid='" + ns_uuid + "' AND cust_uuid='" + cust_uuid + "';";
-			stmt.executeUpdate(sql);
-			c.commit();
-			stmt.close();
-			result = true;
+//			c.setAutoCommit(false);
+//			stmt = c.createStatement();
+//			ResultSet rs = stmt.executeQuery(sql);
+//			c.commit();
+//			stmt.close();
+//			result = true;
+			
+			PreparedStatement pstmt = c.prepareStatement(sql);
+			pstmt.setString(1, current_instances);
+			pstmt.setString(2, sla_uuid);
+			pstmt.setString(3, ns_uuid);
+			pstmt.setString(4, cust_uuid);
 
+			pstmt.executeUpdate();
+			result = true;
+			
+		
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 			String timestamps = timestamp.toString();
