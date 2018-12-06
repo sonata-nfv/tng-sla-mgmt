@@ -156,7 +156,7 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 					jsonObjectMessage = new JSONObject(map);
 
 					correlation_id = (String) properties.getCorrelationId();
-				
+
 					// logging
 					Timestamp timestamp1 = new Timestamp(System.currentTimeMillis());
 					String timestamps1 = timestamp1.toString();
@@ -172,12 +172,12 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 					if (jsonObjectMessage.has("status")) {
 						status = (String) jsonObjectMessage.get("status");
 
-	    				// logging
+						// logging
 						Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 						String timestamps = timestamp.toString();
 						String type = "I";
 						String operation = "RabbitMQ Listener - NS Instantiation";
-						String message2 = "[*] Message coming from MANO - STATUS= " +status ;
+						String message2 = "[*] Message coming from MANO - STATUS= " + status;
 						String status2 = "";
 						logger.info(
 								"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
@@ -193,10 +193,11 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 								JSONArray vnfrs = (JSONArray) jsonObjectMessage.getJSONArray("vnfrs");
 								for (int i = 0; i < (vnfrs).length(); i++) {
 									// Get vdus_reference foreach vnfr
-									JSONArray vdus = (JSONArray) ((JSONObject) vnfrs.getJSONObject(i)).getJSONArray("virtual_deployment_units");
+									JSONArray vdus = (JSONArray) ((JSONObject) vnfrs.getJSONObject(i))
+											.getJSONArray("virtual_deployment_units");
 									for (int j = 0; j < vdus.length(); j++) {
-										String vdu_reference = (String) ((JSONObject) vdus.getJSONObject(j)).get("vdu_reference");
-										System.out.println("vdu reference ==> " + vdu_reference);
+										String vdu_reference = (String) ((JSONObject) vdus.getJSONObject(j))
+												.get("vdu_reference");
 										// if vnfr is the haproxy function - continue to the monitoring creation
 										// metrics
 										if (vdu_reference.startsWith("haproxy") == true) {
@@ -204,9 +205,11 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 											String vnfr_id = (String) ((JSONObject) vnfrs.get(i)).get("id");
 											vnfr_id_list.add(vnfr_id);
 											// get vdu id (vc_id)
-											JSONArray vnfc_instance = (JSONArray) ((JSONObject) vdus.getJSONObject(j)).getJSONArray("vnfc_instance");
+											JSONArray vnfc_instance = (JSONArray) ((JSONObject) vdus.getJSONObject(j))
+													.getJSONArray("vnfc_instance");
 											for (int k = 0; k < vnfc_instance.length(); k++) {
-												String vc_id = (String) ((JSONObject) vnfc_instance.getJSONObject(j)).get("vc_id");
+												String vc_id = (String) ((JSONObject) vnfc_instance.getJSONObject(j))
+														.get("vc_id");
 												vc_id_list.add(vc_id);
 											}
 										}
@@ -217,20 +220,18 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 								db_operations dbo = new db_operations();
 								db_operations.connectPostgreSQL();
 								db_operations.UpdateRecordAgreement(status, correlation_id, nsi_id);
-								
-															
+
 								// create monitoring rules to check sla violations
-								//MonitoringRules mr = new MonitoringRules();
-								//MonitoringRules.createMonitroingRules(String.valueOf(sla_id), vnfr_id_list, vc_id_list,nsi_id);
-								
+								// MonitoringRules mr = new MonitoringRules();
+								// MonitoringRules.createMonitroingRules(String.valueOf(sla_id), vnfr_id_list,
+								// vc_id_list,nsi_id);
+
 								// UPDATE LIcense record with NSI - to create license instance
-								//check if there are already instances for this ns_uuid - cust_uuid
-								db_operations.CreateLicenseInstance(correlation_id, "active", nsi_id);						
+								// check if there are already instances for this ns_uuid - cust_uuid
+								db_operations.CreateLicenseInstance(correlation_id, "active", nsi_id);
 								db_operations.closePostgreSQL();
-								
-							} 
-							else 
-							{
+
+							} else {
 								// logging
 								Timestamp timestamp3 = new Timestamp(System.currentTimeMillis());
 								String timestamps3 = timestamp1.toString();
@@ -290,62 +291,72 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 							ArrayList<String> SLADetails = cust_sla.getSLAdetails(sla_uuid);
 							sla_name = (String) SLADetails.get(1);
 							sla_status = (String) SLADetails.get(0);
-							String inst_status = "PENDING";						
+							String inst_status = "PENDING";
 							cust_sla_corr.createCustSlaCorr(sla_uuid, sla_name, sla_status, ns_uuid, ns_name, cust_uuid,
 									cust_email, inst_status, correlation_id);
-							
+
 							// CREATE LICENSE RECORD IN THE SLA_LICENSING TABLE
-							//get licensing information		
+							// get licensing information
 							db_operations.connectPostgreSQL();
 
-							org.json.simple.JSONObject LicenseinfoTemplate = db_operations.getLicenseinfoTemplates(sla_uuid, ns_uuid);
+							org.json.simple.JSONObject LicenseinfoTemplate = db_operations
+									.getLicenseinfoTemplates(sla_uuid, ns_uuid);
 							String license_type = (String) LicenseinfoTemplate.get("license_type");
 							String license_exp_date = (String) LicenseinfoTemplate.get("license_exp_date");
 							String license_period = (String) LicenseinfoTemplate.get("license_period");
 							String allowed_instances = (String) LicenseinfoTemplate.get("allowed_instances");
-							
-							//check if there are already instances for this ns_uuid - cust_uuid
-							int active_licenses = db_operations.countActiveLicensePerCustSLA(cust_uuid, sla_uuid, "active");
-							String current_instances = String.valueOf(active_licenses+1);
-							System.out.println("active_licenses ==> " + active_licenses);
-							
-							System.out.println("license_type ==> " + license_type);
-							System.out.println("license_exp_date ==> " + license_exp_date);
-							System.out.println("license_period ==> " + license_period);
-							System.out.println("allowed_instances ==> " + allowed_instances);
-							System.out.println("current_instances ==> " + current_instances);
-								
+
+							// check if there are already instances for this ns_uuid - cust_uuid
+							int active_licenses = db_operations.countActiveLicensePerCustSLA(cust_uuid, sla_uuid,
+									"active");
+							String current_instances = String.valueOf(active_licenses + 1);
+
+							// logging
+							timestamp1 = new Timestamp(System.currentTimeMillis());
+							timestamps1 = timestamp1.toString();
+							type1 = "I";
+							operation1 = "Instantiation with License";
+							message1 = "[*] Active licenses for this customer and ns ==> " + active_licenses;
+							status1 = "";
+							logger.info(
+									"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+									type1, timestamps1, operation1, message1, status1);
+
 							// private licenses
-							if (license_type.equals("private")) {	
+							if (license_type.equals("private")) {
 								// in this stage the license status should be "bought"
 								// an einai to prwto instantiation enos prwtou private license
 								if (active_licenses == 0) {
-									db_operations.UpdateLicenseCorrelationID(sla_uuid, ns_uuid, cust_uuid, correlation_id);			
-									db_operations.UpdateLicenseCurrentInstances(sla_uuid, ns_uuid, cust_uuid, current_instances);
-								} 
-								// an den einai to prwto instantiation enos prwtou private license - prepei n prostethei epipleon instance mesa sto pinaka kai na ginoun ola t arecords update me right current instances
+									db_operations.UpdateLicenseCorrelationID(sla_uuid, ns_uuid, cust_uuid,
+											correlation_id);
+									db_operations.UpdateLicenseCurrentInstances(sla_uuid, ns_uuid, cust_uuid,
+											current_instances);
+								}
+								// an den einai to prwto instantiation enos prwtou private license - prepei n
+								// prostethei epipleon instance mesa sto pinaka kai na ginoun ola t arecords
+								// update me right current instances
 								else {
-									db_operations.insertLicenseRecord(sla_uuid, ns_uuid, "", cust_uuid, cust_email, license_type, license_exp_date, license_period, allowed_instances, current_instances, "bought", correlation_id);
-									db_operations.UpdateLicenseCurrentInstances(sla_uuid, ns_uuid, cust_uuid, current_instances);
-
-								}								
-								
-							} 
+									db_operations.insertLicenseRecord(sla_uuid, ns_uuid, "", cust_uuid, cust_email,
+											license_type, license_exp_date, license_period, allowed_instances,
+											current_instances, "bought", correlation_id);
+									db_operations.UpdateLicenseCurrentInstances(sla_uuid, ns_uuid, cust_uuid,
+											current_instances);
+								}
+							}
 							// public and trial licenses
 							else {
 								db_operations.createTableLicensing();
-								db_operations.insertLicenseRecord(sla_uuid, ns_uuid, "", cust_uuid, cust_email, license_type, license_exp_date, license_period, allowed_instances, current_instances, "inactive", correlation_id);
-								db_operations.UpdateLicenseCurrentInstances(sla_uuid, ns_uuid, cust_uuid, current_instances);
+								db_operations.insertLicenseRecord(sla_uuid, ns_uuid, "", cust_uuid, cust_email,
+										license_type, license_exp_date, license_period, allowed_instances,
+										current_instances, "inactive", correlation_id);
+								db_operations.UpdateLicenseCurrentInstances(sla_uuid, ns_uuid, cust_uuid,
+										current_instances);
 
 							}
 							db_operations.closePostgreSQL();
-				
 						}
-
 					}
-
 				}
-
 			};
 
 			// service instantiation consumer
