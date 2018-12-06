@@ -335,6 +335,8 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 							else {
 								db_operations.createTableLicensing();
 								db_operations.insertLicenseRecord(sla_uuid, ns_uuid, "", cust_uuid, cust_email, license_type, license_exp_date, license_period, allowed_instances, current_instances, "inactive", correlation_id);
+								db_operations.UpdateLicenseCurrentInstances(sla_uuid, ns_uuid, cust_uuid, current_instances);
+
 							}
 							db_operations.closePostgreSQL();
 				
