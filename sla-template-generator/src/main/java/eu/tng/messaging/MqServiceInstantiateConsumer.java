@@ -156,7 +156,7 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 					jsonObjectMessage = new JSONObject(map);
 
 					correlation_id = (String) properties.getCorrelationId();
-				
+
 					// logging
 					Timestamp timestamp1 = new Timestamp(System.currentTimeMillis());
 					String timestamps1 = timestamp1.toString();
@@ -171,13 +171,13 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 					/** if message coming from the MANO - contain status key **/
 					if (jsonObjectMessage.has("status")) {
 						status = (String) jsonObjectMessage.get("status");
-						
-	    				// logging
+
+						// logging
 						Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 						String timestamps = timestamp.toString();
 						String type = "I";
 						String operation = "RabbitMQ Listener - NS Instantiation";
-						String message2 = "[*] Message coming from MANO - STATUS= " +status ;
+						String message2 = "[*] Message coming from MANO - STATUS= " + status;
 						String status2 = "";
 						logger.info(
 								"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
@@ -220,12 +220,17 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 								db_operations dbo = new db_operations();
 								db_operations.connectPostgreSQL();
 								db_operations.UpdateRecordAgreement(status, correlation_id, nsi_id);
-								db_operations.closePostgreSQL();
-															
+
 								// create monitoring rules to check sla violations
-								MonitoringRules mr = new MonitoringRules();
-								MonitoringRules.createMonitroingRules(String.valueOf(sla_id), vnfr_id_list, vc_id_list,
-										nsi_id);
+								// MonitoringRules mr = new MonitoringRules();
+								// MonitoringRules.createMonitroingRules(String.valueOf(sla_id), vnfr_id_list,
+								// vc_id_list,nsi_id);
+
+								// UPDATE LIcense record with NSI - to create license instance
+								// check if there are already instances for this ns_uuid - cust_uuid
+								db_operations.CreateLicenseInstance(correlation_id, "active", nsi_id);
+								db_operations.closePostgreSQL();
+
 							} else {
 								// logging
 								Timestamp timestamp3 = new Timestamp(System.currentTimeMillis());
@@ -251,7 +256,7 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 						String timestamps4 = timestamp4.toString();
 						String type4 = "I";
 						String operation4 = "RabbitMQ Listener";
-						String message4 = "[*] Message coming from Gatekeeper - Instantiation status= " + status;
+						String message4 = "[*] Message coming from Gatekeeper";
 						String status4 = "";
 						logger.info(
 								"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
@@ -280,33 +285,78 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 						// if sla exists create record in database
 						if (sla_uuid != null && !sla_uuid.isEmpty()) {
 
+							// CREATE AGREEMENT RECORD IN THE CUST_SLA TABLE
 							cust_sla_corr cust_sla = new cust_sla_corr();
 							@SuppressWarnings("unchecked")
 							ArrayList<String> SLADetails = cust_sla.getSLAdetails(sla_uuid);
 							sla_name = (String) SLADetails.get(1);
 							sla_status = (String) SLADetails.get(0);
 							String inst_status = "PENDING";
-							
-							String license_type = (String) SLADetails.get(2);
-							String license_period = (String) SLADetails.get(3);
-							String license_exp_date = (String) SLADetails.get(4);
-							String allowed_instances = (String) SLADetails.get(5);
-							
-							// create agreement record
 							cust_sla_corr.createCustSlaCorr(sla_uuid, sla_name, sla_status, ns_uuid, ns_name, cust_uuid,
 									cust_email, inst_status, correlation_id);
-							
-							// Create license record
+
+							// CREATE LICENSE RECORD IN THE SLA_LICENSING TABLE
+							// get licensing information
 							db_operations.connectPostgreSQL();
-							db_operations.createTableLicensing();
-							db_operations.insertLicenseRecord(sla_uuid, ns_uuid, "", cust_uuid, cust_email, license_type, license_exp_date, license_period, allowed_instances, "0", "inactive", correlation_id);
 
+							org.json.simple.JSONObject LicenseinfoTemplate = db_operations
+									.getLicenseinfoTemplates(sla_uuid, ns_uuid);
+							String license_type = (String) LicenseinfoTemplate.get("license_type");
+							String license_exp_date = (String) LicenseinfoTemplate.get("license_exp_date");
+							String license_period = (String) LicenseinfoTemplate.get("license_period");
+							String allowed_instances = (String) LicenseinfoTemplate.get("allowed_instances");
+
+							// check if there are already instances for this ns_uuid - cust_uuid
+							int active_licenses = db_operations.countActiveLicensePerCustSLA(cust_uuid, sla_uuid,
+									"active");
+							String current_instances = String.valueOf(active_licenses + 1);
+
+							// logging
+							timestamp1 = new Timestamp(System.currentTimeMillis());
+							timestamps1 = timestamp1.toString();
+							type1 = "I";
+							operation1 = "Instantiation with License";
+							message1 = "[*] Active licenses for this customer and ns ==> " + active_licenses;
+							status1 = "";
+							logger.info(
+									"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+									type1, timestamps1, operation1, message1, status1);
+
+							// private licenses
+							if (license_type.equals("private")) {
+								// in this stage the license status should be "bought"
+								// an einai to prwto instantiation enos prwtou private license
+								if (active_licenses == 0) {
+									db_operations.UpdateLicenseCorrelationID(sla_uuid, ns_uuid, cust_uuid,
+											correlation_id);
+									db_operations.UpdateLicenseCurrentInstances(sla_uuid, ns_uuid, cust_uuid,
+											current_instances);
+								}
+								// an den einai to prwto instantiation enos prwtou private license - prepei n
+								// prostethei epipleon instance mesa sto pinaka kai na ginoun ola t arecords
+								// update me right current instances
+								else {
+									db_operations.insertLicenseRecord(sla_uuid, ns_uuid, "", cust_uuid, cust_email,
+											license_type, license_exp_date, license_period, allowed_instances,
+											current_instances, "bought", correlation_id);
+									db_operations.UpdateLicenseCurrentInstances(sla_uuid, ns_uuid, cust_uuid,
+											current_instances);
+								}
+							}
+							// public and trial licenses
+							else {
+								db_operations.createTableLicensing();
+								db_operations.insertLicenseRecord(sla_uuid, ns_uuid, "", cust_uuid, cust_email,
+										license_type, license_exp_date, license_period, allowed_instances,
+										current_instances, "inactive", correlation_id);
+								db_operations.UpdateLicenseCurrentInstances(sla_uuid, ns_uuid, cust_uuid,
+										current_instances);
+
+							}
+							db_operations.closePostgreSQL();
 						}
-
 					}
-
 				}
-
 			};
 
 			// service instantiation consumer

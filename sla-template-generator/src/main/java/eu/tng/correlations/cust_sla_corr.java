@@ -109,24 +109,6 @@ public class cust_sla_corr {
 							// get slad name
 							String name = (String) slad.get("name");
 							details.add(name);
-							
-							if (slad.containsKey("licenses")) {
-								JSONObject licenses = (JSONObject) slad.get("licenses");
-								if (licenses.containsKey("service_based")) {
-									JSONObject service_based = (JSONObject) licenses.get("service_based");
-									// get slad name
-									String service_licence_type = (String) service_based.get("service_licence_type");
-									String service_licence_period = (String) service_based.get("service_licence_period");
-									String service_licence_expiration_date = (String) service_based.get("service_licence_expiration_date");
-									String allowed_service_instances = (String) service_based.get("allowed_service_instances");
-
-									details.add(service_licence_type);
-									details.add(service_licence_period);									
-									details.add(service_licence_expiration_date);									
-									details.add(allowed_service_instances);									
-
-								}
-							}
 						}
 
 					} catch (ParseException e) {
