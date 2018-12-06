@@ -220,8 +220,8 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 								
 															
 								// create monitoring rules to check sla violations
-								MonitoringRules mr = new MonitoringRules();
-								MonitoringRules.createMonitroingRules(String.valueOf(sla_id), vnfr_id_list, vc_id_list,nsi_id);
+								//MonitoringRules mr = new MonitoringRules();
+								//MonitoringRules.createMonitroingRules(String.valueOf(sla_id), vnfr_id_list, vc_id_list,nsi_id);
 								
 								// UPDATE LIcense record with NSI - to create license instance
 								db_operations.CreateLicenseInstance(correlation_id, "active", nsi_id);
