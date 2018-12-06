@@ -1408,10 +1408,10 @@ public class db_operations {
 		try {
 			stmt = c.createStatement();
 			String sql = "CREATE TABLE IF NOT EXISTS sla_licensing " + "(ID  SERIAL," + " NSI_UUID TEXT, "
-					+ "SLA_UUID TEXT NOT NULL," + "NS_UUID TEXT NOT NULL," + "CUST_UUID TEXT NOT NULL,"
-					+ "CUST_EMAIL  TEXT NOT NULL," + "license_type  TEXT NOT NULL," + "license_exp_date  TEXT,"
-					+ "license_period  TEXT," + "allowed_instances  TEXT NOT NULL,"
-					+ "current_instances  TEXT NOT NULL," + "license_status  TEXT," + "correlation_id TEXT)";
+					+ "SLA_UUID TEXT," + "NS_UUID TEXT," + "CUST_UUID TEXT ,"
+					+ "CUST_EMAIL  TEXT," + "license_type  TEXT," + "license_exp_date  TEXT,"
+					+ "license_period  TEXT," + "allowed_instances  TEXT,"
+					+ "current_instances  TEXT," + "license_status  TEXT," + "correlation_id TEXT)";
 			stmt.executeUpdate(sql);
 			stmt.close();
 			// logging
