@@ -307,7 +307,7 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 							//check if there are already instances for this ns_uuid - cust_uuid
 							int active_licenses = db_operations.countActiveLicensePerCustSLA(cust_uuid, sla_uuid, "active");
 							String current_instances = String.valueOf(active_licenses+1);
-							System.out.println("Current instances ==> " + current_instances);
+							System.out.println("active_licenses ==> " + active_licenses);
 							
 							System.out.println("license_type ==> " + license_type);
 							System.out.println("license_exp_date ==> " + license_exp_date);
@@ -319,7 +319,7 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 							if (license_type.equals("private")) {	
 								// in this stage the license status should be "bought"
 								// an einai to prwto instantiation enos prwtou private license
-								if (String.valueOf(active_licenses).equals("1")) {
+								if (active_licenses == 1) {
 									System.out.println("Mpike mesa sto if aactive l einai 1");
 
 									db_operations.UpdateLicenseCorrelationID(sla_uuid, ns_uuid, cust_uuid, correlation_id);			
