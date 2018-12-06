@@ -326,6 +326,8 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 								// an den einai to prwto instantiation enos prwtou private license - prepei n prostethei epipleon instance mesa sto pinaka kai na ginoun ola t arecords update me right current instances
 								else {
 									db_operations.insertLicenseRecord(sla_uuid, ns_uuid, "", cust_uuid, cust_email, license_type, license_exp_date, license_period, allowed_instances, current_instances, "bought", correlation_id);
+									db_operations.UpdateLicenseCurrentInstances(sla_uuid, ns_uuid, cust_uuid, current_instances);
+
 								}								
 								
 							} 
