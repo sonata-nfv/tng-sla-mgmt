@@ -306,7 +306,7 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 							
 							//check if there are already instances for this ns_uuid - cust_uuid
 							int active_licenses = db_operations.countActiveLicensePerCustSLA(cust_uuid, sla_uuid, "active");
-							String current_instances = String.valueOf(active_licenses);
+							String current_instances = String.valueOf(active_licenses+1);
 							System.out.println("Current instances ==> " + current_instances);
 							
 							System.out.println("license_type ==> " + license_type);
@@ -318,12 +318,12 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 							if (license_type.equals("private")) {	
 								// in this stage the license status should be "bought"
 								db_operations.UpdateLicenseCorrelationID(sla_uuid, ns_uuid, cust_uuid, correlation_id);			
-								db_operations.UpdateLicenseCurrentInstances(sla_uuid, ns_uuid, cust_uuid, (current_instances+1));
+								db_operations.UpdateLicenseCurrentInstances(sla_uuid, ns_uuid, cust_uuid, current_instances);
 								
 							} 
 							else {
 								db_operations.createTableLicensing();
-								db_operations.insertLicenseRecord(sla_uuid, ns_uuid, "", cust_uuid, cust_email, license_type, license_exp_date, license_period, allowed_instances, (current_instances+1), "inactive", correlation_id);
+								db_operations.insertLicenseRecord(sla_uuid, ns_uuid, "", cust_uuid, cust_email, license_type, license_exp_date, license_period, allowed_instances, current_instances, "inactive", correlation_id);
 							}
 							db_operations.closePostgreSQL();
 				
