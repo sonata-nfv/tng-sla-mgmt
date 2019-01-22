@@ -50,6 +50,8 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
@@ -74,7 +76,11 @@ public class templatesAPIs {
 	 */
 	@Produces(MediaType.APPLICATION_JSON)
 	@GET
-	public Response getTemplates() {
+	public Response getTemplates(@Context HttpHeaders headers) {
+		
+		String Authorization = headers.getRequestHeader("Authorization").get(0);
+		System.out.println("Authorization token ---> " + Authorization);
+		
 		ResponseBuilder apiresponse = null;
 		try {
 			String url = System.getenv("CATALOGUES_URL") + "slas/template-descriptors";
