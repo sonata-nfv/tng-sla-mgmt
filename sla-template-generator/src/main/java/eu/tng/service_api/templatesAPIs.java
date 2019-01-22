@@ -63,6 +63,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
 import com.auth0.jwt.JWT;
+import com.auth0.jwt.interfaces.DecodedJWT;
 
 import eu.tng.template_gen.*;
 import eu.tng.validations.TemplateValidation;
@@ -95,8 +96,8 @@ public class templatesAPIs {
 					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 					type, timestamps, operation, message, status);
 			
-			JWT decode = (JWT) JWT.decode(Authorization);
-			System.out.println(decode);
+			DecodedJWT decode = JWT.decode(Authorization);
+			System.out.println(decode.toString());
 
 		} catch (Exception e) {
 			// logging
