@@ -78,9 +78,9 @@ public class templatesAPIs {
 	@GET
 	public Response getTemplates(@Context HttpHeaders headers) {
 
+		// Get Authorization Token
 		try {
 			String Authorization = headers.getRequestHeader("Authorization").get(0);
-			System.out.println("Authorization token ---> " + Authorization);
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 			String timestamps = timestamp.toString();
@@ -98,7 +98,7 @@ public class templatesAPIs {
 			String timestamps = timestamp.toString();
 			String type = "W";
 			String operation = "Get Authorization token";
-			String message = "Error getting authorization token --> " + e;
+			String message = "Authorization token not included in thw request --> " + e;
 			String status = "";
 			logger.info(
 					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
@@ -172,7 +172,35 @@ public class templatesAPIs {
 	@Produces(MediaType.APPLICATION_JSON)
 	@GET
 	@Path("/{sla_uuid}")
-	public Response getTemplate(@PathParam("sla_uuid") String sla_uuid) {
+	public Response getTemplate(@PathParam("sla_uuid") String sla_uuid, @Context HttpHeaders headers) {
+
+		// Get Authorization Token
+		try {
+			String Authorization = headers.getRequestHeader("Authorization").get(0);
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			String timestamps = timestamp.toString();
+			String type = "I";
+			String operation = "Get Authorization token";
+			String message = "Authorization token feched succesfully! --> " + Authorization;
+			String status = String.valueOf(200);
+			logger.info(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
+
+		} catch (Exception e) {
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			String timestamps = timestamp.toString();
+			String type = "W";
+			String operation = "Get Authorization token";
+			String message = "Authorization token not included in thw request --> " + e;
+			String status = "";
+			logger.info(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
+		}
+
 		ResponseBuilder apiresponse = null;
 		try {
 			String url = System.getenv("CATALOGUES_URL") + "slas/template-descriptors/" + sla_uuid;
@@ -243,7 +271,34 @@ public class templatesAPIs {
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes("application/x-www-form-urlencoded")
 	@POST
-	public Response createTemplate(final MultivaluedMap<String, String> formParams) {
+	public Response createTemplate(final MultivaluedMap<String, String> formParams, @Context HttpHeaders headers) {
+
+		// Get Authorization Token
+		try {
+			String Authorization = headers.getRequestHeader("Authorization").get(0);
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			String timestamps = timestamp.toString();
+			String type = "I";
+			String operation = "Get Authorization token";
+			String message = "Authorization token feched succesfully! --> " + Authorization;
+			String status = String.valueOf(200);
+			logger.info(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
+
+		} catch (Exception e) {
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			String timestamps = timestamp.toString();
+			String type = "W";
+			String operation = "Get Authorization token";
+			String message = "Authorization token not included in thw request --> " + e;
+			String status = "";
+			logger.info(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
+		}
 
 		ResponseBuilder apiresponse = null;
 
@@ -491,7 +546,34 @@ public class templatesAPIs {
 	@Path("/{sla_uuid}")
 	@Produces(MediaType.TEXT_PLAIN)
 	@DELETE
-	public Response deleteTemplate(@PathParam("sla_uuid") String sla_uuid) {
+	public Response deleteTemplate(@PathParam("sla_uuid") String sla_uuid, @Context HttpHeaders headers) {
+
+		// Get Authorization Token
+		try {
+			String Authorization = headers.getRequestHeader("Authorization").get(0);
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			String timestamps = timestamp.toString();
+			String type = "I";
+			String operation = "Get Authorization token";
+			String message = "Authorization token feched succesfully! --> " + Authorization;
+			String status = String.valueOf(200);
+			logger.info(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
+
+		} catch (Exception e) {
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			String timestamps = timestamp.toString();
+			String type = "W";
+			String operation = "Get Authorization token";
+			String message = "Authorization token not included in thw request --> " + e;
+			String status = "";
+			logger.info(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
+		}
 
 		ResponseBuilder apiresponse = null;
 		String dr = null;
