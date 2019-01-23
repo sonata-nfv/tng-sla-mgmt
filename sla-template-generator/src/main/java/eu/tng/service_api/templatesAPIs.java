@@ -62,7 +62,6 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
-import org.apache.commons.codec.binary.Base64;
 
 import eu.tng.template_gen.*;
 import eu.tng.validations.TemplateValidation;
@@ -83,6 +82,7 @@ public class templatesAPIs {
 
 		// Get Authorization Token
 		try {
+			// get jwt token
 			String Authorization = headers.getRequestHeader("Authorization").get(0);
 			String token = Authorization.substring(6);
 
@@ -97,7 +97,8 @@ public class templatesAPIs {
 					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 					type, timestamps, operation, message, status);
 			
-			testDecodeJWT(token);
+			// decode jwt token
+			JSONObject auth_info = JwtTokenDecode.DecodeToken(token);  
 
 		} catch (Exception e) {
 			// logging
@@ -672,24 +673,6 @@ public class templatesAPIs {
 
 		}
 
-	}
-
-	public void testDecodeJWT(String token) {
-		String jwtToken = token;
-		System.out.println("------------ Decode JWT ------------");
-		String[] split_string = jwtToken.split("\\.");
-		String base64EncodedHeader = split_string[0];
-		String base64EncodedBody = split_string[1];
-		String base64EncodedSignature = split_string[2];
-
-		System.out.println("~~~~~~~~~ JWT Header ~~~~~~~");
-		Base64 base64Url = new Base64(true);
-		String header = new String(base64Url.decode(base64EncodedHeader));
-		System.out.println("JWT Header : " + header);
-
-		System.out.println("~~~~~~~~~ JWT Body ~~~~~~~");
-		String body = new String(base64Url.decode(base64EncodedBody));
-		System.out.println("JWT Body : " + body);
 	}
 
 }
