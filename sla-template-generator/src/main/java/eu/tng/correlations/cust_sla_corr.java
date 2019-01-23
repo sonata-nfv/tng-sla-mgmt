@@ -203,8 +203,8 @@ public class cust_sla_corr {
 			JSONObject slad_obj = (JSONObject) parser.parse(response.toString());
 			JSONObject slad = (JSONObject) slad_obj.get("slad");
 			JSONObject sla_template = (JSONObject) slad.get("sla_template");
-			JSONObject ns = (JSONObject) sla_template.get("ns");
-			guaranteeTerms = (JSONArray) ns.get("guaranteeTerms");
+			JSONObject service = (JSONObject) sla_template.get("service");
+			guaranteeTerms = (JSONArray) service.get("guaranteeTerms");
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 			String timestamps = timestamp.toString();
