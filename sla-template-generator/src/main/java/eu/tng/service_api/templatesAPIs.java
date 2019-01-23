@@ -62,8 +62,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.interfaces.DecodedJWT;
+import org.apache.commons.codec.binary.Base64;
 
 import eu.tng.template_gen.*;
 import eu.tng.validations.TemplateValidation;
@@ -85,19 +84,20 @@ public class templatesAPIs {
 		// Get Authorization Token
 		try {
 			String Authorization = headers.getRequestHeader("Authorization").get(0);
+			String token = Authorization.substring(6);
+
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 			String timestamps = timestamp.toString();
 			String type = "I";
 			String operation = "Get Authorization token";
-			String message = "Authorization token feched succesfully! --> " + Authorization;
+			String message = "Authorization token feched succesfully! --> " + token;
 			String status = String.valueOf(200);
 			logger.info(
 					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 					type, timestamps, operation, message, status);
 			
-			DecodedJWT decode = JWT.decode(Authorization);
-			System.out.println(decode.toString());
+			testDecodeJWT(token);
 
 		} catch (Exception e) {
 			// logging
@@ -672,6 +672,24 @@ public class templatesAPIs {
 
 		}
 
+	}
+
+	public void testDecodeJWT(String token) {
+		String jwtToken = token;
+		System.out.println("------------ Decode JWT ------------");
+		String[] split_string = jwtToken.split("\\.");
+		String base64EncodedHeader = split_string[0];
+		String base64EncodedBody = split_string[1];
+		String base64EncodedSignature = split_string[2];
+
+		System.out.println("~~~~~~~~~ JWT Header ~~~~~~~");
+		Base64 base64Url = new Base64(true);
+		String header = new String(base64Url.decode(base64EncodedHeader));
+		System.out.println("JWT Header : " + header);
+
+		System.out.println("~~~~~~~~~ JWT Body ~~~~~~~");
+		String body = new String(base64Url.decode(base64EncodedBody));
+		System.out.println("JWT Body : " + body);
 	}
 
 }
