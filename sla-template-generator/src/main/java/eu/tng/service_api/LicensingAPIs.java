@@ -46,6 +46,8 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
@@ -53,6 +55,7 @@ import javax.ws.rs.core.Response.ResponseBuilder;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.json.JSONException;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
@@ -104,12 +107,12 @@ public class LicensingAPIs {
 		ResponseBuilder apiresponse = null;
 
 		List<String> sla_uuid = formParams.get("sla_uuid");
-		List<String> cust_uuid = formParams.get("cust_uuid");
+		List<String> cust_username = formParams.get("cust_username");
 		List<String> ns_uuid = formParams.get("ns_uuid");
 
 		db_operations db = new db_operations();
 		db.connectPostgreSQL();
-		boolean delete = db.deleteLicenseRecord(sla_uuid.get(0), cust_uuid.get(0), ns_uuid.get(0));
+		boolean delete = db.deleteLicenseRecord(sla_uuid.get(0), cust_username.get(0), ns_uuid.get(0));
 		db.closePostgreSQL();
 
 		if (delete == true) {
@@ -156,9 +159,49 @@ public class LicensingAPIs {
 	@SuppressWarnings("unchecked")
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	@Path("/status/{sla_uuid}/{cust_uuid}/{ns_uuid}")
+	@Path("/status/{sla_uuid}/{ns_uuid}")
 	public Response getLicenseInfoPerCustomer(@PathParam("sla_uuid") String sla_uuid,
-			@PathParam("cust_uuid") String cust_uuid, @PathParam("ns_uuid") String ns_uuid) {
+			@PathParam("ns_uuid") String ns_uuid, @Context HttpHeaders headers) {
+
+		String cust_username = "customer";
+
+		// Get Authorization Token
+		try {
+			// get jwt token
+			String Authorization = headers.getRequestHeader("Authorization").get(0);
+			String token = Authorization.substring(7);
+
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			String timestamps = timestamp.toString();
+			String type = "I";
+			String operation = "Get Authorization token";
+			String message = "Authorization token feched succesfully! --> " + token;
+			String status = String.valueOf(200);
+			logger.info(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
+
+			// decode jwt token
+			JSONObject auth_info = JwtTokenDecode.DecodeToken(token);
+
+			try {
+				cust_username = (String) auth_info.get("username");
+			} catch (JSONException e) {
+				System.out.println(e);
+			}
+		} catch (Exception e) {
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			String timestamps = timestamp.toString();
+			String type = "W";
+			String operation = "Get Authorization token";
+			String message = "Authorization token not included in thw request --> " + e;
+			String status = "";
+			logger.info(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
+		}
 
 		ResponseBuilder apiresponse = null;
 		db_operations dbo = new db_operations();
@@ -170,7 +213,7 @@ public class LicensingAPIs {
 
 			// check if this customer has already a license for this SLA
 			db_operations.createTableLicensing();
-			int count_licenses = db_operations.countLicensePerCustSLA(cust_uuid, sla_uuid);
+			int count_licenses = db_operations.countLicensePerCustSLA(cust_username, sla_uuid);
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 			String timestamps = timestamp.toString();
@@ -222,7 +265,7 @@ public class LicensingAPIs {
 			}
 			// if customer has already a license instance
 			else {
-				JSONObject license_info_record = db_operations.getLicenseInfo(sla_uuid, cust_uuid, ns_uuid);
+				JSONObject license_info_record = db_operations.getLicenseInfo(sla_uuid, cust_username, ns_uuid);
 				String license_type = (String) license_info_record.get("license_type");
 				String license_status = (String) license_info_record.get("license_status");
 				String license_allowed_instances = (String) license_info_record.get("allowed_instances");
@@ -302,29 +345,71 @@ public class LicensingAPIs {
 	@Consumes("application/x-www-form-urlencoded")
 	@Path("/buy")
 	@POST
-	public Response LicenseBought(final MultivaluedMap<String, String> formParams) {
+	public Response LicenseBought(final MultivaluedMap<String, String> formParams, @Context HttpHeaders headers) {
+
+		String cust_username = "customer";
+		String cust_email = "email";
+
+		// Get Authorization Token
+		try {
+			// get jwt token
+			String Authorization = headers.getRequestHeader("Authorization").get(0);
+			String token = Authorization.substring(7);
+
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			String timestamps = timestamp.toString();
+			String type = "I";
+			String operation = "Get Authorization token";
+			String message = "Authorization token feched succesfully! --> " + token;
+			String status = String.valueOf(200);
+			logger.info(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
+
+			// decode jwt token
+			JSONObject auth_info = JwtTokenDecode.DecodeToken(token);
+
+			try {
+				cust_username = (String) auth_info.get("username");
+				cust_email = (String) auth_info.get("email");
+
+			} catch (JSONException e) {
+				System.out.println(e);
+			}
+		} catch (Exception e) {
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			String timestamps = timestamp.toString();
+			String type = "W";
+			String operation = "Get Authorization token";
+			String message = "Authorization token not included in thw request --> " + e;
+			String status = "";
+			logger.info(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
+		}
 
 		ResponseBuilder apiresponse = null;
 
 		List<String> ns_uuid = formParams.get("ns_uuid");
 		List<String> sla_uuid = formParams.get("sla_uuid");
-		List<String> cust_uuid = formParams.get("cust_uuid");
-		List<String> cust_email = formParams.get("cust_email");
 
 		db_operations.connectPostgreSQL();
 		db_operations.createTableLicensing();
-		
+
 		JSONObject LicenseinfoTemplate = db_operations.getLicenseinfoTemplates(sla_uuid.get(0), ns_uuid.get(0));
 		String license_type = (String) LicenseinfoTemplate.get("license_type");
 		String license_exp_date = (String) LicenseinfoTemplate.get("license_exp_date");
 		String license_period = (String) LicenseinfoTemplate.get("license_period");
 		String allowed_instances = (String) LicenseinfoTemplate.get("allowed_instances");
 		String current_instances = "0";
-		
+
 		db_operations.createTableLicensing();
-		db_operations.insertLicenseRecord(sla_uuid.get(0), ns_uuid.get(0), null, cust_uuid.get(0), cust_email.get(0), license_type, license_exp_date, license_period, allowed_instances, current_instances, "", "");
-		
-		boolean update = db_operations.UpdateLicenseStatus(sla_uuid.get(0), ns_uuid.get(0), cust_uuid.get(0), "bought");
+		db_operations.insertLicenseRecord(sla_uuid.get(0), ns_uuid.get(0), null, cust_username, cust_email,
+				license_type, license_exp_date, license_period, allowed_instances, current_instances, "", "");
+
+		boolean update = db_operations.UpdateLicenseStatus(sla_uuid.get(0), ns_uuid.get(0), cust_username, "bought");
 		db_operations.closePostgreSQL();
 
 		if (update == true) {

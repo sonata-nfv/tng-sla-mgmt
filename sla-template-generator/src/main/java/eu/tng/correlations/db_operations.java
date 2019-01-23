@@ -1515,7 +1515,7 @@ public class db_operations {
 	 * @param current_instances
 	 * @param license_status
 	 */
-	public static void insertLicenseRecord(String sla_uuid, String ns_uuid, String nsi_uuid, String cust_uuid,
+	public static void insertLicenseRecord(String sla_uuid, String ns_uuid, String nsi_uuid, String cust_username,
 			String cust_email, String license_type, String license_exp_date, String license_period,
 			String allowed_instances, String current_instances, String license_status, String correlation_id) {
 
@@ -1523,7 +1523,7 @@ public class db_operations {
 			c.setAutoCommit(false);
 			Statement stmt = c.createStatement();
 			String sql = "INSERT INTO sla_licensing  (sla_uuid, ns_uuid,nsi_uuid, cust_uuid, cust_email, license_type, license_exp_date, license_period, allowed_instances, current_instances, license_status,correlation_id) VALUES ('"
-					+ sla_uuid + "', '" + ns_uuid + "', '" + nsi_uuid + "','" + cust_uuid + "', '" + cust_email + "' ,'"
+					+ sla_uuid + "', '" + ns_uuid + "', '" + nsi_uuid + "','" + cust_username + "', '" + cust_email + "' ,'"
 					+ license_type + "','" + license_exp_date + "','" + license_period + "','" + allowed_instances
 					+ "','" + current_instances + "','" + license_status + "', '" + correlation_id + "');  ";
 			stmt.executeUpdate(sql);
@@ -1535,7 +1535,7 @@ public class db_operations {
 			String timestamps = timestamp.toString();
 			String type = "I";
 			String operation = "Insert license record";
-			String message = ("License record for sla_uuid = " + sla_uuid + " and cust_uuid= " + cust_uuid
+			String message = ("License record for sla_uuid = " + sla_uuid + " and cust_username " + cust_username
 					+ "  created successfully");
 			String status = "";
 			logger.info(
@@ -1557,14 +1557,14 @@ public class db_operations {
 		}
 	}
 
-	public boolean deleteLicenseRecord(String sla_uuid, String cust_uuid, String ns_uuid) {
+	public boolean deleteLicenseRecord(String sla_uuid, String cust_username, String ns_uuid) {
 		Statement stmt = null;
 		boolean result = false;
 		try {
 			c.setAutoCommit(false);
 			stmt = c.createStatement();
 			String sql = "DELETE FROM sla_licensing WHERE NS_UUID='" + ns_uuid + "' AND sla_uuid='" + sla_uuid
-					+ "' AND cust_uuid='" + cust_uuid + "';";
+					+ "' AND cust_uuid='" + cust_username + "';";
 			stmt.executeUpdate(sql);
 			c.commit();
 			stmt.close();
@@ -1597,7 +1597,7 @@ public class db_operations {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static JSONObject getLicenseInfo(String sla_uuid, String cust_uuid, String ns_uuid) {
+	public static JSONObject getLicenseInfo(String sla_uuid, String cust_username, String ns_uuid) {
 
 		JSONObject license_info = new JSONObject();
 		String license_status = "";
@@ -1614,7 +1614,7 @@ public class db_operations {
 			c.setAutoCommit(false);
 			stmt = c.createStatement();
 			ResultSet rs = stmt.executeQuery("SELECT * FROM sla_licensing WHERE sla_uuid = '" + sla_uuid
-					+ "' AND ns_uuid='" + ns_uuid + "' AND  cust_uuid='" + cust_uuid + "';");
+					+ "' AND ns_uuid='" + ns_uuid + "' AND  cust_uuid='" + cust_username + "';");
 
 			while (rs.next()) {
 				license_status = rs.getString("license_status");
@@ -1696,9 +1696,9 @@ public class db_operations {
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	public static int countLicensePerCustSLA(String cust_uuid, String sla_uuid) {
+	public static int countLicensePerCustSLA(String cust_username, String sla_uuid) {
 
-		String SQL = "SELECT count(*) FROM sla_licensing WHERE cust_uuid='" + cust_uuid + "' AND sla_uuid='" + sla_uuid+ "'";
+		String SQL = "SELECT count(*) FROM sla_licensing WHERE cust_uuid='" + cust_username + "' AND sla_uuid='" + sla_uuid+ "'";
 		int count_licenses = 0;
 		try {
 			stmt = c.createStatement();
@@ -1731,7 +1731,7 @@ public class db_operations {
 
 	}
 
-	public static boolean UpdateLicenseStatus(String sla_uuid, String ns_uuid, String cust_uuid, String license_status) {
+	public static boolean UpdateLicenseStatus(String sla_uuid, String ns_uuid, String cust_username, String license_status) {
 
 		Statement stmt = null;
 		boolean result = false;
@@ -1739,7 +1739,7 @@ public class db_operations {
 			c.setAutoCommit(false);
 			stmt = c.createStatement();
 			String sql = "UPDATE sla_licensing SET license_status='" + license_status + "' WHERE sla_uuid='" + sla_uuid
-					+ "' AND ns_uuid='" + ns_uuid + "' AND cust_uuid='" + cust_uuid + "';";
+					+ "' AND ns_uuid='" + ns_uuid + "' AND cust_uuid='" + cust_username + "';";
 			stmt.executeUpdate(sql);
 			c.commit();
 			stmt.close();
