@@ -58,6 +58,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.json.JSONException;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -97,8 +98,7 @@ public class templatesAPIs {
 					type, timestamps, operation, message, status);
 			// decode jwt token
 			JSONObject auth_info = JwtTokenDecode.DecodeToken(token);
-			String template_initiator = (String) auth_info.get("name");
-			System.out.println("template_initiator from auth information ==> " + template_initiator);
+			String template_initiator = (String) auth_info.get("username");
 
 		} catch (Exception e) {
 			// logging
@@ -254,6 +254,7 @@ public class templatesAPIs {
 	@POST
 	public Response createTemplate(final MultivaluedMap<String, String> formParams, @Context HttpHeaders headers) {
 
+		String template_initiator = "admin";
 		// Get Authorization Token
 		try {
 			// get jwt token
@@ -270,12 +271,17 @@ public class templatesAPIs {
 			logger.info(
 					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 					type, timestamps, operation, message, status);
-			
+
 			// decode jwt token
 			JSONObject auth_info = JwtTokenDecode.DecodeToken(token);
-			//String template_initiator = (String) auth_info.get("username");
 
-		} catch (Exception e) {
+			try {
+				template_initiator = (String) auth_info.get("username");
+			} catch (JSONException e) {
+				System.out.println(e);
+			}
+		} 
+		catch (Exception e) {
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 			String timestamps = timestamp.toString();
@@ -293,6 +299,7 @@ public class templatesAPIs {
 		List<String> nsd_uuid = formParams.get("nsd_uuid");
 		List<String> expireDate = formParams.get("expireDate");
 		List<String> templateName = formParams.get("templateName");
+		List<String> provider_name = formParams.get("providerName");
 
 		List<String> service_licence_type = formParams.get("service_licence_type");
 		List<String> allowed_service_instances = formParams.get("allowed_service_instances");
@@ -306,7 +313,7 @@ public class templatesAPIs {
 		CreateTemplate ct = new CreateTemplate();
 		JSONObject template = ct.createTemplate(nsd_uuid.get(0), templateName.get(0), expireDate.get(0), guarantees,
 				service_licence_type.get(0), allowed_service_instances.get(0), service_licence_expiration_date.get(0),
-				service_licence_period.get(0));
+				service_licence_period.get(0), provider_name.get(0), template_initiator);
 
 		if (template == null) {
 			String dr = null;
@@ -527,41 +534,13 @@ public class templatesAPIs {
 	}
 
 	/**
-	 * api call in order to edit an already existing sla template
+	 * api call in order to delete an sla template
 	 */
-
 	@SuppressWarnings("static-access")
 	@Path("/{sla_uuid}")
 	@Produces(MediaType.TEXT_PLAIN)
 	@DELETE
-	public Response deleteTemplate(@PathParam("sla_uuid") String sla_uuid, @Context HttpHeaders headers) {
-
-		// Get Authorization Token
-		try {
-			String Authorization = headers.getRequestHeader("Authorization").get(0);
-			// logging
-			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-			String timestamps = timestamp.toString();
-			String type = "I";
-			String operation = "Get Authorization token";
-			String message = "Authorization token feched succesfully! --> " + Authorization;
-			String status = String.valueOf(200);
-			logger.info(
-					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
-					type, timestamps, operation, message, status);
-
-		} catch (Exception e) {
-			// logging
-			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-			String timestamps = timestamp.toString();
-			String type = "W";
-			String operation = "Get Authorization token";
-			String message = "Authorization token not included in thw request --> " + e;
-			String status = "";
-			logger.info(
-					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
-					type, timestamps, operation, message, status);
-		}
+	public Response deleteTemplate(@PathParam("sla_uuid") String sla_uuid) {
 
 		ResponseBuilder apiresponse = null;
 		String dr = null;
