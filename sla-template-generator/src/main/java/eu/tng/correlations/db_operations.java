@@ -774,19 +774,19 @@ public class db_operations {
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	public JSONObject selectAgreementPerCustomer(String custuuid) {
+	public JSONObject selectAgreementPerCustomer(String cust_username) {
 
 		Statement stmt = null;
 		JSONObject root = new JSONObject();
 		JSONArray cust_sla = new JSONArray();
 
-		custuuid = custuuid.trim();
+		cust_username = cust_username.trim();
 
 		try {
 			c.setAutoCommit(false);
 			stmt = c.createStatement();
 			ResultSet rs = stmt.executeQuery(
-					"SELECT * FROM cust_sla WHERE cust_uuid = '" + custuuid + "' AND inst_status='READY';");
+					"SELECT * FROM cust_sla WHERE cust_uuid = '" + cust_username + "' AND inst_status='READY';");
 
 			while (rs.next()) {
 				String ns_uuid = rs.getString("ns_uuid");
@@ -798,7 +798,7 @@ public class db_operations {
 				obj.put("ns_uuid", ns_uuid);
 				obj.put("nsi_uuid", nsi_uuid);
 				obj.put("sla_uuid", sla_uuid);
-				obj.put("cust_uuid", cust_uuid);
+				obj.put("cust_username", cust_uuid);
 				cust_sla.add(obj);
 			}
 			root.put("cust_sla", cust_sla);
@@ -842,12 +842,12 @@ public class db_operations {
 					+ nsi_uuid + "' AND  inst_status='READY';");
 
 			while (rs.next()) {
-				String cust_uuid = rs.getString("cust_uuid");
+				String cust_username = rs.getString("cust_uuid");
 				String cust_email = rs.getString("cust_email");
 				String sla_date = rs.getString("sla_date");
 
 				new JSONObject();
-				root.put("cust_uuid", cust_uuid);
+				root.put("cust_username", cust_username);
 				root.put("cust_email", cust_email);
 				root.put("sla_date", sla_date);
 			}
