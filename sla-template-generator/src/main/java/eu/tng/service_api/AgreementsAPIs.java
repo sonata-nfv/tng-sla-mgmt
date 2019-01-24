@@ -51,6 +51,8 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
@@ -58,6 +60,7 @@ import javax.ws.rs.core.Response.ResponseBuilder;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.json.JSONException;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -261,16 +264,56 @@ public class AgreementsAPIs {
 	 */
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	@Path("customer/{cust_uuid}")
-	public Response getAgreementsPerCustonmer(@PathParam("cust_uuid") String cust_uuid) {
+	@Path("customer")
+	public Response getAgreementsPerCustonmer(@Context HttpHeaders headers) {
+		
+		String cust_username = "";
+		// Get Authorization Token
+		try {
+			// get jwt token
+			String Authorization = headers.getRequestHeader("Authorization").get(0);
+			String token = Authorization.substring(7);
 
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			String timestamps = timestamp.toString();
+			String type = "I";
+			String operation = "Get Authorization token";
+			String message = "Authorization token feched succesfully! --> " + token;
+			String status = String.valueOf(200);
+			logger.info(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
+
+			// decode jwt token
+			JSONObject auth_info = JwtTokenDecode.DecodeToken(token);
+
+			try {
+				cust_username = (String) auth_info.get("username");
+			} catch (JSONException e) {
+				System.out.println(e);
+			}
+		} 
+		catch (Exception e) {
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			String timestamps = timestamp.toString();
+			String type = "W";
+			String operation = "Get Authorization token";
+			String message = "Authorization token not included in thw request --> " + e;
+			String status = "";
+			logger.info(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
+		}
+		
 		ResponseBuilder apiresponse = null;
 		db_operations dbo = new db_operations();
 		boolean connect = db_operations.connectPostgreSQL();
 
 		if (connect == true) {
 			db_operations.createTableCustSla();
-			JSONObject agrPerNs = dbo.selectAgreementPerCustomer(cust_uuid);
+			JSONObject agrPerNs = dbo.selectAgreementPerCustomer(cust_username);
 			dbo.closePostgreSQL();
 
 			apiresponse = Response.ok(agrPerNs);
@@ -335,10 +378,10 @@ public class AgreementsAPIs {
 			JSONObject agrPerSlaNs = dbo.selectAgreementPerSlaNs(sla_uuid, nsi_uuid);
 			dbo.closePostgreSQL();
 
-			String cust_uuid = (String) agrPerSlaNs.get("cust_uuid");
+			String cust_username = (String) agrPerSlaNs.get("cust_username");
 			String cust_email = (String) agrPerSlaNs.get("cust_email");
 			String sla_date = (String) agrPerSlaNs.get("sla_date");
-
+			
 			// update the template with the necessary customer info - convert it to
 			// agreement
 			JSONObject slad = (JSONObject) agreement.get("slad");
@@ -349,7 +392,7 @@ public class AgreementsAPIs {
 
 			/** add the customer information */
 			JSONObject customer_info = new JSONObject();
-			customer_info.put("cust_uuid", cust_uuid);
+			customer_info.put("cust_username", cust_username);
 			customer_info.put("cust_email", cust_email);
 			sla_template.put("customer_info", customer_info);
 
@@ -357,7 +400,7 @@ public class AgreementsAPIs {
 			existingTemplates = agreement;
 
 			apiresponse = Response.ok((Object) existingTemplates);
-			apiresponse.header("Content-Length", agreement.toJSONString().length() - 7);
+			apiresponse.header("Content-Length", agreement.toJSONString().length() - 2);
 
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
@@ -447,7 +490,7 @@ public class AgreementsAPIs {
 	}
 
 	/**
-	 * api call in order to generate a sla template
+	 * api call in order to generate a sla agreement
 	 */
 	@SuppressWarnings("null")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -461,8 +504,8 @@ public class AgreementsAPIs {
 		List<String> sla_uuid1 = formParams.get("sla_uuid");
 		List<String> sla_name1 = formParams.get("sla_name");
 		List<String> sla_status1 = formParams.get("sla_status");
-		List<String> cust_name1 = formParams.get("cust_name");
-		List<String> cust_uuid1 = formParams.get("cust_uuid");
+		List<String> cust_email1 = formParams.get("cust_email");
+		List<String> cust_username1 = formParams.get("cust_username");
 		List<String> inst_status1 = formParams.get("inst_status");
 		List<String> correlation_id1 = formParams.get("correlation_id");
 
@@ -474,9 +517,9 @@ public class AgreementsAPIs {
 		if (connect == true) {
 			db_operations.createTableCustSla();
 			dbo.insertRecordAgreement(ns_uuid1.get(0).toString(), ns_name1.toString(), sla_uuid1.get(0).toString(),
-					sla_name1.get(0).toString(), sla_status1.get(0).toString(), cust_name1.get(0).toString(),
-					cust_uuid1.get(0).toString(), inst_status1.get(0).toString(), correlation_id1.get(0).toString());
-			db_operations.UpdateRecordAgreement("READY", "123", "4fbb748a-4c2e-441b-b387-0f3da2c77ca7");
+					sla_name1.get(0).toString(), sla_status1.get(0).toString(), cust_email1.get(0).toString(),
+					cust_username1.get(0).toString(), inst_status1.get(0).toString(), correlation_id1.get(0).toString());
+			db_operations.UpdateRecordAgreement("READY", correlation_id1.get(0), ns_uuid1.get(0));
 			dbo.closePostgreSQL();
 
 			apiresponse = Response.ok();

@@ -227,7 +227,7 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 								// vc_id_list,nsi_id);
 
 								// UPDATE LIcense record with NSI - to create license instance
-								// check if there are already instances for this ns_uuid - cust_uuid
+								// check if there are already instances for this ns_uuid - cust_username
 								db_operations.CreateLicenseInstance(correlation_id, "active", nsi_id);
 								db_operations.closePostgreSQL();
 
@@ -266,7 +266,7 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 						String sla_uuid = null;
 						String ns_uuid = null;
 						String ns_name = null;
-						String cust_uuid = null;
+						String cust_username = null;
 						String cust_email = null;
 						String sla_name = null;
 						String sla_status = null;
@@ -279,7 +279,7 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 						// Parse customer data + sla uuid
 						JSONObject user_data = (JSONObject) jsonObjectMessage.getJSONObject("user_data");
 						JSONObject customer = (JSONObject) user_data.getJSONObject("customer");
-						cust_uuid = (String) customer.get("uuid");
+						cust_username = (String) customer.get("uuid");
 						cust_email = (String) customer.get("email");
 						sla_uuid = (String) customer.get("sla_id");
 						// if sla exists create record in database
@@ -292,7 +292,7 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 							sla_name = (String) SLADetails.get(1);
 							sla_status = (String) SLADetails.get(0);
 							String inst_status = "PENDING";
-							cust_sla_corr.createCustSlaCorr(sla_uuid, sla_name, sla_status, ns_uuid, ns_name, cust_uuid,
+							cust_sla_corr.createCustSlaCorr(sla_uuid, sla_name, sla_status, ns_uuid, ns_name, cust_username,
 									cust_email, inst_status, correlation_id);
 
 							// CREATE LICENSE RECORD IN THE SLA_LICENSING TABLE
@@ -306,8 +306,8 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 							String license_period = (String) LicenseinfoTemplate.get("license_period");
 							String allowed_instances = (String) LicenseinfoTemplate.get("allowed_instances");
 
-							// check if there are already instances for this ns_uuid - cust_uuid
-							int active_licenses = db_operations.countActiveLicensePerCustSLA(cust_uuid, sla_uuid,
+							// check if there are already instances for this ns_uuid - cust_username
+							int active_licenses = db_operations.countActiveLicensePerCustSLA(cust_username, sla_uuid,
 									"active");
 							String current_instances = String.valueOf(active_licenses + 1);
 
@@ -327,29 +327,29 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 								// in this stage the license status should be "bought"
 								// an einai to prwto instantiation enos prwtou private license
 								if (active_licenses == 0) {
-									db_operations.UpdateLicenseCorrelationID(sla_uuid, ns_uuid, cust_uuid,
+									db_operations.UpdateLicenseCorrelationID(sla_uuid, ns_uuid, cust_username,
 											correlation_id);
-									db_operations.UpdateLicenseCurrentInstances(sla_uuid, ns_uuid, cust_uuid,
+									db_operations.UpdateLicenseCurrentInstances(sla_uuid, ns_uuid, cust_username,
 											current_instances);
 								}
 								// an den einai to prwto instantiation enos prwtou private license - prepei n
 								// prostethei epipleon instance mesa sto pinaka kai na ginoun ola t arecords
 								// update me right current instances
 								else {
-									db_operations.insertLicenseRecord(sla_uuid, ns_uuid, "", cust_uuid, cust_email,
+									db_operations.insertLicenseRecord(sla_uuid, ns_uuid, "", cust_username, cust_email,
 											license_type, license_exp_date, license_period, allowed_instances,
 											current_instances, "bought", correlation_id);
-									db_operations.UpdateLicenseCurrentInstances(sla_uuid, ns_uuid, cust_uuid,
+									db_operations.UpdateLicenseCurrentInstances(sla_uuid, ns_uuid, cust_username,
 											current_instances);
 								}
 							}
 							// public and trial licenses
 							else {
 								db_operations.createTableLicensing();
-								db_operations.insertLicenseRecord(sla_uuid, ns_uuid, "", cust_uuid, cust_email,
+								db_operations.insertLicenseRecord(sla_uuid, ns_uuid, "", cust_username, cust_email,
 										license_type, license_exp_date, license_period, allowed_instances,
 										current_instances, "inactive", correlation_id);
-								db_operations.UpdateLicenseCurrentInstances(sla_uuid, ns_uuid, cust_uuid,
+								db_operations.UpdateLicenseCurrentInstances(sla_uuid, ns_uuid, cust_username,
 										current_instances);
 
 							}

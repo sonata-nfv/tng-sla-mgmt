@@ -136,7 +136,7 @@ public class MqMonitoringConsumer implements ServletContextListener {
 					String alert_name = null;
 					String alert_state = null;
 					String sla_uuid = null;
-					String cust_uuid = null;
+					String cust_username = null;
 
 					// Parse headers
 					try {
@@ -160,18 +160,18 @@ public class MqMonitoringConsumer implements ServletContextListener {
 						org.json.simple.JSONObject violated_sla = dbo.getViolatedSLA(nsi_uuid);
 						sla_uuid = (String) violated_sla.get("sla_uuid");
 						System.out.println("Violated sla_uuid ==> " + sla_uuid);
-						cust_uuid = (String) violated_sla.get("cust_uuid");
-						cust_uuid = (String) violated_sla.get("cust_uuid");
-						System.out.println("Violated cust_uuid ==> " + sla_uuid);
+						cust_username = (String) violated_sla.get("cust_uuid");
+						cust_username = (String) violated_sla.get("cust_uuid");
+						System.out.println("Violated cust_username ==> " + sla_uuid);
 						// insert the violation in the violation database
-						db_operations.insertRecordViolation(nsi_uuid, sla_uuid, alert_time, alert_state, cust_uuid);
+						db_operations.insertRecordViolation(nsi_uuid, sla_uuid, alert_time, alert_state, cust_username);
 						db_operations.UpdateAgreementStatus(nsi_uuid);
 						// }
 						db_operations.closePostgreSQL();
 
 						try {
 							JSONObject violationMessage = ViolationsProducer.createViolationMessage(nsi_uuid, sla_uuid,
-									alert_time, alert_state, cust_uuid, connection);
+									alert_time, alert_state, cust_username, connection);
 						} catch (Exception e) {
 							Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 							String timestamps = timestamp.toString();

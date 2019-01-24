@@ -306,7 +306,7 @@ public class db_operations {
 			String sql = "CREATE TABLE IF NOT EXISTS cust_sla" + "(ID  SERIAL PRIMARY KEY," + " NS_UUID TEXT NOT NULL, "
 					+ "NSI_UUID TEXT NULL," + "NS_NAME TEXT NOT NULL," + "SLA_UUID  TEXT NOT NULL,"
 					+ "SLA_NAME TEXT NOT NULL," + "SLA_DATE TIMESTAMPTZ DEFAULT Now()," + "SLA_STATUS TEXT NOT NULL,"
-					+ "CUST_EMAIL TEXT NOT NULL," + "CUST_UUID  TEXT NOT NULL," + "INST_ID TEXT NOT NULL,"
+					+ "CUST_EMAIL TEXT NOT NULL," + "CUST_USERNAME  TEXT NOT NULL," + "INST_ID TEXT NOT NULL,"
 					+ "INST_STATUS  TEXT NOT NULL )";
 			stmt.executeUpdate(sql);
 			stmt.close();
@@ -342,17 +342,15 @@ public class db_operations {
 	 * 
 	 */
 	public void insertRecordAgreement(String ns_uuid, String ns_name, String sla_uuid, String sla_name,
-			String sla_status, String cust_name, String cust_uuid, String inst_status, String correlation_id) {
+			String sla_status, String cust_email, String cust_username, String inst_status, String correlation_id) {
 
-		cust_uuid = "Tom";
-		String cust_email = "tom@example.com";
 		try {
 			c.setAutoCommit(false);
 			Statement stmt = c.createStatement();
 			String sql = "INSERT INTO cust_sla "
-					+ " (ns_uuid, ns_name, sla_uuid, sla_name, sla_status, cust_email, cust_uuid, inst_status, inst_id) "
+					+ " (ns_uuid, ns_name, sla_uuid, sla_name, sla_status, cust_email, cust_username, inst_status, inst_id) "
 					+ "VALUES ('" + ns_uuid + "','" + ns_name + "','" + sla_uuid + "' ,'" + sla_name + "' ,'"
-					+ sla_status + "','" + cust_email + "','" + cust_uuid + "', '" + inst_status + "' , '"
+					+ sla_status + "','" + cust_email + "','" + cust_username + "', '" + inst_status + "' , '"
 					+ correlation_id + "');";
 			stmt.executeUpdate(sql);
 			stmt.close();
@@ -588,7 +586,7 @@ public class db_operations {
 				String sla_date = rs.getString("sla_date");
 				String sla_status = rs.getString("sla_status");
 				String cust_email = rs.getString("cust_email");
-				String cust_uuid = rs.getString("cust_uuid");
+				String cust_username = rs.getString("cust_username");
 				String inst_status = rs.getString("inst_status");
 				String inst_id = rs.getString("inst_id");
 				String nsi_uuid = rs.getString("nsi_uuid");
@@ -601,7 +599,7 @@ public class db_operations {
 				obj.put("sla_status", sla_status);
 				obj.put("sla_uuid", sla_uuid);
 				obj.put("cust_email", cust_email);
-				obj.put("cust_uuid", cust_uuid);
+				obj.put("cust_username", cust_username);
 				obj.put("inst_status", inst_status);
 				obj.put("correlation_id", inst_id);
 				obj.put("nsi_uuid", nsi_uuid);
@@ -664,7 +662,7 @@ public class db_operations {
 				String sla_date = rs.getString("sla_date");
 				String sla_status = rs.getString("sla_status");
 				String cust_email = rs.getString("cust_email");
-				String cust_uuid = rs.getString("cust_uuid");
+				String cust_username = rs.getString("cust_username");
 				String inst_status = rs.getString("inst_status");
 				String inst_id = rs.getString("inst_id");
 				String nsi_uuid = rs.getString("nsi_uuid");
@@ -677,7 +675,7 @@ public class db_operations {
 				obj.put("sla_status", sla_status);
 				obj.put("sla_uuid", sla_uuid);
 				obj.put("cust_email", cust_email);
-				obj.put("cust_uuid", cust_uuid);
+				obj.put("cust_username", cust_username);
 				obj.put("inst_status", inst_status);
 				obj.put("correlation_id", inst_id);
 				obj.put("nsi_uuid", nsi_uuid);
@@ -737,14 +735,14 @@ public class db_operations {
 			while (rs.next()) {
 				String ns_uuid = rs.getString("ns_uuid");
 				String sla_uuid = rs.getString("sla_uuid");
-				String cust_uuid = rs.getString("cust_uuid");
+				String cust_username = rs.getString("cust_username");
 				String sla_status = rs.getString("sla_status");
 
 				JSONObject obj = new JSONObject();
 				obj.put("ns_uuid", ns_uuid);
 				obj.put("nsi_uuid", nsi_uuid);
 				obj.put("sla_uuid", sla_uuid);
-				obj.put("cust_uuid", cust_uuid);
+				obj.put("cust_username", cust_username);
 				obj.put("sla_status", sla_status);
 
 				cust_sla.add(obj);
@@ -774,31 +772,31 @@ public class db_operations {
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	public JSONObject selectAgreementPerCustomer(String custuuid) {
+	public JSONObject selectAgreementPerCustomer(String cust_username) {
 
 		Statement stmt = null;
 		JSONObject root = new JSONObject();
 		JSONArray cust_sla = new JSONArray();
 
-		custuuid = custuuid.trim();
+		cust_username = cust_username.trim();
 
 		try {
 			c.setAutoCommit(false);
 			stmt = c.createStatement();
 			ResultSet rs = stmt.executeQuery(
-					"SELECT * FROM cust_sla WHERE cust_uuid = '" + custuuid + "' AND inst_status='READY';");
+					"SELECT * FROM cust_sla WHERE cust_username = '" + cust_username + "' AND inst_status='READY';");
 
 			while (rs.next()) {
 				String ns_uuid = rs.getString("ns_uuid");
 				String sla_uuid = rs.getString("sla_uuid");
-				String cust_uuid = rs.getString("cust_uuid");
+				cust_username = rs.getString("cust_username");
 				String nsi_uuid = rs.getString("nsi_uuid");
 
 				JSONObject obj = new JSONObject();
 				obj.put("ns_uuid", ns_uuid);
 				obj.put("nsi_uuid", nsi_uuid);
 				obj.put("sla_uuid", sla_uuid);
-				obj.put("cust_uuid", cust_uuid);
+				obj.put("cust_username", cust_username);
 				cust_sla.add(obj);
 			}
 			root.put("cust_sla", cust_sla);
@@ -842,12 +840,12 @@ public class db_operations {
 					+ nsi_uuid + "' AND  inst_status='READY';");
 
 			while (rs.next()) {
-				String cust_uuid = rs.getString("cust_uuid");
+				String cust_username = rs.getString("cust_username");
 				String cust_email = rs.getString("cust_email");
 				String sla_date = rs.getString("sla_date");
 
 				new JSONObject();
-				root.put("cust_uuid", cust_uuid);
+				root.put("cust_username", cust_username);
 				root.put("cust_email", cust_email);
 				root.put("sla_date", sla_date);
 			}
@@ -969,7 +967,7 @@ public class db_operations {
 			stmt = c.createStatement();
 			String sql = "CREATE TABLE IF NOT EXISTS sla_violations" + "(ID  SERIAL," + " NS_UUID TEXT PRIMARY KEY, "
 					+ "SLA_UUID TEXT NOT NULL," + "VIOLATION_TIME TEXT NOT NULL," + "ALERT_STATE TEXT NOT NULL,"
-					+ "CUST_UUID  TEXT NOT NULL )";
+					+ "CUST_USERNAME  TEXT NOT NULL )";
 			stmt.executeUpdate(sql);
 			stmt.close();
 			// logging
@@ -1002,14 +1000,13 @@ public class db_operations {
 	 * 
 	 */
 	public static void insertRecordViolation(String nsi_uuid, String sla_uuid, String violation_time,
-			String alert_state, String cust_uuid) {
+			String alert_state, String cust_username) {
 
-		cust_uuid = "Tom";
 		try {
 			c.setAutoCommit(false);
 			Statement stmt = c.createStatement();
-			String sql = "INSERT INTO sla_violations  (ns_uuid, sla_uuid,violation_time, alert_state, cust_uuid ) VALUES ('"
-					+ nsi_uuid + "', '" + sla_uuid + "', '" + violation_time + "','" + alert_state + "', '" + cust_uuid
+			String sql = "INSERT INTO sla_violations  (ns_uuid, sla_uuid,violation_time, alert_state, cust_username ) VALUES ('"
+					+ nsi_uuid + "', '" + sla_uuid + "', '" + violation_time + "','" + alert_state + "', '" + cust_username
 					+ "');  ";
 			stmt.executeUpdate(sql);
 			stmt.close();
@@ -1053,7 +1050,7 @@ public class db_operations {
 		Statement stmt = null;
 
 		String sla_uuid = null;
-		String cust_uuid = null;
+		String cust_username = null;
 		JSONObject violated_sla = new JSONObject();
 
 		try {
@@ -1062,9 +1059,9 @@ public class db_operations {
 			ResultSet rs = stmt.executeQuery("SELECT * FROM cust_sla WHERE nsi_uuid = '" + nsi_uuid + "';");
 			while (rs.next()) {
 				sla_uuid = rs.getString("sla_uuid");
-				cust_uuid = rs.getString("cust_uuid");
+				cust_username = rs.getString("cust_username");
 				violated_sla.put("sla_uuid", sla_uuid);
-				violated_sla.put("cust_uuid", cust_uuid);
+				violated_sla.put("cust_username", cust_username);
 
 			}
 			rs.close();
@@ -1118,11 +1115,11 @@ public class db_operations {
 			while (rs.next()) {
 				String violation_time = rs.getString("violation_time");
 				String alert_state = rs.getString("alert_state");
-				String cust_uuid = rs.getString("cust_uuid");
+				String cust_username = rs.getString("cust_username");
 
 				violation.put("violation_time", violation_time);
 				violation.put("alert_state", alert_state);
-				violation.put("cust_uuid", cust_uuid);
+				violation.put("cust_username", cust_username);
 				violation.put("ns_uuid", nsi_uuid);
 				violation.put("sla_uuid", sla_uuid);
 
@@ -1163,14 +1160,14 @@ public class db_operations {
 			while (rs.next()) {
 				String violation_time = rs.getString("violation_time");
 				String alert_state = rs.getString("alert_state");
-				String cust_uuid = rs.getString("cust_uuid");
+				String cust_username = rs.getString("cust_username");
 				String nsi_uuid = rs.getString("ns_uuid");
 				String sla_uuid = rs.getString("sla_uuid");
 
 				JSONObject obj = new JSONObject();
 				obj.put("violation_time", violation_time);
 				obj.put("alert_state", alert_state);
-				obj.put("cust_uuid", cust_uuid);
+				obj.put("cust_username", cust_username);
 				obj.put("nsi_uuid", nsi_uuid);
 				obj.put("sla_uuid", sla_uuid);
 				violations.add(obj);
@@ -1365,12 +1362,12 @@ public class db_operations {
 				while (rs.next()) {
 					String ns_uuid = rs.getString("ns_uuid");
 					String sla_uuid = rs.getString("sla_uuid");
-					String cust_uuid = rs.getString("cust_uuid");
+					String cust_username = rs.getString("cust_username");
 
 					JSONObject obj = new JSONObject();
 					obj.put("ns_uuid", ns_uuid);
 					obj.put("sla_uuid", sla_uuid);
-					obj.put("cust_uuid", cust_uuid);
+					obj.put("cust_username", cust_username);
 					cust_sla.add(obj);
 				}
 
@@ -1408,7 +1405,7 @@ public class db_operations {
 		try {
 			stmt = c.createStatement();
 			String sql = "CREATE TABLE IF NOT EXISTS sla_licensing " + "(ID  SERIAL," + " NSI_UUID TEXT, "
-					+ "SLA_UUID TEXT," + "NS_UUID TEXT," + "CUST_UUID TEXT ,"
+					+ "SLA_UUID TEXT," + "NS_UUID TEXT," + "CUST_USERNAME TEXT ,"
 					+ "CUST_EMAIL  TEXT," + "license_type  TEXT," + "license_exp_date  TEXT,"
 					+ "license_period  TEXT," + "allowed_instances  TEXT,"
 					+ "current_instances  TEXT," + "license_status  TEXT," + "correlation_id TEXT)";
@@ -1457,7 +1454,7 @@ public class db_operations {
 				String sla_uuid = rs.getString("sla_uuid");
 				String ns_uuid = rs.getString("ns_uuid");
 				String nsi_uuid = rs.getString("nsi_uuid");
-				String cust_uuid = rs.getString("cust_uuid");
+				String cust_username = rs.getString("cust_username");
 				String cust_email = rs.getString("cust_email");
 				String license_type = rs.getString("license_type");
 				String license_exp_date = rs.getString("license_exp_date");
@@ -1470,7 +1467,7 @@ public class db_operations {
 				licenses_data.put("sla_uuid", sla_uuid);
 				licenses_data.put("ns_uuid", ns_uuid);
 				licenses_data.put("nsi_uuid", nsi_uuid);
-				licenses_data.put("cust_uuid", cust_uuid);
+				licenses_data.put("cust_username", cust_username);
 				licenses_data.put("cust_email", cust_email);
 				licenses_data.put("license_type", license_type);
 				licenses_data.put("license_exp_date", license_exp_date);
@@ -1506,7 +1503,7 @@ public class db_operations {
 	 * @param sla_uuid
 	 * @param ns_uuid
 	 * @param nsi_uuid
-	 * @param cust_uuid
+	 * @param cust_username
 	 * @param cust_email
 	 * @param license_type
 	 * @param license_exp_date
@@ -1515,15 +1512,15 @@ public class db_operations {
 	 * @param current_instances
 	 * @param license_status
 	 */
-	public static void insertLicenseRecord(String sla_uuid, String ns_uuid, String nsi_uuid, String cust_uuid,
+	public static void insertLicenseRecord(String sla_uuid, String ns_uuid, String nsi_uuid, String cust_username,
 			String cust_email, String license_type, String license_exp_date, String license_period,
 			String allowed_instances, String current_instances, String license_status, String correlation_id) {
 
 		try {
 			c.setAutoCommit(false);
 			Statement stmt = c.createStatement();
-			String sql = "INSERT INTO sla_licensing  (sla_uuid, ns_uuid,nsi_uuid, cust_uuid, cust_email, license_type, license_exp_date, license_period, allowed_instances, current_instances, license_status,correlation_id) VALUES ('"
-					+ sla_uuid + "', '" + ns_uuid + "', '" + nsi_uuid + "','" + cust_uuid + "', '" + cust_email + "' ,'"
+			String sql = "INSERT INTO sla_licensing  (sla_uuid, ns_uuid,nsi_uuid, cust_username, cust_email, license_type, license_exp_date, license_period, allowed_instances, current_instances, license_status,correlation_id) VALUES ('"
+					+ sla_uuid + "', '" + ns_uuid + "', '" + nsi_uuid + "','" + cust_username + "', '" + cust_email + "' ,'"
 					+ license_type + "','" + license_exp_date + "','" + license_period + "','" + allowed_instances
 					+ "','" + current_instances + "','" + license_status + "', '" + correlation_id + "');  ";
 			stmt.executeUpdate(sql);
@@ -1535,7 +1532,7 @@ public class db_operations {
 			String timestamps = timestamp.toString();
 			String type = "I";
 			String operation = "Insert license record";
-			String message = ("License record for sla_uuid = " + sla_uuid + " and cust_uuid= " + cust_uuid
+			String message = ("License record for sla_uuid = " + sla_uuid + " and cust_username " + cust_username
 					+ "  created successfully");
 			String status = "";
 			logger.info(
@@ -1557,14 +1554,14 @@ public class db_operations {
 		}
 	}
 
-	public boolean deleteLicenseRecord(String sla_uuid, String cust_uuid, String ns_uuid) {
+	public boolean deleteLicenseRecord(String sla_uuid, String cust_username, String ns_uuid) {
 		Statement stmt = null;
 		boolean result = false;
 		try {
 			c.setAutoCommit(false);
 			stmt = c.createStatement();
 			String sql = "DELETE FROM sla_licensing WHERE NS_UUID='" + ns_uuid + "' AND sla_uuid='" + sla_uuid
-					+ "' AND cust_uuid='" + cust_uuid + "';";
+					+ "' AND cust_username='" + cust_username + "';";
 			stmt.executeUpdate(sql);
 			c.commit();
 			stmt.close();
@@ -1597,7 +1594,7 @@ public class db_operations {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static JSONObject getLicenseInfo(String sla_uuid, String cust_uuid, String ns_uuid) {
+	public static JSONObject getLicenseInfo(String sla_uuid, String cust_username, String ns_uuid) {
 
 		JSONObject license_info = new JSONObject();
 		String license_status = "";
@@ -1614,7 +1611,7 @@ public class db_operations {
 			c.setAutoCommit(false);
 			stmt = c.createStatement();
 			ResultSet rs = stmt.executeQuery("SELECT * FROM sla_licensing WHERE sla_uuid = '" + sla_uuid
-					+ "' AND ns_uuid='" + ns_uuid + "' AND  cust_uuid='" + cust_uuid + "';");
+					+ "' AND ns_uuid='" + ns_uuid + "' AND  cust_username='" + cust_username + "';");
 
 			while (rs.next()) {
 				license_status = rs.getString("license_status");
@@ -1691,14 +1688,14 @@ public class db_operations {
 	/**
 	 * Count license records per customer
 	 * 
-	 * @param cust_uuid
+	 * @param cust_username
 	 * @param sla_uuid
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	public static int countLicensePerCustSLA(String cust_uuid, String sla_uuid) {
+	public static int countLicensePerCustSLA(String cust_username, String sla_uuid) {
 
-		String SQL = "SELECT count(*) FROM sla_licensing WHERE cust_uuid='" + cust_uuid + "' AND sla_uuid='" + sla_uuid+ "'";
+		String SQL = "SELECT count(*) FROM sla_licensing WHERE cust_username='" + cust_username + "' AND sla_uuid='" + sla_uuid+ "'";
 		int count_licenses = 0;
 		try {
 			stmt = c.createStatement();
@@ -1731,7 +1728,7 @@ public class db_operations {
 
 	}
 
-	public static boolean UpdateLicenseStatus(String sla_uuid, String ns_uuid, String cust_uuid, String license_status) {
+	public static boolean UpdateLicenseStatus(String sla_uuid, String ns_uuid, String cust_username, String license_status) {
 
 		Statement stmt = null;
 		boolean result = false;
@@ -1739,7 +1736,7 @@ public class db_operations {
 			c.setAutoCommit(false);
 			stmt = c.createStatement();
 			String sql = "UPDATE sla_licensing SET license_status='" + license_status + "' WHERE sla_uuid='" + sla_uuid
-					+ "' AND ns_uuid='" + ns_uuid + "' AND cust_uuid='" + cust_uuid + "';";
+					+ "' AND ns_uuid='" + ns_uuid + "' AND cust_username='" + cust_username + "';";
 			stmt.executeUpdate(sql);
 			c.commit();
 			stmt.close();
@@ -1772,7 +1769,7 @@ public class db_operations {
 
 	}
 	
-	public static boolean UpdateLicenseCorrelationID(String sla_uuid, String ns_uuid, String cust_uuid, String correlation_id) {
+	public static boolean UpdateLicenseCorrelationID(String sla_uuid, String ns_uuid, String cust_username, String correlation_id) {
 
 		Statement stmt = null;
 		boolean result = false;
@@ -1780,7 +1777,7 @@ public class db_operations {
 			c.setAutoCommit(false);
 			stmt = c.createStatement();
 			String sql = "UPDATE sla_licensing SET correlation_id='" + correlation_id + "' WHERE sla_uuid='" + sla_uuid
-					+ "' AND ns_uuid='" + ns_uuid + "' AND cust_uuid='" + cust_uuid + "';";
+					+ "' AND ns_uuid='" + ns_uuid + "' AND cust_username='" + cust_username + "';";
 			stmt.executeUpdate(sql);
 			c.commit();
 			stmt.close();
@@ -1813,9 +1810,9 @@ public class db_operations {
 
 	}
 	
-	public static int countActiveLicensePerCustSLA(String cust_uuid, String sla_uuid, String license_status) {
+	public static int countActiveLicensePerCustSLA(String cust_username, String sla_uuid, String license_status) {
 
-		String SQL = "SELECT count(*) FROM sla_licensing WHERE cust_uuid='" + cust_uuid + "' AND sla_uuid='" + sla_uuid+ "' AND license_status='active'";
+		String SQL = "SELECT count(*) FROM sla_licensing WHERE cust_username='" + cust_username + "' AND sla_uuid='" + sla_uuid+ "' AND license_status='active'";
 		int count_active_licenses = 0;
 		try {
 			stmt = c.createStatement();
@@ -1852,11 +1849,11 @@ public class db_operations {
 	 * 
 	 * @param sla_uuid
 	 * @param ns_uuid
-	 * @param cust_uuid
+	 * @param cust_username
 	 * @param current_instances
 	 * @return
 	 */
-	public static boolean UpdateLicenseCurrentInstances(String sla_uuid, String ns_uuid, String cust_uuid, String current_instances) {
+	public static boolean UpdateLicenseCurrentInstances(String sla_uuid, String ns_uuid, String cust_username, String current_instances) {
 
 		Statement stmt = null;
 		boolean result = false;
@@ -1864,7 +1861,7 @@ public class db_operations {
 			c.setAutoCommit(false);
 			stmt = c.createStatement();
 			String sql = "UPDATE sla_licensing SET current_instances='" + current_instances + "' WHERE sla_uuid='" + sla_uuid
-					+ "' AND ns_uuid='" + ns_uuid + "' AND cust_uuid='" + cust_uuid + "';";
+					+ "' AND ns_uuid='" + ns_uuid + "' AND cust_username='" + cust_username + "';";
 			stmt.executeUpdate(sql);
 			c.commit();
 			stmt.close();
@@ -1875,7 +1872,7 @@ public class db_operations {
 			String timestamps = timestamp.toString();
 			String type = "I";
 			String operation = "Updating SLA Licensing current instances";
-			String message = "License current instances updated?" + result + " The current instances for NS_UUID="+ns_uuid+" and CUST_UUID="+cust_uuid+" are="+current_instances;
+			String message = "License current instances updated?" + result + " The current instances for NS_UUID="+ns_uuid+" and CUST_USERNAME="+cust_username+" are="+current_instances;
 			String status = "";
 			logger.info(
 					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
