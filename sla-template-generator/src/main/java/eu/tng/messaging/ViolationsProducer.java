@@ -105,13 +105,13 @@ public class ViolationsProducer {
 	}
 
 	public static JSONObject createViolationMessage(String ns_uuid, String sla_uuid, String alert_time,
-			String alert_state, String cust_uuid, Connection connection) throws Exception {
+			String alert_state, String cust_username, Connection connection) throws Exception {
 
 		JSONObject payload = new JSONObject();
 		try {
 			payload.put("ns_uuid", ns_uuid);
 			payload.put("violated_sla", sla_uuid);
-			payload.put("cust_uuid", cust_uuid);
+			payload.put("cust_username", cust_username);
 			payload.put("violation_time", alert_time);
 			payload.put("alert_state", alert_state);
 		} catch (JSONException e) {

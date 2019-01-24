@@ -66,12 +66,12 @@ public class cust_sla_corr {
 	 * @param correlation_id
 	 */
 	public static void createCustSlaCorr(String sla_uuid, String sla_name, String sla_status, String ns_uuid,
-			String ns_name, String cust_uuid, String cust_email, String inst_status, String correlation_id) {
+			String ns_name, String cust_username, String cust_email, String inst_status, String correlation_id) {
 
 		db_operations dbo = new db_operations();
 		db_operations.connectPostgreSQL();
 		db_operations.createTableCustSla();
-		dbo.insertRecordAgreement(ns_uuid, ns_name, sla_uuid, sla_name, sla_status, cust_email, cust_uuid, inst_status,
+		dbo.insertRecordAgreement(ns_uuid, ns_name, sla_uuid, sla_name, sla_status, cust_email, cust_username, inst_status,
 				correlation_id);
 		dbo.closePostgreSQL();
 
