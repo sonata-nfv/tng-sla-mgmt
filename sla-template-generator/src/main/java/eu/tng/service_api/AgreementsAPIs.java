@@ -381,7 +381,7 @@ public class AgreementsAPIs {
 			String cust_username = (String) agrPerSlaNs.get("cust_username");
 			String cust_email = (String) agrPerSlaNs.get("cust_email");
 			String sla_date = (String) agrPerSlaNs.get("sla_date");
-
+			
 			// update the template with the necessary customer info - convert it to
 			// agreement
 			JSONObject slad = (JSONObject) agreement.get("slad");
@@ -400,7 +400,7 @@ public class AgreementsAPIs {
 			existingTemplates = agreement;
 
 			apiresponse = Response.ok((Object) existingTemplates);
-			apiresponse.header("Content-Length", agreement.toJSONString().length() - 7);
+			apiresponse.header("Content-Length", agreement.toJSONString().length() - 2);
 
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
