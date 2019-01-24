@@ -280,8 +280,7 @@ public class templatesAPIs {
 			} catch (JSONException e) {
 				System.out.println(e);
 			}
-		} 
-		catch (Exception e) {
+		} catch (Exception e) {
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 			String timestamps = timestamp.toString();
@@ -310,6 +309,17 @@ public class templatesAPIs {
 		guarantees.addAll(formParams.get("guaranteeId"));
 
 		// call CreateTemplate method
+		System.out.println(template_initiator);
+		System.out.println(provider_name.get(0));
+		System.out.println(service_licence_period.get(0));
+		System.out.println(service_licence_expiration_date.get(0));
+		System.out.println(allowed_service_instances.get(0));
+		System.out.println(service_licence_type.get(0));
+		System.out.println(guarantees);
+		System.out.println(expireDate.get(0));
+		System.out.println(templateName.get(0));
+		System.out.println(nsd_uuid.get(0));
+
 		CreateTemplate ct = new CreateTemplate();
 		JSONObject template = ct.createTemplate(nsd_uuid.get(0), templateName.get(0), expireDate.get(0), guarantees,
 				service_licence_type.get(0), allowed_service_instances.get(0), service_licence_expiration_date.get(0),
