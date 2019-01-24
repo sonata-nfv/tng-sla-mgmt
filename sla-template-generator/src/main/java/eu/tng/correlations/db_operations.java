@@ -342,17 +342,15 @@ public class db_operations {
 	 * 
 	 */
 	public void insertRecordAgreement(String ns_uuid, String ns_name, String sla_uuid, String sla_name,
-			String sla_status, String cust_name, String cust_uuid, String inst_status, String correlation_id) {
+			String sla_status, String cust_email, String cust_username, String inst_status, String correlation_id) {
 
-		cust_uuid = "Tom";
-		String cust_email = "tom@example.com";
 		try {
 			c.setAutoCommit(false);
 			Statement stmt = c.createStatement();
 			String sql = "INSERT INTO cust_sla "
 					+ " (ns_uuid, ns_name, sla_uuid, sla_name, sla_status, cust_email, cust_uuid, inst_status, inst_id) "
 					+ "VALUES ('" + ns_uuid + "','" + ns_name + "','" + sla_uuid + "' ,'" + sla_name + "' ,'"
-					+ sla_status + "','" + cust_email + "','" + cust_uuid + "', '" + inst_status + "' , '"
+					+ sla_status + "','" + cust_email + "','" + cust_username + "', '" + inst_status + "' , '"
 					+ correlation_id + "');";
 			stmt.executeUpdate(sql);
 			stmt.close();
