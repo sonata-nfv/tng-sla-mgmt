@@ -160,10 +160,9 @@ public class LicensingAPIs {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/status/{sla_uuid}/{ns_uuid}")
-	public Response getLicenseInfoPerCustomer(@PathParam("sla_uuid") String sla_uuid,
-			@PathParam("ns_uuid") String ns_uuid, @Context HttpHeaders headers) {
+	public Response getLicenseInfoPerCustomer(@PathParam("sla_uuid") String sla_uuid, @PathParam("ns_uuid") String ns_uuid, @Context HttpHeaders headers) {
 
-		String cust_username = "tango_cust";
+		String cust_username = "";
 		String cust_email = "";
 
 		// Get Authorization Token
@@ -190,8 +189,6 @@ public class LicensingAPIs {
 				cust_username = (String) auth_info.get("username");
 				cust_email = (String) auth_info.get("email");
 				
-				System.out.println("AUTH NAME ==> " +cust_username);
-
 			} catch (JSONException e) {
 				System.out.println(e);
 			}
@@ -276,13 +273,6 @@ public class LicensingAPIs {
 				String license_allowed_instances = (String) license_info_record.get("allowed_instances");
 				String license_current_instances = (String) license_info_record.get("current_instances");
 				
-				System.out.println("license_type===>" + license_type );
-				System.out.println("license_status ==> " + license_status );
-				System.out.println("license_allowed_instances ===> " + license_allowed_instances );
-				System.out.println("license_current_instances ===> " + license_current_instances );
-
-
-
 				boolean allowed_to_instantiate = allowedToInstantiate(license_status, license_type,
 						license_allowed_instances, license_current_instances);
 				license_info_record.put("allowed_to_instantiate", String.valueOf(allowed_to_instantiate));
@@ -462,8 +452,6 @@ public class LicensingAPIs {
 	}
 
 	private boolean isStatusOK(String license_status, String license_type) {
-		System.out.println(license_type);
-		System.out.println(license_status);
 
 		boolean statusOK = false;
 		if ((license_status.equals("inactive") || (license_status.equals("active")) && license_type.equals("public"))) {
