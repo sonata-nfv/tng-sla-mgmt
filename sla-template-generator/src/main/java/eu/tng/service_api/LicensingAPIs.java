@@ -80,7 +80,7 @@ public class LicensingAPIs {
 		dbo.closePostgreSQL();
 
 		apiresponse = Response.ok((Object) all_licenses);
-		apiresponse.header("Content-Length", all_licenses.toString().length());
+		apiresponse.header("Content-Length", all_licenses.toString().length()-2);
 
 		// logging
 		Timestamp timestamp = new Timestamp(System.currentTimeMillis());
@@ -296,7 +296,7 @@ public class LicensingAPIs {
 			db_operations.closePostgreSQL();
 			// API Response
 			apiresponse = Response.ok((Object) license_info_response);
-			apiresponse.header("Content-Length", license_info_response.toJSONString().length());
+			apiresponse.header("Content-Length", license_info_response.toJSONString().length()-2);
 			return apiresponse.status(200).build();
 
 		} else {
