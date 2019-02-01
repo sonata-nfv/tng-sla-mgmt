@@ -80,7 +80,7 @@ public class LicensingAPIs {
 		dbo.closePostgreSQL();
 
 		apiresponse = Response.ok((Object) all_licenses);
-		apiresponse.header("Content-Length", all_licenses.toString().length()-2);
+		apiresponse.header("Content-Length", all_licenses.toJSONString().length()-2);
 
 		// logging
 		Timestamp timestamp = new Timestamp(System.currentTimeMillis());
@@ -451,6 +451,9 @@ public class LicensingAPIs {
 	}
 
 	private boolean isStatusOK(String license_status, String license_type) {
+		System.out.println(license_type);
+		System.out.println(license_status);
+		
 		boolean statusOK = false;
 		if ((license_status.equals("inactive") || (license_status.equals("active")) && license_type.equals("public"))) {
 			statusOK = true;
