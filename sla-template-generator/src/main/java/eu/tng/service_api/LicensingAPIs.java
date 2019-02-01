@@ -163,7 +163,7 @@ public class LicensingAPIs {
 	public Response getLicenseInfoPerCustomer(@PathParam("sla_uuid") String sla_uuid,
 			@PathParam("ns_uuid") String ns_uuid, @Context HttpHeaders headers) {
 
-		String cust_username = "";
+		String cust_username = "tango_cust";
 		String cust_email = "";
 
 		// Get Authorization Token
