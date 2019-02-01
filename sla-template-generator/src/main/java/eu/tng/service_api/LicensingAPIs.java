@@ -80,7 +80,7 @@ public class LicensingAPIs {
 		dbo.closePostgreSQL();
 
 		apiresponse = Response.ok((Object) all_licenses);
-		apiresponse.header("Content-Length", all_licenses.toJSONString().length()-2);
+		apiresponse.header("Content-Length", all_licenses.toJSONString().length() - 2);
 
 		// logging
 		Timestamp timestamp = new Timestamp(System.currentTimeMillis());
@@ -163,7 +163,8 @@ public class LicensingAPIs {
 	public Response getLicenseInfoPerCustomer(@PathParam("sla_uuid") String sla_uuid,
 			@PathParam("ns_uuid") String ns_uuid, @Context HttpHeaders headers) {
 
-		String cust_username = "customer";
+		String cust_username = "";
+		String cust_email = "";
 
 		// Get Authorization Token
 		try {
@@ -187,6 +188,10 @@ public class LicensingAPIs {
 
 			try {
 				cust_username = (String) auth_info.get("username");
+				cust_email = (String) auth_info.get("email");
+				
+				System.out.println("AUTH NAME ==> " +cust_username);
+
 			} catch (JSONException e) {
 				System.out.println(e);
 			}
@@ -270,6 +275,13 @@ public class LicensingAPIs {
 				String license_status = (String) license_info_record.get("license_status");
 				String license_allowed_instances = (String) license_info_record.get("allowed_instances");
 				String license_current_instances = (String) license_info_record.get("current_instances");
+				
+				System.out.println("license_type===>" + license_type );
+				System.out.println("license_status ==> " + license_status );
+				System.out.println("license_allowed_instances ===> " + license_allowed_instances );
+				System.out.println("license_current_instances ===> " + license_current_instances );
+
+
 
 				boolean allowed_to_instantiate = allowedToInstantiate(license_status, license_type,
 						license_allowed_instances, license_current_instances);
@@ -296,7 +308,7 @@ public class LicensingAPIs {
 			db_operations.closePostgreSQL();
 			// API Response
 			apiresponse = Response.ok((Object) license_info_response);
-			apiresponse.header("Content-Length", license_info_response.toJSONString().length()-2);
+			apiresponse.header("Content-Length", license_info_response.toJSONString().length() - 2);
 			return apiresponse.status(200).build();
 
 		} else {
@@ -347,9 +359,8 @@ public class LicensingAPIs {
 	@POST
 	public Response LicenseBought(final MultivaluedMap<String, String> formParams, @Context HttpHeaders headers) {
 
-		String cust_username = "customer";
-		String cust_email = "email";
-
+		String cust_username = "";
+		String cust_email = "";
 		// Get Authorization Token
 		try {
 			// get jwt token
@@ -453,7 +464,7 @@ public class LicensingAPIs {
 	private boolean isStatusOK(String license_status, String license_type) {
 		System.out.println(license_type);
 		System.out.println(license_status);
-		
+
 		boolean statusOK = false;
 		if ((license_status.equals("inactive") || (license_status.equals("active")) && license_type.equals("public"))) {
 			statusOK = true;
