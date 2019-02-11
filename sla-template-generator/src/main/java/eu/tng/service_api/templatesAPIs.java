@@ -476,10 +476,7 @@ public class templatesAPIs {
 								allowed_service_instances.get(0), "inactive");
 
 						br.close();
-
-						apiresponse = Response.ok(responseSLA);
-						apiresponse.header("Content-Length", response_length);
-
+				
 						// logging
 						Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 						String timestamps = timestamp.toString();
@@ -490,9 +487,11 @@ public class templatesAPIs {
 						logger.info(
 								"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 								type, timestamps, operation, message, status);
-
+						
+						
+						apiresponse = Response.ok("'Success':'SLA Template created succesfully.'");
 						return apiresponse.status(201).build();
-
+						
 					} else {
 						// conflict in uploading sla template to the catalogue
 						JSONObject error = new JSONObject();
