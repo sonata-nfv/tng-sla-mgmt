@@ -965,7 +965,7 @@ public class db_operations {
 	public static void createTableViolations() {
 		try {
 			stmt = c.createStatement();
-			String sql = "CREATE TABLE IF NOT EXISTS sla_violations" + "(ID  SERIAL," + " NS_UUID TEXT PRIMARY KEY, "
+			String sql = "CREATE TABLE IF NOT EXISTS sla_violations" + "(ID  SERIAL," + " NSI_UUID TEXT PRIMARY KEY, "
 					+ "SLA_UUID TEXT NOT NULL," + "VIOLATION_TIME TEXT NOT NULL," + "ALERT_STATE TEXT NOT NULL,"
 					+ "CUST_USERNAME  TEXT NOT NULL )";
 			stmt.executeUpdate(sql);
@@ -1005,7 +1005,7 @@ public class db_operations {
 		try {
 			c.setAutoCommit(false);
 			Statement stmt = c.createStatement();
-			String sql = "INSERT INTO sla_violations  (ns_uuid, sla_uuid,violation_time, alert_state, cust_username ) VALUES ('"
+			String sql = "INSERT INTO sla_violations  (nsi_uuid, sla_uuid,violation_time, alert_state, cust_username ) VALUES ('"
 					+ nsi_uuid + "', '" + sla_uuid + "', '" + violation_time + "','" + alert_state + "', '" + cust_username
 					+ "');  ";
 			stmt.executeUpdate(sql);
@@ -1120,7 +1120,7 @@ public class db_operations {
 				violation.put("violation_time", violation_time);
 				violation.put("alert_state", alert_state);
 				violation.put("cust_username", cust_username);
-				violation.put("ns_uuid", nsi_uuid);
+				violation.put("nsi_uuid", nsi_uuid);
 				violation.put("sla_uuid", sla_uuid);
 
 			}
@@ -1161,7 +1161,7 @@ public class db_operations {
 				String violation_time = rs.getString("violation_time");
 				String alert_state = rs.getString("alert_state");
 				String cust_username = rs.getString("cust_username");
-				String nsi_uuid = rs.getString("ns_uuid");
+				String nsi_uuid = rs.getString("nsi_uuid");
 				String sla_uuid = rs.getString("sla_uuid");
 
 				JSONObject obj = new JSONObject();
@@ -1194,7 +1194,7 @@ public class db_operations {
 	@SuppressWarnings("unchecked")
 	public static int countViolationsPerNsi(String nsi_uuid) {
 
-		String SQL = "SELECT count(*) FROM sla_violations where ns_uuid = '" + nsi_uuid + "' ";
+		String SQL = "SELECT count(*) FROM sla_violations where nsi_uuid = '" + nsi_uuid + "' ";
 		int count_violations = 0;
 		try {
 			stmt = c.createStatement();
