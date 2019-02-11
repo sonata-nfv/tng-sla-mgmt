@@ -396,11 +396,10 @@ public class AgreementsAPIs {
 			customer_info.put("cust_email", cust_email);
 			sla_template.put("customer_info", customer_info);
 
-			System.out.println(agreement);
 			existingTemplates = agreement;
 
 			apiresponse = Response.ok((Object) existingTemplates);
-			apiresponse.header("Content-Length", agreement.toJSONString().length() - 2);
+			apiresponse.header("Content-Length", agreement.toJSONString().length() - 7);
 
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
