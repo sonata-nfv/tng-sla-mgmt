@@ -3,17 +3,29 @@
 # tng-sla-mgmt [![Build Status](https://jenkins.sonata-nfv.eu/buildStatus/icon?job=tng-sla-mgmt/master)](https://jenkins.sonata-nfv.eu/job/tng-sla-mgmt/job/master/)   [![Join the chat at https://gitter.im/sonata-nfv/Lobby](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/sonata-nfv/Lobby)
 
 5GTANGO's SLA management framework is part of the SONATA powered by 5GTANGO Service Platform. The SLA Management repository includes the SLAs descriptors
-examples and schemas, as well as all mechanisms that are implemented. The schema files are written in JSON-Schema, and the mechanisms included in the
-tng-sla-mgmt for the first release includes the `SLA Template Generator`. It's purpose is to create initial and tailored SLA templates driven from the operator.
-The SLA Templates are then available to the Customers, in order to select the desired one during the NS instantiation process. Agreements are also available
-to both operator and customer, in order to manage them accordingly.
+examples and schemas, as well as all mechanisms that are implemented. The schema files are written in JSON-Schema and they are available [here](https://github.com/sonata-nfv/tng-schema/tree/master/sla-template-descriptor)
 
+**SLA Templates:**    
+Initial SLA Templates are defined. An SLA template refers to an initial advertisement of the provider regarding the attached NS, while it also 
+describes what type of QoS commitments the provider is willing to take. Each template includes a set of speciﬁc Service Level Objectives (SLOs), which deﬁnes the maximum values 
+and thresholds allowed for a set of network and service-speciﬁc parameters, that ar ealso available and re-confgurable [here](https://github.com/sonata-nfv/tng-sla-mgmt/blob/master/sla-template-generator/src/main/resources/slos_list_Y2.json).     
+
+**SLA Agreements:**    
+As long as a service is successfully instantiated in the 5GTANGO Service Platform, the Agreement is automatically created. Speciﬁcally, once the deployment of the service is 
+completed, the corresponding SLA template is promoted to an actual agreement that is being enforced (i.e. instance of the SLA template). Once the agreement is established the 
+guaranteed requirements of the service start being monitored and checked for breaches of contract.    
+
+**SLA Violations:**    
 The violation of a SLA agreement is important to the customer. For this reason, while monitoring data are gathered by the monitoring manager, are then published
-to the SLA manager in case of a SLA violation. The afforementioned process is happening through publishing messages in the Message Queue framework (RabbitMQ) that is
-used in the project for communication purposes between each micro service. An example of an SLA violation can be the following. In this release, availability among others,
+to the SLA manager in case of a SLA violation. An example of an SLA violation can be the following. In this release, availability among others,
 is a supported metric by the monitoring manager. Different values of service's availability can be signed in the SLA agreement. If 98% is chosen by the customer, 
-this is translated into maximum downtime of his/her service 1.5 seconds in a windows of 60 secs. IF this limit is reached, an alert from the monitoring manager is produced.
-As SLA manager is a consumer of that topic in the MQ, it will consume the alert and mark the agreement as 'VIOLATED'.
+this is translated into maximum downtime of his/her service 1.5 seconds in a windows of 60 secs. IF this limit is reached, an alert from the monitoring manager is produced.    
+
+**License-based SLAs:**    
+An important addition to the SLA Manager is the introduction of licenses in the SLAs. 5GTANGO SLA Manager proposes a service-based licensing model, which links a license to a specific customer 
+and an instantiated NS, by specifying also the number of allowed NS instances. The model provides three types of licenses: a) trial, which supports limited time of trying the desired
+NS before license purchasing, b) public, which comes with no instantiation restrictions, and c) private, which specifies as mandatory the purchase of a license before instantiating a 
+NS. It is worth mentioning that licensing is provided "as a service” and it is included into the provided SLAs.
  
 ## Dependencies
 
@@ -21,7 +33,7 @@ As SLA manager is a consumer of that topic in the MQ, it will consume the alert 
 The first release of the SLA Manager has been programmed using JAVA (JDK8). Jersey RESTful Web Services framework is extensively used for the SLA Manager API programming.
 
 ### Frameworks
-*  Jersey - RESTful Web Services in Java - Version 1.19 (CDDL, XXXXX )
+*  Jersey - RESTful Web Services in Java - Version 1.19 
     *  jersey-servlet : 1.19
 	*  jersey-json : 1.19
 	*  jersey-client : 1.19
@@ -88,6 +100,7 @@ The database includes the following tables:
 *  `ns_template` - stores and manages correlations between sla templates and network services.
 *  `cust_sla` - stores and manages correlations between slas, instatiated network services and the customers. it is also used to manage the Agreements's informations.
 *  `sla_violations` - stores and manages all the SLA violations information per network service instance.
+*  `sla_licensing` - stores and manages all the Licensing information per SLA and the corresponding service.
 
 ### Logging 
 
@@ -121,8 +134,8 @@ Our style guide is really simple:
 
 
 ## Versioning
-*  The first release of the SLA Manager does not support versioning reagrding the code. In the future we can maybe use [SemVer](http://semver.org/) for this kind of versioning.
-*  The most up-to-date container version is v4. For the container versions available, see the [link to tags on this repository](https://github.com/sonata-nfv/tng-sla-mgmt/releases).
+*  The SLA Manager does not support versioning reagrding the code. In the future we can maybe use [SemVer](http://semver.org/) for this kind of versioning.
+*  The most up-to-date container version is v4.0 For the container versions available, see the [link to tags on this repository](https://github.com/sonata-nfv/tng-sla-mgmt/releases).
 	
 ## Development
 
