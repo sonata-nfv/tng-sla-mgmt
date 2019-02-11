@@ -296,34 +296,30 @@ public class templatesAPIs {
 		ResponseBuilder apiresponse = null;
 
 		List<String> nsd_uuid = formParams.get("nsd_uuid");
-		List<String> expireDate = formParams.get("expireDate");
 		List<String> templateName = formParams.get("templateName");
-		List<String> provider_name = formParams.get("providerName");
+		List<String> expireDate = formParams.get("expireDate");
 
 		List<String> service_licence_type = formParams.get("service_licence_type");
 		List<String> allowed_service_instances = formParams.get("allowed_service_instances");
 		List<String> service_licence_expiration_date = formParams.get("service_licence_expiration_date");
 		List<String> service_licence_period = formParams.get("service_licence_period");
+		
+		// optional provider name
+		String provider_name = "";
+		try {
+			List<String> provider_name_list = formParams.get("providerName");
+			provider_name = provider_name_list.get(0);
+		} catch (Exception e) {
+			provider_name = "default";
+		}
 
 		ArrayList<String> guarantees = new ArrayList<String>();
 		guarantees.addAll(formParams.get("guaranteeId"));
 
-		// call CreateTemplate method
-		System.out.println(template_initiator);
-		System.out.println(provider_name.get(0));
-		System.out.println(service_licence_period.get(0));
-		System.out.println(service_licence_expiration_date.get(0));
-		System.out.println(allowed_service_instances.get(0));
-		System.out.println(service_licence_type.get(0));
-		System.out.println(guarantees);
-		System.out.println(expireDate.get(0));
-		System.out.println(templateName.get(0));
-		System.out.println(nsd_uuid.get(0));
-
 		CreateTemplate ct = new CreateTemplate();
 		JSONObject template = ct.createTemplate(nsd_uuid.get(0), templateName.get(0), expireDate.get(0), guarantees,
 				service_licence_type.get(0), allowed_service_instances.get(0), service_licence_expiration_date.get(0),
-				service_licence_period.get(0), provider_name.get(0), template_initiator);
+				service_licence_period.get(0), provider_name, template_initiator);
 
 		if (template == null) {
 			String dr = null;
