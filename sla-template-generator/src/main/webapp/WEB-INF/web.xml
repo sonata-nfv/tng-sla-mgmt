@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <!--
 /*
  * 
@@ -36,7 +35,6 @@
  * 
  */
 -->
-
 <web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
   <servlet>
     <servlet-name>SLA Templates APIs</servlet-name>
@@ -60,9 +58,7 @@
   <listener>
     <listener-class>eu.tng.messaging.MqMonitoringConsumer</listener-class>
   </listener>
-   <!--  
   <listener>
-  	<listener-class>eu.tng.messaging.MqSlaViolationsConsumer</listener-class>
-  </listener>  
-  -->
+    <listener-class>eu.tng.rules.LicensePeriodCheck</listener-class>
+  </listener>
 </web-app>
