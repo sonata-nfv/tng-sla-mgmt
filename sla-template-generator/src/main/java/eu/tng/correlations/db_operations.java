@@ -1442,7 +1442,7 @@ public class db_operations {
 	 * @return licenses
 	 */
 	@SuppressWarnings("unchecked")
-	public JSONArray getAllLicenses() {
+	public static JSONArray getAllLicenses() {
 
 		JSONArray licenses = new JSONArray();
 		Statement stmt = null;
@@ -1759,6 +1759,47 @@ public class db_operations {
 			String timestamps = timestamp.toString();
 			String type = "W";
 			String operation = "Updating SLA Licensing status";
+			String message = e.getMessage();
+			String status = "";
+			logger.warn(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
+		}
+		return result;
+
+	}
+	
+	
+	public static boolean deactivateLicenseForNSI(String nsi_uuid, String license_status) {
+
+		Statement stmt = null;
+		boolean result = false;
+		try {
+			c.setAutoCommit(false);
+			stmt = c.createStatement();
+			String sql = "UPDATE sla_licensing SET license_status='" + license_status + "' WHERE nsi_uuid='" + nsi_uuid + "';";
+			stmt.executeUpdate(sql);
+			c.commit();
+			stmt.close();
+			result = true;
+
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			String timestamps = timestamp.toString();
+			String type = "I";
+			String operation = "Deactivating SLA Licensing";
+			String message = "Deactivated" + result;
+			String status = "";
+			logger.info(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
+
+		} catch (Exception e) {
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			String timestamps = timestamp.toString();
+			String type = "W";
+			String operation = "Deactivating SLA Licensing";
 			String message = e.getMessage();
 			String status = "";
 			logger.warn(

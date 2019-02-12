@@ -48,6 +48,10 @@ import javax.servlet.ServletContextListener;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.json.JSONObject;
+import org.json.simple.JSONArray;
+
+import eu.tng.correlations.db_operations;
 
 /**
  * Application Lifecycle Listener implementation class LicensePeriodCheck
@@ -88,39 +92,71 @@ public class LicensePeriodCheck implements ServletContextListener {
 	public void contextInitialized(ServletContextEvent arg0) {
 		System.out.println("[*] License Check Listener started!!");
 
-
 		// run every 24h - 24*60*60*1000 add 24 hours delay between job executions.
-		final long timeInterval = 24*60*60*1000; 
+		final long timeInterval = 24 * 60 * 60 * 1000;
 		Runnable runnable = new Runnable() {
 
 			public void run() {
 				while (true) {
 					// code for task to run
 					System.out.println("Hello Thread scheduler !!");
-					
-					DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-					
-					Date currentDate = new Date();
-					System.out.println("Current date" + dateFormat.format(currentDate)); //2016/11/16
-					
-		            Date licenseExpirationDate = null;
-					try {
-						licenseExpirationDate = dateFormat.parse("15/01/2019");
-					} catch (ParseException e1) {
-						e1.printStackTrace();
-					}
-					System.out.println("License Expiration date" + dateFormat.format(licenseExpirationDate)); //2016/11/16
 
-		            if(currentDate.after(licenseExpirationDate)){
-		                System.out.println("currentDate >  licenseExpirationDate");
-		            }
+					/*
+					 * try { licenseExpirationDate = dateFormat.parse("15/01/2019"); } catch
+					 * (ParseException e1) { e1.printStackTrace(); }
+					 * System.out.println("License Expiration date" +
+					 * dateFormat.format(licenseExpirationDate)); // 2016/11/16
+					 */
+
+					// get expiration date for all licenses
+					db_operations dbo = new db_operations();
+					db_operations.connectPostgreSQL();
+					db_operations.createTableLicensing();
+					JSONArray licenses = db_operations.getAllLicenses();
+					db_operations.closePostgreSQL();
+					System.out.println("[*] Licenses ==> " + licenses);
+
+					checkExpDate(licenses);
+
 					// code for task to run ends here
-		            
 					try {
 						Thread.sleep(timeInterval);
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
+				}
+			}
+
+			private void checkExpDate(JSONArray licenses) {
+				DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+
+				Date currentDate = new Date();
+				Date license_exp_date = null;
+
+				if (licenses != null && licenses.size() > 0) {
+					for (int i = 0; i < licenses.size(); i++) {
+						Object license_item = licenses.get(i);
+						String license_exp_date_string = ((JSONObject) license_item).getString("license_exp_date");
+						String license_nsi_uuid = ((JSONObject) license_item).getString("nsi_uuid");
+
+						try {
+							license_exp_date = dateFormat.parse(license_exp_date_string);
+							System.out.println(dateFormat.format(license_exp_date_string));
+
+							if (currentDate.after(license_exp_date)) {
+								System.out.println("[*] currentDate >  licenseExpirationDate");
+								db_operations dbo = new db_operations();
+								db_operations.connectPostgreSQL();
+								db_operations.deactivateLicenseForNSI(license_nsi_uuid, "inactive");
+								db_operations.closePostgreSQL();
+							}
+						} catch (ParseException e) {
+							e.printStackTrace();
+						}
+					}
+				}
+				else {
+					System.out.print("[*] No license instances yet.");
 				}
 			}
 		};
