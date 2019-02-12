@@ -133,7 +133,10 @@ public class LicensePeriodCheck implements ServletContextListener {
 				Date currentDate = new Date();
 				Date license_exp_date = null;
 				System.out.println("Licences pinakas size: " + licenses.size());
-				if (licenses.size() != 0) {
+				if (licenses.size() == 0) {
+					System.out.print("[*] No license instances yet.");
+				}
+				else {
 					for (int i = 0; i < licenses.size(); i++) {
 						Object license_item = licenses.get(i);
 						String license_exp_date_string = ((JSONObject) license_item).getString("license_exp_date");
@@ -154,9 +157,6 @@ public class LicensePeriodCheck implements ServletContextListener {
 							e.printStackTrace();
 						}
 					}
-				}
-				else {
-					System.out.print("[*] No license instances yet.");
 				}
 			}
 		};
