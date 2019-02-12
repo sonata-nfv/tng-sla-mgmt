@@ -48,8 +48,9 @@ import javax.servlet.ServletContextListener;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.json.JSONArray;
 import org.json.JSONObject;
-import org.json.simple.JSONArray;
+//import org.json.simple.JSONArray;
 
 import eu.tng.correlations.db_operations;
 
@@ -112,7 +113,7 @@ public class LicensePeriodCheck implements ServletContextListener {
 					db_operations dbo = new db_operations();
 					db_operations.connectPostgreSQL();
 					db_operations.createTableLicensing();
-					JSONArray licenses = db_operations.getAllLicenses();
+					org.json.simple.JSONArray licenses = db_operations.getAllLicenses();
 					db_operations.closePostgreSQL();
 					System.out.println("[*] Licenses ==> " + licenses);
 
@@ -127,13 +128,13 @@ public class LicensePeriodCheck implements ServletContextListener {
 				}
 			}
 
-			private void checkExpDate(JSONArray licenses) {
+			private void checkExpDate(org.json.simple.JSONArray licenses) {
 				DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 
 				Date currentDate = new Date();
 				Date license_exp_date = null;
 				System.out.println("Licences pinakas size: " + licenses.size());
-				if (licenses.isEmpty() == true) {
+				if (licenses.size() == 0) {
 					System.out.print("[*] No license instances yet.");
 				}
 				else {
