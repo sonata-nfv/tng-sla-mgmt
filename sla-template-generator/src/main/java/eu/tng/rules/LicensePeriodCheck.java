@@ -84,16 +84,36 @@ public class LicensePeriodCheck implements ServletContextListener {
 	 */
 	public void contextInitialized(ServletContextEvent arg0) {
 		System.out.println("[*] License Check Listener started!!");
-		
-		Date date=new Date();
-		Timer timer = new Timer();
 
-		timer.schedule(new TimerTask(){
-		     public void run(){
-		          System.out.println("Timer Running... " + new Date());
-		     }
-		},date, 60000);//24*60*60*1000 add 24 hours delay between job executions.  
-	
+		/*
+		 * Date date=new Date(); Timer timer = new Timer();
+		 * 
+		 * timer.schedule(new TimerTask(){ public void run(){
+		 * System.out.println("Timer Running... " + new Date()); } },date,
+		 * 60000);//24*60*60*1000 add 24 hours delay between job executions.
+		 */
+
+		// run in 5 seconds
+		final long timeInterval = 5000;
+		Runnable runnable = new Runnable() {
+
+			public void run() {
+				while (true) {
+					// ------- code for task to run
+					System.out.println("Hello Thread scheduler !!");
+					// ------- ends here
+					try {
+						Thread.sleep(timeInterval);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		};
+
+		Thread thread = new Thread(runnable);
+		thread.start();
+
 	}
 
 }
