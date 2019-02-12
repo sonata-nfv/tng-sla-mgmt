@@ -94,7 +94,7 @@ public class LicensePeriodCheck implements ServletContextListener {
 		 */
 
 		// run in 5 seconds
-		final long timeInterval = 5000;
+		final long timeInterval = 24*60*60*1000;
 		Runnable runnable = new Runnable() {
 
 			public void run() {
