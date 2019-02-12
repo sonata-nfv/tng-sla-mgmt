@@ -36,6 +36,9 @@
 package eu.tng.rules;
 
 import java.sql.Timestamp;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -85,23 +88,34 @@ public class LicensePeriodCheck implements ServletContextListener {
 	public void contextInitialized(ServletContextEvent arg0) {
 		System.out.println("[*] License Check Listener started!!");
 
-		/*
-		 * Date date=new Date(); Timer timer = new Timer();
-		 * 
-		 * timer.schedule(new TimerTask(){ public void run(){
-		 * System.out.println("Timer Running... " + new Date()); } },date,
-		 * 60000);//24*60*60*1000 add 24 hours delay between job executions.
-		 */
 
-		// run in 5 seconds
-		final long timeInterval = 24*60*60*1000;
+		// run every 24h - 24*60*60*1000 add 24 hours delay between job executions.
+		final long timeInterval = 24*60*60*1000; 
 		Runnable runnable = new Runnable() {
 
 			public void run() {
 				while (true) {
-					// ------- code for task to run
+					// code for task to run
 					System.out.println("Hello Thread scheduler !!");
-					// ------- ends here
+					
+					DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+					
+					Date currentDate = new Date();
+					System.out.println("Current date" + dateFormat.format(currentDate)); //2016/11/16
+					
+		            Date licenseExpirationDate = null;
+					try {
+						licenseExpirationDate = dateFormat.parse("15/01/2019");
+					} catch (ParseException e1) {
+						e1.printStackTrace();
+					}
+					System.out.println("License Expiration date" + dateFormat.format(licenseExpirationDate)); //2016/11/16
+
+		            if(currentDate.after(licenseExpirationDate)){
+		                System.out.println("currentDate >  licenseExpirationDate");
+		            }
+					// code for task to run ends here
+		            
 					try {
 						Thread.sleep(timeInterval);
 					} catch (InterruptedException e) {
