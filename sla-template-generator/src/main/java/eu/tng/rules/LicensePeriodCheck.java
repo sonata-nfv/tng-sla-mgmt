@@ -94,7 +94,7 @@ public class LicensePeriodCheck implements ServletContextListener {
 		System.out.println("[*] License Check Listener started!!");
 
 		// run every 24h - 24*60*60*1000 add 24 hours delay between job executions.
-		final long timeInterval = 24*60*60*1000;
+		final long timeInterval =60 * 1000;
 		Runnable runnable = new Runnable() {
 
 			public void run() {
@@ -104,14 +104,7 @@ public class LicensePeriodCheck implements ServletContextListener {
 					DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 
 					Date currentDate = new Date();
-					System.out.println("Current date" + dateFormat.format(currentDate)); 
-					
-					/*
-					 * try { licenseExpirationDate = dateFormat.parse("15/01/2019"); } catch
-					 * (ParseException e1) { e1.printStackTrace(); }
-					 * System.out.println("License Expiration date" +
-					 * dateFormat.format(licenseExpirationDate)); // 2016/11/16
-					 */
+					System.out.println("Current date" + dateFormat.format(currentDate));
 
 					// get expiration date for all licenses
 					db_operations dbo = new db_operations();
@@ -119,24 +112,23 @@ public class LicensePeriodCheck implements ServletContextListener {
 					db_operations.createTableLicensing();
 					org.json.simple.JSONArray licenses = db_operations.getAllLicenses();
 					db_operations.closePostgreSQL();
-					
+
 					Date license_exp_date = null;
-					
+
 					if (licenses.size() == 0) {
 						System.out.print("[*]0 licenses!!!");
-					} 
-					else {
+					} else {
 						System.out.print("[*] more than 0 licenses!!!");
-						
+
 						for (int i = 0; i < licenses.size(); i++) {
 							JSONObject license_item = (JSONObject) licenses.get(i);
 							System.out.println("[*] lICNSE ITEM " + license_item);
-							String license_exp_date_string = (String) ((JSONObject) license_item).get("license_exp_date");
+							String license_exp_date_string = (String) ((JSONObject) license_item)
+									.get("license_exp_date");
 							System.out.println("[*] Expiration date ==> " + license_exp_date_string);
 							String license_nsi_uuid = (String) ((JSONObject) license_item).get("nsi_uuid");
 							System.out.println("[*] nsi ==> " + license_nsi_uuid);
 
-							/*
 							try {
 								license_exp_date = dateFormat.parse(license_exp_date_string);
 								System.out.println(dateFormat.format(license_exp_date_string));
@@ -145,14 +137,15 @@ public class LicensePeriodCheck implements ServletContextListener {
 									System.out.println("[*] currentDate >  licenseExpirationDate");
 									db_operations.connectPostgreSQL();
 									db_operations.deactivateLicenseForNSI(license_nsi_uuid, "inactive");
+									System.out.println("[*] License de-activated");
 									db_operations.closePostgreSQL();
 								}
 							} catch (ParseException e) {
 								e.printStackTrace();
 							}
-							*/
+
 						}
-						
+
 					}
 
 					// code for task to run ends here
