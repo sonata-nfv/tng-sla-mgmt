@@ -103,8 +103,14 @@ public class LicensePeriodCheck implements ServletContextListener {
 
 					Date currentDate = new Date();
 					String dateString = format.format( currentDate );
-					Date   formatted_current_date = format.parse(dateString);
-					System.out.println("Formatted Current date" + formatted_current_date);
+					Date formatted_current_date;
+					try {
+						formatted_current_date = format.parse(dateString);
+						System.out.println("Formatted Current date" + formatted_current_date);
+					} catch (ParseException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
 
 					// get expiration date for all licenses
 					db_operations dbo = new db_operations();
