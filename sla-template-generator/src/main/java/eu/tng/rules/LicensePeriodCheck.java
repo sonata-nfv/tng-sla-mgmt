@@ -93,7 +93,7 @@ public class LicensePeriodCheck implements ServletContextListener {
 		System.out.println("[*] License Check Listener started!!");
 
 		// run every 24h - 24*60*60*1000 add 24 hours delay between job executions.
-		final long timeInterval =60 * 1000;
+		final long timeInterval = 1000;
 		Runnable runnable = new Runnable() {
 
 			public void run() {
@@ -145,6 +145,9 @@ public class LicensePeriodCheck implements ServletContextListener {
 									db_operations.deactivateLicenseForNSI(license_nsi_uuid, "inactive");
 									System.out.println("[*] License de-activated");
 									db_operations.closePostgreSQL();
+								}
+								else {
+									System.out.println("[*] currentDate < licenseExpirationDate --> License not deactivated");
 								}
 							} catch (ParseException e) {
 								System.out.println("Error ==> " + e);
