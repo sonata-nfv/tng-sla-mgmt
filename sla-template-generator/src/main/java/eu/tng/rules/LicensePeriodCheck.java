@@ -99,9 +99,11 @@ public class LicensePeriodCheck implements ServletContextListener {
 			public void run() {
 				while (true) {
 					// code for task to run
-					SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+					DateFormat format = new SimpleDateFormat("dd/MM/yyyy");
 
 					Date currentDate = new Date();
+					System.out.println("cURRENT DATE ==> " +currentDate);
+					/*
 					String dateString = format.format( currentDate );
 					Date formatted_current_date;
 					try {
@@ -111,6 +113,7 @@ public class LicensePeriodCheck implements ServletContextListener {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					}
+					*/
 
 					// get expiration date for all licenses
 					db_operations dbo = new db_operations();
@@ -131,28 +134,30 @@ public class LicensePeriodCheck implements ServletContextListener {
 							System.out.println("[*] lICNSE ITEM " + license_item);
 							String license_exp_date_string = (String) ((JSONObject) license_item)
 									.get("license_exp_date");
-							System.out.println("[*] Expiration date ==> " + license_exp_date_string);
-							String license_nsi_uuid = (String) ((JSONObject) license_item).get("nsi_uuid");
-							System.out.println("[*] nsi ==> " + license_nsi_uuid);
+							System.out.println("[*] Expiration date IN STRING!!! ==> " + license_exp_date_string);
+							
+							//String license_nsi_uuid = (String) ((JSONObject) license_item).get("nsi_uuid");
+							//System.out.println("[*] nsi ==> " + license_nsi_uuid);
 
 							try {
-								Date formatted_exp_date = format.parse(license_exp_date_string);
-								System.out.println("Formatted expiration date" + formatted_exp_date);
-
-								if (currentDate.after(license_exp_date)) {
-									System.out.println("[*] currentDate >  licenseExpirationDate");
-									db_operations.connectPostgreSQL();
-									db_operations.deactivateLicenseForNSI(license_nsi_uuid, "inactive");
-									System.out.println("[*] License de-activated");
-									db_operations.closePostgreSQL();
-								}
-								else {
-									System.out.println("[*] currentDate < licenseExpirationDate --> License not deactivated");
-								}
+								license_exp_date = format.parse(license_exp_date_string);
+								System.out.println("Formatted expiration date" + license_exp_date);
 							} catch (ParseException e) {
 								System.out.println("Error ==> " + e);
 							}
-
+							
+							/*
+							if (currentDate.after(license_exp_date)) {
+								System.out.println("[*] currentDate >  licenseExpirationDate");
+								db_operations.connectPostgreSQL();
+								db_operations.deactivateLicenseForNSI(license_nsi_uuid, "inactive");
+								System.out.println("[*] License de-activated");
+								db_operations.closePostgreSQL();
+							}
+							else {
+								System.out.println("[*] currentDate < licenseExpirationDate --> License not deactivated");
+							}
+							*/
 						}
 
 					}
