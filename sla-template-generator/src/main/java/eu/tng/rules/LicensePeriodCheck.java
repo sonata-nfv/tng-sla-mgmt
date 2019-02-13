@@ -130,7 +130,7 @@ public class LicensePeriodCheck implements ServletContextListener {
 
 							try {
 					            license_exp_date = dateFormat.parse(license_exp_date_string);
-								System.out.println("[*] Expiration date in Date Format!!! ==> " + dateFormat.format(license_exp_date_string));
+								System.out.println("[*] Expiration date in Date Format!!! ==> " + license_exp_date);
 
 								if (currentDate.after(license_exp_date)) {
 									System.out.println("[*] currentDate >  licenseExpirationDate");
