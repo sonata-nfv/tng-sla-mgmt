@@ -129,7 +129,8 @@ public class LicensePeriodCheck implements ServletContextListener {
 						System.out.print("[*] more than 0 licenses!!!");
 						
 						for (int i = 0; i < licenses.size(); i++) {
-							Object license_item = licenses.get(i);
+							JSONObject license_item = (JSONObject) licenses.get(i);
+							System.out.println("[*] lICNSE ITEM " + license_item);
 							String license_exp_date_string = ((JSONObject) license_item).getString("license_exp_date");
 							System.out.println("[*] Expiration date ==> " + license_exp_date_string);
 							String license_nsi_uuid = ((JSONObject) license_item).getString("nsi_uuid");
@@ -158,7 +159,7 @@ public class LicensePeriodCheck implements ServletContextListener {
 					try {
 						Thread.sleep(timeInterval);
 					} catch (InterruptedException e) {
-						e.printStackTrace();
+						System.out.println("ERROR!!!! ==> " + e);
 					}
 				}
 			}
