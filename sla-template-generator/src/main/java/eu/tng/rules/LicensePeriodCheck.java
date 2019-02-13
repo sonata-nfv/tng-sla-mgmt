@@ -49,7 +49,7 @@ import javax.servlet.ServletContextListener;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.JSONArray;
-import org.json.JSONObject;
+import org.json.simple.JSONObject;
 //import org.json.simple.JSONArray;
 
 import eu.tng.correlations.db_operations;
@@ -131,9 +131,9 @@ public class LicensePeriodCheck implements ServletContextListener {
 						for (int i = 0; i < licenses.size(); i++) {
 							JSONObject license_item = (JSONObject) licenses.get(i);
 							System.out.println("[*] lICNSE ITEM " + license_item);
-							String license_exp_date_string = ((JSONObject) license_item).getString("license_exp_date");
+							String license_exp_date_string = (String) ((JSONObject) license_item).get("license_exp_date");
 							System.out.println("[*] Expiration date ==> " + license_exp_date_string);
-							String license_nsi_uuid = ((JSONObject) license_item).getString("nsi_uuid");
+							String license_nsi_uuid = (String) ((JSONObject) license_item).get("nsi_uuid");
 							System.out.println("[*] nsi ==> " + license_nsi_uuid);
 
 							/*
