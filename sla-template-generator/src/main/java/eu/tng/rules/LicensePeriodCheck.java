@@ -94,7 +94,7 @@ public class LicensePeriodCheck implements ServletContextListener {
 		System.out.println("[*] License Check Listener started!!");
 
 		// run every 24h - 24*60*60*1000 add 24 hours delay between job executions.
-		final long timeInterval = 24 * 60 * 60 * 1000;
+		final long timeInterval = 1000;
 		Runnable runnable = new Runnable() {
 
 			public void run() {
@@ -117,7 +117,20 @@ public class LicensePeriodCheck implements ServletContextListener {
 					db_operations.closePostgreSQL();
 					System.out.println("[*] Licenses ==> " + licenses);
 
-					checkExpDate(licenses);
+					//checkExpDate(licenses);
+					
+					DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+					Date currentDate = new Date();
+					System.out.println("Current date " + currentDate);
+					Date license_exp_date = null;
+					int licenses_number = licenses.size();
+					System.out.println("Licences pinakas size: " + licenses.size());
+					
+					if (licenses.size() == 0) {
+						System.out.print("[*]0 licenses!!!");
+					} else {
+						System.out.print("[*] more than 0 licenses!!!");
+					}
 
 					// code for task to run ends here
 					try {
