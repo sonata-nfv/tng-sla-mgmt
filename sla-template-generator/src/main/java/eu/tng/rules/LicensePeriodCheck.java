@@ -133,23 +133,21 @@ public class LicensePeriodCheck implements ServletContextListener {
 							System.out.println("[*] lICNSE ITEM " + license_item);
 							String license_exp_date_string = (String) ((JSONObject) license_item)
 									.get("license_exp_date");
-							
-							//String license_nsi_uuid = (String) ((JSONObject) license_item).get("nsi_uuid");
-							//System.out.println("[*] nsi ==> " + license_nsi_uuid);
-
 							try {
 								license_exp_date = format.parse(license_exp_date_string);
 							} catch (ParseException e) {
 								System.out.println("Error ==> " + e);
 							}
 							
+							String license_nsi_uuid = (String) ((JSONObject) license_item).get("nsi_uuid");
+							System.out.println("[*] nsi ==> " + license_nsi_uuid);
 							
 							if (currentDate.after(license_exp_date)) {
 								System.out.println("[*] currentDate >  licenseExpirationDate");
-								//db_operations.connectPostgreSQL();
-								//db_operations.deactivateLicenseForNSI(license_nsi_uuid, "inactive");
-								//System.out.println("[*] License de-activated");
-								//db_operations.closePostgreSQL();
+								db_operations.connectPostgreSQL();
+								db_operations.deactivateLicenseForNSI(license_nsi_uuid, "inactive");
+								System.out.println("[*] License de-activated");
+								db_operations.closePostgreSQL();
 							}
 							else {
 								System.out.println("[*] currentDate < licenseExpirationDate --> License not deactivated");
