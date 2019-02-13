@@ -101,6 +101,11 @@ public class LicensePeriodCheck implements ServletContextListener {
 				while (true) {
 					// code for task to run
 
+					DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+
+					Date currentDate = new Date();
+					System.out.println("Current date" + dateFormat.format(currentDate)); 
+					
 					/*
 					 * try { licenseExpirationDate = dateFormat.parse("15/01/2019"); } catch
 					 * (ParseException e1) { e1.printStackTrace(); }
@@ -115,8 +120,6 @@ public class LicensePeriodCheck implements ServletContextListener {
 					org.json.simple.JSONArray licenses = db_operations.getAllLicenses();
 					db_operations.closePostgreSQL();
 					
-					DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-					Date currentDate = new Date();		
 					Date license_exp_date = null;
 					
 					if (licenses.size() == 0) {
@@ -124,6 +127,7 @@ public class LicensePeriodCheck implements ServletContextListener {
 					} 
 					else {
 						System.out.print("[*] more than 0 licenses!!!");
+						
 						for (int i = 0; i < licenses.size(); i++) {
 							Object license_item = licenses.get(i);
 							String license_exp_date_string = ((JSONObject) license_item).getString("license_exp_date");
@@ -131,6 +135,7 @@ public class LicensePeriodCheck implements ServletContextListener {
 							String license_nsi_uuid = ((JSONObject) license_item).getString("nsi_uuid");
 							System.out.println("[*] nsi ==> " + license_nsi_uuid);
 
+							/*
 							try {
 								license_exp_date = dateFormat.parse(license_exp_date_string);
 								System.out.println(dateFormat.format(license_exp_date_string));
@@ -144,7 +149,9 @@ public class LicensePeriodCheck implements ServletContextListener {
 							} catch (ParseException e) {
 								e.printStackTrace();
 							}
+							*/
 						}
+						
 					}
 
 					// code for task to run ends here
@@ -154,50 +161,6 @@ public class LicensePeriodCheck implements ServletContextListener {
 						e.printStackTrace();
 					}
 				}
-			}
-
-			private void checkExpDate(org.json.simple.JSONArray licenses) {
-				DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-
-				Date currentDate = new Date();
-				Date license_exp_date = null;
-				int licenses_number = licenses.size();
-				System.out.println("Licences pinakas size: " + licenses.size());
-				
-				if (licenses.size() == 0) {
-					System.out.print("[*]0 licenses!!!");
-				} else {
-					System.out.print("[*] more than 0 licenses!!!");
-				}
-
-				/*
-				if (String.valueOf(licenses_number).equals("0")) {
-					System.out.print("[*] No license instances yet.");
-				}
-				else {
-					System.out.print("[*] greater than 0 ");
-					for (int i = 0; i < licenses.size(); i++) {
-						Object license_item = licenses.get(i);
-						String license_exp_date_string = ((JSONObject) license_item).getString("license_exp_date");
-						String license_nsi_uuid = ((JSONObject) license_item).getString("nsi_uuid");
-
-						try {
-							license_exp_date = dateFormat.parse(license_exp_date_string);
-							System.out.println(dateFormat.format(license_exp_date_string));
-
-							if (currentDate.after(license_exp_date)) {
-								System.out.println("[*] currentDate >  licenseExpirationDate");
-								db_operations dbo = new db_operations();
-								db_operations.connectPostgreSQL();
-								db_operations.deactivateLicenseForNSI(license_nsi_uuid, "inactive");
-								db_operations.closePostgreSQL();
-							}
-						} catch (ParseException e) {
-							e.printStackTrace();
-						}
-					}
-				}
-				*/
 			}
 		};
 
