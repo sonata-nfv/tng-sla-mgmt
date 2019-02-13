@@ -94,13 +94,12 @@ public class LicensePeriodCheck implements ServletContextListener {
 		System.out.println("[*] License Check Listener started!!");
 
 		// run every 24h - 24*60*60*1000 add 24 hours delay between job executions.
-		final long timeInterval = 1000;
+		final long timeInterval = 24*60*60*1000;
 		Runnable runnable = new Runnable() {
 
 			public void run() {
 				while (true) {
 					// code for task to run
-					System.out.println("Hello Thread scheduler !!");
 
 					/*
 					 * try { licenseExpirationDate = dateFormat.parse("15/01/2019"); } catch
@@ -115,21 +114,37 @@ public class LicensePeriodCheck implements ServletContextListener {
 					db_operations.createTableLicensing();
 					org.json.simple.JSONArray licenses = db_operations.getAllLicenses();
 					db_operations.closePostgreSQL();
-					System.out.println("[*] Licenses ==> " + licenses);
-
-					//checkExpDate(licenses);
 					
 					DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-					Date currentDate = new Date();
-					System.out.println("Current date " + currentDate);
+					Date currentDate = new Date();		
 					Date license_exp_date = null;
-					int licenses_number = licenses.size();
-					System.out.println("Licences pinakas size: " + licenses.size());
 					
 					if (licenses.size() == 0) {
 						System.out.print("[*]0 licenses!!!");
-					} else {
+					} 
+					else {
 						System.out.print("[*] more than 0 licenses!!!");
+						for (int i = 0; i < licenses.size(); i++) {
+							Object license_item = licenses.get(i);
+							String license_exp_date_string = ((JSONObject) license_item).getString("license_exp_date");
+							System.out.println("[*] Expiration date ==> " + license_exp_date_string);
+							String license_nsi_uuid = ((JSONObject) license_item).getString("nsi_uuid");
+							System.out.println("[*] nsi ==> " + license_nsi_uuid);
+
+							try {
+								license_exp_date = dateFormat.parse(license_exp_date_string);
+								System.out.println(dateFormat.format(license_exp_date_string));
+
+								if (currentDate.after(license_exp_date)) {
+									System.out.println("[*] currentDate >  licenseExpirationDate");
+									db_operations.connectPostgreSQL();
+									db_operations.deactivateLicenseForNSI(license_nsi_uuid, "inactive");
+									db_operations.closePostgreSQL();
+								}
+							} catch (ParseException e) {
+								e.printStackTrace();
+							}
+						}
 					}
 
 					// code for task to run ends here
