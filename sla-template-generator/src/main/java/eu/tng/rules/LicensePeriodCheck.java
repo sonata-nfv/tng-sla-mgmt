@@ -99,11 +99,12 @@ public class LicensePeriodCheck implements ServletContextListener {
 			public void run() {
 				while (true) {
 					// code for task to run
-
-					DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+					SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 
 					Date currentDate = new Date();
-					System.out.println("Current date" + dateFormat.format(currentDate));
+					String dateString = format.format( currentDate );
+					Date   formatted_current_date = format.parse(dateString);
+					System.out.println("Formatted Current date" + formatted_current_date);
 
 					// get expiration date for all licenses
 					db_operations dbo = new db_operations();
@@ -129,8 +130,9 @@ public class LicensePeriodCheck implements ServletContextListener {
 							System.out.println("[*] nsi ==> " + license_nsi_uuid);
 
 							try {
-					            license_exp_date = dateFormat.parse(license_exp_date_string);
-								System.out.println("[*] Expiration date in Date Format!!! ==> " + license_exp_date);
+								license_exp_date_string = format.format( new Date() );
+								Date   formatted_exp_date = format.parse(license_exp_date_string);
+								System.out.println("Formatted expiration date" + formatted_exp_date);
 
 								if (currentDate.after(license_exp_date)) {
 									System.out.println("[*] currentDate >  licenseExpirationDate");
