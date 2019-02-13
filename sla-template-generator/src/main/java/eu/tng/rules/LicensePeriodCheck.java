@@ -50,7 +50,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.JSONArray;
 import org.json.simple.JSONObject;
-//import org.json.simple.JSONArray;
 
 import eu.tng.correlations.db_operations;
 
@@ -116,9 +115,9 @@ public class LicensePeriodCheck implements ServletContextListener {
 					Date license_exp_date = null;
 
 					if (licenses.size() == 0) {
-						System.out.print("[*]0 licenses!!!");
+						System.out.println("[*]0 licenses!!!");
 					} else {
-						System.out.print("[*] more than 0 licenses!!!");
+						System.out.println("[*] more than 0 licenses!!!");
 
 						for (int i = 0; i < licenses.size(); i++) {
 							JSONObject license_item = (JSONObject) licenses.get(i);
@@ -130,8 +129,8 @@ public class LicensePeriodCheck implements ServletContextListener {
 							System.out.println("[*] nsi ==> " + license_nsi_uuid);
 
 							try {
-								license_exp_date = dateFormat.parse(license_exp_date_string);
-								System.out.println(dateFormat.format(license_exp_date_string));
+					            license_exp_date = dateFormat.parse(license_exp_date_string);
+								System.out.println("[*] Expiration date in Date Format!!! ==> " + dateFormat.format(license_exp_date_string));
 
 								if (currentDate.after(license_exp_date)) {
 									System.out.println("[*] currentDate >  licenseExpirationDate");
@@ -141,7 +140,7 @@ public class LicensePeriodCheck implements ServletContextListener {
 									db_operations.closePostgreSQL();
 								}
 							} catch (ParseException e) {
-								e.printStackTrace();
+								System.out.println("Error ==> " + e);
 							}
 
 						}
