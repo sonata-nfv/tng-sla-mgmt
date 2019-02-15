@@ -158,7 +158,7 @@ public class LicensePeriodCheck implements ServletContextListener {
 									    request.addHeader("content-type", "application/json");
 									    request.setEntity(params);
 									    HttpResponse response = httpClient.execute(request);
-
+									    System.out.println("URL======= " + request.toString());
 									    System.out.println("[*] Response code for terminating the service ==> " +response.getStatusLine());
 
 									}catch (Exception ex) {
