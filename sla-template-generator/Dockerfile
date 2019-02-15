@@ -34,7 +34,7 @@ ENV DATABASE_PORT 5432
 ENV CATALOGUES_URL http://tng-cat:4011/catalogues/api/v2/
 
 # Set Gatekeeper Environment Variable
-ENV GATEKEEPER_URL http://tng-gk-sp:5000/api/v3/
+ENV GATEKEEPER_URL http://tng-gtk-sp:5000/
 
 # Set MESSAGE BUS Environment Variables
 ENV MQSERVER amqp://guest:guest@broker:5672
