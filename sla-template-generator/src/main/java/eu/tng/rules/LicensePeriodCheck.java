@@ -143,56 +143,27 @@ public class LicensePeriodCheck implements ServletContextListener {
 
 								if (currentDate.after(license_exp_date)) {
 									db_operations.connectPostgreSQL();
+									
+									// sde-activate the license
 									db_operations.deactivateLicenseForNSI(license_nsi_uuid, "inactive");
 									System.out.println("[*] License de-activated");
 									db_operations.closePostgreSQL();		
 									
-									
 									// send termination request for the service
-									//HttpClient httpClient = new DefaultHttpClient(); 
 									HttpClient httpClient = HttpClientBuilder.create().build();
 									try {
-									    HttpPost request = new HttpPost("http://pre-int-sp-ath.5gtango.eu:32002/api/v3/requests");
-									    StringEntity params =new StringEntity("{\"instance_uuid\":\"41297d25-d925-4bc5-a555-9ee1f0c84219\",\"request_type\":\"TERMINATE_SERVICE\"}");
+									    //HttpPost request = new HttpPost("http://pre-int-sp-ath.5gtango.eu:32002/api/v3/requests");
+										HttpPost request = new HttpPost(System.getenv("GATEKEEPER_URL") + "requests");
+									    StringEntity params =new StringEntity("{\"instance_uuid\":\""+license_nsi_uuid+"\",\"request_type\":\"TERMINATE_SERVICE\"}");
 									    request.addHeader("content-type", "application/json");
 									    request.setEntity(params);
 									    HttpResponse response = httpClient.execute(request);
 
-									    System.out.println("RESPONSE CODE ==> " +response.getStatusLine());
+									    System.out.println("[*] Response code for terminating the service ==> " +response.getStatusLine());
 
 									}catch (Exception ex) {
-										System.out.println("ERROR in the api request for terminating the service");
+										System.out.println("[*] ERROR in the api request for terminating the service");
 									}
-									
-									
-									
-									
-//									try {
-//										//String url = System.getenv("CATALOGUES_URL") + "slas/template-descriptors";
-//										String url = "http://pre-int-sp-ath.5gtango.eu:32002/api/v3/requests";
-//										URL object = new URL(url);
-//										HttpURLConnection con = (HttpURLConnection) object.openConnection();
-//										con.setDoOutput(true);
-//										con.setDoInput(true);
-//										con.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
-//										con.setRequestProperty("Accept", "application/json");
-//										con.setRequestMethod("POST");
-//										
-//										JSONObject body   = new JSONObject();
-//										body.put("instance_uuid","41297d25-d925-4bc5-a555-9ee1f0c84219");
-//										body.put("request_type", "TERMINATE_SERVICE");
-//										System.out.println("[*] TERMINATION BODY ==> " + body.toString());	
-//										OutputStreamWriter wr = new OutputStreamWriter(con.getOutputStream());
-//										wr.write(body.toString());
-//										wr.flush();
-//										
-//										int HttpResult = con.getResponseCode();
-//										System.out.println("[*] Termination request response code ==> " + HttpResult);
-//									}
-//									catch (Exception e) {
-//										System.out.println("ERROR in the api request for terminating the service");
-//									}
-									
 
 								} else {
 									System.out.println("[*] License not expired! ");
@@ -207,7 +178,7 @@ public class LicensePeriodCheck implements ServletContextListener {
 					try {
 						Thread.sleep(timeInterval);
 					} catch (InterruptedException e) {
-						System.out.println("ERROR!!!! ==> " + e);
+						System.out.println("[*] Thread Error ==> " + e);
 					}
 				}
 			}
