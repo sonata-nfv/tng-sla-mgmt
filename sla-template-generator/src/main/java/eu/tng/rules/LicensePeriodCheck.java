@@ -52,6 +52,11 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.ws.rs.core.Response;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.JSONArray;
@@ -144,31 +149,49 @@ public class LicensePeriodCheck implements ServletContextListener {
 									
 									
 									// send termination request for the service
+									//HttpClient httpClient = new DefaultHttpClient(); 
+									HttpClient httpClient = HttpClientBuilder.create().build();
 									try {
-										//String url = System.getenv("CATALOGUES_URL") + "slas/template-descriptors";
-										String url = " http://pre-int-sp-ath.5gtango.eu:32002/api/v3/requests";
-										URL object = new URL(url);
-										HttpURLConnection con = (HttpURLConnection) object.openConnection();
-										con.setDoOutput(true);
-										con.setDoInput(true);
-										con.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
-										con.setRequestProperty("Accept", "application/json");
-										con.setRequestMethod("POST");
-										
-										JSONObject body   = new JSONObject();
-										body.put("instance_uuid","41297d25-d925-4bc5-a555-9ee1f0c84219");
-										body.put("request_type", "TERMINATE_SERVICE");
-										System.out.println("[*] TERMINATION BODY ==> " + body.toString());	
-										OutputStreamWriter wr = new OutputStreamWriter(con.getOutputStream());
-										wr.write(body.toString());
-										wr.flush();
-										
-										int HttpResult = con.getResponseCode();
-										System.out.println("[*] Termination request response code ==> " + HttpResult);
-									}
-									catch (Exception e) {
+									    HttpPost request = new HttpPost("http://pre-int-sp-ath.5gtango.eu:32002/api/v3/requests");
+									    StringEntity params =new StringEntity("{\"instance_uuid\":\"41297d25-d925-4bc5-a555-9ee1f0c84219\",\"request_type\":\"TERMINATE_SERVICE\"}");
+									    request.addHeader("content-type", "application/json");
+									    request.setEntity(params);
+									    HttpResponse response = httpClient.execute(request);
+
+									    System.out.println("RESPONSE CODE ==> " +response.getStatusLine());
+
+									}catch (Exception ex) {
 										System.out.println("ERROR in the api request for terminating the service");
 									}
+									
+									
+									
+									
+//									try {
+//										//String url = System.getenv("CATALOGUES_URL") + "slas/template-descriptors";
+//										String url = "http://pre-int-sp-ath.5gtango.eu:32002/api/v3/requests";
+//										URL object = new URL(url);
+//										HttpURLConnection con = (HttpURLConnection) object.openConnection();
+//										con.setDoOutput(true);
+//										con.setDoInput(true);
+//										con.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+//										con.setRequestProperty("Accept", "application/json");
+//										con.setRequestMethod("POST");
+//										
+//										JSONObject body   = new JSONObject();
+//										body.put("instance_uuid","41297d25-d925-4bc5-a555-9ee1f0c84219");
+//										body.put("request_type", "TERMINATE_SERVICE");
+//										System.out.println("[*] TERMINATION BODY ==> " + body.toString());	
+//										OutputStreamWriter wr = new OutputStreamWriter(con.getOutputStream());
+//										wr.write(body.toString());
+//										wr.flush();
+//										
+//										int HttpResult = con.getResponseCode();
+//										System.out.println("[*] Termination request response code ==> " + HttpResult);
+//									}
+//									catch (Exception e) {
+//										System.out.println("ERROR in the api request for terminating the service");
+//									}
 									
 
 								} else {
