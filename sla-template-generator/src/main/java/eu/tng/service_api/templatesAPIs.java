@@ -147,14 +147,10 @@ public class templatesAPIs {
 			logger.info(
 					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 					type, timestamps, operation, message, status);
-
-			JSONParser parser = new JSONParser();
-			JSONObject existingTemplates = (JSONObject) parser.parse(response.toString());
-			apiresponse = Response.ok(existingTemplates.toJSONString());
-			int content_length = existingTemplates.toJSONString().length();
-			apiresponse.header("Content-Length", content_length);
-			return apiresponse.status(200).build();
 			
+			apiresponse.header("Content-Length", response.length());
+			return apiresponse.status(200).build();
+
 		} catch (Exception e) {
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
