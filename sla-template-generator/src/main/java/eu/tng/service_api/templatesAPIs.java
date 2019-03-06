@@ -149,11 +149,12 @@ public class templatesAPIs {
 					type, timestamps, operation, message, status);
 
 			JSONParser parser = new JSONParser();
-			Object existingTemplates = parser.parse(response.toString());
-			apiresponse = Response.ok((Object) existingTemplates);
-			apiresponse.header("Content-Length", response.length());
+			JSONObject existingTemplates = (JSONObject) parser.parse(response.toString());
+			apiresponse = Response.ok(existingTemplates.toJSONString());
+			int content_length = existingTemplates.toJSONString().length();
+			apiresponse.header("Content-Length", content_length);
 			return apiresponse.status(200).build();
-
+			
 		} catch (Exception e) {
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
