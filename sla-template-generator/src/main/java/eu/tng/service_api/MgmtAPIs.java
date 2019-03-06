@@ -35,8 +35,10 @@
 
 package eu.tng.service_api;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.sql.Timestamp;
@@ -268,8 +270,77 @@ public class MgmtAPIs {
 
 		ResponseBuilder apiresponse = null;
 		
-		System.out.println("[*] NSD uuid for flavours ==> " + nsd_uuid);
-		
+//		try {
+//			String url = System.getenv("CATALOGUES_URL") + "network-services/" + nsd_uuid;
+//			// String url
+//			// ="http://pre-int-sp-ath.5gtango.eu:4011/catalogues/api/v2/network-services/"+nsd_uuid;
+//			URL object = new URL(url);
+//
+//			HttpURLConnection con = (HttpURLConnection) object.openConnection();
+//			con.setDoOutput(true);
+//			con.setDoInput(true);
+//			con.setRequestProperty("Content-Type", "application/json");
+//			con.setRequestProperty("Accept", "application/json");
+//			con.setRequestMethod("GET");
+//
+//			@SuppressWarnings("unused")
+//			int responseCode = con.getResponseCode();
+//			BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
+//			String inputLine;
+//			StringBuffer response = new StringBuffer();
+//			while ((inputLine = in.readLine()) != null) {
+//				response.append(inputLine);
+//			}
+//			in.close();
+//			JSONObject nsd_JsonObject = (JSONObject) parser.parse(response.toString());
+//			
+//			// fetch the nsd and get list with deployment flavours names
+//			JSONObject nsd = (JSONObject) nsd_JsonObject.get("nsd");
+//			JSONArray deployment_flavour = (JSONArray) nsd.get("deployment_flavour");
+//			JSONArray flavour_names = new JSONArray();
+//			for (int i = 0; i < deployment_flavour.size(); i++) {
+//				JSONObject deployment_flavour_item = (JSONObject) deployment_flavour.get(i);
+//				String f_name = (String) ((JSONObject) deployment_flavour_item).get("name");
+//				flavour_names.add(f_name);
+//			}
+//			System.out.println("[*] Deployment flavour name ==> " + flavour_names.toString());
+//
+//			apiresponse = Response.ok(flavour_names);
+//			apiresponse.header("Content-Length", flavour_names.toJSONString().length());
+//
+//			// logging
+//			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+//			String timestamps = timestamp.toString();
+//			String type = "I";
+//			String operation = "Get Flavour Names List";
+//			String message = ("[*] Success. Deployment flavours received");
+//			String status = "200";
+//			logger.info(
+//					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+//					type, timestamps, operation, message, status);
+//
+//			return apiresponse.status(200).build();
+//
+//		} catch (Exception e) {
+//			JSONObject error = new JSONObject();
+//			error.put("ERROR: ", " NSD Not Found");
+//			apiresponse = Response.ok((Object) error);
+//			apiresponse.header("Content-Length", error.toJSONString().length());
+//
+//			// logging
+//			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+//			String timestamps = timestamp.toString();
+//			String operation = "Get NSD from catalogur";
+//			String type = "E";
+//			String message = "NSD with uuid=" + nsd_uuid + " NOT Found";
+//			String status = String.valueOf(404);
+//			logger.error(
+//					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+//					type, timestamps, operation, message, status);
+//
+//			return apiresponse.status(404).build();
+//		}
+			
 		try {
 			// get example nsd
 			File nsdf = new File(this.getClass().getResource("/nsd_with_flavours_example.json").toURI());
@@ -287,7 +358,7 @@ public class MgmtAPIs {
 			}
 			System.out.println("[*] Deployment flavour name ==> " + flavour_names.toString());
 
-			apiresponse = Response.ok(jsonObject);
+			apiresponse = Response.ok(flavour_names);
 			apiresponse.header("Content-Length", flavour_names.toJSONString().length());
 
 			// logging
