@@ -151,7 +151,7 @@ public class templatesAPIs {
 			JSONParser parser = new JSONParser();
             Object existingTemplates = parser.parse(response.toString());
             apiresponse = Response.ok((Object) existingTemplates);
-           // apiresponse.header("Content-Length", existingTemplates);
+            apiresponse.header("Content-Length", response.length() - 5);
             return apiresponse.status(200).build();
 			
 
