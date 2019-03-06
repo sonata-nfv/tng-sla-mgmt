@@ -36,7 +36,6 @@
 package eu.tng.service_api;
 
 import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
@@ -60,7 +59,6 @@ import javax.ws.rs.core.Response.ResponseBuilder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.JSONException;
-import org.json.JSONString;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -118,8 +116,7 @@ public class templatesAPIs {
 		ResponseBuilder apiresponse = null;
 		try {
 			String url = System.getenv("CATALOGUES_URL") + "slas/template-descriptors";
-			// String url =
-			// "http://pre-int-sp-ath.5gtango.eu:4011/catalogues/api/v2/slas/template-descriptors";
+			//String url = "http://pre-int-sp-ath.5gtango.eu:4011/catalogues/api/v2/slas/template-descriptors";
 			URL object = new URL(url);
 
 			HttpURLConnection con = (HttpURLConnection) object.openConnection();
@@ -150,22 +147,14 @@ public class templatesAPIs {
 					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 					type, timestamps, operation, message, status);
 
-			//JSONParser parser = new JSONParser();
-			//Object existingTemplates = parser.parse(response.toString());
-			//apiresponse = Response.ok(response);			
-			//apiresponse.header("Content-Length", response.length());
-			//return apiresponse.status(200).build();
 			
 			JSONParser parser = new JSONParser();
-	        JSONObject jsonObject = null;
-	        
-	        System.out.print("RESPONSE FROM CAT " + response.toString());
-	        jsonObject = (JSONObject) parser.parse(response.toString());
-	        
-	        apiresponse = Response.ok(jsonObject);
-            apiresponse.header("Content-Length", jsonObject.toJSONString().length());
-            
+            Object existingTemplates = parser.parse(response.toString());
+            apiresponse = Response.ok((Object) existingTemplates);
+           // apiresponse.header("Content-Length", existingTemplates);
             return apiresponse.status(200).build();
+			
+
 
 		} catch (Exception e) {
 			// logging
