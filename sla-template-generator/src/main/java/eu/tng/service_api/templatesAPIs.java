@@ -163,6 +163,8 @@ public class templatesAPIs {
 	        
 	        apiresponse = Response.ok(jsonObject);
             apiresponse.header("Content-Length", jsonObject.toJSONString().length());
+            
+            return apiresponse.status(200).build();
 
 		} catch (Exception e) {
 			// logging
