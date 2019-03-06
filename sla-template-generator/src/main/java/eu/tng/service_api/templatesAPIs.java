@@ -159,6 +159,7 @@ public class templatesAPIs {
 			JSONParser parser = new JSONParser();
 	        JSONObject jsonObject = null;
 	        
+	        System.out.print("RESPONSE FROM CAT " + response.toString());
 	        jsonObject = (JSONObject) parser.parse(response.toString());
 	        
 	        apiresponse = Response.ok(jsonObject);
