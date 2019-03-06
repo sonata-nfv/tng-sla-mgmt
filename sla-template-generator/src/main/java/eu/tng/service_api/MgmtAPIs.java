@@ -41,6 +41,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -57,6 +58,9 @@ import org.apache.logging.log4j.Logger;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
+
+import com.google.gson.JsonArray;
+
 import eu.tng.correlations.cust_sla_corr;
 import eu.tng.correlations.db_operations;
 import eu.tng.correlations.ns_template_corr;
@@ -248,6 +252,76 @@ public class MgmtAPIs {
 			apiresponse = Response.ok((response));
 			apiresponse.header("Content-Length", response.length());
 			return apiresponse.status(404).build();
+		}
+
+	}
+	
+	/**
+	 * Get QoS  flavour names for a specific nsd
+	 */
+	@Path("/deploymentflavours/{nsd_uuid}")
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getNsDeploymentFlavours(@PathParam("nsd_uuid") String nsd_uuid) {
+		JSONParser parser = new JSONParser();
+		JSONObject jsonObject = null;
+
+		ResponseBuilder apiresponse = null;
+		
+		System.out.println("[*] NSD uuid for flavours ==> " + nsd_uuid);
+		
+		try {
+			// get example nsd
+			File nsdf = new File(this.getClass().getResource("/nsd_with_flavours_example.json").toURI());
+			jsonObject = (JSONObject) parser.parse(new FileReader(nsdf));
+			System.out.println(jsonObject.toJSONString().length());
+
+			// fetch the nsd and get list with deployment flavours names
+			JSONObject nsd = (JSONObject) jsonObject.get("nsd");
+			JSONArray deployment_flavour = (JSONArray) nsd.get("deployment_flavour");
+			JSONArray flavour_names = new JSONArray();
+			for (int i = 0; i < deployment_flavour.size(); i++) {
+				JSONObject deployment_flavour_item = (JSONObject) deployment_flavour.get(i);
+				String f_name = (String) ((JSONObject) deployment_flavour_item).get("name");
+				flavour_names.add(f_name);
+			}
+			System.out.println("[*] Deployment flavour name ==> " + flavour_names.toString());
+
+			apiresponse = Response.ok(jsonObject);
+			apiresponse.header("Content-Length", flavour_names.toJSONString().length());
+
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			String timestamps = timestamp.toString();
+			String type = "I";
+			String operation = "Get Flavour Names List";
+			String message = ("[*] Success. Deployment flavours received");
+			String status = "200";
+			logger.info(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
+
+			return apiresponse.status(200).build();
+
+		} catch (Exception e) {
+			JSONObject error = new JSONObject();
+			error.put("ERROR: ", "NSD File Not Found");
+			apiresponse = Response.ok((Object) error);
+			apiresponse.header("Content-Length", error.toJSONString().length());
+
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			String timestamps = timestamp.toString();
+			String type = "W";
+			String operation = "Get Guarantee List";
+			String message = ("[*] Error. NSD file not found!");
+			String status = "404";
+			logger.warn(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
+
+			return apiresponse.status(404).build();
+
 		}
 
 	}
