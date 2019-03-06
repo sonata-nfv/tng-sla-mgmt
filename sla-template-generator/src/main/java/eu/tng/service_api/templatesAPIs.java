@@ -147,7 +147,10 @@ public class templatesAPIs {
 			logger.info(
 					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 					type, timestamps, operation, message, status);
-			
+
+			//JSONParser parser = new JSONParser();
+			//Object existingTemplates = parser.parse(response.toString());
+			apiresponse = Response.ok(response);
 			apiresponse.header("Content-Length", response.length());
 			return apiresponse.status(200).build();
 
