@@ -293,7 +293,7 @@ public class db_operations {
      * @return
      */
 	@SuppressWarnings("unchecked")
-	public static JSONObject getSpecificFlavour(String sla_uuid, String ns_uuid) {
+	public static JSONObject getSpecificFlavour( String ns_uuid,String sla_uuid) {
 
 		JSONObject dflavour_info = new JSONObject();
 
@@ -305,8 +305,7 @@ public class db_operations {
 		try {
 			c.setAutoCommit(false);
 			stmt = c.createStatement();
-			ResultSet rs = stmt.executeQuery(
-					"SELECT * FROM ns_template WHERE sla_uuid = '" + sla_uuid + "' AND ns_uuid='" + ns_uuid + "';");
+			ResultSet rs = stmt.executeQuery("SELECT * FROM ns_template WHERE sla_uuid = '" + sla_uuid + "' AND ns_uuid='" + ns_uuid + "';");
 
 			while (rs.next()) {
 				d_flavour_name = rs.getString("d_flavour_name");
