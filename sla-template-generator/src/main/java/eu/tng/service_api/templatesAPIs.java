@@ -302,14 +302,26 @@ public class templatesAPIs {
 		List<String> allowed_service_instances = formParams.get("allowed_service_instances");
 		List<String> service_licence_expiration_date = formParams.get("service_licence_expiration_date");
 		List<String> service_licence_period = formParams.get("service_licence_period");
-		
+
 		// optional provider name
 		String provider_name = "";
 		try {
-			List<String> provider_name_list = formParams.get("providerName");
+			List<String> provider_name_list = formParams.get("provider_name");
 			provider_name = provider_name_list.get(0);
+			System.out.println("[*] Provider name  ==> " + provider_name);
 		} catch (Exception e) {
 			provider_name = "default";
+			System.out.println("[*] Provider name  ==> " + provider_name);
+		}
+		// optional flavour_name
+		String dflavour_name = "";
+		try {
+			List<String> dflavour_name_list = formParams.get("dflavour_name");
+			dflavour_name = dflavour_name_list.get(0);
+			System.out.println("[*] Selected Deployment Flavour Name ==> " + dflavour_name);
+		} catch (Exception e) {
+			dflavour_name = "default";
+			System.out.println("[*] Selected Deployment Flavour Name ==> " + dflavour_name);
 		}
 
 		ArrayList<String> guarantees = new ArrayList<String>();
@@ -470,12 +482,15 @@ public class templatesAPIs {
 						JSONObject responseSLA = (JSONObject) createdTemplate;
 						String sla_uuid = (String) responseSLA.get("uuid");
 						ns_template_corr nstemplcorr = new ns_template_corr();
+						System.out.println("[*] sla_uuid (templatesAPI.class) ==> " + sla_uuid);
+						System.out.println("[*] dflavour_name (templatesAPI.class) ==> " + dflavour_name);
+
 						nstemplcorr.createNsTempCorr(nsd_uuid.get(0), sla_uuid, service_licence_type.get(0),
 								service_licence_expiration_date.get(0), service_licence_period.get(0),
-								allowed_service_instances.get(0), "inactive");
+								allowed_service_instances.get(0), "inactive", dflavour_name);
 
 						br.close();
-				
+
 						// logging
 						Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 						String timestamps = timestamp.toString();
@@ -486,11 +501,10 @@ public class templatesAPIs {
 						logger.info(
 								"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 								type, timestamps, operation, message, status);
-						
-						
+
 						apiresponse = Response.ok("'Success':'SLA Template created succesfully.'");
 						return apiresponse.status(201).build();
-						
+
 					} else {
 						// conflict in uploading sla template to the catalogue
 						JSONObject error = new JSONObject();

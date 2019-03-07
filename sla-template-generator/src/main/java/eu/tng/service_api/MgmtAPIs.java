@@ -37,11 +37,8 @@ package eu.tng.service_api;
 
 import java.io.File;
 import java.io.FileReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -57,6 +54,7 @@ import org.apache.logging.log4j.Logger;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
+
 import eu.tng.correlations.cust_sla_corr;
 import eu.tng.correlations.db_operations;
 import eu.tng.correlations.ns_template_corr;
@@ -77,10 +75,10 @@ public class MgmtAPIs {
 
 		ResponseBuilder apiresponse = null;
 		db_operations dbo = new db_operations();
-		dbo.connectPostgreSQL();
+		db_operations.connectPostgreSQL();
 		dbo.createTableNSTemplate();
 		JSONObject correlations = dbo.selectAllRecords("ns_template");
-		dbo.closePostgreSQL();
+		db_operations.closePostgreSQL();
 
 		apiresponse = Response.ok((Object) correlations);
 		apiresponse.header("Content-Length", correlations.toString().length());
@@ -234,9 +232,9 @@ public class MgmtAPIs {
 		ResponseBuilder apiresponse = null;
 
 		db_operations db = new db_operations();
-		db.connectPostgreSQL();
+		db_operations.connectPostgreSQL();
 		boolean delete = db.deleteRecord("cust_sla", sla_uuid);
-		db.closePostgreSQL();
+		db_operations.closePostgreSQL();
 
 		if (delete == true) {
 			String response = "Agreement deleted Succesfully";
@@ -249,6 +247,167 @@ public class MgmtAPIs {
 			apiresponse.header("Content-Length", response.length());
 			return apiresponse.status(404).build();
 		}
+
+	}
+	
+	/**
+	 * Get QoS  flavour names for a specific nsd
+	 */
+	@Path("/deploymentflavours/{nsd_uuid}")
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getNsDeploymentFlavours(@PathParam("nsd_uuid") String nsd_uuid) {
+		JSONParser parser = new JSONParser();
+		JSONObject jsonObject = null;
+
+		ResponseBuilder apiresponse = null;
+		
+//		try {
+//			String url = System.getenv("CATALOGUES_URL") + "network-services/" + nsd_uuid;
+//			// String url
+//			// ="http://pre-int-sp-ath.5gtango.eu:4011/catalogues/api/v2/network-services/"+nsd_uuid;
+//			URL object = new URL(url);
+//
+//			HttpURLConnection con = (HttpURLConnection) object.openConnection();
+//			con.setDoOutput(true);
+//			con.setDoInput(true);
+//			con.setRequestProperty("Content-Type", "application/json");
+//			con.setRequestProperty("Accept", "application/json");
+//			con.setRequestMethod("GET");
+//
+//			@SuppressWarnings("unused")
+//			int responseCode = con.getResponseCode();
+//			BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
+//			String inputLine;
+//			StringBuffer response = new StringBuffer();
+//			while ((inputLine = in.readLine()) != null) {
+//				response.append(inputLine);
+//			}
+//			in.close();
+//			JSONObject nsd_JsonObject = (JSONObject) parser.parse(response.toString());
+//			
+//			// fetch the nsd and get list with deployment flavours names
+//			JSONObject nsd = (JSONObject) nsd_JsonObject.get("nsd");
+//			JSONArray deployment_flavour = (JSONArray) nsd.get("deployment_flavour");
+//			JSONArray flavour_names = new JSONArray();
+//			for (int i = 0; i < deployment_flavour.size(); i++) {
+//				JSONObject deployment_flavour_item = (JSONObject) deployment_flavour.get(i);
+//				String f_name = (String) ((JSONObject) deployment_flavour_item).get("name");
+//				flavour_names.add(f_name);
+//			}
+//			System.out.println("[*] Deployment flavour name ==> " + flavour_names.toString());
+//
+//			apiresponse = Response.ok(flavour_names);
+//			apiresponse.header("Content-Length", flavour_names.toJSONString().length());
+//
+//			// logging
+//			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+//			String timestamps = timestamp.toString();
+//			String type = "I";
+//			String operation = "Get Flavour Names List";
+//			String message = ("[*] Success. Deployment flavours received");
+//			String status = "200";
+//			logger.info(
+//					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+//					type, timestamps, operation, message, status);
+//
+//			return apiresponse.status(200).build();
+//
+//		} catch (Exception e) {
+//			JSONObject error = new JSONObject();
+//			error.put("ERROR: ", " NSD Not Found");
+//			apiresponse = Response.ok((Object) error);
+//			apiresponse.header("Content-Length", error.toJSONString().length());
+//
+//			// logging
+//			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+//			String timestamps = timestamp.toString();
+//			String operation = "Get NSD from catalogur";
+//			String type = "E";
+//			String message = "NSD with uuid=" + nsd_uuid + " NOT Found";
+//			String status = String.valueOf(404);
+//			logger.error(
+//					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+//					type, timestamps, operation, message, status);
+//
+//			return apiresponse.status(404).build();
+//		}
+			
+		try {
+			// get example nsd
+			File nsdf = new File(this.getClass().getResource("/nsd_with_flavours_example.json").toURI());
+			jsonObject = (JSONObject) parser.parse(new FileReader(nsdf));
+			System.out.println(jsonObject.toJSONString().length());
+
+			// fetch the nsd and get list with deployment flavours names
+			JSONObject nsd = (JSONObject) jsonObject.get("nsd");
+			JSONArray deployment_flavour = (JSONArray) nsd.get("deployment_flavour");
+			JSONArray flavour_names = new JSONArray();
+			for (int i = 0; i < deployment_flavour.size(); i++) {
+				JSONObject deployment_flavour_item = (JSONObject) deployment_flavour.get(i);
+				String f_name = (String) ((JSONObject) deployment_flavour_item).get("name");
+				flavour_names.add(f_name);
+			}
+			System.out.println("[*] Deployment flavour name ==> " + flavour_names.toString());
+
+			apiresponse = Response.ok(flavour_names);
+			apiresponse.header("Content-Length", flavour_names.toJSONString().length());
+
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			String timestamps = timestamp.toString();
+			String type = "I";
+			String operation = "Get Flavour Names List";
+			String message = ("[*] Success. Deployment flavours received");
+			String status = "200";
+			logger.info(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
+
+			return apiresponse.status(200).build();
+
+		} catch (Exception e) {
+			JSONObject error = new JSONObject();
+			error.put("ERROR: ", "NSD File Not Found");
+			apiresponse = Response.ok((Object) error);
+			apiresponse.header("Content-Length", error.toJSONString().length());
+
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			String timestamps = timestamp.toString();
+			String type = "W";
+			String operation = "Get Guarantee List";
+			String message = ("[*] Error. NSD file not found!");
+			String status = "404";
+			logger.warn(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
+
+			return apiresponse.status(404).build();
+
+		}
+
+	}
+	
+	/**
+	 * Get QoS  flavour names for a specific nsd
+	 */
+	@Path("/deploymentflavours/{nsd_uuid}/{sla_uuid}")
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response GetSelectedFlavour(@PathParam("nsd_uuid") String nsd_uuid, @PathParam("sla_uuid") String sla_uuid) {
+
+		ResponseBuilder apiresponse = null;
+		
+		db_operations db = new db_operations();
+		db_operations.connectPostgreSQL();
+		JSONObject dflavour_info = db.getSpecificFlavour(nsd_uuid, sla_uuid);
+		db_operations.closePostgreSQL();
+
+		JSONObject response = dflavour_info;
+		apiresponse = Response.ok((response));
+		apiresponse.header("Content-Length", response.toJSONString().length());
+		return apiresponse.status(200).build();
 
 	}
 

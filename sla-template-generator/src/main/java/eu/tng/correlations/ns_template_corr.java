@@ -46,7 +46,6 @@ import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.ThreadContext;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -56,9 +55,9 @@ public class ns_template_corr {
 	static Logger logger = LogManager.getLogger("SLAM_Logger");
 
 	/**
-	 * Create a correlation between a network service and a sla template
+	 * Create a correlation between a network service, a sla template and the if selected a qos deployment flavour 
 	 */
-	public void createNsTempCorr(String ns_uuid, String sla_uuid, String license_type, String license_exp_date, String license_period, String allowed_instances, String license_status ) {
+	public void createNsTempCorr(String ns_uuid, String sla_uuid, String license_type, String license_exp_date, String license_period, String allowed_instances, String license_status, String dflavour_name ) {
 
 		String tablename = "ns_template";
 
@@ -66,9 +65,9 @@ public class ns_template_corr {
 
 		db_operations.connectPostgreSQL();
 		dbo.createTableNSTemplate();
-		dbo.insertRecord(tablename, ns_uuid, sla_uuid, license_type, license_exp_date, license_period, allowed_instances, license_status);
-		dbo.closePostgreSQL();
-
+		System.out.println("[*] dflavour name (ns_template_corr.java) ==> " + dflavour_name);
+		dbo.insertRecord("ns_template", ns_uuid, sla_uuid, license_type, license_exp_date, license_period, allowed_instances, license_status, dflavour_name);
+		db_operations.closePostgreSQL();
 	}
 
 	/**
@@ -79,7 +78,7 @@ public class ns_template_corr {
 		db_operations dbo = new db_operations();
 		db_operations.connectPostgreSQL();
 		dbo.deleteRecord(tablename, sla_uuid);
-		dbo.closePostgreSQL();
+		db_operations.closePostgreSQL();
 	}
 
 	/**
@@ -117,7 +116,7 @@ public class ns_template_corr {
 		}
 
 		correlatedNS = tempArray; // assign temp to original
-		dbo.closePostgreSQL();
+		db_operations.closePostgreSQL();
 		return (JSONArray) correlatedNS;
 
 	}
