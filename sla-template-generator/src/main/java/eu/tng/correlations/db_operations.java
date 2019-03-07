@@ -42,14 +42,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
 
-import javax.ws.rs.DELETE;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.ResponseBuilder;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.ThreadContext;
@@ -165,7 +157,7 @@ public class db_operations {
 			String sql = "CREATE TABLE IF NOT EXISTS ns_template" + "(ID  SERIAL PRIMARY KEY,"
 					+ " NS_UUID TEXT NOT NULL, " + "SLA_UUID  TEXT NOT NULL," + "license_type  TEXT NOT NULL,"
 					+ "license_exp_date  TEXT NOT NULL," + "license_period  TEXT NOT NULL,"
-					+ "allowed_instances  TEXT NOT NULL," + "license_status  TEXT NOT NULL )";
+					+ "allowed_instances  TEXT NOT NULL," + "license_status  TEXT NOT NULL," +  "d_flavour_name TEXT)";
 			stmt.executeUpdate(sql);
 			stmt.close();
 			result = true;
@@ -201,7 +193,7 @@ public class db_operations {
 	 * Insert Record ns-template correlation
 	 */
 	public boolean insertRecord(String tablename, String ns_uuid, String sla_uuid, String license_type,
-			String license_exp_date, String license_period, String allowed_instances, String license_status) {
+			String license_exp_date, String license_period, String allowed_instances, String license_status, String d_flavour_name) {
 		boolean result = false;
 		try {
 			c.setAutoCommit(false);
@@ -209,7 +201,7 @@ public class db_operations {
 			String sql = "INSERT INTO " + tablename
 					+ " (ns_uuid,sla_uuid, license_type, license_exp_date, license_period, allowed_instances, license_status) "
 					+ "VALUES ('" + ns_uuid + "','" + sla_uuid + "', '" + license_type + "','" + license_exp_date
-					+ "','" + license_period + "','" + allowed_instances + "','" + license_status + "');";
+					+ "','" + license_period + "','" + allowed_instances + "','" + license_status + "','" + d_flavour_name +"' );";
 			stmt.executeUpdate(sql);
 			stmt.close();
 			c.commit();
@@ -570,7 +562,6 @@ public class db_operations {
 		Statement stmt = null;
 
 		JSONObject root = new JSONObject();
-		// JSONArray ns_template = new JSONArray();
 		JSONArray agreements = new JSONArray();
 
 		try {
@@ -1322,6 +1313,7 @@ public class db_operations {
 					String license_period = rs.getString("license_period");
 					String allowed_instances = rs.getString("allowed_instances");
 					String license_status = rs.getString("license_status");
+					String dflavour_name = rs.getString("dflavour_name");
 
 					JSONObject obj = new JSONObject();
 					obj.put("ns_uuid", ns_uuid);
@@ -1331,7 +1323,8 @@ public class db_operations {
 					obj.put("license_period", license_period);
 					obj.put("allowed_instances", allowed_instances);
 					obj.put("license_status", license_status);
-
+					obj.put("dflavour_name", dflavour_name);
+					
 					ns_template.add(obj);
 				}
 

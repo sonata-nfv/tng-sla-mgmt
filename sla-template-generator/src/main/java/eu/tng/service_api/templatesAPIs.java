@@ -483,7 +483,7 @@ public class templatesAPIs {
 						ns_template_corr nstemplcorr = new ns_template_corr();
 						nstemplcorr.createNsTempCorr(nsd_uuid.get(0), sla_uuid, service_licence_type.get(0),
 								service_licence_expiration_date.get(0), service_licence_period.get(0),
-								allowed_service_instances.get(0), "inactive");
+								allowed_service_instances.get(0), "inactive", dflavour_name);
 
 						br.close();
 
