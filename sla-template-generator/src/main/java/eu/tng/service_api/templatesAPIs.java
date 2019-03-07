@@ -303,14 +303,22 @@ public class templatesAPIs {
 		List<String> allowed_service_instances = formParams.get("allowed_service_instances");
 		List<String> service_licence_expiration_date = formParams.get("service_licence_expiration_date");
 		List<String> service_licence_period = formParams.get("service_licence_period");
-		
+
 		// optional provider name
 		String provider_name = "";
 		try {
-			List<String> provider_name_list = formParams.get("providerName");
+			List<String> provider_name_list = formParams.get("provider_name");
 			provider_name = provider_name_list.get(0);
 		} catch (Exception e) {
 			provider_name = "default";
+		}
+		// optional flavour_name
+		String dflavour_name = "";
+		try {
+			List<String> dflavour_name_list = formParams.get("dflavour_name");
+			provider_name = dflavour_name_list.get(0);
+		} catch (Exception e) {
+			dflavour_name = "default";
 		}
 
 		ArrayList<String> guarantees = new ArrayList<String>();
@@ -476,7 +484,7 @@ public class templatesAPIs {
 								allowed_service_instances.get(0), "inactive");
 
 						br.close();
-				
+
 						// logging
 						Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 						String timestamps = timestamp.toString();
@@ -487,11 +495,10 @@ public class templatesAPIs {
 						logger.info(
 								"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 								type, timestamps, operation, message, status);
-						
-						
+
 						apiresponse = Response.ok("'Success':'SLA Template created succesfully.'");
 						return apiresponse.status(201).build();
-						
+
 					} else {
 						// conflict in uploading sla template to the catalogue
 						JSONObject error = new JSONObject();
