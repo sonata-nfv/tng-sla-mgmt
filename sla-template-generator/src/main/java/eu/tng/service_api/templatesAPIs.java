@@ -148,10 +148,14 @@ public class templatesAPIs {
 					type, timestamps, operation, message, status);
 
 			
+			long cont_length = response.length();
+			
+			
 			JSONParser parser = new JSONParser();
             Object existingTemplates = parser.parse(response.toString());
-            apiresponse = Response.ok((Object) existingTemplates);
-            apiresponse.header("Content-Length", response.length() - 5);
+            apiresponse = Response.ok((Object) existingTemplates);    
+            apiresponse.header("Content-Length", cont_length);
+            
             return apiresponse.status(200).build();
 			
 

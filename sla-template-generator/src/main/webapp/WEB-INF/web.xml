@@ -49,7 +49,6 @@
     <servlet-name>SLA Templates APIs</servlet-name>
     <url-pattern>/tng-sla-mgmt/api/slas/v1/*</url-pattern>
   </servlet-mapping>
-
   <listener>
     <listener-class>eu.tng.messaging.MqServiceInstantiateConsumer</listener-class>
   </listener>
@@ -66,9 +65,9 @@
     <listener-class>eu.tng.messaging.MqSlaViolationsConsumer</listener-class>
   </listener>
   -->
-   
+ 
   <listener>
     <listener-class>eu.tng.rules.LicensePeriodCheck</listener-class>
   </listener>
-  
+
 </web-app>
