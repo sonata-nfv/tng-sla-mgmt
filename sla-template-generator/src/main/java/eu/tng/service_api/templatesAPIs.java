@@ -59,7 +59,6 @@ import javax.ws.rs.core.Response.ResponseBuilder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.JSONException;
-import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
@@ -76,7 +75,7 @@ public class templatesAPIs {
 	/**
 	 * api call in order to get a list with all the existing sla templates
 	 */
-	@Produces(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.TEXT_PLAIN)
 	@GET
 	public Response getTemplates(@Context HttpHeaders headers) {
 
@@ -147,19 +146,13 @@ public class templatesAPIs {
 					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 					type, timestamps, operation, message, status);
 
-			
-			long cont_length = response.length();
-			
-			
-			JSONParser parser = new JSONParser();
-            Object existingTemplates = parser.parse(response.toString());
-            apiresponse = Response.ok((Object) existingTemplates);    
-            apiresponse.header("Content-Length", cont_length);
-            
-            return apiresponse.status(200).build();
-			
+			String sresponse = response.toString();
 
-
+			apiresponse = Response.ok(sresponse);
+			apiresponse.header("Content-Length", sresponse.length());
+			return apiresponse.status(200).build();
+			
+			
 		} catch (Exception e) {
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
