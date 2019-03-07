@@ -284,7 +284,56 @@ public class db_operations {
 
 		return license_info;
 	}
+	
+	
+    /**
+     * 
+     * @param sla_uuid
+     * @param ns_uuid
+     * @return
+     */
+	@SuppressWarnings("unchecked")
+	public static JSONObject getSpecificFlavour(String sla_uuid, String ns_uuid) {
 
+		JSONObject dflavour_info = new JSONObject();
+
+		String d_flavour_name = "";
+
+		Statement stmt = null;
+		JSONObject root = new JSONObject();
+
+		try {
+			c.setAutoCommit(false);
+			stmt = c.createStatement();
+			ResultSet rs = stmt.executeQuery(
+					"SELECT * FROM ns_template WHERE sla_uuid = '" + sla_uuid + "' AND ns_uuid='" + ns_uuid + "';");
+
+			while (rs.next()) {
+				d_flavour_name = rs.getString("d_flavour_name");
+				dflavour_info.put("d_flavour_name", d_flavour_name);
+			}
+			
+			dflavour_info.put("sla_uuid", sla_uuid);
+			dflavour_info.put("nsd_uuid", ns_uuid);
+			
+			rs.close();
+			stmt.close();
+		} catch (Exception e) {
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			String timestamps = timestamp.toString();
+			String type = "W";
+			String operation = "Get flavours status";
+			String message = ("Error Getting flavour name ==> " + e.getMessage());
+			String status = "";
+			logger.warn(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
+		}
+
+		return dflavour_info;
+	}
+	
 	/*******************************/
 	/** OPERATIONS FOR AGREEMENTS **/
 	/*******************************/

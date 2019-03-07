@@ -35,16 +35,10 @@
 
 package eu.tng.service_api;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.List;
-
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -60,8 +54,6 @@ import org.apache.logging.log4j.Logger;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
-
-import com.google.gson.JsonArray;
 
 import eu.tng.correlations.cust_sla_corr;
 import eu.tng.correlations.db_operations;
@@ -83,10 +75,10 @@ public class MgmtAPIs {
 
 		ResponseBuilder apiresponse = null;
 		db_operations dbo = new db_operations();
-		dbo.connectPostgreSQL();
+		db_operations.connectPostgreSQL();
 		dbo.createTableNSTemplate();
 		JSONObject correlations = dbo.selectAllRecords("ns_template");
-		dbo.closePostgreSQL();
+		db_operations.closePostgreSQL();
 
 		apiresponse = Response.ok((Object) correlations);
 		apiresponse.header("Content-Length", correlations.toString().length());
@@ -240,9 +232,9 @@ public class MgmtAPIs {
 		ResponseBuilder apiresponse = null;
 
 		db_operations db = new db_operations();
-		db.connectPostgreSQL();
+		db_operations.connectPostgreSQL();
 		boolean delete = db.deleteRecord("cust_sla", sla_uuid);
-		db.closePostgreSQL();
+		db_operations.closePostgreSQL();
 
 		if (delete == true) {
 			String response = "Agreement deleted Succesfully";
@@ -394,6 +386,28 @@ public class MgmtAPIs {
 			return apiresponse.status(404).build();
 
 		}
+
+	}
+	
+	/**
+	 * Get QoS  flavour names for a specific nsd
+	 */
+	@Path("/deploymentflavours/{nsd_uuid}/{sla_uuid}")
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response GetSelectedFlavour(@PathParam("nsd_uuid") String nsd_uuid, @PathParam("sla_uuid") String sla_uuid) {
+
+		ResponseBuilder apiresponse = null;
+		
+		db_operations db = new db_operations();
+		db_operations.connectPostgreSQL();
+		JSONObject dflavour_info = db.getSpecificFlavour(nsd_uuid, sla_uuid);
+		db_operations.closePostgreSQL();
+
+		JSONObject response = dflavour_info;
+		apiresponse = Response.ok((response));
+		apiresponse.header("Content-Length", response.toJSONString().length());
+		return apiresponse.status(200).build();
 
 	}
 
