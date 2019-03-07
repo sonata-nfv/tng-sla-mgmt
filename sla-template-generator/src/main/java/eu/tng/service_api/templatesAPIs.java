@@ -317,8 +317,10 @@ public class templatesAPIs {
 		try {
 			List<String> dflavour_name_list = formParams.get("dflavour_name");
 			provider_name = dflavour_name_list.get(0);
+			System.out.println("[*] Selected Deployment Flavour Name ==> " + dflavour_name);
 		} catch (Exception e) {
 			dflavour_name = "default";
+			System.out.println("[*] Selected Deployment Flavour Name ==> " + dflavour_name);
 		}
 
 		ArrayList<String> guarantees = new ArrayList<String>();
