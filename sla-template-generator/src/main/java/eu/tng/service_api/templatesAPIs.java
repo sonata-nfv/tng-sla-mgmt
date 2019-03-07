@@ -309,14 +309,16 @@ public class templatesAPIs {
 		try {
 			List<String> provider_name_list = formParams.get("provider_name");
 			provider_name = provider_name_list.get(0);
+			System.out.println("[*] Provider name  ==> " + provider_name);
 		} catch (Exception e) {
 			provider_name = "default";
+			System.out.println("[*] Provider name  ==> " + provider_name);
 		}
 		// optional flavour_name
 		String dflavour_name = "";
 		try {
 			List<String> dflavour_name_list = formParams.get("dflavour_name");
-			provider_name = dflavour_name_list.get(0);
+			dflavour_name = dflavour_name_list.get(0);
 			System.out.println("[*] Selected Deployment Flavour Name ==> " + dflavour_name);
 		} catch (Exception e) {
 			dflavour_name = "default";
@@ -481,6 +483,9 @@ public class templatesAPIs {
 						JSONObject responseSLA = (JSONObject) createdTemplate;
 						String sla_uuid = (String) responseSLA.get("uuid");
 						ns_template_corr nstemplcorr = new ns_template_corr();
+						System.out.println("[*] sla_uuid (templatesAPI.class) ==> " + sla_uuid);
+						System.out.println("[*] dflavour_name (templatesAPI.class) ==> " + dflavour_name);
+
 						nstemplcorr.createNsTempCorr(nsd_uuid.get(0), sla_uuid, service_licence_type.get(0),
 								service_licence_expiration_date.get(0), service_licence_period.get(0),
 								allowed_service_instances.get(0), "inactive", dflavour_name);

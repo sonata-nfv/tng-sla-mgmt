@@ -65,7 +65,8 @@ public class ns_template_corr {
 
 		db_operations.connectPostgreSQL();
 		dbo.createTableNSTemplate();
-		dbo.insertRecord(tablename, ns_uuid, sla_uuid, license_type, license_exp_date, license_period, allowed_instances, license_status, dflavour_name);
+		System.out.println("[*] dflavour name (ns_template_corr.java) ==> " + dflavour_name);
+		dbo.insertRecord("ns_template", ns_uuid, sla_uuid, license_type, license_exp_date, license_period, allowed_instances, license_status, dflavour_name);
 		db_operations.closePostgreSQL();
 	}
 

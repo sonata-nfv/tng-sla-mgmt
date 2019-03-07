@@ -199,9 +199,9 @@ public class db_operations {
 			c.setAutoCommit(false);
 			Statement stmt = c.createStatement();
 			String sql = "INSERT INTO " + tablename
-					+ " (ns_uuid,sla_uuid, license_type, license_exp_date, license_period, allowed_instances, license_status) "
+					+ " (ns_uuid,sla_uuid, license_type, license_exp_date, license_period, allowed_instances, license_status,d_flavour_name) "
 					+ "VALUES ('" + ns_uuid + "','" + sla_uuid + "', '" + license_type + "','" + license_exp_date
-					+ "','" + license_period + "','" + allowed_instances + "','" + license_status + "','" + d_flavour_name +"' );";
+					+ "','" + license_period + "','" + allowed_instances + "','" + license_status + "','" + d_flavour_name +"');";
 			stmt.executeUpdate(sql);
 			stmt.close();
 			c.commit();
