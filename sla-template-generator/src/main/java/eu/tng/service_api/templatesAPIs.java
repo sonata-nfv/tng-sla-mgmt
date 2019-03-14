@@ -247,7 +247,7 @@ public class templatesAPIs {
 	/**
 	 * api call in order to generate a sla template
 	 */
-	@SuppressWarnings("null")
+	@SuppressWarnings({ "null", "unchecked" })
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes("application/x-www-form-urlencoded")
 	@POST
@@ -502,7 +502,7 @@ public class templatesAPIs {
 								"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 								type, timestamps, operation, message, status);
 
-						apiresponse = Response.ok("'Success':'SLA Template created succesfully.'");
+						apiresponse = Response.ok("{\"Success\": \"SLA template created succesfully\",\"uuid\":"+sla_uuid+"}");
 						return apiresponse.status(201).build();
 
 					} else {
