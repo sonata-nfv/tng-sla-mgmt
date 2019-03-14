@@ -248,7 +248,7 @@ public class templatesAPIs {
 	 * api call in order to generate a sla template
 	 */
 	@SuppressWarnings({ "null", "unchecked" })
-	@Produces(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.TEXT_PLAIN)
 	@Consumes("application/x-www-form-urlencoded")
 	@POST
 	public Response createTemplate(final MultivaluedMap<String, String> formParams, @Context HttpHeaders headers) {
@@ -504,6 +504,7 @@ public class templatesAPIs {
 
 						String jsonForResponse = "{\"uuid\" : \"" + sla_uuid + "\" , " + "\"Status\" : \"Success\"}";  
 						apiresponse = Response.ok(jsonForResponse);
+						apiresponse.header("Content-Length", jsonForResponse.length());
 						return apiresponse.status(201).build();
 
 					} else {
