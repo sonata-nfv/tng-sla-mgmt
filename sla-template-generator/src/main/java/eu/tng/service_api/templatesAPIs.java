@@ -166,9 +166,9 @@ public class templatesAPIs {
 					type, timestamps, operation, message, status);
 
 			JSONObject error = new JSONObject();
-			error.put("ERROR: ", "Not Found");
-			apiresponse = Response.ok((Object) error);
-			apiresponse.header("Content-Length", error.toJSONString().length());
+			error.put("ERROR:", "Not Found");
+			apiresponse = Response.ok(error.toString());
+			apiresponse.header("Content-Length", error.toString().length());
 			return apiresponse.status(404).build();
 		}
 	}
@@ -226,7 +226,7 @@ public class templatesAPIs {
 			JSONObject error = new JSONObject();
 			error.put("ERROR: ", "Not Found");
 			apiresponse = Response.ok((Object) error);
-			apiresponse.header("Content-Length", error.toJSONString().length());
+			apiresponse.header("Content-Length", error.toString().length());
 
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
@@ -335,9 +335,9 @@ public class templatesAPIs {
 		if (template == null) {
 			String dr = null;
 			JSONObject error = new JSONObject();
-			error.put("ERROR: ", "NSD don't found");
-			apiresponse = Response.ok((Object) error);
-			apiresponse.header("Content-Length", error.toJSONString().length());
+			error.put("ERROR:", "NSD don't found");
+			apiresponse = Response.ok(error.toString());
+			apiresponse.header("Content-Length", error.toString().length());
 
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
@@ -364,7 +364,7 @@ public class templatesAPIs {
 				JSONObject error = new JSONObject();
 				error.put("ERROR: ", "Invalid expire date format. The format should be dd/mm/YYY");
 				apiresponse = Response.ok((Object) error);
-				apiresponse.header("Content-Length", error.toJSONString().length());
+				apiresponse.header("Content-Length", error.toString().length());
 
 				// logging
 				Timestamp timestamp = new Timestamp(System.currentTimeMillis());
@@ -384,8 +384,8 @@ public class templatesAPIs {
 				String dr = null;
 				JSONObject error = new JSONObject();
 				error.put("ERROR: ", "The expire date is not a future date.");
-				apiresponse = Response.ok((Object) error);
-				apiresponse.header("Content-Length", error.toJSONString().length());
+				apiresponse = Response.ok(error.toString());
+				apiresponse.header("Content-Length", error.toString().length());
 
 				// logging
 				Timestamp timestamp = new Timestamp(System.currentTimeMillis());
@@ -406,8 +406,8 @@ public class templatesAPIs {
 				JSONObject error = new JSONObject();
 				error.put("ERROR: ",
 						"There is a problem with the guarantee terms. You should select at least one guarantee id, and avoid duplicates.");
-				apiresponse = Response.ok((Object) error);
-				apiresponse.header("Content-Length", error.toJSONString().length() - 2);
+				apiresponse = Response.ok(error.toString());
+				apiresponse.header("Content-Length", error.toString().length());
 
 				// logging
 				Timestamp timestamp = new Timestamp(System.currentTimeMillis());
@@ -427,8 +427,8 @@ public class templatesAPIs {
 				String dr = null;
 				JSONObject error = new JSONObject();
 				error.put("ERROR: ", "Define a SLA Template Name");
-				apiresponse = Response.ok((Object) error);
-				apiresponse.header("Content-Length", error.toJSONString().length() - 2);
+				apiresponse = Response.ok(error.toString());
+				apiresponse.header("Content-Length", error.toString().length());
 
 				// logging
 				Timestamp timestamp = new Timestamp(System.currentTimeMillis());
@@ -510,9 +510,9 @@ public class templatesAPIs {
 					} else {
 						// conflict in uploading sla template to the catalogue
 						JSONObject error = new JSONObject();
-						error.put("ERROR: ", con.getResponseMessage());
-						apiresponse = Response.ok((Object) error);
-						apiresponse.header("Content-Length", error.toJSONString().length());
+						error.put("ERROR:", con.getResponseMessage());
+						apiresponse = Response.ok(error.toString());
+						apiresponse.header("Content-Length", error.toString().length());
 
 						// logging
 						Timestamp timestamp = new Timestamp(System.currentTimeMillis());
@@ -531,8 +531,8 @@ public class templatesAPIs {
 					String dr = null;
 					JSONObject error = new JSONObject();
 					error.put("ERROR: ", "while uploading SLA Template");
-					apiresponse = Response.ok((Object) error);
-					apiresponse.header("Content-Length", error.toJSONString().length());
+					apiresponse = Response.ok(error.toString());
+					apiresponse.header("Content-Length", error.toString().length());
 
 					// logging
 					Timestamp timestamp = new Timestamp(System.currentTimeMillis());
@@ -632,8 +632,8 @@ public class templatesAPIs {
 			} catch (Exception e) {
 				JSONObject error = new JSONObject();
 				error.put("ERROR: ", "URL Not Found");
-				apiresponse = Response.ok((Object) error);
-				apiresponse.header("Content-Length", error.toJSONString().length());
+				apiresponse = Response.ok(error.toString());
+				apiresponse.header("Content-Length", error.toString().length());
 
 				// logging
 				Timestamp timestamp = new Timestamp(System.currentTimeMillis());
