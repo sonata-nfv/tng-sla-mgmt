@@ -301,7 +301,7 @@ public class templatesAPIs {
 		List<String> service_licence_type = formParams.get("service_licence_type");
 		List<String> allowed_service_instances = formParams.get("allowed_service_instances");
 		List<String> service_licence_expiration_date = formParams.get("service_licence_expiration_date");
-		List<String> service_licence_period = formParams.get("service_licence_period");
+		
 
 		// optional provider name
 		String provider_name = "";
@@ -324,6 +324,18 @@ public class templatesAPIs {
 			System.out.println("[*] Selected Deployment Flavour Name ==> " + dflavour_name);
 		}
 
+		// optional service_licence_period
+        String service_licence_period = "";
+        try {
+            List<String> licence_period = formParams.get("service_licence_period");
+            service_licence_period = licence_period.get(0);
+            System.out.println("[*] Selected service_licence_period ==> " + service_licence_period);
+        } catch (Exception e) {
+            service_licence_period = "default";
+            System.out.println("[*] Selected service_licence_period ==> " + service_licence_period);
+        }
+        
+        
 		ArrayList<String> guarantees = new ArrayList<String>();
 		guarantees.addAll(formParams.get("guaranteeId"));
 
