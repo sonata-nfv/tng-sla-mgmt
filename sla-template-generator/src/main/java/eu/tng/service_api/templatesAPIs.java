@@ -166,9 +166,9 @@ public class templatesAPIs {
 					type, timestamps, operation, message, status);
 
 			JSONObject error = new JSONObject();
-			error.put("ERROR: ", "Not Found");
-			apiresponse = Response.ok((Object) error);
-			apiresponse.header("Content-Length", error.toJSONString().length());
+			error.put("ERROR:", "Not Found");
+			apiresponse = Response.ok(error.toString());
+			apiresponse.header("Content-Length", error.toString().length());
 			return apiresponse.status(404).build();
 		}
 	}
@@ -226,7 +226,7 @@ public class templatesAPIs {
 			JSONObject error = new JSONObject();
 			error.put("ERROR: ", "Not Found");
 			apiresponse = Response.ok((Object) error);
-			apiresponse.header("Content-Length", error.toJSONString().length());
+			apiresponse.header("Content-Length", error.toString().length());
 
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
@@ -247,8 +247,8 @@ public class templatesAPIs {
 	/**
 	 * api call in order to generate a sla template
 	 */
-	@SuppressWarnings("null")
-	@Produces(MediaType.APPLICATION_JSON)
+	@SuppressWarnings({ "null", "unchecked" })
+	@Produces(MediaType.TEXT_PLAIN)
 	@Consumes("application/x-www-form-urlencoded")
 	@POST
 	public Response createTemplate(final MultivaluedMap<String, String> formParams, @Context HttpHeaders headers) {
@@ -335,9 +335,9 @@ public class templatesAPIs {
 		if (template == null) {
 			String dr = null;
 			JSONObject error = new JSONObject();
-			error.put("ERROR: ", "NSD don't found");
-			apiresponse = Response.ok((Object) error);
-			apiresponse.header("Content-Length", error.toJSONString().length());
+			error.put("ERROR:", "NSD don't found");
+			apiresponse = Response.ok(error.toString());
+			apiresponse.header("Content-Length", error.toString().length());
 
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
@@ -364,7 +364,7 @@ public class templatesAPIs {
 				JSONObject error = new JSONObject();
 				error.put("ERROR: ", "Invalid expire date format. The format should be dd/mm/YYY");
 				apiresponse = Response.ok((Object) error);
-				apiresponse.header("Content-Length", error.toJSONString().length());
+				apiresponse.header("Content-Length", error.toString().length());
 
 				// logging
 				Timestamp timestamp = new Timestamp(System.currentTimeMillis());
@@ -384,8 +384,8 @@ public class templatesAPIs {
 				String dr = null;
 				JSONObject error = new JSONObject();
 				error.put("ERROR: ", "The expire date is not a future date.");
-				apiresponse = Response.ok((Object) error);
-				apiresponse.header("Content-Length", error.toJSONString().length());
+				apiresponse = Response.ok(error.toString());
+				apiresponse.header("Content-Length", error.toString().length());
 
 				// logging
 				Timestamp timestamp = new Timestamp(System.currentTimeMillis());
@@ -406,8 +406,8 @@ public class templatesAPIs {
 				JSONObject error = new JSONObject();
 				error.put("ERROR: ",
 						"There is a problem with the guarantee terms. You should select at least one guarantee id, and avoid duplicates.");
-				apiresponse = Response.ok((Object) error);
-				apiresponse.header("Content-Length", error.toJSONString().length() - 2);
+				apiresponse = Response.ok(error.toString());
+				apiresponse.header("Content-Length", error.toString().length());
 
 				// logging
 				Timestamp timestamp = new Timestamp(System.currentTimeMillis());
@@ -427,8 +427,8 @@ public class templatesAPIs {
 				String dr = null;
 				JSONObject error = new JSONObject();
 				error.put("ERROR: ", "Define a SLA Template Name");
-				apiresponse = Response.ok((Object) error);
-				apiresponse.header("Content-Length", error.toJSONString().length() - 2);
+				apiresponse = Response.ok(error.toString());
+				apiresponse.header("Content-Length", error.toString().length());
 
 				// logging
 				Timestamp timestamp = new Timestamp(System.currentTimeMillis());
@@ -502,22 +502,24 @@ public class templatesAPIs {
 								"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 								type, timestamps, operation, message, status);
 
-						apiresponse = Response.ok("'Success':'SLA Template created succesfully.'");
+						String jsonForResponse = "{\"uuid\" : \"" + sla_uuid + "\" , " + "\"Status\" : \"Success\"}";  
+						apiresponse = Response.ok(jsonForResponse);
+						apiresponse.header("Content-Length", jsonForResponse.length());
 						return apiresponse.status(201).build();
 
 					} else {
 						// conflict in uploading sla template to the catalogue
 						JSONObject error = new JSONObject();
-						error.put("ERROR: ", con.getResponseMessage());
-						apiresponse = Response.ok((Object) error);
-						apiresponse.header("Content-Length", error.toJSONString().length());
+						error.put("ERROR:", con.getResponseMessage());
+						apiresponse = Response.ok(error.toString());
+						apiresponse.header("Content-Length", error.toString().length());
 
 						// logging
 						Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 						String timestamps = timestamp.toString();
 						String type = "I";
 						String operation = "Generate the SLA Template";
-						String message = "Error uploding to Catalogue : " + con.getResponseMessage();
+						String message = "Error uploading to Catalogue : " + con.getResponseMessage();
 						String status = String.valueOf(400);
 						logger.warn(
 								"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
@@ -528,16 +530,16 @@ public class templatesAPIs {
 				} catch (Exception e) {
 					String dr = null;
 					JSONObject error = new JSONObject();
-					error.put("ERROR: ", "while uploding SLA Template");
-					apiresponse = Response.ok((Object) error);
-					apiresponse.header("Content-Length", error.toJSONString().length());
+					error.put("ERROR: ", "while uploading SLA Template");
+					apiresponse = Response.ok(error.toString());
+					apiresponse.header("Content-Length", error.toString().length());
 
 					// logging
 					Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 					String timestamps = timestamp.toString();
 					String type = "W";
 					String operation = "Generate the SLA Template";
-					String message = "Error uploding to Catalogue : URL invalid";
+					String message = "Error uploading to Catalogue : URL invalid";
 					String status = String.valueOf(404);
 					logger.warn(
 							"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
@@ -630,15 +632,15 @@ public class templatesAPIs {
 			} catch (Exception e) {
 				JSONObject error = new JSONObject();
 				error.put("ERROR: ", "URL Not Found");
-				apiresponse = Response.ok((Object) error);
-				apiresponse.header("Content-Length", error.toJSONString().length());
+				apiresponse = Response.ok(error.toString());
+				apiresponse.header("Content-Length", error.toString().length());
 
 				// logging
 				Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 				String timestamps = timestamp.toString();
 				String type = "W";
 				String operation = "Delete an SLA Template";
-				String message = "Error uploding to Catalogue : URL invalid";
+				String message = "Error uploading to Catalogue : URL invalid";
 				String status = String.valueOf(404);
 				logger.warn(
 						"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
