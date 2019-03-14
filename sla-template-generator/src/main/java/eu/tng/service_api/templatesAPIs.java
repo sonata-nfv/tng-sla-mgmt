@@ -502,8 +502,8 @@ public class templatesAPIs {
 								"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 								type, timestamps, operation, message, status);
 
-						apiresponse = Response.ok("{\"Success\": \"SLA template created succesfully\",\"uuid\":\"{}\"",sla_uuid);
-						      
+						String jsonForResponse = "{\"uuid\" : \"" + sla_uuid + "\" , " + "\"Status\" : \"Success\"}";  
+						apiresponse = Response.ok(jsonForResponse);
 						return apiresponse.status(201).build();
 
 					} else {
@@ -518,7 +518,7 @@ public class templatesAPIs {
 						String timestamps = timestamp.toString();
 						String type = "I";
 						String operation = "Generate the SLA Template";
-						String message = "Error uploding to Catalogue : " + con.getResponseMessage();
+						String message = "Error uploading to Catalogue : " + con.getResponseMessage();
 						String status = String.valueOf(400);
 						logger.warn(
 								"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
@@ -529,7 +529,7 @@ public class templatesAPIs {
 				} catch (Exception e) {
 					String dr = null;
 					JSONObject error = new JSONObject();
-					error.put("ERROR: ", "while uploding SLA Template");
+					error.put("ERROR: ", "while uploading SLA Template");
 					apiresponse = Response.ok((Object) error);
 					apiresponse.header("Content-Length", error.toJSONString().length());
 
@@ -538,7 +538,7 @@ public class templatesAPIs {
 					String timestamps = timestamp.toString();
 					String type = "W";
 					String operation = "Generate the SLA Template";
-					String message = "Error uploding to Catalogue : URL invalid";
+					String message = "Error uploading to Catalogue : URL invalid";
 					String status = String.valueOf(404);
 					logger.warn(
 							"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
@@ -639,7 +639,7 @@ public class templatesAPIs {
 				String timestamps = timestamp.toString();
 				String type = "W";
 				String operation = "Delete an SLA Template";
-				String message = "Error uploding to Catalogue : URL invalid";
+				String message = "Error uploading to Catalogue : URL invalid";
 				String status = String.valueOf(404);
 				logger.warn(
 						"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
