@@ -151,7 +151,8 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 					String message = new String(body, "UTF-8");
 					// parse the yaml and convert it to json
 					Yaml yaml = new Yaml();
-					Map<String, Object> map = (Map<String, Object>) yaml.load(message);
+					@SuppressWarnings("unchecked")
+                    Map<String, Object> map = (Map<String, Object>) yaml.load(message);
 
 					sla_id = map.get("sla_id");
 
@@ -290,6 +291,15 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 						    cust_username = "";
 						    cust_email = "";
 						}
+						
+						try {
+						    sla_uuid = (String) customer.get("sla_id");
+                        }catch (JSONException  e)
+                        {
+                            sla_uuid = "";
+                        }
+						
+						
 						// if sla exists create record in database
 						if (sla_uuid != null && !sla_uuid.isEmpty()) {
 
