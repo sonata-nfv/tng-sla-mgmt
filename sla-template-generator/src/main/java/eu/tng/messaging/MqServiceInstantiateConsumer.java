@@ -46,6 +46,7 @@ import javax.servlet.ServletContextListener;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.yaml.snakeyaml.Yaml;
 
@@ -279,9 +280,17 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 						// Parse customer data + sla uuid
 						JSONObject user_data = (JSONObject) jsonObjectMessage.getJSONObject("user_data");
 						JSONObject customer = (JSONObject) user_data.getJSONObject("customer");
-						cust_username = (String) customer.get("name");
-						cust_email = (String) customer.get("email");
-						sla_uuid = (String) customer.get("sla_id");
+						
+						try {
+    						cust_username = (String) customer.get("name");
+    						cust_email = (String) customer.get("email");
+    						sla_uuid = (String) customer.get("sla_id");
+						}catch (JSONException  e)
+						{
+						    cust_username = "";
+						    cust_email = "";
+						    sla_uuid = "";
+						}
 						// if sla exists create record in database
 						if (sla_uuid != null && !sla_uuid.isEmpty()) {
 
