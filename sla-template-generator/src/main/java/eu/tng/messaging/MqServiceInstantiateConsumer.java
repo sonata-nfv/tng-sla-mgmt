@@ -279,7 +279,7 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 						// Parse customer data + sla uuid
 						JSONObject user_data = (JSONObject) jsonObjectMessage.getJSONObject("user_data");
 						JSONObject customer = (JSONObject) user_data.getJSONObject("customer");
-						cust_username = (String) customer.get("uuid");
+						cust_username = (String) customer.get("name");
 						cust_email = (String) customer.get("email");
 						sla_uuid = (String) customer.get("sla_id");
 						// if sla exists create record in database
