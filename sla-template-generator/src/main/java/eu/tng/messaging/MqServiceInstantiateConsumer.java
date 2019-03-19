@@ -135,7 +135,8 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 
 			Consumer consumer_service_instance = new DefaultConsumer(channel_service_instance) {
 
-				public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties,
+				@SuppressWarnings("unused")
+                public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties,
 						byte[] body) throws IOException {
 					// Initialize variables
 					String status = "";
@@ -284,12 +285,10 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 						try {
     						cust_username = (String) customer.get("name");
     						cust_email = (String) customer.get("email");
-    						sla_uuid = (String) customer.get("sla_id");
 						}catch (JSONException  e)
 						{
 						    cust_username = "";
 						    cust_email = "";
-						    sla_uuid = "";
 						}
 						// if sla exists create record in database
 						if (sla_uuid != null && !sla_uuid.isEmpty()) {
