@@ -38,24 +38,20 @@ package eu.tng.messaging;
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Map;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.yaml.snakeyaml.Yaml;
-
-import com.rabbitmq.client.AMQP.BasicProperties;
 import com.rabbitmq.client.*;
 
 import eu.tng.correlations.cust_sla_corr;
 import eu.tng.correlations.db_operations;
-import eu.tng.rules.MonitoringRules;
+
 
 public class MqServiceInstantiateConsumer implements ServletContextListener {
 
@@ -111,6 +107,7 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 					type, timestamps, operation, message, status);
 
+			channel_service_instance.basicQos(1);
 			channel_service_instance.queueBind(queueName_service_instance, EXCHANGE_NAME, "service.instances.create");
 			// logging
 			Timestamp timestamp1 = new Timestamp(System.currentTimeMillis());
@@ -133,11 +130,9 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 					type2, timestamps2, operation2, message2, status2);
 
-			Consumer consumer_service_instance = new DefaultConsumer(channel_service_instance) {
-
-				@SuppressWarnings("unused")
-                public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties,
-						byte[] body) throws IOException {
+			DeliverCallback deliverCallback = new DeliverCallback() {
+                @Override
+                public void handle(String consumerTag, Delivery delivery) throws IOException {
 					// Initialize variables
 					String status = "";
 					String correlation_id = null;
@@ -148,7 +143,7 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 					ArrayList<String> vnfr_id_list = new ArrayList<String>();
 
 					// Parse message payload
-					String message = new String(body, "UTF-8");
+					String message = new String(delivery.getBody(), "UTF-8");
 					// parse the yaml and convert it to json
 					Yaml yaml = new Yaml();
 					@SuppressWarnings("unchecked")
@@ -158,8 +153,8 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 
 					jsonObjectMessage = new JSONObject(map);
 
-					correlation_id = (String) properties.getCorrelationId();
-
+					correlation_id = (String) delivery.getProperties().getCorrelationId();
+					
 					// logging
 					Timestamp timestamp1 = new Timestamp(System.currentTimeMillis());
 					String timestamps1 = timestamp1.toString();
@@ -377,9 +372,11 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 				}
 			};
 
-			// service instantiation consumer
-			channel_service_instance.basicConsume(queueName_service_instance, true, consumer_service_instance);
-
+			channel_service_instance.basicConsume(queueName_service_instance, false, deliverCallback, new CancelCallback() {
+                @Override
+                public void handle(String consumerTag) throws IOException { }
+            });
+			
 		} catch (IOException e) {
 
 			// logging

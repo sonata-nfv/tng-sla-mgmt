@@ -49,10 +49,13 @@ import org.json.*;
 import org.yaml.snakeyaml.Yaml;
 
 import com.rabbitmq.client.AMQP;
+import com.rabbitmq.client.CancelCallback;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.Consumer;
 import com.rabbitmq.client.DefaultConsumer;
+import com.rabbitmq.client.DeliverCallback;
+import com.rabbitmq.client.Delivery;
 import com.rabbitmq.client.Envelope;
 
 import eu.tng.correlations.db_operations;
@@ -102,6 +105,7 @@ public class MqServiceTerminateConsumer implements ServletContextListener {
 					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 					type, timestamps, operation, message, status);
 
+			channel_service_terminate.basicQos(1);
 			channel_service_terminate.queueBind(queueName_service_terminate, EXCHANGE_NAME,
 					"service.instance.terminate");
 
@@ -127,10 +131,9 @@ public class MqServiceTerminateConsumer implements ServletContextListener {
 					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 					type, timestamps, operation, message, status);
 
-			Consumer consumer_service_terminate = new DefaultConsumer(channel_service_terminate) {
-
-				public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties,
-						byte[] body) throws IOException {
+			DeliverCallback deliverCallback = new DeliverCallback() {
+                @Override
+                public void handle(String consumerTag, Delivery delivery) throws IOException {
 
 					JSONObject jsonObjectMessage = null;
 					Object correlation_id = null;
@@ -138,7 +141,7 @@ public class MqServiceTerminateConsumer implements ServletContextListener {
 					Object nsi_uuid = null;
 
 					// Parse message payload
-					String message = new String(body, "UTF-8");
+					String message = new String(delivery.getBody(), "UTF-8");
 
 					// parse the yaml and convert it to json
 					Yaml yaml = new Yaml();
@@ -146,7 +149,7 @@ public class MqServiceTerminateConsumer implements ServletContextListener {
 					System.out.println("Message for terminating service received (printed as MAP): " + map);
 					jsonObjectMessage = new JSONObject(map);
 
-					correlation_id = properties.getCorrelationId();
+					correlation_id = (String) delivery.getProperties().getCorrelationId();
 
 					/** if message coming from the MANO - contain status key **/
 					if (jsonObjectMessage.has("status")) {
@@ -189,8 +192,10 @@ public class MqServiceTerminateConsumer implements ServletContextListener {
 
 			};
 
-			// consumer
-			channel_service_terminate.basicConsume(queueName_service_terminate, true, consumer_service_terminate);
+			channel_service_terminate.basicConsume(queueName_service_terminate, false, deliverCallback, new CancelCallback() {
+                @Override
+                public void handle(String consumerTag) throws IOException { }
+            });
 
 		} catch (IOException e) {
 			// logging
