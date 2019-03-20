@@ -66,7 +66,7 @@ public class MqSlaViolationsConsumer implements ServletContextListener {
 
     @Override
     public void contextInitialized(ServletContextEvent arg0) {
-        Channel channel_violations;
+        final Channel channel_violations;
         Connection connection;
         String queueName_sla_violations;
 
@@ -98,6 +98,7 @@ public class MqSlaViolationsConsumer implements ServletContextListener {
                         // TODO Auto-generated catch block
                         System.out.println("ERROR: " + e.getMessage());
                     }
+                    channel_violations.basicAck(delivery.getEnvelope().getDeliveryTag(), false);
                 }
 
             };

@@ -82,7 +82,7 @@ public class MqServiceTerminateConsumer implements ServletContextListener {
 
 	@Override
 	public void contextInitialized(ServletContextEvent arg0) {
-		Channel channel_service_terminate;
+		final Channel channel_service_terminate;
 		Connection connection;
 		String queueName_service_terminate;
 
@@ -187,7 +187,7 @@ public class MqServiceTerminateConsumer implements ServletContextListener {
 						db_operations.UpdateCorrelationID(nsi_uuid.toString(), correlation_id.toString());
 						db_operations.closePostgreSQL();
 					}
-
+					channel_service_terminate.basicAck(delivery.getEnvelope().getDeliveryTag(), false);
 				}
 
 			};

@@ -84,7 +84,7 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 	 */
 	public void contextInitialized(ServletContextEvent event) {
 
-		Channel channel_service_instance;
+		final Channel channel_service_instance;
 		Connection connection;
 		String queueName_service_instance;
 
@@ -232,14 +232,14 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 							} else {
 								// logging
 								Timestamp timestamp3 = new Timestamp(System.currentTimeMillis());
-								String timestamps3 = timestamp1.toString();
+								String timestamps3 = timestamp3.toString();
 								String type3 = "I";
 								String operation3 = "RabbitMQ Listener - NS Instantiation";
 								String message3 = "[*] Instantiation without SLA. Message aborted.";
 								String status3 = "";
 								logger.info(
 										"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
-										type1, timestamps1, operation1, message1, status1);
+										type3, timestamps3, operation3, message3, status3);
 							}
 
 						}
@@ -369,6 +369,7 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 							db_operations.closePostgreSQL();
 						}
 					}
+					channel_service_instance.basicAck(delivery.getEnvelope().getDeliveryTag(), false);
 				}
 			};
 

@@ -75,7 +75,7 @@ public class MqMonitoringConsumer implements ServletContextListener {
 
 	@Override
 	public void contextInitialized(ServletContextEvent arg0) {
-		Channel channel_monitor;
+		final Channel channel_monitor;
 		final Connection connection;
 		String queueName_monitor;
 
@@ -191,9 +191,8 @@ public class MqMonitoringConsumer implements ServletContextListener {
 								type, timestamps, operation, messageLog, status);
 					}
 					
+					channel_monitor.basicAck(delivery.getEnvelope().getDeliveryTag(), false);
 				}
-
-                
 
 			};
 
