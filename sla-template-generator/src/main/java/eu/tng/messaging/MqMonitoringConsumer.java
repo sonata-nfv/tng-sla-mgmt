@@ -137,6 +137,10 @@ public class MqMonitoringConsumer implements ServletContextListener {
 					// Parse headers
 					try {
 						String message = new String(delivery.getBody(), "UTF-8");
+						
+						//Ack the message
+						channel_monitor.basicAck(delivery.getEnvelope().getDeliveryTag(), false);
+						
 						jmessage = new JSONObject(message);
 						System.out.println(jmessage);
 
@@ -191,7 +195,7 @@ public class MqMonitoringConsumer implements ServletContextListener {
 								type, timestamps, operation, messageLog, status);
 					}
 					
-					channel_monitor.basicAck(delivery.getEnvelope().getDeliveryTag(), false);
+					
 				}
 
 			};

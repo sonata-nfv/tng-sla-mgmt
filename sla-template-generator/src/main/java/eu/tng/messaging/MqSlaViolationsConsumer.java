@@ -91,6 +91,11 @@ public class MqSlaViolationsConsumer implements ServletContextListener {
                     JSONObject jmessage = null;                  
                     try {
                         String message = new String(delivery.getBody(), "UTF-8");
+						
+						//Ack the message
+						channel_violations.basicAck(delivery.getEnvelope().getDeliveryTag(), false);
+						
+						
                         jmessage = new JSONObject(message);
                         System.out.println("VIOLATION MESSAGE " + jmessage);
 
@@ -98,7 +103,7 @@ public class MqSlaViolationsConsumer implements ServletContextListener {
                         // TODO Auto-generated catch block
                         System.out.println("ERROR: " + e.getMessage());
                     }
-                    channel_violations.basicAck(delivery.getEnvelope().getDeliveryTag(), false);
+                    
                 }
 
             };

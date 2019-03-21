@@ -144,6 +144,10 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 
 					// Parse message payload
 					String message = new String(delivery.getBody(), "UTF-8");
+					
+					//Ack the message
+					channel_service_instance.basicAck(delivery.getEnvelope().getDeliveryTag(), false);
+					
 					// parse the yaml and convert it to json
 					Yaml yaml = new Yaml();
 					@SuppressWarnings("unchecked")
@@ -369,7 +373,7 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 							db_operations.closePostgreSQL();
 						}
 					}
-					channel_service_instance.basicAck(delivery.getEnvelope().getDeliveryTag(), false);
+					
 				}
 			};
 

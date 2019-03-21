@@ -142,6 +142,9 @@ public class MqServiceTerminateConsumer implements ServletContextListener {
 
 					// Parse message payload
 					String message = new String(delivery.getBody(), "UTF-8");
+					
+					//Ack the message
+					channel_service_terminate.basicAck(delivery.getEnvelope().getDeliveryTag(), false);
 
 					// parse the yaml and convert it to json
 					Yaml yaml = new Yaml();
@@ -187,7 +190,7 @@ public class MqServiceTerminateConsumer implements ServletContextListener {
 						db_operations.UpdateCorrelationID(nsi_uuid.toString(), correlation_id.toString());
 						db_operations.closePostgreSQL();
 					}
-					channel_service_terminate.basicAck(delivery.getEnvelope().getDeliveryTag(), false);
+					
 				}
 
 			};
