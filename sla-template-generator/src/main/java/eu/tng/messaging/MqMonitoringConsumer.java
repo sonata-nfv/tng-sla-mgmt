@@ -37,21 +37,17 @@ package eu.tng.messaging;
 
 import java.io.IOException;
 import java.sql.Timestamp;
-
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import com.rabbitmq.client.AMQP;
+import com.rabbitmq.client.CancelCallback;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
-import com.rabbitmq.client.Consumer;
-import com.rabbitmq.client.DefaultConsumer;
-import com.rabbitmq.client.Envelope;
+import com.rabbitmq.client.DeliverCallback;
+import com.rabbitmq.client.Delivery;
 
 import eu.tng.correlations.db_operations;
 
@@ -79,7 +75,7 @@ public class MqMonitoringConsumer implements ServletContextListener {
 
 	@Override
 	public void contextInitialized(ServletContextEvent arg0) {
-		Channel channel_monitor;
+		final Channel channel_monitor;
 		final Connection connection;
 		String queueName_monitor;
 
@@ -102,6 +98,7 @@ public class MqMonitoringConsumer implements ServletContextListener {
 					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 					type, timestamps, operation, message, status);
 
+			channel_monitor.basicQos(1);
 			channel_monitor.queueBind(queueName_monitor, EXCHANGE_NAME, "son.monitoring.SLA");
 			// logging
 			Timestamp timestamp1 = new Timestamp(System.currentTimeMillis());
@@ -124,29 +121,31 @@ public class MqMonitoringConsumer implements ServletContextListener {
 					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 					type2, timestamps2, operation2, message2, status2);
 
-			Consumer consumer_monitor = new DefaultConsumer(channel_monitor) {
-
-				public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties,
-						byte[] body) throws IOException {
+			DeliverCallback deliverCallback = new DeliverCallback() {
+                @Override
+                public void handle(String consumerTag, Delivery delivery) throws IOException {
 
 					// Initialize variables
 					JSONObject jmessage = null;
 					String nsi_uuid = null;
 					String alert_time = null;
-					String alert_name = null;
+
 					String alert_state = null;
 					String sla_uuid = null;
 					String cust_username = null;
 
 					// Parse headers
 					try {
-						String message = new String(body, "UTF-8");
+						String message = new String(delivery.getBody(), "UTF-8");
+						
+						//Ack the message
+						channel_monitor.basicAck(delivery.getEnvelope().getDeliveryTag(), false);
+						
 						jmessage = new JSONObject(message);
 						System.out.println(jmessage);
 
 						nsi_uuid = jmessage.getString("serviceID"); // this is the service instantce id
 						alert_time = jmessage.getString("time");
-						alert_name = jmessage.getString("alertname");
 						alert_state = jmessage.getString("alertstate");
 
 						db_operations dbo = new db_operations();
@@ -195,12 +194,16 @@ public class MqMonitoringConsumer implements ServletContextListener {
 								"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 								type, timestamps, operation, messageLog, status);
 					}
+					
+					
 				}
 
 			};
 
-			// consumer
-			channel_monitor.basicConsume(queueName_monitor, true, consumer_monitor);
+			channel_monitor.basicConsume(queueName_monitor, false, deliverCallback, new CancelCallback() {
+                @Override
+                public void handle(String consumerTag) throws IOException { }
+            });
 
 		} catch (IOException e) {
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
