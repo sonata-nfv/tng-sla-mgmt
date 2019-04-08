@@ -444,13 +444,16 @@ public class MgmtAPIs {
 		int activeAgreements = db.countActiveAgreements();
 		int violatedAgreements = db.countViolatedAgreements();
 		
-		float percentage_violated = (float)((violatedAgreements / totalAgreements) * 100);
-		float percentage_active = (float)((activeAgreements / totalAgreements) * 100);
-
 		JSONObject percentages = new JSONObject();
-		percentages.put("percentage_violated", percentage_violated);
-		percentages.put("percentage_active", percentage_active);
-		
+
+		if (totalAgreements > 0) {
+			float percentage_violated = (float)((violatedAgreements / totalAgreements) * 100);
+			float percentage_active = (float)((activeAgreements / totalAgreements) * 100);
+
+			percentages.put("percentage_violated", percentage_violated);
+			percentages.put("percentage_active", percentage_active);
+		}
+
 		db_operations.closePostgreSQL();
 
 		JSONObject response = null;
