@@ -459,26 +459,28 @@ public class MgmtAPIs {
 
 				percentages.put("percentage_violated", percentage_violated);
 				percentages.put("percentage_active", percentage_active);
+				System.out.println("response jsonobject ==> " + percentages);
+
 			}
 		} 
 		
-		// date range filtering 
-		else {
-			System.out.println("Violation percentage in the last " + d + " days.");
-
-			int totalAgreements = db.countActiveAgreementsDateRange(d);
-			int activeAgreements = db.countActiveAgreementsDateRange(d);
-			int violatedAgreements = db.countViolatedAgreementsDateRange(d);
-			
-			if (totalAgreements > 0) {
-				float percentage_violated = (float) ((violatedAgreements / totalAgreements) * 100);
-				float percentage_active = (float) ((activeAgreements / totalAgreements) * 100);
-
-				percentages.put("percentage_violated", percentage_violated);
-				percentages.put("percentage_active", percentage_active);
-			}
-
-		}
+//		// date range filtering 
+//		else {
+//			System.out.println("Violation percentage in the last " + d + " days.");
+//
+//			int totalAgreements = db.countActiveAgreementsDateRange(d);
+//			int activeAgreements = db.countActiveAgreementsDateRange(d);
+//			int violatedAgreements = db.countViolatedAgreementsDateRange(d);
+//			
+//			if (totalAgreements > 0) {
+//				float percentage_violated = (float) ((violatedAgreements / totalAgreements) * 100);
+//				float percentage_active = (float) ((activeAgreements / totalAgreements) * 100);
+//
+//				percentages.put("percentage_violated", percentage_violated);
+//				percentages.put("percentage_active", percentage_active);
+//			}
+//
+//		}
 
 		db_operations.closePostgreSQL();
 
