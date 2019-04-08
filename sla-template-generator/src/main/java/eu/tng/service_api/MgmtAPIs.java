@@ -430,7 +430,7 @@ public class MgmtAPIs {
 	 * Get Nº SLA Agreements vs. Violations (in the last 24h / 7 days / 30 days)
 	 */
 	@SuppressWarnings("null")
-	@Path("/deploymentflavours/{nsd_uuid}/{sla_uuid}")
+	@Path("violationspercentage")
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getAgreementsVsViolationsPercentage() {
