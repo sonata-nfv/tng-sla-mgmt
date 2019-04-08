@@ -430,7 +430,7 @@ public class MgmtAPIs {
 	/**
 	 * Get Nº SLA Agreements vs. Violations (in the last 24h / 7 days / 30 days)
 	 */
-	@SuppressWarnings("null")
+	@SuppressWarnings({ "null", "unchecked" })
 	@Path("violationspercentage")
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
@@ -451,8 +451,11 @@ public class MgmtAPIs {
 			int violatedAgreements = db.countViolatedAgreements();
 
 			if (totalAgreements > 0) {
-				float percentage_violated = (float) ((violatedAgreements / totalAgreements) * 100);
-				float percentage_active = (float) ((activeAgreements / totalAgreements) * 100);
+				float percentage_violated = ((violatedAgreements / totalAgreements) * 100);
+				float percentage_active = ((activeAgreements / totalAgreements) * 100);
+
+				System.out.println("Violation percentage ==> " + percentage_violated);
+				System.out.println("active percentage ==> " + percentage_active);
 
 				percentages.put("percentage_violated", percentage_violated);
 				percentages.put("percentage_active", percentage_active);
@@ -479,8 +482,9 @@ public class MgmtAPIs {
 
 		db_operations.closePostgreSQL();
 
-		apiresponse = Response.ok((percentages));
-		apiresponse.header("Content-Length", percentages.toJSONString().length());
+		JSONObject response = percentages;
+		apiresponse = Response.ok((response));
+		apiresponse.header("Content-Length", response.toJSONString().length());
 		return apiresponse.status(200).build();
 
 	}
