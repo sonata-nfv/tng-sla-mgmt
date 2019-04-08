@@ -335,16 +335,16 @@ public class MgmtAPIs {
 			
 		try {
 			// get example nsd
-			File nsdf = new File(this.getClass().getResource("/nsd_with_flavours_example.json").toURI());
+			File nsdf = new File(this.getClass().getResource("/multi-flavour-nsd.json").toURI());
 			jsonObject = (JSONObject) parser.parse(new FileReader(nsdf));
 			System.out.println(jsonObject.toJSONString().length());
 
 			// fetch the nsd and get list with deployment flavours names
 			JSONObject nsd = (JSONObject) jsonObject.get("nsd");
-			JSONArray deployment_flavour = (JSONArray) nsd.get("deployment_flavour");
+			JSONArray deployment_flavours = (JSONArray) nsd.get("deployment_flavours");
 			JSONArray flavour_names = new JSONArray();
-			for (int i = 0; i < deployment_flavour.size(); i++) {
-				JSONObject deployment_flavour_item = (JSONObject) deployment_flavour.get(i);
+			for (int i = 0; i < deployment_flavours.size(); i++) {
+				JSONObject deployment_flavour_item = (JSONObject) deployment_flavours.get(i);
 				String f_name = (String) ((JSONObject) deployment_flavour_item).get("name");
 				flavour_names.add(f_name);
 			}
