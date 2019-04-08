@@ -436,15 +436,16 @@ public class MgmtAPIs {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getAgreementsVsViolationsPercentage(@QueryParam("d") int d) {
 
-		System.out.println("Violation percentage in the last " + d + " days.");
-
 		ResponseBuilder apiresponse = null;
 		JSONObject percentages = new JSONObject();
 
 		db_operations db = new db_operations();
 		db_operations.connectPostgreSQL();
 
+		// check all agreements - without date filtering
 		if (d == 0) {
+			System.out.println("Violation percentage in the last " + d + " days.");
+
 			int totalAgreements = db.countTotalAgreements();
 			int activeAgreements = db.countActiveAgreements();
 			int violatedAgreements = db.countViolatedAgreements();
@@ -457,10 +458,22 @@ public class MgmtAPIs {
 				percentages.put("percentage_active", percentage_active);
 			}
 		} 
+		
+		// date range filtering 
 		else {
-			int totalAgreements = db.countTotalAgreements();
-			int activeAgreements = db.countActiveAgreements();
-			int violatedAgreements = db.countViolatedAgreements();
+			System.out.println("Violation percentage in the last " + d + " days.");
+
+			int totalAgreements = db.countActiveAgreementsDateRange(d);
+			int activeAgreements = db.countActiveAgreementsDateRange(d);
+			int violatedAgreements = db.countViolatedAgreementsDateRange(d);
+			
+			if (totalAgreements > 0) {
+				float percentage_violated = (float) ((violatedAgreements / totalAgreements) * 100);
+				float percentage_active = (float) ((activeAgreements / totalAgreements) * 100);
+
+				percentages.put("percentage_violated", percentage_violated);
+				percentages.put("percentage_active", percentage_active);
+			}
 
 		}
 

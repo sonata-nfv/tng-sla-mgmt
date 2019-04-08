@@ -1124,12 +1124,58 @@ public class db_operations {
 	}
 	
 	/**
+	 * Count violated agreements in date range
+	 */
+	@SuppressWarnings("unchecked")
+	public int countViolatedAgreementsDateRange(int days) {
+
+		LocalDate currentDate = LocalDate.now().minusDays(300);
+	    LocalDate minusDates = LocalDate.now().minusDays(days);
+	    
+	    System.out.println("currentDate ==> " + currentDate);
+	    System.out.println("minusDates ==> " + minusDates);
+	    
+		String SQL = "SELECT count(*) FROM cust_sla where inst_status='VIOLATED' AND sla_date BETWEEN "+minusDates+" AND "+currentDate+"";
+		int count = 0;
+		try {
+			stmt = c.createStatement();
+			ResultSet rs = stmt.executeQuery(SQL);
+			while (rs.next()) {
+				count = rs.getInt(1);
+			}
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			String timestamps = timestamp.toString();
+			String type = "I";
+			String operation = "Count violated agreements";
+			String message = ("The number of violated SLA Agreements are = " + count);
+			String status = "";
+			logger.info(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
+
+		} catch (SQLException e) {
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			String timestamps = timestamp.toString();
+			String type = "W";
+			String operation = "Count violated agreements ";
+			String message = ("Error counting violated agreements ==> " + e.getMessage());
+			String status = "";
+			logger.warn(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
+		}
+		return count;
+	}
+	
+	/**
 	 * Count total agreements
 	 */
 	@SuppressWarnings("unchecked")
 	public int countTotalAgreements() {
 
-		String SQL = "SELECT count(*) FROM cust_sla where inst_status='VIOLATED' AND inst_status='READY'";
+		String SQL = "SELECT count(*) FROM cust_sla where inst_status='VIOLATED' OR inst_status='READY'";
 		int count = 0;
 		try {
 			stmt = c.createStatement();
@@ -1175,7 +1221,7 @@ public class db_operations {
 	    System.out.println("currentDate ==> " + currentDate);
 	    System.out.println("minusDates ==> " + minusDates);
 
-		String SQL = "SELECT count(*) FROM cust_sla where inst_status='READY' AND inst_status='VIOLATED' AND sla_date BETWEEN "+minusDates+" AND "+currentDate+"";
+		String SQL = "SELECT count(*) FROM cust_sla where (inst_status='READY' OR inst_status='VIOLATED') AND sla_date BETWEEN "+minusDates+" AND "+currentDate+"";
 		int count = 0;
 		try {
 			stmt = c.createStatement();
