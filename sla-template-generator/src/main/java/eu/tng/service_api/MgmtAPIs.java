@@ -308,7 +308,7 @@ public class MgmtAPIs {
 
 				apiresponse = Response.ok(flavour_names);
 				apiresponse.header("Content-Length", flavour_names.toJSONString().length());
-				
+
 			} catch (Exception e) {
 				apiresponse = Response.ok(flavour_names);
 				apiresponse.header("Content-Length", flavour_names.toJSONString().length());
@@ -426,7 +426,7 @@ public class MgmtAPIs {
 		return apiresponse.status(200).build();
 
 	}
-	
+
 	/**
 	 * Get Nº SLA Agreements vs. Violations (in the last 24h / 7 days / 30 days)
 	 */
@@ -434,32 +434,37 @@ public class MgmtAPIs {
 	@Path("violationspercentage")
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response getAgreementsVsViolationsPercentage(@QueryParam("n") int n) {
+	public Response getAgreementsVsViolationsPercentage(@QueryParam("d") int d) {
+
+		System.out.println("Violation percentage in the last " + d + " days.");
 
 		ResponseBuilder apiresponse = null;
-
-		System.out.println("Violation percentage in the last " + n + " days.");
-		
-		db_operations db = new db_operations();
-		db_operations.connectPostgreSQL();
-		
-		int totalAgreements = db.countTotalAgreements();
-		int activeAgreements = db.countActiveAgreements();
-		int violatedAgreements = db.countViolatedAgreements();
-		
-		db_operations.closePostgreSQL();
-
 		JSONObject percentages = new JSONObject();
 
-		if (totalAgreements > 0) {
-			float percentage_violated = (float)((violatedAgreements / totalAgreements) * 100);
-			float percentage_active = (float)((activeAgreements / totalAgreements) * 100);
+		db_operations db = new db_operations();
+		db_operations.connectPostgreSQL();
 
-			percentages.put("percentage_violated", percentage_violated);
-			percentages.put("percentage_active", percentage_active);
-			
-			
+		if (d == 0) {
+			int totalAgreements = db.countTotalAgreements();
+			int activeAgreements = db.countActiveAgreements();
+			int violatedAgreements = db.countViolatedAgreements();
+
+			if (totalAgreements > 0) {
+				float percentage_violated = (float) ((violatedAgreements / totalAgreements) * 100);
+				float percentage_active = (float) ((activeAgreements / totalAgreements) * 100);
+
+				percentages.put("percentage_violated", percentage_violated);
+				percentages.put("percentage_active", percentage_active);
+			}
+		} 
+		else {
+			int totalAgreements = db.countTotalAgreements();
+			int activeAgreements = db.countActiveAgreements();
+			int violatedAgreements = db.countViolatedAgreements();
+
 		}
+
+		db_operations.closePostgreSQL();
 
 		apiresponse = Response.ok((percentages));
 		apiresponse.header("Content-Length", percentages.toJSONString().length());
