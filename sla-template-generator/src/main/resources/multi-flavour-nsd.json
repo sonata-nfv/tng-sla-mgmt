@@ -1,0 +1,298 @@
+{
+  "updated_at": "2018-07-02T11:35:10.776+00:00",
+  "signature": null,
+  "created_at": "2018-07-02T11:35:10.776+00:00",
+  "nsd": {
+    "descriptor_schema": "https://raw.githubusercontent.com/sonata-nfv/tng-schema/master/service-descriptor/nsd-schema.yml",
+    "vendor": "eu.5gtango",
+    "name": "multi-flavour-nsd",
+    "version": "0.9",
+    "author": "5GTANGO Developer",
+    "description": "An NSD using VNFDs of multiple deployment flavours",
+    "network_functions": [
+      {
+        "vnf_id": "vnf1",
+        "vnf_vendor": "eu.5gtango",
+        "vnf_name": "multi-flavour-vnf",
+        "vnf_version": "0.9"
+      }
+    ],
+    "connection_points": [
+      {
+        "id": "mgmt",
+        "interface": "ipv4",
+        "type": "management"
+      },
+      {
+        "id": "input",
+        "interface": "ipv4",
+        "type": "external"
+      },
+      {
+        "id": "output",
+        "interface": "ipv4",
+        "type": "external"
+      }
+    ],
+    "virtual_links": [
+      {
+        "id": "mgmt",
+        "connectivity_type": "E-LAN",
+        "connection_points_reference": [
+          "vnf1:mgmt",
+          "vnf2:mgmt",
+          "mgmt"
+        ]
+      },
+      {
+        "id": "input-2-vnf1",
+        "connectivity_type": "E-Line",
+        "connection_points_reference": [
+          "input",
+          "vnf1:input"
+        ]
+      },
+      {
+        "id": "vnf1-2-output",
+        "connectivity_type": "E-Line",
+        "connection_points_reference": [
+          "vnf1:output",
+          "output"
+        ]
+      }
+    ],
+    "forwarding_graphs": [
+      {
+        "fg_id": "fg01",
+        "number_of_endpoints": 2,
+        "number_of_virtual_links": 2,
+        "constituent_virtual_links": [
+          "input-2-vnf1",
+          "vnf1-2-output"
+        ],
+        "constituent_vnfs": [
+          "vnf1"
+        ],
+        "network_forwarding_paths": [
+          {
+            "fp_id": "fg01:fp01",
+            "policy": "none",
+            "connection_points": [
+              {
+                "connection_point_ref": "input",
+                "position": 1
+              },
+              {
+                "connection_point_ref": "vnf1:input",
+                "position": 2
+              },
+              {
+                "connection_point_ref": "vnf1:output",
+                "position": 3
+              },
+              {
+                "connection_point_ref": "output",
+                "position": 4
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "deployment_flavours": [
+      {
+        "name": "Gold",
+        "network_functions": [
+          {
+            "vnf_id": "vnf1",
+            "vnf_vendor": "eu.5gtango",
+            "vnf_name": "multi-flavour-vnf",
+            "vnf_version": "0.9",
+            "vnf_flavour": "High"
+          }
+        ],
+        "connection_points": [
+          {
+            "id": "mgmt",
+            "interface": "ipv4",
+            "type": "management"
+          },
+          {
+            "id": "input",
+            "interface": "ipv4",
+            "type": "external"
+          },
+          {
+            "id": "output",
+            "interface": "ipv4",
+            "type": "external"
+          }
+        ],
+        "virtual_links": [
+          {
+            "id": "mgmt",
+            "connectivity_type": "E-LAN",
+            "connection_points_reference": [
+              "vnf1:mgmt",
+              "vnf2:mgmt",
+              "mgmt"
+            ]
+          },
+          {
+            "id": "input-2-vnf1",
+            "connectivity_type": "E-Line",
+            "connection_points_reference": [
+              "input",
+              "vnf1:input"
+            ]
+          },
+          {
+            "id": "vnf1-2-output",
+            "connectivity_type": "E-Line",
+            "connection_points_reference": [
+              "vnf1:output",
+              "output"
+            ]
+          }
+        ],
+        "forwarding_graphs": [
+          {
+            "fg_id": "fg01",
+            "number_of_endpoints": 2,
+            "number_of_virtual_links": 2,
+            "constituent_virtual_links": [
+              "input-2-vnf1",
+              "vnf1-2-output"
+            ],
+            "constituent_vnfs": [
+              "vnf1"
+            ],
+            "network_forwarding_paths": [
+              {
+                "fp_id": "fg01:fp01",
+                "policy": "none",
+                "connection_points": [
+                  {
+                    "connection_point_ref": "input",
+                    "position": 1
+                  },
+                  {
+                    "connection_point_ref": "vnf1:input",
+                    "position": 2
+                  },
+                  {
+                    "connection_point_ref": "vnf1:output",
+                    "position": 3
+                  },
+                  {
+                    "connection_point_ref": "output",
+                    "position": 4
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Bronze",
+        "network_functions": [
+          {
+            "vnf_id": "vnf1",
+            "vnf_vendor": "eu.5gtango",
+            "vnf_name": "multi-flavour-vnf",
+            "vnf_version": "0.9",
+            "vnf_flavour": "Low"
+          }
+        ],
+        "connection_points": [
+          {
+            "id": "mgmt",
+            "interface": "ipv4",
+            "type": "management"
+          },
+          {
+            "id": "input",
+            "interface": "ipv4",
+            "type": "external"
+          },
+          {
+            "id": "output",
+            "interface": "ipv4",
+            "type": "external"
+          }
+        ],
+        "virtual_links": [
+          {
+            "id": "mgmt",
+            "connectivity_type": "E-LAN",
+            "connection_points_reference": [
+              "vnf1:mgmt",
+              "vnf2:mgmt",
+              "mgmt"
+            ]
+          },
+          {
+            "id": "input-2-vnf1",
+            "connectivity_type": "E-Line",
+            "connection_points_reference": [
+              "input",
+              "vnf1:input"
+            ]
+          },
+          {
+            "id": "vnf1-2-output",
+            "connectivity_type": "E-Line",
+            "connection_points_reference": [
+              "vnf1:output",
+              "output"
+            ]
+          }
+        ],
+        "forwarding_graphs": [
+          {
+            "fg_id": "fg01",
+            "number_of_endpoints": 2,
+            "number_of_virtual_links": 2,
+            "constituent_virtual_links": [
+              "input-2-vnf1",
+              "vnf1-2-output"
+            ],
+            "constituent_vnfs": [
+              "vnf1"
+            ],
+            "network_forwarding_paths": [
+              {
+                "fp_id": "fg01:fp01",
+                "policy": "none",
+                "connection_points": [
+                  {
+                    "connection_point_ref": "input",
+                    "position": 1
+                  },
+                  {
+                    "connection_point_ref": "vnf1:input",
+                    "position": 2
+                  },
+                  {
+                    "connection_point_ref": "vnf1:output",
+                    "position": 3
+                  },
+                  {
+                    "connection_point_ref": "output",
+                    "position": 4
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "published": false,
+  "uuid": "cecf65e8-ea49-47a2-965f-47d976547632",
+  "md5": "b38af0e118fe8685637b4faea404b625",
+  "status": "active",
+  "username": null
+}
