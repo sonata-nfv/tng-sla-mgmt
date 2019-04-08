@@ -425,5 +425,39 @@ public class MgmtAPIs {
 		return apiresponse.status(200).build();
 
 	}
+	
+	/**
+	 * Get Nº SLA Agreements vs. Violations (in the last 24h / 7 days / 30 days)
+	 */
+	@SuppressWarnings("null")
+	@Path("/deploymentflavours/{nsd_uuid}/{sla_uuid}")
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getAgreementsVsViolationsPercentage() {
+
+		ResponseBuilder apiresponse = null;
+
+		db_operations db = new db_operations();
+		db_operations.connectPostgreSQL();
+		
+		int totalAgreements = db.countTotalAgreements();
+		int activeAgreements = db.countActiveAgreements();
+		int violatedAgreements = db.countViolatedAgreements();
+		
+		float percentage_violated = (float)((violatedAgreements / totalAgreements) * 100);
+		float percentage_active = (float)((activeAgreements / totalAgreements) * 100);
+
+		JSONObject percentages = new JSONObject();
+		percentages.put("percentage_violated", percentage_violated);
+		percentages.put("percentage_active", percentage_active);
+		
+		db_operations.closePostgreSQL();
+
+		JSONObject response = null;
+		apiresponse = Response.ok((response));
+		apiresponse.header("Content-Length", response.toJSONString().length());
+		return apiresponse.status(200).build();
+
+	}
 
 }
