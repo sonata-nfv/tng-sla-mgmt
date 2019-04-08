@@ -444,6 +444,8 @@ public class MgmtAPIs {
 		int activeAgreements = db.countActiveAgreements();
 		int violatedAgreements = db.countViolatedAgreements();
 		
+		db_operations.closePostgreSQL();
+
 		JSONObject percentages = new JSONObject();
 
 		if (totalAgreements > 0) {
@@ -452,13 +454,12 @@ public class MgmtAPIs {
 
 			percentages.put("percentage_violated", percentage_violated);
 			percentages.put("percentage_active", percentage_active);
+			
+			
 		}
 
-		db_operations.closePostgreSQL();
-
-		JSONObject response = null;
-		apiresponse = Response.ok((response));
-		apiresponse.header("Content-Length", response.toJSONString().length());
+		apiresponse = Response.ok((percentages));
+		apiresponse.header("Content-Length", percentages.toJSONString().length());
 		return apiresponse.status(200).build();
 
 	}
