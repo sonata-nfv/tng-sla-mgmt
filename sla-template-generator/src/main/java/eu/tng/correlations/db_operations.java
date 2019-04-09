@@ -1045,7 +1045,7 @@ public class db_operations {
 	    Timestamp currentDate = new Timestamp(System.currentTimeMillis());
 	    LocalDate minusDates = LocalDate.now().minusDays(days);
 	   
-		String SQL = "SELECT count(*) FROM cust_sla where inst_status='READY' AND sla_date BETWEEN cast('"+minusDates+"' as datetime) AND cast('"+currentDate+"' as datetime)";
+		String SQL = "SELECT count(*) FROM cust_sla where inst_status='READY' AND sla_date BETWEEN '"+minusDates+"' AND '"+currentDate+"'";
 			
 		int count = 0;
 		try {
@@ -1130,7 +1130,7 @@ public class db_operations {
 		LocalDate currentDate = LocalDate.now().minusDays(300);
 	    LocalDate minusDates = LocalDate.now().minusDays(days);
 	    
-		String SQL = "SELECT count(*) FROM cust_sla where inst_status='VIOLATED' AND sla_date BETWEEN cast('"+minusDates+"' as datetime) AND cast('"+currentDate+"' as datetime)";
+		String SQL = "SELECT count(*) FROM cust_sla where inst_status='VIOLATED' AND sla_date BETWEEN '"+minusDates+"' AND '"+currentDate+"'";
 		int count = 0;
 		try {
 			stmt = c.createStatement();
@@ -1213,7 +1213,7 @@ public class db_operations {
 	    Timestamp currentDate = new Timestamp(System.currentTimeMillis());
 	    LocalDate minusDates = LocalDate.now().minusDays(days);
 	    
-		String SQL = "SELECT count(*) FROM cust_sla where (inst_status='READY' OR inst_status='VIOLATED') AND sla_date BETWEEN cast('"+minusDates+"' as datetime) AND cast('"+currentDate+"' as datetime)";
+		String SQL = "SELECT count(*) FROM cust_sla where (inst_status='READY' OR inst_status='VIOLATED') AND sla_date BETWEEN '"+minusDates+"' AND '"+currentDate+"'";
 		System.out.println(SQL);
 		int count = 0;
 		try {
