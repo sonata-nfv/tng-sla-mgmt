@@ -440,7 +440,7 @@ public class MgmtAPIs {
 		JSONObject percentages = new JSONObject();
 
 		System.out.println("Violation percentage in the last " + d + " days.");
-		
+
 		db_operations db = new db_operations();
 		db_operations.connectPostgreSQL();
 		int totalAgreements = db.countTotalAgreements();
@@ -450,57 +450,66 @@ public class MgmtAPIs {
 		int violatedAgreements = db.countViolatedAgreements();
 		System.out.println("VIOLATED AGREEMENTS " + violatedAgreements);
 		db_operations.closePostgreSQL();
-		
-		percentages.put("active", activeAgreements);
-		percentages.put("violated", violatedAgreements);
-		System.out.println("JSON OBJECT " + percentages);
+
+		if (totalAgreements > 0) {
+			float percentage_violated = ((violatedAgreements / totalAgreements) * 100);
+			float percentage_active = ((activeAgreements / totalAgreements) * 100);
+
+			System.out.println("Violation percentage ==> " + percentage_violated);
+			System.out.println("active percentage ==> " + percentage_active);
+
+			percentages.put("percentage_violated", percentage_violated);
+			percentages.put("percentage_active", percentage_active);
+			System.out.println("response jsonobject ==> " + percentages);
+
+		}
 
 		apiresponse = Response.ok((percentages));
 		apiresponse.header("Content-Length", percentages.toJSONString().length());
 		return apiresponse.status(200).build();
 
-
-//		// check all agreements - without date filtering
-//		if (d == 0) {
-//			System.out.println("Violation percentage in the last " + d + " days.");
-//
-//			int totalAgreements = db.countTotalAgreements();
-//			int activeAgreements = db.countActiveAgreements();
-//			int violatedAgreements = db.countViolatedAgreements();
-//
-//			if (totalAgreements > 0) {
-//				float percentage_violated = ((violatedAgreements / totalAgreements) * 100);
-//				float percentage_active = ((activeAgreements / totalAgreements) * 100);
-//
-//				System.out.println("Violation percentage ==> " + percentage_violated);
-//				System.out.println("active percentage ==> " + percentage_active);
-//
-//				percentages.put("percentage_violated", percentage_violated);
-//				percentages.put("percentage_active", percentage_active);
-//				System.out.println("response jsonobject ==> " + percentages);
-//
-//				
-//			}
-//		} 
-//		
-//		// date range filtering 
-//		else {
-//			System.out.println("Violation percentage in the last " + d + " days.");
-//
-//			int totalAgreements = db.countActiveAgreementsDateRange(d);
-//			int activeAgreements = db.countActiveAgreementsDateRange(d);
-//			int violatedAgreements = db.countViolatedAgreementsDateRange(d);
-//			
-//			if (totalAgreements > 0) {
-//				float percentage_violated = (float) ((violatedAgreements / totalAgreements) * 100);
-//				float percentage_active = (float) ((activeAgreements / totalAgreements) * 100);
-//
-//				percentages.put("percentage_violated", percentage_violated);
-//				percentages.put("percentage_active", percentage_active);
-//			}
-//
-//		}
-
+		// // check all agreements - without date filtering
+		// if (d == 0) {
+		// System.out.println("Violation percentage in the last " + d + " days.");
+		//
+		// int totalAgreements = db.countTotalAgreements();
+		// int activeAgreements = db.countActiveAgreements();
+		// int violatedAgreements = db.countViolatedAgreements();
+		//
+		// if (totalAgreements > 0) {
+		// float percentage_violated = ((violatedAgreements / totalAgreements) * 100);
+		// float percentage_active = ((activeAgreements / totalAgreements) * 100);
+		//
+		// System.out.println("Violation percentage ==> " + percentage_violated);
+		// System.out.println("active percentage ==> " + percentage_active);
+		//
+		// percentages.put("percentage_violated", percentage_violated);
+		// percentages.put("percentage_active", percentage_active);
+		// System.out.println("response jsonobject ==> " + percentages);
+		//
+		//
+		// }
+		// }
+		//
+		// // date range filtering
+		// else {
+		// System.out.println("Violation percentage in the last " + d + " days.");
+		//
+		// int totalAgreements = db.countActiveAgreementsDateRange(d);
+		// int activeAgreements = db.countActiveAgreementsDateRange(d);
+		// int violatedAgreements = db.countViolatedAgreementsDateRange(d);
+		//
+		// if (totalAgreements > 0) {
+		// float percentage_violated = (float) ((violatedAgreements / totalAgreements) *
+		// 100);
+		// float percentage_active = (float) ((activeAgreements / totalAgreements) *
+		// 100);
+		//
+		// percentages.put("percentage_violated", percentage_violated);
+		// percentages.put("percentage_active", percentage_active);
+		// }
+		//
+		// }
 
 	}
 
