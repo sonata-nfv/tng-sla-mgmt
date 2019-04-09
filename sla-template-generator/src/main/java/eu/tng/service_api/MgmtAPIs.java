@@ -449,9 +449,9 @@ public class MgmtAPIs {
 			db_operations.closePostgreSQL();
 
 			if (totalAgreements > 0) {
-				float percentage_violated = ((violatedAgreements / totalAgreements) * 100);
+				float percentage_violated = (float)((violatedAgreements / totalAgreements) * 100);
 				System.out.print(percentage_violated);
-				float percentage_active = ((activeAgreements / totalAgreements) * 100);
+				float percentage_active = (float)((activeAgreements / totalAgreements) * 100);
 				System.out.print(percentage_active);
 				
 				System.out.print("active percentage (string)" + Float.toString(percentage_active));
