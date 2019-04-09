@@ -347,7 +347,7 @@ public class db_operations {
 			stmt = c.createStatement();
 			String sql = "CREATE TABLE IF NOT EXISTS cust_sla" + "(ID  SERIAL PRIMARY KEY," + " NS_UUID TEXT NOT NULL, "
 					+ "NSI_UUID TEXT NULL," + "NS_NAME TEXT NOT NULL," + "SLA_UUID  TEXT NOT NULL,"
-					+ "SLA_NAME TEXT NOT NULL," + "SLA_DATE TIMESTAMP DEFAULT Now()," + "SLA_STATUS TEXT NOT NULL,"
+					+ "SLA_NAME TEXT NOT NULL," + "SLA_DATE TIMESTAMP DEFAULT F()," + "SLA_STATUS TEXT NOT NULL,"
 					+ "CUST_EMAIL TEXT NOT NULL," + "CUST_USERNAME  TEXT NOT NULL," + "INST_ID TEXT NOT NULL,"
 					+ "INST_STATUS  TEXT NOT NULL )";
 			stmt.executeUpdate(sql);
@@ -1048,7 +1048,7 @@ public class db_operations {
 	    System.out.println("currentDate ==> " + currentDate);
 	    System.out.println("minusDates ==> " + minusDates);
 
-		String SQL = "SELECT count(*) FROM cust_sla where inst_status='READY' AND sla_date BETWEEN "+minusDates+" AND "+currentDate+"";
+		String SQL = "SELECT count(*) FROM cust_sla where inst_status='READY' AND sla_date BETWEEN '"+minusDates+" AND "+currentDate+"'";
 		int count = 0;
 		try {
 			stmt = c.createStatement();
@@ -1135,7 +1135,7 @@ public class db_operations {
 	    System.out.println("currentDate ==> " + currentDate);
 	    System.out.println("minusDates ==> " + minusDates);
 	    
-		String SQL = "SELECT count(*) FROM cust_sla where inst_status='VIOLATED' AND sla_date BETWEEN "+minusDates+" AND "+currentDate+"";
+		String SQL = "SELECT count(*) FROM cust_sla where inst_status='VIOLATED' AND sla_date BETWEEN '"+minusDates+"' AND '"+currentDate+"'";
 		int count = 0;
 		try {
 			stmt = c.createStatement();
@@ -1221,7 +1221,7 @@ public class db_operations {
 	    System.out.println("currentDate ==> " + currentDate);
 	    System.out.println("minusDates ==> " + minusDates);
 
-		String SQL = "SELECT count(*) FROM cust_sla where (inst_status='READY' OR inst_status='VIOLATED') AND sla_date BETWEEN "+minusDates+" AND "+currentDate+"";
+		String SQL = "SELECT count(*) FROM cust_sla where (inst_status='READY' OR inst_status='VIOLATED') AND sla_date BETWEEN '"+minusDates+"' AND '"+currentDate+"'";
 		int count = 0;
 		try {
 			stmt = c.createStatement();
