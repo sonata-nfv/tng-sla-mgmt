@@ -441,8 +441,6 @@ public class MgmtAPIs {
 
 		// without date range
 		if (d == 0) {
-			System.out.println("Date Range ==> " + d );
-
 			db_operations db = new db_operations();
 			db_operations.connectPostgreSQL();
 			int totalAgreements = db.countTotalAgreements();
@@ -454,16 +452,12 @@ public class MgmtAPIs {
 				float percentage_violated = ((violatedAgreements / totalAgreements) * 100);
 				float percentage_active = ((activeAgreements / totalAgreements) * 100);
 
-				System.out.println("Violation percentage ==> " + percentage_violated);
-				System.out.println("active percentage ==> " + percentage_active);
-
 				percentages.put("total_agreements", String.valueOf(totalAgreements));
 				percentages.put("percentage_violated", String.valueOf(violatedAgreements));
 				percentages.put("percentage_active", String.valueOf(activeAgreements));
 				System.out.println("response jsonobject ==> " + percentages);
 			} else {
 				percentages.put("total_agreements", String.valueOf(totalAgreements));
-				System.out.println("response jsonobject ==> " + percentages);
 			}
 		}
 
@@ -481,17 +475,13 @@ public class MgmtAPIs {
 			if (totalAgreements > 0) {
 				float percentage_violated = ((violatedAgreements / totalAgreements) * 100);
 				float percentage_active = ((activeAgreements / totalAgreements) * 100);
-
-				System.out.println("Violation percentage ==> " + percentage_violated);
-				System.out.println("active percentage ==> " + percentage_active);
-
+				
 				percentages.put("total_agreements", String.valueOf(totalAgreements));
 				percentages.put("percentage_violated", String.valueOf(violatedAgreements));
 				percentages.put("percentage_active", String.valueOf(activeAgreements));
 				System.out.println("response jsonobject ==> " + percentages);
 			} else {
 				percentages.put("total_agreements", String.valueOf(totalAgreements));
-				System.out.println("response jsonobject ==> " + percentages);
 			}
 		}
 
