@@ -1042,7 +1042,7 @@ public class db_operations {
 	@SuppressWarnings("unchecked")
 	public int countActiveAgreementsDateRange(int days) {
 
-	    LocalDate currentDate = LocalDate.now().minusDays(300);
+	    Timestamp currentDate = new Timestamp(System.currentTimeMillis());
 	    LocalDate minusDates = LocalDate.now().minusDays(days);
 	    
 	    System.out.println("currentDate ==> " + currentDate);
@@ -1131,7 +1131,7 @@ public class db_operations {
 
 		LocalDate currentDate = LocalDate.now().minusDays(300);
 	    LocalDate minusDates = LocalDate.now().minusDays(days);
-	    
+	    	    
 	    System.out.println("currentDate ==> " + currentDate);
 	    System.out.println("minusDates ==> " + minusDates);
 	    
@@ -1215,7 +1215,7 @@ public class db_operations {
 	@SuppressWarnings("unchecked")
 	public int countTotalAgreementsDateRange(int days) {
 
-		LocalDate currentDate = LocalDate.now().minusDays(300);
+	    Timestamp currentDate = new Timestamp(System.currentTimeMillis());
 	    LocalDate minusDates = LocalDate.now().minusDays(days);
 	    
 	    System.out.println("currentDate ==> " + currentDate);
