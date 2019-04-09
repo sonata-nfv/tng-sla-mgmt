@@ -450,17 +450,11 @@ public class MgmtAPIs {
 
 			if (totalAgreements > 0) {
 				double percentage_violated = (violatedAgreements * 100) / totalAgreements ;
-				System.out.println(percentage_violated);
 				double percentage_active = (activeAgreements * 100) / totalAgreements ;
-				System.out.println(percentage_active);
-				
-				System.out.print("active percentage (string)" + Double.toString(percentage_active));
-				System.out.print("violated percentage (string)" + Double.toString(percentage_violated));
 
-
-				percentages.put("total_agreements", String.valueOf(totalAgreements));
-				percentages.put("percentage_violated", Double.toString(percentage_violated));
-				percentages.put("percentage_active", Double.toString(percentage_active));
+				percentages.put("total_agreements", String.format("%.2f", totalAgreements));
+				percentages.put("percentage_violated",String.format("%.2f", percentage_violated));
+				percentages.put("percentage_active", String.format("%.2f", percentage_active));
 				System.out.println("response jsonobject ==> " + percentages);
 			} else {
 				percentages.put("total_agreements", String.valueOf(totalAgreements));
@@ -473,18 +467,18 @@ public class MgmtAPIs {
 
 			db_operations db = new db_operations();
 			db_operations.connectPostgreSQL();
-			int totalAgreements = db.countTotalAgreementsDateRange(d);
-			int activeAgreements = db.countActiveAgreementsDateRange(d);
-			int violatedAgreements = db.countViolatedAgreementsDateRange(d);
+			double totalAgreements = db.countTotalAgreementsDateRange(d);
+			double activeAgreements = db.countActiveAgreementsDateRange(d);
+			double violatedAgreements = db.countViolatedAgreementsDateRange(d);
 			db_operations.closePostgreSQL();
 
 			if (totalAgreements > 0) {
-				float percentage_violated = ((violatedAgreements / totalAgreements) * 100);
-				float percentage_active = ((activeAgreements / totalAgreements) * 100);
+				double percentage_violated = (violatedAgreements * 100) / totalAgreements ;
+				double percentage_active = (activeAgreements * 100) / totalAgreements ;
 				
-				percentages.put("total_agreements", String.valueOf(totalAgreements));
-				percentages.put("percentage_violated", String.valueOf(percentage_violated));
-				percentages.put("percentage_active", String.valueOf(percentage_active));
+				percentages.put("total_agreements", String.format("%.2f", totalAgreements));
+				percentages.put("percentage_violated",String.format("%.2f", percentage_violated));
+				percentages.put("percentage_active", String.format("%.2f", percentage_active));
 				System.out.println("response jsonobject ==> " + percentages);
 			} else {
 				percentages.put("total_agreements", String.valueOf(totalAgreements));
