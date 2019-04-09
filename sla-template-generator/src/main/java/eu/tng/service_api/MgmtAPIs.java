@@ -450,11 +450,17 @@ public class MgmtAPIs {
 
 			if (totalAgreements > 0) {
 				float percentage_violated = ((violatedAgreements / totalAgreements) * 100);
+				System.out.print(percentage_violated);
 				float percentage_active = ((activeAgreements / totalAgreements) * 100);
+				System.out.print(percentage_active);
+				
+				System.out.print("active percentage (string)" + Float.toString(percentage_active));
+				System.out.print("violated percentage (string)" + Float.toString(percentage_violated));
+
 
 				percentages.put("total_agreements", String.valueOf(totalAgreements));
-				percentages.put("percentage_violated", String.valueOf((violatedAgreements / totalAgreements) * 100));
-				percentages.put("percentage_active", String.valueOf((activeAgreements / totalAgreements) * 100));
+				percentages.put("percentage_violated", Float.toString(percentage_violated));
+				percentages.put("percentage_active", Float.toString(percentage_active));
 				System.out.println("response jsonobject ==> " + percentages);
 			} else {
 				percentages.put("total_agreements", String.valueOf(totalAgreements));
