@@ -443,24 +443,24 @@ public class MgmtAPIs {
 		if (d == 0) {
 			db_operations db = new db_operations();
 			db_operations.connectPostgreSQL();
-			int totalAgreements = db.countTotalAgreements();
-			int activeAgreements = db.countActiveAgreements();
-			int violatedAgreements = db.countViolatedAgreements();
+			double totalAgreements = db.countTotalAgreements();
+			double activeAgreements = db.countActiveAgreements();
+			double violatedAgreements = db.countViolatedAgreements();
 			db_operations.closePostgreSQL();
 
 			if (totalAgreements > 0) {
-				float percentage_violated = (float)((violatedAgreements / totalAgreements) * 100);
-				System.out.print(percentage_violated);
-				float percentage_active = (float)((activeAgreements / totalAgreements) * 100);
-				System.out.print(percentage_active);
+				double percentage_violated = (violatedAgreements * 100) / totalAgreements ;
+				System.out.println(percentage_violated);
+				double percentage_active = (activeAgreements * 100) / totalAgreements ;
+				System.out.println(percentage_active);
 				
-				System.out.print("active percentage (string)" + Float.toString(percentage_active));
-				System.out.print("violated percentage (string)" + Float.toString(percentage_violated));
+				System.out.print("active percentage (string)" + Double.toString(percentage_active));
+				System.out.print("violated percentage (string)" + Double.toString(percentage_violated));
 
 
 				percentages.put("total_agreements", String.valueOf(totalAgreements));
-				percentages.put("percentage_violated", Float.toString(percentage_violated));
-				percentages.put("percentage_active", Float.toString(percentage_active));
+				percentages.put("percentage_violated", Double.toString(percentage_violated));
+				percentages.put("percentage_active", Double.toString(percentage_active));
 				System.out.println("response jsonobject ==> " + percentages);
 			} else {
 				percentages.put("total_agreements", String.valueOf(totalAgreements));
