@@ -439,16 +439,11 @@ public class MgmtAPIs {
 		ResponseBuilder apiresponse = null;
 		JSONObject percentages = new JSONObject();
 
-		System.out.println("Violation percentage in the last " + d + " days.");
-
 		db_operations db = new db_operations();
 		db_operations.connectPostgreSQL();
 		int totalAgreements = db.countTotalAgreements();
-		System.out.println("TOTAL AGREEMENTS " + totalAgreements);
 		int activeAgreements = db.countActiveAgreements();
-		System.out.println("AVTIVE AGREEMENTS " + activeAgreements);
 		int violatedAgreements = db.countViolatedAgreements();
-		System.out.println("VIOLATED AGREEMENTS " + violatedAgreements);
 		db_operations.closePostgreSQL();
 
 		if (totalAgreements > 0) {
@@ -458,10 +453,14 @@ public class MgmtAPIs {
 			System.out.println("Violation percentage ==> " + percentage_violated);
 			System.out.println("active percentage ==> " + percentage_active);
 
-			percentages.put("percentage_violated", percentage_violated);
-			percentages.put("percentage_active", percentage_active);
+			percentages.put("total_agreements", String.valueOf(totalAgreements));
+			percentages.put("percentage_violated", String.valueOf(violatedAgreements));
+			percentages.put("percentage_active", String.valueOf(activeAgreements));
 			System.out.println("response jsonobject ==> " + percentages);
-
+		}
+		else {
+			percentages.put("total_agreements", String.valueOf(totalAgreements));
+			System.out.println("response jsonobject ==> " + percentages);
 		}
 
 		apiresponse = Response.ok((percentages));
