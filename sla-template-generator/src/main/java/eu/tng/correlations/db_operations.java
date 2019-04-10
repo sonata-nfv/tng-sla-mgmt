@@ -1126,8 +1126,8 @@ public class db_operations {
 	 */
 	@SuppressWarnings("unchecked")
 	public int countViolatedAgreementsDateRange(int days) {
-
-		LocalDate currentDate = LocalDate.now().minusDays(300);
+	    
+	    Timestamp currentDate = new Timestamp(System.currentTimeMillis());
 	    LocalDate minusDates = LocalDate.now().minusDays(days);
 	    
 		String SQL = "SELECT count(*) FROM cust_sla where inst_status='VIOLATED' AND sla_date BETWEEN '"+minusDates+"' AND '"+currentDate+"'";
