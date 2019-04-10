@@ -499,5 +499,32 @@ public class LicensingAPIs {
 
 		return instancesOK;
 	}
+	
+	/**
+	 * Nº Licenses Utilized
+	 */
+	@SuppressWarnings("unchecked")
+	@Path("/utilized")
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getLicensesUtilized() {
+
+		ResponseBuilder apiresponse = null;
+
+		db_operations db = new db_operations();
+		db_operations.connectPostgreSQL();
+		db_operations.createTableLicensing();
+		int licenses_utilized_number = db.countUtilizedLicense();
+		db_operations.closePostgreSQL();
+		
+		JSONObject licenses_utilized = new JSONObject();
+		licenses_utilized.put("total_agreements", String.valueOf(licenses_utilized_number));
+
+		JSONObject response = licenses_utilized;
+		apiresponse = Response.ok((response));
+		apiresponse.header("Content-Length", response.toJSONString().length());
+		return apiresponse.status(200).build();
+
+	}
 
 }

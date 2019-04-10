@@ -2229,5 +2229,46 @@ public class db_operations {
 		return result;
 
 	}
+	
+
+	/**
+	 * @return Number of utilized licenses
+	 */
+	@SuppressWarnings("unchecked")
+	public int countUtilizedLicense() {
+
+		String SQL = "SELECT count(*) FROM sla_licensing WHERE license_status='active'";
+		int count = 0;
+		try {
+			stmt = c.createStatement();
+			ResultSet rs = stmt.executeQuery(SQL);
+			while (rs.next()) {
+				count = rs.getInt(1);
+			}
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			String timestamps = timestamp.toString();
+			String type = "I";
+			String operation = "Count utilized licenses";
+			String message = ("The number of utilized licenses are = " + count);
+			String status = "";
+			logger.info(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
+
+		} catch (SQLException e) {
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			String timestamps = timestamp.toString();
+			String type = "W";
+			String operation = "Count utilized licenses";
+			String message = ("Error counting utilized licenses ==> " + e.getMessage());
+			String status = "";
+			logger.warn(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
+		}
+		return count;
+	}
 
 }
