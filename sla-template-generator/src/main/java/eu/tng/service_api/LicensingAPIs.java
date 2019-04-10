@@ -518,9 +518,36 @@ public class LicensingAPIs {
 		db_operations.closePostgreSQL();
 		
 		JSONObject licenses_utilized = new JSONObject();
-		licenses_utilized.put("total_agreements", String.valueOf(licenses_utilized_number));
+		licenses_utilized.put("utilized_licenses", String.valueOf(licenses_utilized_number));
 
 		JSONObject response = licenses_utilized;
+		apiresponse = Response.ok((response));
+		apiresponse.header("Content-Length", response.toJSONString().length());
+		return apiresponse.status(200).build();
+
+	}
+	
+	/**
+	 * Nº Licenses Acquired
+	 */
+	@SuppressWarnings("unchecked")
+	@Path("/acquired")
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getLicensesAcquired() {
+
+		ResponseBuilder apiresponse = null;
+
+		db_operations db = new db_operations();
+		db_operations.connectPostgreSQL();
+		db_operations.createTableLicensing();
+		int licenses_acquired_number = db.countAcquiredLicense();
+		db_operations.closePostgreSQL();
+		
+		JSONObject licenses_acquired = new JSONObject();
+		licenses_acquired.put("acquired_licenses", String.valueOf(licenses_acquired_number));
+
+		JSONObject response = licenses_acquired;
 		apiresponse = Response.ok((response));
 		apiresponse.header("Content-Length", response.toJSONString().length());
 		return apiresponse.status(200).build();
