@@ -545,7 +545,7 @@ public class LicensingAPIs {
 		db_operations.closePostgreSQL();
 		
 		JSONObject licenses_acquired = new JSONObject();
-		licenses_acquired.put("utilized_licenses", String.valueOf(licenses_acquired_number));
+		licenses_acquired.put("acquired_licenses", String.valueOf(licenses_acquired_number));
 
 		JSONObject response = licenses_acquired;
 		apiresponse = Response.ok((response));
