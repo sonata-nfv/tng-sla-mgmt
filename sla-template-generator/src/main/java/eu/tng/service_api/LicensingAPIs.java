@@ -455,7 +455,7 @@ public class LicensingAPIs {
 
 		boolean statusOK = false;
 		if ((license_status.equals("inactive") || (license_status.equals("active")) && license_type.equals("public"))) {
-			statusOK = true;
+			statusOK = true;     
 		}
 		if ((license_status.equals("inactive") || (license_status.equals("active")) && license_type.equals("trial"))) {
 			statusOK = true;
@@ -548,6 +548,33 @@ public class LicensingAPIs {
 		licenses_acquired.put("acquired_licenses", String.valueOf(licenses_acquired_number));
 
 		JSONObject response = licenses_acquired;
+		apiresponse = Response.ok((response));
+		apiresponse.header("Content-Length", response.toJSONString().length());
+		return apiresponse.status(200).build();
+
+	}
+	
+	/**
+	 * Nº Licenses Expired
+	 */
+	@SuppressWarnings("unchecked")
+	@Path("/expired")
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getLicensesExpired() {
+
+		ResponseBuilder apiresponse = null;
+
+		db_operations db = new db_operations();
+		db_operations.connectPostgreSQL();
+		db_operations.createTableLicensing();
+		int licenses_expired_number = db.countExpiredLicense();
+		db_operations.closePostgreSQL();
+		
+		JSONObject licenses_expired = new JSONObject();
+		licenses_expired.put("expired_licenses", String.valueOf(licenses_expired_number));
+
+		JSONObject response = licenses_expired;
 		apiresponse = Response.ok((response));
 		apiresponse.header("Content-Length", response.toJSONString().length());
 		return apiresponse.status(200).build();

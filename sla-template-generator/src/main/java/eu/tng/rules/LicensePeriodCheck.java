@@ -145,8 +145,8 @@ public class LicensePeriodCheck implements ServletContextListener {
 									db_operations.connectPostgreSQL();
 									
 									// sde-activate the license
-									db_operations.deactivateLicenseForNSI(license_nsi_uuid, "inactive");
-									System.out.println("[*] License de-activated");
+									db_operations.deactivateLicenseForNSI(license_nsi_uuid, "expired");
+									System.out.println("[*] License expired! Expiration date reached.");
 									db_operations.closePostgreSQL();		
 									
 									// send termination request for the service
