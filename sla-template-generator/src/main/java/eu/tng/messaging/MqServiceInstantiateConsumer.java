@@ -52,7 +52,6 @@ import com.rabbitmq.client.*;
 import eu.tng.correlations.cust_sla_corr;
 import eu.tng.correlations.db_operations;
 
-
 public class MqServiceInstantiateConsumer implements ServletContextListener {
 
 	static Logger logger = LogManager.getLogger();
@@ -131,8 +130,8 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 					type2, timestamps2, operation2, message2, status2);
 
 			DeliverCallback deliverCallback = new DeliverCallback() {
-                @Override
-                public void handle(String consumerTag, Delivery delivery) throws IOException {
+				@Override
+				public void handle(String consumerTag, Delivery delivery) throws IOException {
 					// Initialize variables
 					String status = "";
 					String correlation_id = null;
@@ -141,24 +140,25 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 					Object sla_id = null;
 					ArrayList<String> vc_id_list = new ArrayList<String>();
 					ArrayList<String> vnfr_id_list = new ArrayList<String>();
+					ArrayList<String> cdu_id_list = new ArrayList<String>();
 
 					// Parse message payload
 					String message = new String(delivery.getBody(), "UTF-8");
-					
-					//Ack the message
+
+					// Ack the message
 					channel_service_instance.basicAck(delivery.getEnvelope().getDeliveryTag(), false);
-					
+
 					// parse the yaml and convert it to json
 					Yaml yaml = new Yaml();
 					@SuppressWarnings("unchecked")
-                    Map<String, Object> map = (Map<String, Object>) yaml.load(message);
+					Map<String, Object> map = (Map<String, Object>) yaml.load(message);
 
 					sla_id = map.get("sla_id");
 
 					jsonObjectMessage = new JSONObject(map);
 
 					correlation_id = (String) delivery.getProperties().getCorrelationId();
-					
+
 					// logging
 					Timestamp timestamp1 = new Timestamp(System.currentTimeMillis());
 					String timestamps1 = timestamp1.toString();
@@ -186,10 +186,10 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 								type, timestamps, operation, message2, status2);
 
 						if (status.equals("READY")) {
-							
+
 							// Debug 2
 							System.out.println("RabbitMQ Message (when status ready)" + jsonObjectMessage);
-							
+
 							// get info for the monitoring metrics
 							if (sla_id != null) {
 								// Get service uuid
@@ -198,28 +198,58 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 								// Get vnfrs
 								JSONArray vnfrs = (JSONArray) jsonObjectMessage.getJSONArray("vnfrs");
 								for (int i = 0; i < (vnfrs).length(); i++) {
+
 									// Get vdus_reference foreach vnfr
-									JSONArray vdus = (JSONArray) ((JSONObject) vnfrs.getJSONObject(i))
-											.getJSONArray("virtual_deployment_units");
-									for (int j = 0; j < vdus.length(); j++) {
-										String vdu_reference = (String) ((JSONObject) vdus.getJSONObject(j))
-												.get("vdu_reference");
-										// if vnfr is the haproxy function - continue to the monitoring creation
-										// metrics
-										if (vdu_reference.startsWith("haproxy") == true) {
-											// get vnfr id
-											String vnfr_id = (String) ((JSONObject) vnfrs.get(i)).get("id");
-											vnfr_id_list.add(vnfr_id);
-											// get vdu id (vc_id)
-											JSONArray vnfc_instance = (JSONArray) ((JSONObject) vdus.getJSONObject(j))
-													.getJSONArray("vnfc_instance");
-											for (int k = 0; k < vnfc_instance.length(); k++) {
-												String vc_id = (String) ((JSONObject) vnfc_instance.getJSONObject(j))
-														.get("vc_id");
-												vc_id_list.add(vc_id);
+									try {
+										JSONArray vdus = (JSONArray) ((JSONObject) vnfrs.getJSONObject(i))
+												.getJSONArray("virtual_deployment_units");
+										for (int j = 0; j < vdus.length(); j++) {
+											String vdu_reference = (String) ((JSONObject) vdus.getJSONObject(j))
+													.get("vdu_reference");
+											// if vnfr is the haproxy function - continue to the monitoring creation
+											// metrics
+											if (vdu_reference.startsWith("haproxy") == true) {
+												// get vnfr id
+												String vnfr_id = (String) ((JSONObject) vnfrs.get(i)).get("id");
+												vnfr_id_list.add(vnfr_id);
+												// get vdu id (vc_id)
+												JSONArray vnfc_instance = (JSONArray) ((JSONObject) vdus
+														.getJSONObject(j)).getJSONArray("vnfc_instance");
+												for (int k = 0; k < vnfc_instance.length(); k++) {
+													String vc_id = (String) ((JSONObject) vnfc_instance
+															.getJSONObject(j)).get("vc_id");
+													vc_id_list.add(vc_id);
+												}
 											}
 										}
+									} catch (Exception e) {
+										// TODO: handle exception
+										System.out.println("[*] No vdus for this vnfr");
 									}
+									
+									// Get cdus_reference foreach vnfr
+									try {
+										JSONArray cdus = (JSONArray) ((JSONObject) vnfrs.getJSONObject(i))
+												.getJSONArray("cloudnative_deployment_units");
+										for (int j = 0; j < cdus.length(); j++) {
+											String cdu_reference = (String) ((JSONObject) cdus.getJSONObject(j))
+													.get("cdu_reference");
+											// if vnfr is the haproxy function - continue to the monitoring creation
+											// metrics
+											if (cdu_reference.startsWith("haproxy") == true) {
+												// get vnfr id
+												String vnfr_id = (String) ((JSONObject) vnfrs.get(i)).get("id");
+												vnfr_id_list.add(vnfr_id);
+												// get cdu id (cdu_id)
+												String cdu_id = cdus.getJSONObject(j).getString("id");
+												cdu_id_list.add(cdu_id);
+											}
+										}
+									} catch (Exception e) {
+										// TODO: handle exception
+										System.out.println("[*] No cdus for this vnfr");
+									}
+
 								}
 
 								// Update NSI Records - to create agreement
@@ -256,7 +286,7 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 
 					/** if message coming from the GK - doesn't contain status key **/
 					else {
-						
+
 						// Debug 1
 						System.out.println("RabbitMQ Message (when status instantiating)" + jsonObjectMessage);
 
@@ -288,24 +318,21 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 						// Parse customer data + sla uuid
 						JSONObject user_data = (JSONObject) jsonObjectMessage.getJSONObject("user_data");
 						JSONObject customer = (JSONObject) user_data.getJSONObject("customer");
-						
+
 						try {
-    						cust_username = (String) customer.get("name");
-    						cust_email = (String) customer.get("email");
-						}catch (JSONException  e)
-						{
-						    cust_username = "";
-						    cust_email = "";
+							cust_username = (String) customer.get("name");
+							cust_email = (String) customer.get("email");
+						} catch (JSONException e) {
+							cust_username = "";
+							cust_email = "";
 						}
-						
+
 						try {
-						    sla_uuid = (String) customer.get("sla_id");
-                        }catch (JSONException  e)
-                        {
-                            sla_uuid = "";
-                        }
-						
-						
+							sla_uuid = (String) customer.get("sla_id");
+						} catch (JSONException e) {
+							sla_uuid = "";
+						}
+
 						// if sla exists create record in database
 						if (sla_uuid != null && !sla_uuid.isEmpty()) {
 
@@ -316,8 +343,8 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 							sla_name = (String) SLADetails.get(1);
 							sla_status = (String) SLADetails.get(0);
 							String inst_status = "PENDING";
-							cust_sla_corr.createCustSlaCorr(sla_uuid, sla_name, sla_status, ns_uuid, ns_name, cust_username,
-									cust_email, inst_status, correlation_id);
+							cust_sla_corr.createCustSlaCorr(sla_uuid, sla_name, sla_status, ns_uuid, ns_name,
+									cust_username, cust_email, inst_status, correlation_id);
 
 							// CREATE LICENSE RECORD IN THE SLA_LICENSING TABLE
 							// get licensing information
@@ -380,15 +407,17 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 							db_operations.closePostgreSQL();
 						}
 					}
-					
+
 				}
 			};
 
-			channel_service_instance.basicConsume(queueName_service_instance, false, deliverCallback, new CancelCallback() {
-                @Override
-                public void handle(String consumerTag) throws IOException { }
-            });
-			
+			channel_service_instance.basicConsume(queueName_service_instance, false, deliverCallback,
+					new CancelCallback() {
+						@Override
+						public void handle(String consumerTag) throws IOException {
+						}
+					});
+
 		} catch (IOException e) {
 
 			// logging
