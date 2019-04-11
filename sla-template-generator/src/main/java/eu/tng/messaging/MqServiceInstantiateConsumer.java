@@ -186,6 +186,10 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 								type, timestamps, operation, message2, status2);
 
 						if (status.equals("READY")) {
+							
+							// Debug 2
+							System.out.println("RabbitMQ Message (when status ready)" + jsonObjectMessage);
+							
 							// get info for the monitoring metrics
 							if (sla_id != null) {
 								// Get service uuid
@@ -252,6 +256,9 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 
 					/** if message coming from the GK - doesn't contain status key **/
 					else {
+						
+						// Debug 1
+						System.out.println("RabbitMQ Message (when status instantiating)" + jsonObjectMessage);
 
 						// logging
 						Timestamp timestamp4 = new Timestamp(System.currentTimeMillis());
