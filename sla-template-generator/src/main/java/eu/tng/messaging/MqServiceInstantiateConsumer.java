@@ -224,9 +224,18 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 										}
 									} catch (Exception e) {
 										// TODO: handle exception
-										System.out.println("[*] No vdus for this vnfr");
+										// logging
+										timestamp = new Timestamp(System.currentTimeMillis());
+										timestamps = timestamp.toString();
+										type = "I";
+										operation = "RabbitMQ Listener - NS Instantiation";
+										message2 = "[*] No vdus for this vnfr - use cdus instead. Exception ==> " + e;
+										status2 = "";
+										logger.info(
+												"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+												type, timestamps, operation, message2, status2);
 									}
-									
+
 									// Get cdus_reference foreach vnfr
 									try {
 										JSONArray cdus = (JSONArray) ((JSONObject) vnfrs.getJSONObject(i))
@@ -247,7 +256,17 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 										}
 									} catch (Exception e) {
 										// TODO: handle exception
-										System.out.println("[*] No cdus for this vnfr");
+										// TODO: handle exception
+										// logging
+										timestamp = new Timestamp(System.currentTimeMillis());
+										timestamps = timestamp.toString();
+										type = "I";
+										operation = "RabbitMQ Listener - NS Instantiation";
+										message2 = "[*] No cdus for this vnfr. Exception ==> " + e;
+										status2 = "";
+										logger.info(
+												"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+												type, timestamps, operation, message2, status2);
 									}
 
 								}
@@ -274,6 +293,8 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 								String type3 = "I";
 								String operation3 = "RabbitMQ Listener - NS Instantiation";
 								String message3 = "[*] Instantiation without SLA. Message aborted.";
+								
+								
 								String status3 = "";
 								logger.info(
 										"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
@@ -286,10 +307,6 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 
 					/** if message coming from the GK - doesn't contain status key **/
 					else {
-
-						// Debug 1
-						System.out.println("RabbitMQ Message (when status instantiating)" + jsonObjectMessage);
-
 						// logging
 						Timestamp timestamp4 = new Timestamp(System.currentTimeMillis());
 						String timestamps4 = timestamp4.toString();
