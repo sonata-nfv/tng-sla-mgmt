@@ -347,61 +347,61 @@ public class MgmtAPIs {
 			return apiresponse.status(404).build();
 		}
 
-		// try {
-		// // get example nsd
-		// File nsdf = new
-		// File(this.getClass().getResource("/multi-flavour-nsd.json").toURI());
-		// jsonObject = (JSONObject) parser.parse(new FileReader(nsdf));
-		// System.out.println(jsonObject.toJSONString().length());
-		//
-		// // fetch the nsd and get list with deployment flavours names
-		// JSONObject nsd = (JSONObject) jsonObject.get("nsd");
-		// JSONArray deployment_flavours = (JSONArray) nsd.get("deployment_flavours");
-		// JSONArray flavour_names = new JSONArray();
-		// for (int i = 0; i < deployment_flavours.size(); i++) {
-		// JSONObject deployment_flavour_item = (JSONObject) deployment_flavours.get(i);
-		// String f_name = (String) ((JSONObject) deployment_flavour_item).get("name");
-		// flavour_names.add(f_name);
-		// }
-		// System.out.println("[*] Deployment flavour name ==> " +
-		// flavour_names.toString());
-		//
-		// apiresponse = Response.ok(flavour_names);
-		// apiresponse.header("Content-Length", flavour_names.toJSONString().length());
-		//
-		// // logging
-		// Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-		// String timestamps = timestamp.toString();
-		// String type = "I";
-		// String operation = "Get Flavour Names List";
-		// String message = ("[*] Success. Deployment flavours received");
-		// String status = "200";
-		// logger.info(
-		// "{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
-		// type, timestamps, operation, message, status);
-		//
-		// return apiresponse.status(200).build();
-		//
-		// } catch (Exception e) {
-		// JSONObject error = new JSONObject();
-		// error.put("ERROR: ", "NSD File Not Found");
-		// apiresponse = Response.ok((Object) error);
-		// apiresponse.header("Content-Length", error.toJSONString().length());
-		//
-		// // logging
-		// Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-		// String timestamps = timestamp.toString();
-		// String type = "W";
-		// String operation = "Get Guarantee List";
-		// String message = ("[*] Error. NSD file not found!");
-		// String status = "404";
-		// logger.warn(
-		// "{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
-		// type, timestamps, operation, message, status);
-		//
-		// return apiresponse.status(404).build();
-		//
-		// }
+//		 try {
+//		 // get example nsd
+//		 File nsdf = new
+//		 File(this.getClass().getResource("/multi-flavour-nsd.json").toURI());
+//		 jsonObject = (JSONObject) parser.parse(new FileReader(nsdf));
+//		 System.out.println(jsonObject.toJSONString().length());
+//		
+//		 // fetch the nsd and get list with deployment flavours names
+//		 JSONObject nsd = (JSONObject) jsonObject.get("nsd");
+//		 JSONArray deployment_flavours = (JSONArray) nsd.get("deployment_flavours");
+//		 JSONArray flavour_names = new JSONArray();
+//		 for (int i = 0; i < deployment_flavours.size(); i++) {
+//		 JSONObject deployment_flavour_item = (JSONObject) deployment_flavours.get(i);
+//		 String f_name = (String) ((JSONObject) deployment_flavour_item).get("name");
+//		 flavour_names.add(f_name);
+//		 }
+//		 System.out.println("[*] Deployment flavour name ==> " +
+//		 flavour_names.toString());
+//		
+//		 apiresponse = Response.ok(flavour_names);
+//		 apiresponse.header("Content-Length", flavour_names.toJSONString().length());
+//		
+//		 // logging
+//		 Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+//		 String timestamps = timestamp.toString();
+//		 String type = "I";
+//		 String operation = "Get Flavour Names List";
+//		 String message = ("[*] Success. Deployment flavours received");
+//		 String status = "200";
+//		 logger.info(
+//		 "{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+//		 type, timestamps, operation, message, status);
+//		
+//		 return apiresponse.status(200).build();
+//		
+//		 } catch (Exception e) {
+//		 JSONObject error = new JSONObject();
+//		 error.put("ERROR: ", "NSD File Not Found");
+//		 apiresponse = Response.ok((Object) error);
+//		 apiresponse.header("Content-Length", error.toJSONString().length());
+//		
+//		 // logging
+//		 Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+//		 String timestamps = timestamp.toString();
+//		 String type = "W";
+//		 String operation = "Get Guarantee List";
+//		 String message = ("[*] Error. NSD file not found!");
+//		 String status = "404";
+//		 logger.warn(
+//		 "{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+//		 type, timestamps, operation, message, status);
+//		
+//		 return apiresponse.status(404).build();
+//		
+//		 }
 
 	}
 
