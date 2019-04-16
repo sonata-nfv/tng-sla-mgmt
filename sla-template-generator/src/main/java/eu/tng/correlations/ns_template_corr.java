@@ -57,7 +57,7 @@ public class ns_template_corr {
 	/**
 	 * Create a correlation between a network service, a sla template and the if selected a qos deployment flavour 
 	 */
-	public void createNsTempCorr(String ns_uuid, String sla_uuid, String license_type, String license_exp_date, String license_period, String allowed_instances, String license_status, String dflavour_name ) {
+	public void createNsTempCorr(String ns_uuid, String sla_uuid, String license_type, String license_exp_date, String allowed_instances, String license_status, String dflavour_name ) {
 
 		String tablename = "ns_template";
 
@@ -66,7 +66,7 @@ public class ns_template_corr {
 		db_operations.connectPostgreSQL();
 		dbo.createTableNSTemplate();
 		System.out.println("[*] dflavour name (ns_template_corr.java) ==> " + dflavour_name);
-		dbo.insertRecord("ns_template", ns_uuid, sla_uuid, license_type, license_exp_date, license_period, allowed_instances, license_status, dflavour_name);
+		dbo.insertRecord("ns_template", ns_uuid, sla_uuid, license_type, license_exp_date, allowed_instances, license_status, dflavour_name);
 		db_operations.closePostgreSQL();
 	}
 

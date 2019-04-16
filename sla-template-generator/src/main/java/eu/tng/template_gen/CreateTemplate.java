@@ -57,7 +57,7 @@ public class CreateTemplate {
 	@SuppressWarnings("unchecked")
 	public JSONObject createTemplate(String nsd_uuid, String templateName, String expireDate,
 			ArrayList<String> guarantees, String service_licence_type, String allowed_service_instances,
-			String service_licence_expiration_date, String service_licence_period, String provider_name, String template_initiator) {
+			String service_licence_expiration_date, String provider_name, String template_initiator) {
 
 		GetGuarantee guarantee = new GetGuarantee();
 		ArrayList<JSONObject> guaranteeArr = guarantee.getGuarantee(guarantees);
@@ -142,7 +142,6 @@ public class CreateTemplate {
 			JSONObject service_based = new JSONObject();
 			service_based.put("service_licence_type", service_licence_type);
 			service_based.put("allowed_service_instances", allowed_service_instances);
-			service_based.put("service_licence_period", service_licence_period);
 			service_based.put("service_licence_expiration_date", service_licence_expiration_date);
 			licenses.put("service_based", service_based);
 			root.put("licences", licenses);

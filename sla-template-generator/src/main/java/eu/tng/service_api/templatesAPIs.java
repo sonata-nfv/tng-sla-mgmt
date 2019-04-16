@@ -115,7 +115,8 @@ public class templatesAPIs {
 		ResponseBuilder apiresponse = null;
 		try {
 			String url = System.getenv("CATALOGUES_URL") + "slas/template-descriptors";
-			//String url = "http://pre-int-sp-ath.5gtango.eu:4011/catalogues/api/v2/slas/template-descriptors";
+			// String url =
+			// "http://pre-int-sp-ath.5gtango.eu:4011/catalogues/api/v2/slas/template-descriptors";
 			URL object = new URL(url);
 
 			HttpURLConnection con = (HttpURLConnection) object.openConnection();
@@ -151,8 +152,7 @@ public class templatesAPIs {
 			apiresponse = Response.ok(sresponse);
 			apiresponse.header("Content-Length", sresponse.length());
 			return apiresponse.status(200).build();
-			
-			
+
 		} catch (Exception e) {
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
@@ -301,7 +301,6 @@ public class templatesAPIs {
 		List<String> service_licence_type = formParams.get("service_licence_type");
 		List<String> allowed_service_instances = formParams.get("allowed_service_instances");
 		List<String> service_licence_expiration_date = formParams.get("service_licence_expiration_date");
-		
 
 		// optional provider name
 		String provider_name = "";
@@ -324,25 +323,13 @@ public class templatesAPIs {
 			System.out.println("[*] Selected Deployment Flavour Name ==> " + dflavour_name);
 		}
 
-		// optional service_licence_period
-        String service_licence_period = "";
-        try {
-            List<String> licence_period = formParams.get("service_licence_period");
-            service_licence_period = licence_period.get(0);
-            System.out.println("[*] Selected service_licence_period ==> " + service_licence_period);
-        } catch (Exception e) {
-            service_licence_period = "default";
-            System.out.println("[*] Selected service_licence_period ==> " + service_licence_period);
-        }
-        
-        
 		ArrayList<String> guarantees = new ArrayList<String>();
 		guarantees.addAll(formParams.get("guaranteeId"));
 
 		CreateTemplate ct = new CreateTemplate();
 		JSONObject template = ct.createTemplate(nsd_uuid.get(0), templateName.get(0), expireDate.get(0), guarantees,
 				service_licence_type.get(0), allowed_service_instances.get(0), service_licence_expiration_date.get(0),
-				service_licence_period, provider_name, template_initiator);
+				provider_name, template_initiator);
 
 		if (template == null) {
 			String dr = null;
@@ -498,8 +485,7 @@ public class templatesAPIs {
 						System.out.println("[*] dflavour_name (templatesAPI.class) ==> " + dflavour_name);
 
 						nstemplcorr.createNsTempCorr(nsd_uuid.get(0), sla_uuid, service_licence_type.get(0),
-								service_licence_expiration_date.get(0), service_licence_period,
-								allowed_service_instances.get(0), "inactive", dflavour_name);
+								service_licence_expiration_date.get(0), allowed_service_instances.get(0), "inactive", dflavour_name);
 
 						br.close();
 
@@ -514,7 +500,7 @@ public class templatesAPIs {
 								"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 								type, timestamps, operation, message, status);
 
-						String jsonForResponse = "{\"uuid\" : \"" + sla_uuid + "\" , " + "\"Status\" : \"Success\"}";  
+						String jsonForResponse = "{\"uuid\" : \"" + sla_uuid + "\" , " + "\"Status\" : \"Success\"}";
 						apiresponse = Response.ok(jsonForResponse);
 						apiresponse.header("Content-Length", jsonForResponse.length());
 						return apiresponse.status(201).build();
