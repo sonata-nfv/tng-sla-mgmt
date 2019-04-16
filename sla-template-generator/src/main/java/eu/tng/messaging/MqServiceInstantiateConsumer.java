@@ -405,7 +405,7 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 								// update me right current instances
 								else {
 									db_operations.insertLicenseRecord(sla_uuid, ns_uuid, "", cust_username, cust_email,
-											license_type, license_exp_date, license_period, allowed_instances,
+											license_type, license_exp_date, allowed_instances,
 											current_instances, "bought", correlation_id);
 									db_operations.UpdateLicenseCurrentInstances(sla_uuid, ns_uuid, cust_username,
 											current_instances);
@@ -415,7 +415,7 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 							else {
 								db_operations.createTableLicensing();
 								db_operations.insertLicenseRecord(sla_uuid, ns_uuid, "", cust_username, cust_email,
-										license_type, license_exp_date, license_period, allowed_instances,
+										license_type, license_exp_date, allowed_instances,
 										current_instances, "inactive", correlation_id);
 								db_operations.UpdateLicenseCurrentInstances(sla_uuid, ns_uuid, cust_username,
 										current_instances);

@@ -408,7 +408,7 @@ public class LicensingAPIs {
 
 		db_operations.createTableLicensing();
 		db_operations.insertLicenseRecord(sla_uuid.get(0), ns_uuid.get(0), null, cust_username, cust_email,
-				license_type, license_exp_date, license_period, allowed_instances, current_instances, "", "");
+				license_type, license_exp_date, allowed_instances, current_instances, "", "");
 
 		boolean update = db_operations.UpdateLicenseStatus(sla_uuid.get(0), ns_uuid.get(0), cust_username, "bought");
 		db_operations.closePostgreSQL();
