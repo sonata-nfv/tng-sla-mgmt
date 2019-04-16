@@ -350,7 +350,7 @@ public class MgmtAPIs {
 		 try {
 		 // get example nsd
 		 File nsdf = new
-		 File(this.getClass().getResource("/nsd_with_flavours_example.json").toURI());
+		 File(this.getClass().getResource("/multi-flavour-nsd.json").toURI());
 		 jsonObject = (JSONObject) parser.parse(new FileReader(nsdf));
 		 System.out.println(jsonObject.toJSONString().length());
 		
