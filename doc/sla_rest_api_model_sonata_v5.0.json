@@ -133,13 +133,6 @@
             "description": "The license expiration date"
           },
           {
-            "name": "service_licence_period",
-            "in": "formData",
-            "required": false,
-            "type": "string",
-            "description": "The license valid period"
-          },
-          {
             "name": "provider_name",
             "in": "formData",
             "required": false,
@@ -328,10 +321,6 @@
                                     },
                                     "service_licence_instances": {
                                       "description": "The allowed NS instances the the license can provide",
-                                      "type": "string"
-                                    },
-                                    "service_licence_period": {
-                                      "description": "The period that the license will be active",
                                       "type": "string"
                                     },
                                     "service_licence_expiration_date": {
@@ -555,10 +544,6 @@
                                   },
                                   "service_licence_instances": {
                                     "description": "The allowed NS instances the the license can provide",
-                                    "type": "string"
-                                  },
-                                  "service_licence_period": {
-                                    "description": "The period that the license will be active",
                                     "type": "string"
                                   },
                                   "service_licence_expiration_date": {
@@ -923,10 +908,6 @@
                                   },
                                   "service_licence_instances": {
                                     "description": "The allowed NS instances the the license can provide",
-                                    "type": "string"
-                                  },
-                                  "service_licence_period": {
-                                    "description": "The period that the license will be active",
                                     "type": "string"
                                   },
                                   "service_licence_expiration_date": {
@@ -1348,6 +1329,594 @@
         "operationId": "violations-percentage",
         "tags": [
           "SLA-Violations-v2"
+        ]
+      }
+    },
+    "/licenses": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "headers": {
+              "Content-Type": {
+                "description": "The MIME type of the body of the response (\"application/json\").",
+                "type": "string",
+                "maximum": 1,
+                "minimum": 1
+              }
+            },
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "sla_uuid": {
+                    "description": "The uuid of the accosiated SLA",
+                    "type": "string"
+                  },
+                  "nsd_uuid": {
+                    "description": "The uuid of the  accosiated NS",
+                    "type": "string"
+                  },
+                  "nsi_uuid": {
+                    "description": "The uuid of the accosiated NS Instance",
+                    "type": "string"
+                  },
+                  "cust_userrname": {
+                    "description": "The name of the customer that the license belongs to",
+                    "type": "string"
+                  },
+                  "cust_email": {
+                    "description": "The email of the customer that the license belongs to",
+                    "type": "string"
+                  },
+                  "license_type": {
+                    "description": "The license type (Trial|Public|Private)",
+                    "type": "string"
+                  },
+                  "license_exp_date": {
+                    "description": "The license expiration date",
+                    "type": "string"
+                  },
+                  "allowed_instances": {
+                    "description": "The license allowed NS instances",
+                    "type": "string"
+                  },
+                  "current_instances": {
+                    "description": "The license current NS instances)",
+                    "type": "string"
+                  },
+                  "license_status": {
+                    "description": "The license status (inactive|active|bought|expired)",
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request: HTTP bad request"
+          }
+        },
+        "operationId": "all-licenses",
+        "tags": [
+          "SLA-Licenses-v1"
+        ]
+      },
+      "delete": {
+        "responses": {
+          "200": {
+            "description": "License was deleted"
+          },
+          "404": {
+            "description": "License was not deleted"
+          }
+        },
+        "parameters": [
+          {
+            "name": "sla_uuid",
+            "in": "formData",
+            "required": true,
+            "type": "string",
+            "description": "SLA UUID"
+          },
+          {
+            "name": "cust_username",
+            "in": "formData",
+            "required": true,
+            "type": "string",
+            "description": "Name of customer that the license belongs to"
+          },
+          {
+            "name": "ns_uuid",
+            "in": "formData",
+            "required": true,
+            "type": "string",
+            "description": "NS uuid"
+          }
+        ],
+        "consumes": [
+          "multipart/form-data"
+        ],
+        "operationId": "delete_license",
+        "tags": [
+          "SLA-Licenses-v1"
+        ]
+      }
+    },
+    "/licenses/status/{sla_uuid}/{ns_uuid}": {
+      "get": {
+        "parameters": [
+          {
+            "name": "sla_uuid",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "SLA UUID"
+          },
+          {
+            "name": "ns_uuid",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "NS uuid"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "headers": {
+              "Content-Type": {
+                "description": "The MIME type of the body of the response (\"application/json\").",
+                "type": "string",
+                "maximum": 1,
+                "minimum": 1
+              }
+            },
+            "schema": {
+              "type": "object",
+              "properties": {
+                "license_type": {
+                  "description": "The license type (Trial|Private|Public)",
+                  "type": "string"
+                },
+                "license_status": {
+                  "description": "The license status)",
+                  "type": "string"
+                },
+                "allowed_instances": {
+                  "description": "The license allowed instances",
+                  "type": "string"
+                },
+                "current_instances": {
+                  "description": "The license cuurent instances",
+                  "type": "string"
+                },
+                "allowed_to_instantiate": {
+                  "description": "true|false",
+                  "type": "boolean"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "ERROR:connecting to database"
+          }
+        },
+        "operationId": "get-license-status",
+        "tags": [
+          "SLA-Licenses-v1"
+        ]
+      }
+    },
+    "/licenses/buy": {
+      "post": {
+        "404": {
+          "description": "Error: Private license could not be bought"
+        },
+        "responses": {
+          "200": {
+            "description": "Success: Private license bought"
+          }
+        }
+      },
+      "operationId": "buy_license",
+      "parameters": [
+        {
+          "name": "ns_uuid",
+          "in": "formData",
+          "required": true,
+          "type": "string",
+          "description": "Network Service UUID"
+        },
+        {
+          "name": "sla_uuid",
+          "in": "formData",
+          "required": true,
+          "type": "string",
+          "description": "SLA UUID"
+        }
+      ],
+      "consumes": [
+        "multipart/form-data"
+      ],
+      "tags": [
+        "SLA-Licenses-v1-v2"
+      ],
+      "security": "bearerAuth"
+    },
+    "/licenses/utilized": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Nº Licenses Utilized",
+            "headers": {
+              "Content-Type": {
+                "description": "The MIME type of the body of the response (\"application/json\").",
+                "type": "string",
+                "maximum": 1,
+                "minimum": 1
+              }
+            },
+            "schema": {
+              "type": "object",
+              "properties": {
+                "utilized_licenses": {
+                  "description": "The number utilized_licenses",
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "licenses-utilized",
+        "tags": [
+          "SLA-Licenses-v1"
+        ]
+      }
+    },
+    "/licenses/acquired": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Nº Licenses acquired",
+            "headers": {
+              "Content-Type": {
+                "description": "The MIME type of the body of the response (\"application/json\").",
+                "type": "string",
+                "maximum": 1,
+                "minimum": 1
+              }
+            },
+            "schema": {
+              "type": "object",
+              "properties": {
+                "acquired_licenses": {
+                  "description": "The number acquired licenses",
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "licenses-acquired",
+        "tags": [
+          "SLA-Licenses-v1"
+        ]
+      }
+    },
+    "/licenses/expired": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Nº Licenses expired",
+            "headers": {
+              "Content-Type": {
+                "description": "The MIME type of the body of the response (\"application/json\").",
+                "type": "string",
+                "maximum": 1,
+                "minimum": 1
+              }
+            },
+            "schema": {
+              "type": "object",
+              "properties": {
+                "expired_licenses": {
+                  "description": "The number expired licenses",
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "licenses-expired",
+        "tags": [
+          "SLA-Licenses-v1"
+        ]
+      }
+    },
+    "/mgmt/services/templates/": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "headers": {
+              "Content-Type": {
+                "description": "The MIME type of the body of the response (\"application/json\").",
+                "type": "string",
+                "maximum": 1,
+                "minimum": 1
+              }
+            },
+            "schema": {
+              "type": "object",
+              "properties": {
+                "ns_template": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "ns_uuid": {
+                        "description": "The ns_uuid",
+                        "type": "string"
+                      },
+                      "sla_uuid": {
+                        "description": "The sla_uuid",
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request: HTTP bad request"
+          }
+        },
+        "operationId": "get_correlated_sla_ns",
+        "parameters": [],
+        "tags": [
+          "SLA-Management-v2"
+        ]
+      }
+    },
+    "/mgmt/services/templates/true": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "headers": {
+              "Content-Type": {
+                "description": "The MIME type of the body of the response (\"application/json\").",
+                "type": "string",
+                "maximum": 1,
+                "minimum": 1
+              }
+            },
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "ns_uuid": {
+                    "description": "The sla_uuid",
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request: HTTP bad request"
+          }
+        },
+        "operationId": "get_ns_assosiated_Slas",
+        "parameters": [],
+        "tags": [
+          "SLA-Management-v2"
+        ]
+      }
+    },
+    "/mgmt/services/templates/false": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "headers": {
+              "Content-Type": {
+                "description": "The MIME type of the body of the response (\"application/json\").",
+                "type": "string",
+                "maximum": 1,
+                "minimum": 1
+              }
+            },
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "ns_uuid": {
+                    "description": "The sla_uuid",
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request: HTTP bad request"
+          }
+        },
+        "operationId": "get_ns_withno_slas",
+        "parameters": [],
+        "tags": [
+          "SLA-Management-v2"
+        ]
+      }
+    },
+    "/mgmt/services/agreements/true": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "headers": {
+              "Content-Type": {
+                "description": "The MIME type of the body of the response (\"application/json\").",
+                "type": "string",
+                "maximum": 1,
+                "minimum": 1
+              }
+            },
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "ns_uuid": {
+                    "description": "The sla_uuid",
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request: HTTP bad request"
+          }
+        },
+        "operationId": "get_ns_with_agreements",
+        "parameters": [],
+        "tags": [
+          "SLA-Management-v2"
+        ]
+      }
+    },
+    "/mgmt/services/agreements/false": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "headers": {
+              "Content-Type": {
+                "description": "The MIME type of the body of the response (\"application/json\").",
+                "type": "string",
+                "maximum": 1,
+                "minimum": 1
+              }
+            },
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "ns_uuid": {
+                    "description": "The sla_uuid",
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request: HTTP bad request"
+          }
+        },
+        "operationId": "get_ns_with_no_agreements",
+        "parameters": [],
+        "tags": [
+          "SLA-Management-v2"
+        ]
+      }
+    },
+    "/mgmt/deploymentflavours/{nsd_uuid}": {
+      "get": {
+        "parameters": [
+          {
+            "name": "nsd_uuid",
+            "in": "path",
+            "type": "string",
+            "required": true,
+            "description": "NSD uuid"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "headers": {
+              "Content-Type": {
+                "description": "The MIME type of the body of the response (\"application/json\").",
+                "type": "string",
+                "maximum": 1,
+                "minimum": 1
+              }
+            },
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "f_name": {
+                    "description": "The deployment flavour name of the corresponding NS",
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "ERROR: NS uuid not found"
+          }
+        },
+        "operationId": "get_dflavour_for_ns",
+        "tags": [
+          "SLA-Management-v2"
+        ]
+      }
+    },
+    "/mgmt/deploymentflavours/{nsd_uuid}/{sla_uuid}": {
+      "get": {
+        "parameters": [
+          {
+            "name": "nsd_uuid",
+            "in": "path",
+            "type": "string",
+            "required": true,
+            "description": "NSD uuid"
+          },
+          {
+            "name": "sla_uuid",
+            "in": "path",
+            "type": "string",
+            "required": true,
+            "description": "SLA uuid"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "headers": {
+              "Content-Type": {
+                "description": "The MIME type of the body of the response (\"application/json\").",
+                "type": "string",
+                "maximum": 1,
+                "minimum": 1
+              }
+            },
+            "schema": {
+              "type": "object",
+              "properties": {
+                "d_flavour_name": {
+                  "description": "The deployment flavour name for a specific SLA",
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "get_dflavour_for_specific_sla",
+        "tags": [
+          "SLA-Management-v2"
         ]
       }
     }
