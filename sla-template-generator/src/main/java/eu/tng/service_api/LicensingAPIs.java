@@ -128,7 +128,7 @@ public class LicensingAPIs {
 					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 					type, timestamps, operation, message, status);
 
-			String response = "Agreement deleted Succesfully";
+			String response = "Success: License deleted Succesfully";
 			apiresponse = Response.ok((response));
 			apiresponse.header("Content-Length", response.length());
 			return apiresponse.status(200).build();
@@ -138,7 +138,7 @@ public class LicensingAPIs {
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 			String timestamps = timestamp.toString();
 			String type = "W";
-			String operation = "Delete license record";
+			String operation = "Error: Delete license record failed";
 			String message = ("[*] Error! License record was not deleted!");
 			String status = "404";
 			logger.warn(
@@ -426,7 +426,7 @@ public class LicensingAPIs {
 					type, timestamps, operation, message, status);
 
 			JSONObject success = new JSONObject();
-			success.put("Succes: ", "License status updated");
+			success.put("Succes: ", "License bought!");
 			apiresponse = Response.ok((Object) success);
 			apiresponse.header("Content-Length", success.toJSONString().length());
 			return apiresponse.status(200).build();
@@ -443,7 +443,7 @@ public class LicensingAPIs {
 					type, timestamps, operation, message, status);
 
 			JSONObject error = new JSONObject();
-			error.put("Error: ", "License status was not updated");
+			error.put("Error: ", "License could not be bought!");
 			apiresponse = Response.ok((Object) error);
 			apiresponse.header("Content-Length", error.toJSONString().length());
 			return apiresponse.status(404).build();
