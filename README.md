@@ -61,8 +61,7 @@ Besides this README file, more documentation is available in the [WiKi](https://
 	*  amqp-client :  5.2.0 (Apache 2.0, GPL 2.0, Mozilla Public License)
 
 ## Installation
-You can follow the installation guide [here](https://github.com/sonata-nfv/tng-sla-mgmt/wiki/Installation), for installing the 5GTANGO SLA Manager.    
-Then you can access it through http://127.0.0.1:8080/tng-sla-mgmt    
+You can follow the installation guide [here](https://github.com/sonata-nfv/tng-sla-mgmt/wiki/Installation), for installing the 5GTANGO SLA Manager.     
 Enjoy!
 
 ## Configuration
