@@ -361,7 +361,7 @@ public class templatesAPIs {
 				// invalid date format
 				String dr = null;
 				JSONObject error = new JSONObject();
-				error.put("ERROR: ", "Invalid expire date format. The format should be dd/mm/YYY");
+				error.put("ERROR", "Invalid expire date format. The format should be dd/mm/YYY");
 				apiresponse = Response.ok((Object) error);
 				apiresponse.header("Content-Length", error.toString().length());
 
@@ -382,7 +382,7 @@ public class templatesAPIs {
 				// invalid expire date
 				String dr = null;
 				JSONObject error = new JSONObject();
-				error.put("ERROR: ", "The expire date is not a future date.");
+				error.put("ERROR", "The expire date is not a future date.");
 				apiresponse = Response.ok(error.toString());
 				apiresponse.header("Content-Length", error.toString().length());
 
@@ -403,7 +403,7 @@ public class templatesAPIs {
 				// invalid guarantee terms
 				String dr = null;
 				JSONObject error = new JSONObject();
-				error.put("ERROR: ",
+				error.put("ERROR",
 						"There is a problem with the guarantee terms. You should select at least one guarantee id, and avoid duplicates.");
 				apiresponse = Response.ok(error.toString());
 				apiresponse.header("Content-Length", error.toString().length());
@@ -425,7 +425,7 @@ public class templatesAPIs {
 				// invalid template name
 				String dr = null;
 				JSONObject error = new JSONObject();
-				error.put("ERROR: ", "Define a SLA Template Name");
+				error.put("ERROR", "Define a SLA Template Name");
 				apiresponse = Response.ok(error.toString());
 				apiresponse.header("Content-Length", error.toString().length());
 
@@ -508,7 +508,7 @@ public class templatesAPIs {
 					} else {
 						// conflict in uploading sla template to the catalogue
 						JSONObject error = new JSONObject();
-						error.put("ERROR:", con.getResponseMessage());
+						error.put("ERROR", con.getResponseMessage());
 						apiresponse = Response.ok(error.toString());
 						apiresponse.header("Content-Length", error.toString().length());
 
@@ -528,7 +528,7 @@ public class templatesAPIs {
 				} catch (Exception e) {
 					String dr = null;
 					JSONObject error = new JSONObject();
-					error.put("ERROR: ", "while uploading SLA Template");
+					error.put("ERROR", "while uploading SLA Template");
 					apiresponse = Response.ok(error.toString());
 					apiresponse.header("Content-Length", error.toString().length());
 
@@ -629,7 +629,7 @@ public class templatesAPIs {
 
 			} catch (Exception e) {
 				JSONObject error = new JSONObject();
-				error.put("ERROR: ", "URL Not Found");
+				error.put("ERROR", "URL Not Found");
 				apiresponse = Response.ok(error.toString());
 				apiresponse.header("Content-Length", error.toString().length());
 
