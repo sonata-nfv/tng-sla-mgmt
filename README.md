@@ -29,10 +29,14 @@ NS. It is worth mentioning that licensing is provided "as a service” and it is
  
 ## Dependencies
 
-### Programming Language
-The first release of the SLA Manager has been programmed using JAVA (JDK8). Jersey RESTful Web Services framework is extensively used for the SLA Manager API programming.
+'tng-sla-mgmt' expects the following environment:
+*   JAVA JDK8
+*   Docker >= 1.10 (Apache 2.0)    
+*   RabbitMQ >= 3.5 (Mozilla Public License)
+*   PostgreSQL >= 3.0 (PostgreSQL Licence)
+*   A Catalogue (MongoDB) to where the descriptors can be requested from (https://github.com/sonata-nfv/tng-cat)
 
-### Frameworks
+'tng-sla-mgmt' has the following dependencies:
 *  Jersey - RESTful Web Services in Java - Version 1.19 
     *  jersey-servlet : 1.19
 	*  jersey-json : 1.19
@@ -41,23 +45,19 @@ The first release of the SLA Manager has been programmed using JAVA (JDK8). Jers
     *  maven-compiler-plugin : 2.3.2
 	*  maven-checkstyle-plugin : 2.13
 *  Apache Tomcat - Version 8.5  (Apache 2.0)
-	
-### Libraries
-*  genson : 0.99 (Apache 2.0)
-*  org.json : 20180130 (The JSON License)
-*  snakeyaml : 1.21 (Apache 2.0)
-*  yamlbeans : 1.13 (MIT)
-*  httpclient : 4.5.5 (Apache 2.0)
-*  postgresql : 9.1-901.jdbc4 (PostgreSQL Licence)
-*  amqp-client :  5.2.0 (Apache 2.0, GPL 2.0, Mozilla Public License)
+*  Libraries
+	*  genson : 0.99 (Apache 2.0)
+	*  org.json : 20180130 (The JSON License)
+	*  snakeyaml : 1.21 (Apache 2.0)
+	*  yamlbeans : 1.13 (MIT)
+	*  httpclient : 4.5.5 (Apache 2.0)
+	*  postgresql : 9.1-901.jdbc4 (PostgreSQL Licence)
+	*  amqp-client :  5.2.0 (Apache 2.0, GPL 2.0, Mozilla Public License)
 
-## Build and run tng-sla-mgmt locally (Container mode using Docker)
-
-```
-git clone https://github.com/sonata-nfv/tng-sla-mgmt
-docker-compose up --build -d
-```
-
+## Installation
+You can follow the installation guide [here](https://github.com/sonata-nfv/tng-sla-mgmt/wiki/Installation), for installing the 5GTANGO SLA Manager.    
+Then you can access it through http://127.0.0.1:8080/tng-sla-mgmt    
+Enjoy!
 
 ## Configuration
 
@@ -72,7 +72,7 @@ The following configurations are definied into the Dockerfile [here](https://git
     *  Specify RabbitMQ server
 	*  Specify the RabbitMQ exchange topic
 	
-*  5GTANGO Catalogue - Specify the 5GTANGO Catalogue base url
+*  Catalogue - Specify the 5GTANGO Catalogue base url
 
 
 ## Usage
@@ -80,11 +80,13 @@ The following configurations are definied into the Dockerfile [here](https://git
 The following shows how to use SLA Manager: 
 
 * First, make sure there is a network service descriptor in the 5GTANGO Catalogue - More information on how to upload a Network Service in 5GTANGO Catalogue
- can be found [here](https://github.com/sonata-nfv/tng-cat).
-* Then, you can create a SLA template using the end point provided in API's Reference section.
+ can be found [here](https://github.com/sonata-nfv/tng-cat ).
+* Then, you can create a SLA template using the end point provided in API's Reference section.    
+    *  During the SLA Template creation you can define guarantees, expiration date, license information, as well as a desired deployment flavour.
 * If you have installed the whole 5GTANGO Service Platform, you can then instantiate a service.
-* Choosing one SLA template in the instantiation process, the SLA agreement will be automatically created and appear in the 5GTANGO'S PORTAL.
-* At a next stage monitoring manager is gathering data for your service, and if a violation is accured, you will receive a message in the Message Bus.
+* Choosing one SLA template in the instantiation process, the SLA agreement will be automatically created and appear in the 5GTANGO'S Portal.
+* The SLA Manager is checking the license, based on its type (Public, Trial, Private)
+* At a next stage monitoring manager is gathering data for your service, and if a violation is accured, you will receive a message in the RabbitMQ.
 * This information will be stored in sla manager's database and your SLA agreement status will marked as violated.
 * You can then terminate the service and see your SLA agreement marked as TERMINATED
 
@@ -125,12 +127,12 @@ More details can be found in the Wiki page [here](https://github.com/sonata-nfv/
 
 Our style guide is really simple:
 *  We try to follow a Clean Code philosophy in as much as possible, i.e., classes and methods should do one thing only, have the least number of parameters possible, etc.;
-*  we use one (1) Tab for identation.
+*  we use four (4) Tab for identation.
 
 ## Tests
-*  Unit Tests are triggered automatically when building the project, and are defined in the [SLA Manager's test folder](https://github.com/ekapassa/tng-sla-mgmt/tree/master/sla-template-generator/src/test/java/eu/tng).
-*  Checkstyle Tests are triggered automatically when building the project, and are defined in the [SLA Manager's Checkstyle folder](https://github.com/ekapassa/tng-sla-mgmt/tree/master/sla-template-generator/src/main/resources/Checkstyle).
-*  Wider scope (integration and functional) tests involving this micro-service are defined in tng-tests.
+*  Unit Tests are triggered automatically when building the project, and are defined in the [SLA Manager's test folder](https://github.com/ekapassa/tng-sla-mgmt/tree/master/sla-template-generator/src/test/java/eu/tng )
+*  Checkstyle Tests are triggered automatically when building the project, and are defined in the [SLA Manager's Checkstyle folder](https://github.com/ekapassa/tng-sla-mgmt/tree/master/sla-template-generator/src/main/resources/Checkstyle )
+*  Wider scope (integration and functional) tests involving this micro-service are defined in [tng-tests](https://github.com/sonata-nfv/tng-tests )
 
 
 ## Versioning
