@@ -2,6 +2,7 @@
 
 # tng-sla-mgmt [![Build Status](https://jenkins.sonata-nfv.eu/buildStatus/icon?job=tng-sla-mgmt/master)](https://jenkins.sonata-nfv.eu/job/tng-sla-mgmt/job/master/)   [![Join the chat at https://gitter.im/sonata-nfv/Lobby](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/sonata-nfv/Lobby)
 
+## Overview
 5GTANGO's SLA management framework is part of the SONATA powered by 5GTANGO Service Platform. The SLA Management repository includes the SLAs descriptors
 examples and schemas, as well as all mechanisms that are implemented. The schema files are written in JSON-Schema and they are available [here](https://github.com/sonata-nfv/tng-schema/tree/master/sla-template-descriptor)
 
@@ -27,16 +28,21 @@ and an instantiated NS, by specifying also the number of allowed NS instances. T
 NS before license purchasing, b) public, which comes with no instantiation restrictions, and c) private, which specifies as mandatory the purchase of a license before instantiating a 
 NS. It is worth mentioning that licensing is provided "as a service” and it is included into the provided SLAs.
  
+## Documentation
+Besides this README file, more documentation is available in the [WiKi](https://github.com/sonata-nfv/tng-sla-mgmt/wiki) belonging to this repository. Additional information are available in the 5GTANGO project's deliverables:
+* [5GTANGO D2.2 Architecture Design](https://5gtango.eu/project-outcomes/deliverables/2-uncategorised/31-d2-2-architecture-design.html)
+* [5GTANGO D5.1 Service platform operational first prototype](https://5gtango.eu/project-outcomes/deliverables/43-d5-1-service-platform-operational-first-prototype.html)
+
 ## Dependencies
 
-'tng-sla-mgmt' expects the following environment:
+`tng-sla-mgmt` expects the following environment:
 *   JAVA JDK8
 *   Docker >= 1.10 (Apache 2.0)    
 *   RabbitMQ >= 3.5 (Mozilla Public License)
 *   PostgreSQL >= 3.0 (PostgreSQL Licence)
 *   A Catalogue (MongoDB) to where the descriptors can be requested from (https://github.com/sonata-nfv/tng-cat)
 
-'tng-sla-mgmt' has the following dependencies:
+`tng-sla-mgmt` has the following dependencies:
 *  Jersey - RESTful Web Services in Java - Version 1.19 
     *  jersey-servlet : 1.19
 	*  jersey-json : 1.19
@@ -71,14 +77,10 @@ The following configurations are definied into the Dockerfile [here](https://git
 *  RabbitMQ
     *  Specify RabbitMQ server
 	*  Specify the RabbitMQ exchange topic
-	
 *  Catalogue - Specify the 5GTANGO Catalogue base url
 
-
 ## Usage
-
 The following shows how to use SLA Manager: 
-
 * First, make sure there is a network service descriptor in the 5GTANGO Catalogue - More information on how to upload a Network Service in 5GTANGO Catalogue
  can be found [here](https://github.com/sonata-nfv/tng-cat ).
 * Then, you can create a SLA template using the end point provided in API's Reference section.    
@@ -97,7 +99,7 @@ or on the [SLA Manager WIKI page](https://github.com/sonata-nfv/tng-sla-mgmt/wik
 
 ### Database
 
-The SLA Manager is using [PosgreSQL](https://www.postgresql.org/) as internal database.  
+The SLA Manager is using PosgtreSQL, for storing SLA records and correlations.  
 The database includes the following tables:     
 *  `ns_template` - stores and manages correlations between sla templates and network services.
 *  `cust_sla` - stores and manages correlations between slas, instatiated network services and the customers. it is also used to manage the Agreements's informations.
@@ -105,7 +107,6 @@ The database includes the following tables:
 *  `sla_licensing` - stores and manages all the Licensing information per SLA and the corresponding service.
 
 ### Logging 
-
 `tng-sla-mgmt` uses the [Apache Log4j 2](http://logging.apache.org/log4j/2.x/) logging services, to produce logs in the 5GTANGO JSON format as described [here](https://git.cs.upb.de/5gtango/UserStories/issues/376) (authentication needed).       
 
 ```json
@@ -121,8 +122,6 @@ The database includes the following tables:
 
 More details can be found in the Wiki page [here](https://github.com/sonata-nfv/tng-sla-mgmt/wiki/Logging) 
     
-
-
 ## Style guide
 
 Our style guide is really simple:
@@ -133,7 +132,6 @@ Our style guide is really simple:
 *  Unit Tests are triggered automatically when building the project, and are defined in the [SLA Manager's test folder](https://github.com/ekapassa/tng-sla-mgmt/tree/master/sla-template-generator/src/test/java/eu/tng )
 *  Checkstyle Tests are triggered automatically when building the project, and are defined in the [SLA Manager's Checkstyle folder](https://github.com/ekapassa/tng-sla-mgmt/tree/master/sla-template-generator/src/main/resources/Checkstyle )
 *  Wider scope (integration and functional) tests involving this micro-service are defined in [tng-tests](https://github.com/sonata-nfv/tng-tests )
-
 
 ## Versioning
 *  The SLA Manager does not support versioning reagrding the code. In the future we can maybe use [SemVer](http://semver.org/) for this kind of versioning.
