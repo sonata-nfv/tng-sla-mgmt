@@ -92,7 +92,7 @@ public class CreateTemplate {
 			Date date = new Date();
 			String offered_date = df.format(date);
 
-			/** valid until date */
+			/** sla expiration date */
 			SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 			String dateInString = expireDate;
 			Date date2 = null;
@@ -102,7 +102,19 @@ public class CreateTemplate {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			String validUntil = df.format(date2);
+			String validUntil_new = df.format(date2);
+			
+			/** license expiration date */
+			SimpleDateFormat formatter_lic = new SimpleDateFormat("dd/MM/yyyy");
+			String dateInString_lic = service_licence_expiration_date ;
+			Date date_lic = null;
+			try {
+				date_lic = formatter_lic.parse(dateInString_lic);
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			String service_licence_expiration_date_new = df.format(date_lic);
 
 
 			/** generate the template */
@@ -118,7 +130,7 @@ public class CreateTemplate {
 			JSONObject sla_template = new JSONObject();
 			sla_template.put("template_name", templateName);
 			sla_template.put("offer_date", offered_date);
-			sla_template.put("expiration_date", validUntil);
+			sla_template.put("expiration_date", validUntil_new);
 			sla_template.put("provider_name", provider_name);
 			sla_template.put("template_initiator", template_initiator);			
 			root.put("sla_template", sla_template);
@@ -142,7 +154,7 @@ public class CreateTemplate {
 			JSONObject service_based = new JSONObject();
 			service_based.put("service_licence_type", service_licence_type);
 			service_based.put("allowed_service_instances", allowed_service_instances);
-			service_based.put("service_licence_expiration_date", service_licence_expiration_date);
+			service_based.put("service_licence_expiration_date", service_licence_expiration_date_new);
 			licenses.put("service_based", service_based);
 			root.put("licences", licenses);
 
