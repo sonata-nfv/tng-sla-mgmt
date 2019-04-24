@@ -176,7 +176,7 @@ public class templatesAPIs {
 	/**
 	 * api call in order to get specific sla
 	 */
-	@Produces(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.TEXT_PLAIN)
 	@GET
 	@Path("/{sla_uuid}")
 	public Response getTemplate(@PathParam("sla_uuid") String sla_uuid, @Context HttpHeaders headers) {
