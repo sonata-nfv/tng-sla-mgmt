@@ -274,8 +274,11 @@ public class templatesAPIs {
 			// decode jwt token
 			JSONObject auth_info = JwtTokenDecode.DecodeToken(token);
 
+			System.out.println("[***] Auth info ==> " + auth_info);
 			try {
 				template_initiator = (String) auth_info.get("username");
+				System.out.println("[***] Auth info: Username  ==> " + template_initiator);
+
 			} catch (JSONException e) {
 				System.out.println(e);
 			}
