@@ -176,7 +176,7 @@ public class templatesAPIs {
 	/**
 	 * api call in order to get specific sla
 	 */
-	@Produces(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.TEXT_PLAIN)
 	@GET
 	@Path("/{sla_uuid}")
 	public Response getTemplate(@PathParam("sla_uuid") String sla_uuid, @Context HttpHeaders headers) {
@@ -204,10 +204,10 @@ public class templatesAPIs {
 				response.append(inputLine);
 			}
 			in.close();
-			JSONParser parser = new JSONParser();
-			Object existingTemplates = parser.parse(response.toString());
-			apiresponse = Response.ok((Object) existingTemplates);
-			apiresponse.header("Content-Length", response.length());
+
+			String cat_response = response.toString();
+			apiresponse = Response.ok(cat_response);
+			apiresponse.header("Content-Length", cat_response.length());
 
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
