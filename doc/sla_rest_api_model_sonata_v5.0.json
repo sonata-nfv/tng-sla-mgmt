@@ -1,1924 +1,1928 @@
 {
-  "swagger": "2.0",
-  "info": {
-    "description": "An H2020 5GTANGO project",
-    "version": "0.0.2",
-    "title": "5GTANGO SLA Manager REST APIs",
-    "termsOfService": "https://5gtango.eu/",
-    "license": {
-      "name": "H2020 5GTANGO Copyright",
-      "url": "https://github.com/sonata-nfv/tng-sla-mgmt/blob/master/LICENSE"
-    }
-  },
-  "host": "tng-sla-mgmt:8080",
-  "basePath": "/tng-sla-mgmt/api/slas/v1",
-  "tags": [
-    {
-      "name": "SLA-Templates-v2",
-      "description": "SLA Templates APIs"
-    },
-    {
-      "name": "SLA-Agreements-v2",
-      "description": "SLA Agreements APIs"
-    },
-    {
-      "name": "SLA-Violations-v2",
-      "description": "SLA  Violations APIs"
-    },
-    {
-      "name": "SLA-Management-v2",
-      "description": "SLA Managements APIs"
-    },
-    {
-      "name": "SLA-Licenses-v1",
-      "description": "Licenses APIs"
-    }
-  ],
-  "components": {
-    "securitySchemes": {
-      "bearerAuth": {
-        "type": "http",
-        "scheme": "bearer",
-        "bearerFormat": "JWT"
+   "swagger":"2.0",
+   "info":{
+      "description":"An H2020 5GTANGO project",
+      "version":"0.0.2",
+      "title":"5GTANGO SLA Manager REST APIs",
+      "termsOfService":"https://5gtango.eu/",
+      "license":{
+         "name":"H2020 5GTANGO Copyright",
+         "url":"https://github.com/sonata-nfv/tng-sla-mgmt/blob/master/LICENSE"
       }
-    }
-  },
-  "paths": {
-    "/templates": {
-      "post": {
-        "responses": {
-          "201": {
-            "description": "Created",
-            "headers": {
-              "Content-Type": {
-                "description": "The MIME type of the body of the response (\"application/json\").",
-                "type": "string",
-                "maximum": 1,
-                "minimum": 1
-              }
-            },
-            "schema": {
-              "type": "object",
-              "properties": {
-                "uuid": {
-                  "description": "The created sla descriptor uuid",
-                  "type": "string"
-                },
-                "status": {
-                  "description": "The creation status - Success",
-                  "type": "string"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad request: HTTP bad request"
-          },
-          "404": {
-            "description": "Not Found: NS not found."
-          },
-          "500": {
-            "description": "Internal Server Error."
-          }
-        },
-        "operationId": "create_template",
-        "parameters": [
-          {
-            "name": "nsd_uuid",
-            "in": "formData",
-            "required": true,
-            "type": "string",
-            "description": "Network Service UUID"
-          },
-          {
-            "name": "templateName",
-            "in": "formData",
-            "required": true,
-            "type": "string",
-            "description": "Name of the SLA template"
-          },
-          {
-            "name": "expireDate",
-            "in": "formData",
-            "required": true,
-            "type": "string",
-            "description": "Expire date of the SLA"
-          },
-          {
-            "name": "guaranteeID",
-            "in": "formData",
-            "required": true,
-            "type": "string",
-            "description": "The ID of the SLO"
-          },
-          {
-            "name": "service_licence_type",
-            "in": "formData",
-            "required": true,
-            "type": "string",
-            "description": "The type of the license"
-          },
-          {
-            "name": "allowed_service_instances",
-            "in": "formData",
-            "required": true,
-            "type": "string",
-            "description": "allowed_service_instances number"
-          },
-          {
-            "name": "service_licence_expiration_date",
-            "in": "formData",
-            "required": true,
-            "type": "string",
-            "description": "The license expiration date"
-          },
-          {
-            "name": "provider_name",
-            "in": "formData",
-            "required": false,
-            "type": "string",
-            "description": "The provider name of the SLA. e.g. Telefonica"
-          },
-          {
-            "name": "dflavour_name",
-            "in": "formData",
-            "required": false,
-            "type": "string",
-            "description": "The selected deployment flavour of the corresponding NS"
-          }
-        ],
-        "consumes": [
-          "multipart/form-data"
-        ],
-        "tags": [
-          "SLA-Templates-v2"
-        ],
-        "security": "bearerAuth"
+   },
+   "host":"tng-sla-mgmt:8080",
+   "basePath":"/tng-sla-mgmt/api/slas/v1",
+   "tags":[
+      {
+         "name":"SLA-Templates-v2",
+         "description":"SLA Templates APIs"
       },
-      "get": {
-        "responses": {
-          "200": {
-            "description": "Success",
-            "headers": {
-              "Content-Type": {
-                "description": "The MIME type of the body of the response (\"application/json\").",
-                "type": "string",
-                "maximum": 1,
-                "minimum": 1
-              },
-              "schema": {
-                "type": "array",
-                "items": {
-                  "type": "object",
-                  "properties": {
-                    "descriptor_schema": {
-                      "description": "The descriptor schema the template follows",
-                      "type": "string"
-                    },
-                    "name": {
-                      "description": "The name of the sla template",
-                      "type": "string"
-                    },
-                    "vendor": {
-                      "description": "The vendor of the sla template",
-                      "type": "string"
-                    },
-                    "version": {
-                      "description": "The version of the sla template",
-                      "type": "string"
-                    },
-                    "author": {
-                      "description": "The author/s of the sla template",
-                      "type": "string"
-                    },
-                    "description": {
-                      "description": "A simple description of the sla template",
-                      "type": "string"
-                    },
-                    "sla_template": {
-                      "type": "object",
-                      "properties": {
-                        "template_name": {
-                          "description": "The user defined sla template name",
-                          "type": "string"
+      {
+         "name":"SLA-Agreements-v2",
+         "description":"SLA Agreements APIs"
+      },
+      {
+         "name":"SLA-Violations-v2",
+         "description":"SLA  Violations APIs"
+      },
+      {
+         "name":"SLA-Management-v2",
+         "description":"SLA Managements APIs"
+      },
+      {
+         "name":"SLA-Licenses-v1",
+         "description":"Licenses APIs"
+      }
+   ],
+   "paths":{
+      "/templates":{
+         "post":{
+            "responses":{
+               "201":{
+                  "description":"Created",
+                  "headers":{
+                     "Content-Type":{
+                        "description":"The MIME type of the body of the response (\"application/json\").",
+                        "type":"string",
+                        "maximum":1,
+                        "minimum":1
+                     }
+                  },
+                  "schema":{
+                     "type":"object",
+                     "properties":{
+                        "uuid":{
+                           "description":"The created sla descriptor uuid",
+                           "type":"string"
                         },
-                        "offer_date": {
-                          "description": "The sla template offered date",
-                          "type": "string"
-                        },
-                        "expiration_date": {
-                          "description": "The sla template expiration date",
-                          "type": "string"
-                        },
-                        "provider_name": {
-                          "description": "The network provider that requested the creation of the template. e.g. Telefonica.",
-                          "type": "string"
-                        },
-                        "template_initiator": {
-                          "description": "The user who created the sla template",
-                          "type": "string"
-                        },
-                        "service": {
-                          "type": "object",
-                          "properties": {
-                            "ns_uuid": {
-                              "description": "The accosiated ns uuid",
-                              "type": "string"
-                            },
-                            "ns_name": {
-                              "description": "The accosiated ns vendor",
-                              "type": "string"
-                            },
-                            "ns_vendor": {
-                              "description": "The accosiated ns vendor",
-                              "type": "string"
-                            },
-                            "ns_version": {
-                              "description": "The accosiated ns version",
-                              "type": "string"
-                            },
-                            "guaranteeTerms": {
-                              "type": "array",
-                              "items": {
-                                "type": "object",
-                                "properties": {
-                                  "guaranteeID": {
-                                    "description": "The id of the selected guarantee term",
-                                    "type": "string"
-                                  },
-                                  "guarantee_name": {
-                                    "description": "The name of the selected guarantee term",
-                                    "type": "string"
-                                  },
-                                  "guarantee_definition": {
-                                    "description": "A short definition of the selected guarantee term",
-                                    "type": "string"
-                                  },
-                                  "guarantee_threshold": {
-                                    "description": "The value of the selected guarantee term",
-                                    "type": "string"
-                                  },
-                                  "guarantee_operator": {
-                                    "description": "The operator describing the expression of the selected guarantee term",
-                                    "type": "string"
-                                  },
-                                  "guarantee_unit": {
-                                    "description": "The unit describing the selected guarantee term",
-                                    "type": "string"
-                                  },
-                                  "guarantee_period": {
-                                    "description": "The period that the guarantee term will be calculated",
-                                    "type": "string"
-                                  },
-                                  "guarantee_service_level": {
-                                    "description": "The corresponding service level",
-                                    "type": "string"
-                                  },
-                                  "target_slo": {
-                                    "type": "array",
-                                    "items": {
-                                      "type": "object",
-                                      "properties": {
-                                        "target_kpi": {
-                                          "description": "The target slo that is going to be monitored",
-                                          "type": "string"
-                                        },
-                                        "target_value": {
-                                          "description": "The monitoring target_value of the guarantee",
-                                          "type": "string"
-                                        },
-                                        "target_operator": {
-                                          "description": "The operator describing the realtion between the target slo and thne guaranteed threshold",
-                                          "type": "string"
-                                        },
-                                        "target_duration": {
-                                          "description": "The monitoring duration of the targeted slo",
-                                          "type": "string"
-                                        },
-                                        "target_period": {
-                                          "description": "The period that the target slo will be calculated",
-                                          "type": "string"
-                                        },
-                                        "target_service_level": {
-                                          "description": "The full expression of the guaranteed slo",
-                                          "type": "string"
-                                        }
-                                      }
+                        "status":{
+                           "description":"The creation status - Success",
+                           "type":"string"
+                        }
+                     }
+                  }
+               },
+               "400":{
+                  "description":"Bad request: HTTP bad request"
+               },
+               "404":{
+                  "description":"Not Found: NS not found."
+               },
+               "500":{
+                  "description":"Internal Server Error."
+               }
+            },
+            "operationId":"create_template",
+            "parameters":[
+               {
+                  "name":"nsd_uuid",
+                  "in":"formData",
+                  "required":true,
+                  "type":"string",
+                  "description":"Network Service UUID"
+               },
+               {
+                  "name":"templateName",
+                  "in":"formData",
+                  "required":true,
+                  "type":"string",
+                  "description":"Name of the SLA template"
+               },
+               {
+                  "name":"expireDate",
+                  "in":"formData",
+                  "required":true,
+                  "type":"string",
+                  "description":"Expire date of the SLA"
+               },
+               {
+                  "name":"guaranteeID",
+                  "in":"formData",
+                  "required":true,
+                  "type":"string",
+                  "description":"The ID of the SLO"
+               },
+               {
+                  "name":"service_licence_type",
+                  "in":"formData",
+                  "required":true,
+                  "type":"string",
+                  "description":"The type of the license"
+               },
+               {
+                  "name":"allowed_service_instances",
+                  "in":"formData",
+                  "required":true,
+                  "type":"string",
+                  "description":"allowed_service_instances number"
+               },
+               {
+                  "name":"service_licence_expiration_date",
+                  "in":"formData",
+                  "required":true,
+                  "type":"string",
+                  "description":"The license expiration date"
+               },
+               {
+                  "name":"provider_name",
+                  "in":"formData",
+                  "required":false,
+                  "type":"string",
+                  "description":"The provider name of the SLA. e.g. Telefonica"
+               },
+               {
+                  "name":"dflavour_name",
+                  "in":"formData",
+                  "required":false,
+                  "type":"string",
+                  "description":"The selected deployment flavour of the corresponding NS"
+               }
+            ],
+            "consumes":[
+               "multipart/form-data"
+            ],
+            "tags":[
+               "SLA-Templates-v2"
+            ]
+         },
+         "get":{
+            "responses":{
+               "200":{
+                  "description":"Success",
+                  "headers":{
+                     "Content-Type":{
+                        "description":"The MIME type of the body of the response (\"application/json\").",
+                        "type":"string",
+                        "maximum":1,
+                        "minimum":1
+                     }
+                  },
+                  "schema":{
+                     "type":"array",
+                     "items":{
+                        "type":"object",
+                        "properties":{
+                           "descriptor_schema":{
+                              "description":"The descriptor schema the template follows",
+                              "type":"string"
+                           },
+                           "name":{
+                              "description":"The name of the sla template",
+                              "type":"string"
+                           },
+                           "vendor":{
+                              "description":"The vendor of the sla template",
+                              "type":"string"
+                           },
+                           "version":{
+                              "description":"The version of the sla template",
+                              "type":"string"
+                           },
+                           "author":{
+                              "description":"The author/s of the sla template",
+                              "type":"string"
+                           },
+                           "description":{
+                              "description":"A simple description of the sla template",
+                              "type":"string"
+                           },
+                           "sla_template":{
+                              "type":"object",
+                              "properties":{
+                                 "template_name":{
+                                    "description":"The user defined sla template name",
+                                    "type":"string"
+                                 },
+                                 "offer_date":{
+                                    "description":"The sla template offered date",
+                                    "type":"string"
+                                 },
+                                 "expiration_date":{
+                                    "description":"The sla template expiration date",
+                                    "type":"string"
+                                 },
+                                 "provider_name":{
+                                    "description":"The network provider that requested the creation of the template. e.g. Telefonica.",
+                                    "type":"string"
+                                 },
+                                 "template_initiator":{
+                                    "description":"The user who created the sla template",
+                                    "type":"string"
+                                 },
+                                 "service":{
+                                    "type":"object",
+                                    "properties":{
+                                       "ns_uuid":{
+                                          "description":"The accosiated ns uuid",
+                                          "type":"string"
+                                       },
+                                       "ns_name":{
+                                          "description":"The accosiated ns vendor",
+                                          "type":"string"
+                                       },
+                                       "ns_vendor":{
+                                          "description":"The accosiated ns vendor",
+                                          "type":"string"
+                                       },
+                                       "ns_version":{
+                                          "description":"The accosiated ns version",
+                                          "type":"string"
+                                       },
+                                       "guaranteeTerms":{
+                                          "type":"array",
+                                          "items":{
+                                             "type":"object",
+                                             "properties":{
+                                                "guaranteeID":{
+                                                   "description":"The id of the selected guarantee term",
+                                                   "type":"string"
+                                                },
+                                                "guarantee_name":{
+                                                   "description":"The name of the selected guarantee term",
+                                                   "type":"string"
+                                                },
+                                                "guarantee_definition":{
+                                                   "description":"A short definition of the selected guarantee term",
+                                                   "type":"string"
+                                                },
+                                                "guarantee_threshold":{
+                                                   "description":"The value of the selected guarantee term",
+                                                   "type":"string"
+                                                },
+                                                "guarantee_operator":{
+                                                   "description":"The operator describing the expression of the selected guarantee term",
+                                                   "type":"string"
+                                                },
+                                                "guarantee_unit":{
+                                                   "description":"The unit describing the selected guarantee term",
+                                                   "type":"string"
+                                                },
+                                                "guarantee_period":{
+                                                   "description":"The period that the guarantee term will be calculated",
+                                                   "type":"string"
+                                                },
+                                                "guarantee_service_level":{
+                                                   "description":"The corresponding service level",
+                                                   "type":"string"
+                                                },
+                                                "target_slo":{
+                                                   "type":"array",
+                                                   "items":{
+                                                      "type":"object",
+                                                      "properties":{
+                                                         "target_kpi":{
+                                                            "description":"The target slo that is going to be monitored",
+                                                            "type":"string"
+                                                         },
+                                                         "target_value":{
+                                                            "description":"The monitoring target_value of the guarantee",
+                                                            "type":"string"
+                                                         },
+                                                         "target_operator":{
+                                                            "description":"The operator describing the realtion between the target slo and thne guaranteed threshold",
+                                                            "type":"string"
+                                                         },
+                                                         "target_duration":{
+                                                            "description":"The monitoring duration of the targeted slo",
+                                                            "type":"string"
+                                                         },
+                                                         "target_period":{
+                                                            "description":"The period that the target slo will be calculated",
+                                                            "type":"string"
+                                                         },
+                                                         "target_service_level":{
+                                                            "description":"The full expression of the guaranteed slo",
+                                                            "type":"string"
+                                                         }
+                                                      }
+                                                   }
+                                                }
+                                             }
+                                          }
+                                       }
                                     }
-                                  }
-                                }
+                                 },
+                                 "licences":{
+                                    "type":"object",
+                                    "properties":{
+                                       "service_based":{
+                                          "type":"object",
+                                          "properties":{
+                                             "service_licence_type":{
+                                                "description":"The type of the license for the NS - Public|Trial|Private",
+                                                "type":"string"
+                                             },
+                                             "service_licence_instances":{
+                                                "description":"The allowed NS instances the the license can provide",
+                                                "type":"string"
+                                             },
+                                             "service_licence_expiration_date":{
+                                                "description":"The expiration date of the license",
+                                                "type":"string"
+                                             }
+                                          }
+                                       }
+                                    }
+                                 }
                               }
-                            },
-                            "licences": {
-                              "type": "object",
-                              "properties": {
-                                "service_based": {
-                                  "type": "object",
-                                  "properties": {
-                                    "service_licence_type": {
-                                      "description": "The type of the license for the NS - Public|Trial|Private",
-                                      "type": "string"
+                           }
+                        }
+                     }
+                  }
+               },
+               "400":{
+                  "description":"Bad request: HTTP bad request"
+               },
+               "500":{
+                  "description":"Internal Server Error."
+               }
+            },
+            "operationId":"get_all_sla_templates",
+            "tags":[
+               "SLA-Templates-v2"
+            ]
+         }
+      },
+      "/templates/{sla_uuid}":{
+         "parameters":[
+            {
+               "name":"sla_uuid",
+               "in":"path",
+               "type":"string",
+               "required":true,
+               "description":"SLA uuid"
+            }
+         ],
+         "delete":{
+            "responses":{
+               "200":{
+                  "description":"Success: SLA {sla_uuid} deleted!"
+               },
+               "404":{
+                  "description":"ERROR: sla_uuid Not Found"
+               }
+            },
+            "operationId":"delete_sla_template",
+            "tags":[
+               "SLA-Templates-v2"
+            ]
+         },
+         "get":{
+            "responses":{
+               "200":{
+                  "description":"Success",
+                  "headers":{
+                     "Content-Type":{
+                        "description":"The MIME type of the body of the response (\"application/json\").",
+                        "type":"string",
+                        "maximum":1,
+                        "minimum":1
+                     }
+                  },
+                  "schema":{
+                     "type":"array",
+                     "items":{
+                        "type":"object",
+                        "properties":{
+                           "descriptor_schema":{
+                              "description":"The descriptor schema the template follows",
+                              "type":"string"
+                           },
+                           "name":{
+                              "description":"The name of the sla template",
+                              "type":"string"
+                           },
+                           "vendor":{
+                              "description":"The vendor of the sla template",
+                              "type":"string"
+                           },
+                           "version":{
+                              "description":"The version of the sla template",
+                              "type":"string"
+                           },
+                           "author":{
+                              "description":"The author/s of the sla template",
+                              "type":"string"
+                           },
+                           "description":{
+                              "description":"A simple description of the sla template",
+                              "type":"string"
+                           },
+                           "sla_template":{
+                              "type":"object",
+                              "properties":{
+                                 "template_name":{
+                                    "description":"The user defined sla template name",
+                                    "type":"string"
+                                 },
+                                 "offer_date":{
+                                    "description":"The sla template offered date",
+                                    "type":"string"
+                                 },
+                                 "expiration_date":{
+                                    "description":"The sla template expiration date",
+                                    "type":"string"
+                                 },
+                                 "provider_name":{
+                                    "description":"The network provider that requested the creation of the template. e.g. Telefonica.",
+                                    "type":"string"
+                                 },
+                                 "template_initiator":{
+                                    "description":"The user who created the sla template",
+                                    "type":"string"
+                                 },
+                                 "service":{
+                                    "type":"object",
+                                    "properties":{
+                                       "ns_uuid":{
+                                          "description":"The accosiated ns uuid",
+                                          "type":"string"
+                                       },
+                                       "ns_name":{
+                                          "description":"The accosiated ns vendor",
+                                          "type":"string"
+                                       },
+                                       "ns_vendor":{
+                                          "description":"The accosiated ns vendor",
+                                          "type":"string"
+                                       },
+                                       "ns_version":{
+                                          "description":"The accosiated ns version",
+                                          "type":"string"
+                                       },
+                                       "guaranteeTerms":{
+                                          "type":"array",
+                                          "items":{
+                                             "type":"object",
+                                             "properties":{
+                                                "guaranteeID":{
+                                                   "description":"The id of the selected guarantee term",
+                                                   "type":"string"
+                                                },
+                                                "guarantee_name":{
+                                                   "description":"The name of the selected guarantee term",
+                                                   "type":"string"
+                                                },
+                                                "guarantee_definition":{
+                                                   "description":"A short definition of the selected guarantee term",
+                                                   "type":"string"
+                                                },
+                                                "guarantee_threshold":{
+                                                   "description":"The value of the selected guarantee term",
+                                                   "type":"string"
+                                                },
+                                                "guarantee_operator":{
+                                                   "description":"The operator describing the expression of the selected guarantee term",
+                                                   "type":"string"
+                                                },
+                                                "guarantee_unit":{
+                                                   "description":"The unit describing the selected guarantee term",
+                                                   "type":"string"
+                                                },
+                                                "guarantee_period":{
+                                                   "description":"The period that the guarantee term will be calculated",
+                                                   "type":"string"
+                                                },
+                                                "guarantee_service_level":{
+                                                   "description":"The corresponding service level",
+                                                   "type":"string"
+                                                },
+                                                "target_slo":{
+                                                   "type":"array",
+                                                   "items":{
+                                                      "type":"object",
+                                                      "properties":{
+                                                         "target_kpi":{
+                                                            "description":"The target slo that is going to be monitored",
+                                                            "type":"string"
+                                                         },
+                                                         "target_value":{
+                                                            "description":"The monitoring target_value of the guarantee",
+                                                            "type":"string"
+                                                         },
+                                                         "target_operator":{
+                                                            "description":"The operator describing the realtion between the target slo and thne guaranteed threshold",
+                                                            "type":"string"
+                                                         },
+                                                         "target_duration":{
+                                                            "description":"The monitoring duration of the targeted slo",
+                                                            "type":"string"
+                                                         },
+                                                         "target_period":{
+                                                            "description":"The period that the target slo will be calculated",
+                                                            "type":"string"
+                                                         },
+                                                         "target_service_level":{
+                                                            "description":"The full expression of the guaranteed slo",
+                                                            "type":"string"
+                                                         }
+                                                      }
+                                                   }
+                                                }
+                                             }
+                                          }
+                                       },
+                                       "licences":{
+                                          "type":"object",
+                                          "properties":{
+                                             "service_based":{
+                                                "type":"object",
+                                                "properties":{
+                                                   "service_licence_type":{
+                                                      "description":"The type of the license for the NS - Public|Trial|Private",
+                                                      "type":"string"
+                                                   },
+                                                   "service_licence_instances":{
+                                                      "description":"The allowed NS instances the the license can provide",
+                                                      "type":"string"
+                                                   },
+                                                   "service_licence_expiration_date":{
+                                                      "description":"The expiration date of the license",
+                                                      "type":"string"
+                                                   }
+                                                }
+                                             }
+                                          }
+                                       }
+                                    }
+                                 }
+                              }
+                           }
+                        }
+                     }
+                  }
+               },
+               "404":{
+                  "description":"ERROR: SLA Not Found"
+               }
+            },
+            "operationId":"get_sla_by_uuid",
+            "tags":[
+               "SLA-Templates-v2"
+            ]
+         }
+      },
+      "/agreements":{
+         "get":{
+            "responses":{
+               "200":{
+                  "description":"Success",
+                  "headers":{
+                     "Content-Type":{
+                        "description":"The MIME type of the body of the response (\"application/json\").",
+                        "type":"string",
+                        "maximum":1,
+                        "minimum":1
+                     }
+                  },
+                  "schema":{
+                     "type":"array",
+                     "items":{
+                        "type":"object",
+                        "properties":{
+                           "ns_uuid":{
+                              "description":"The uuid of the accosiated NS",
+                              "type":"string"
+                           },
+                           "ns_name":{
+                              "description":"The name of the  accosiated NS",
+                              "type":"string"
+                           },
+                           "sla_uuid":{
+                              "description":"The uuid of the accosiated NS",
+                              "type":"string"
+                           },
+                           "sla_name":{
+                              "description":"The name of the accosiated NS",
+                              "type":"string"
+                           },
+                           "sla_date":{
+                              "description":"The date when the agreement was created",
+                              "type":"string"
+                           },
+                           "sla_status":{
+                              "description":"The status of the agreement.",
+                              "type":"string"
+                           },
+                           "cust_username":{
+                              "description":"The cust_username of the customer who signed the aqgreement",
+                              "type":"string"
+                           },
+                           "cust_email":{
+                              "description":"The email of the customer who signed the aqgreement",
+                              "type":"string"
+                           },
+                           "inst_status":{
+                              "description":"The status of the agreement (pending, ready, terminated)",
+                              "type":"string"
+                           },
+                           "correlation_id":{
+                              "description":"The correlation_id that reference to the nsi record",
+                              "type":"string"
+                           },
+                           "nsi_uuid":{
+                              "description":"The NS Instance uuid that is accosiated to.",
+                              "type":"string"
+                           }
+                        }
+                     }
+                  }
+               },
+               "400":{
+                  "description":"Bad request: HTTP bad request"
+               }
+            },
+            "operationId":"all-active-agreements",
+            "tags":[
+               "SLA-Agreements-v2"
+            ]
+         }
+      },
+      "/agreements/all":{
+         "get":{
+            "responses":{
+               "200":{
+                  "description":"Success",
+                  "headers":{
+                     "Content-Type":{
+                        "description":"The MIME type of the body of the response (\"application/json\").",
+                        "type":"string",
+                        "maximum":1,
+                        "minimum":1
+                     }
+                  },
+                  "schema":{
+                     "type":"array",
+                     "items":{
+                        "type":"object",
+                        "properties":{
+                           "ns_uuid":{
+                              "description":"The uuid of the accosiated NS",
+                              "type":"string"
+                           },
+                           "ns_name":{
+                              "description":"The name of the  accosiated NS",
+                              "type":"string"
+                           },
+                           "sla_uuid":{
+                              "description":"The uuid of the accosiated NS",
+                              "type":"string"
+                           },
+                           "sla_name":{
+                              "description":"The name of the accosiated NS",
+                              "type":"string"
+                           },
+                           "sla_date":{
+                              "description":"The date when the agreement was created",
+                              "type":"string"
+                           },
+                           "sla_status":{
+                              "description":"The status of the agreement.",
+                              "type":"string"
+                           },
+                           "cust_username":{
+                              "description":"The cust_username of the customer who signed the aqgreement",
+                              "type":"string"
+                           },
+                           "cust_email":{
+                              "description":"The email of the customer who signed the aqgreement",
+                              "type":"string"
+                           },
+                           "inst_status":{
+                              "description":"The status of the agreement (pending, ready, terminated)",
+                              "type":"string"
+                           },
+                           "correlation_id":{
+                              "description":"The correlation_id that reference to the nsi record",
+                              "type":"string"
+                           },
+                           "nsi_uuid":{
+                              "description":"The NS Instance uuid that is accosiated to.",
+                              "type":"string"
+                           }
+                        }
+                     }
+                  }
+               },
+               "400":{
+                  "description":"Bad request: HTTP bad request"
+               }
+            },
+            "operationId":"all-agreements",
+            "tags":[
+               "SLA-Agreements-v2"
+            ]
+         }
+      },
+      "/agreements/{sla_uuid}/{nsi_uuid}":{
+         "parameters":[
+            {
+               "name":"sla_uuid",
+               "in":"path",
+               "required":true,
+               "type":"string",
+               "description":"The ID of the SLA"
+            },
+            {
+               "name":"nsi_uuid",
+               "in":"path",
+               "required":true,
+               "type":"string",
+               "description":"The ID of the corresponding NS - the instantiated NS"
+            }
+         ],
+         "get":{
+            "responses":{
+               "200":{
+                  "description":"Success",
+                  "headers":{
+                     "Content-Type":{
+                        "description":"The MIME type of the body of the response (\"application/json\").",
+                        "type":"string",
+                        "maximum":1,
+                        "minimum":1
+                     }
+                  },
+                  "schema":{
+                     "type":"array",
+                     "items":{
+                        "type":"object",
+                        "properties":{
+                           "descriptor_schema":{
+                              "description":"The descriptor schema the template follows",
+                              "type":"string"
+                           },
+                           "name":{
+                              "description":"The name of the sla template",
+                              "type":"string"
+                           },
+                           "vendor":{
+                              "description":"The vendor of the sla template",
+                              "type":"string"
+                           },
+                           "version":{
+                              "description":"The version of the sla template",
+                              "type":"string"
+                           },
+                           "author":{
+                              "description":"The author/s of the sla template",
+                              "type":"string"
+                           },
+                           "description":{
+                              "description":"A simple description of the sla template",
+                              "type":"string"
+                           },
+                           "sla_template":{
+                              "type":"object",
+                              "properties":{
+                                 "template_name":{
+                                    "description":"The user defined sla template name",
+                                    "type":"string"
+                                 },
+                                 "offer_date":{
+                                    "description":"The sla template offered date",
+                                    "type":"string"
+                                 },
+                                 "expiration_date":{
+                                    "description":"The sla template expiration date",
+                                    "type":"string"
+                                 },
+                                 "provider_name":{
+                                    "description":"The network provider that requested the creation of the template. e.g. Telefonica.",
+                                    "type":"string"
+                                 },
+                                 "template_initiator":{
+                                    "description":"The user who created the sla template",
+                                    "type":"string"
+                                 },
+                                 "service":{
+                                    "type":"object",
+                                    "properties":{
+                                       "ns_uuid":{
+                                          "description":"The accosiated ns uuid",
+                                          "type":"string"
+                                       },
+                                       "ns_name":{
+                                          "description":"The accosiated ns vendor",
+                                          "type":"string"
+                                       },
+                                       "ns_vendor":{
+                                          "description":"The accosiated ns vendor",
+                                          "type":"string"
+                                       },
+                                       "ns_version":{
+                                          "description":"The accosiated ns version",
+                                          "type":"string"
+                                       },
+                                       "guaranteeTerms":{
+                                          "type":"array",
+                                          "items":{
+                                             "type":"object",
+                                             "properties":{
+                                                "guaranteeID":{
+                                                   "description":"The id of the selected guarantee term",
+                                                   "type":"string"
+                                                },
+                                                "guarantee_name":{
+                                                   "description":"The name of the selected guarantee term",
+                                                   "type":"string"
+                                                },
+                                                "guarantee_definition":{
+                                                   "description":"A short definition of the selected guarantee term",
+                                                   "type":"string"
+                                                },
+                                                "guarantee_threshold":{
+                                                   "description":"The value of the selected guarantee term",
+                                                   "type":"string"
+                                                },
+                                                "guarantee_operator":{
+                                                   "description":"The operator describing the expression of the selected guarantee term",
+                                                   "type":"string"
+                                                },
+                                                "guarantee_unit":{
+                                                   "description":"The unit describing the selected guarantee term",
+                                                   "type":"string"
+                                                },
+                                                "guarantee_period":{
+                                                   "description":"The period that the guarantee term will be calculated",
+                                                   "type":"string"
+                                                },
+                                                "guarantee_service_level":{
+                                                   "description":"The corresponding service level",
+                                                   "type":"string"
+                                                },
+                                                "target_slo":{
+                                                   "type":"array",
+                                                   "items":{
+                                                      "type":"object",
+                                                      "properties":{
+                                                         "target_kpi":{
+                                                            "description":"The target slo that is going to be monitored",
+                                                            "type":"string"
+                                                         },
+                                                         "target_value":{
+                                                            "description":"The monitoring target_value of the guarantee",
+                                                            "type":"string"
+                                                         },
+                                                         "target_operator":{
+                                                            "description":"The operator describing the realtion between the target slo and thne guaranteed threshold",
+                                                            "type":"string"
+                                                         },
+                                                         "target_duration":{
+                                                            "description":"The monitoring duration of the targeted slo",
+                                                            "type":"string"
+                                                         },
+                                                         "target_period":{
+                                                            "description":"The period that the target slo will be calculated",
+                                                            "type":"string"
+                                                         },
+                                                         "target_service_level":{
+                                                            "description":"The full expression of the guaranteed slo",
+                                                            "type":"string"
+                                                         }
+                                                      }
+                                                   }
+                                                }
+                                             }
+                                          }
+                                       },
+                                       "licences":{
+                                          "type":"object",
+                                          "properties":{
+                                             "service_based":{
+                                                "type":"object",
+                                                "properties":{
+                                                   "service_licence_type":{
+                                                      "description":"The type of the license for the NS - Public|Trial|Private",
+                                                      "type":"string"
+                                                   },
+                                                   "service_licence_instances":{
+                                                      "description":"The allowed NS instances the the license can provide",
+                                                      "type":"string"
+                                                   },
+                                                   "service_licence_expiration_date":{
+                                                      "description":"The expiration date of the license",
+                                                      "type":"string"
+                                                   }
+                                                }
+                                             }
+                                          }
+                                       }
+                                    }
+                                 }
+                              }
+                           }
+                        }
+                     }
+                  }
+               },
+               "404":{
+                  "description":"ERROR: SLA not found"
+               }
+            },
+            "operationId":"get_agreement",
+            "tags":[
+               "SLA-Agreements-v2"
+            ]
+         }
+      },
+      "/agreements/service/{nsi_uuid}":{
+         "parameters":[
+            {
+               "name":"nsi_uuid",
+               "in":"path",
+               "type":"string",
+               "description":"NSI uuid",
+               "required":true
+            }
+         ],
+         "get":{
+            "responses":{
+               "200":{
+                  "description":"Success",
+                  "headers":{
+                     "Content-Type":{
+                        "description":"The MIME type of the body of the response (\"application/json\").",
+                        "type":"string",
+                        "maximum":1,
+                        "minimum":1
+                     }
+                  },
+                  "schema":{
+                     "type":"object",
+                     "properties":{
+                        "cust_sla":{
+                           "type":"array",
+                           "items":{
+                              "type":"object",
+                              "properties":{
+                                 "ns_uuid":{
+                                    "description":"The ns_uuid",
+                                    "type":"string"
+                                 },
+                                 "sla_uuid":{
+                                    "description":"The sla_uuid",
+                                    "type":"string"
+                                 },
+                                 "cust_uuid":{
+                                    "description":"The sla_uuid",
+                                    "type":"string"
+                                 }
+                              }
+                           }
+                        }
+                     }
+                  }
+               },
+               "404":{
+                  "description":"NOT Found: NS not found"
+               }
+            },
+            "operationId":"agreements_per_InsNs",
+            "tags":[
+               "SLA-Agreements-v2"
+            ]
+         }
+      },
+      "/agreements/guarantee-terms/{sla_uuid}":{
+         "parameters":[
+            {
+               "name":"sla_uuid",
+               "in":"path",
+               "type":"string",
+               "description":"SLA uuid",
+               "required":true
+            }
+         ],
+         "get":{
+            "responses":{
+               "200":{
+                  "description":"Success",
+                  "headers":{
+                     "Content-Type":{
+                        "description":"The MIME type of the body of the response (\"application/json\").",
+                        "type":"string",
+                        "maximum":1,
+                        "minimum":1
+                     }
+                  },
+                  "schema":{
+                     "type":"array",
+                     "items":{
+                        "type":"object",
+                        "properties":{
+                           "guaranteeID":{
+                              "description":"The id of the selected guarantee term",
+                              "type":"string"
+                           },
+                           "guarantee_name":{
+                              "description":"The name of the selected guarantee term",
+                              "type":"string"
+                           },
+                           "guarantee_definition":{
+                              "description":"A short definition of the selected guarantee term",
+                              "type":"string"
+                           },
+                           "guarantee_threshold":{
+                              "description":"The value of the selected guarantee term",
+                              "type":"string"
+                           },
+                           "guarantee_operator":{
+                              "description":"The operator describing the expression of the selected guarantee term",
+                              "type":"string"
+                           },
+                           "guarantee_unit":{
+                              "description":"The unit describing the selected guarantee term",
+                              "type":"string"
+                           },
+                           "guarantee_period":{
+                              "description":"The period that the guarantee term will be calculated",
+                              "type":"string"
+                           },
+                           "guarantee_service_level":{
+                              "description":"The corresponding service level",
+                              "type":"string"
+                           },
+                           "target_slo":{
+                              "type":"array",
+                              "items":{
+                                 "type":"object",
+                                 "properties":{
+                                    "target_kpi":{
+                                       "description":"The target slo that is going to be monitored",
+                                       "type":"string"
                                     },
-                                    "service_licence_instances": {
-                                      "description": "The allowed NS instances the the license can provide",
-                                      "type": "string"
+                                    "target_value":{
+                                       "description":"The monitoring target_value of the guarantee",
+                                       "type":"string"
                                     },
-                                    "service_licence_expiration_date": {
-                                      "description": "The expiration date of the license",
-                                      "type": "string"
+                                    "target_operator":{
+                                       "description":"The operator describing the realtion between the target slo and thne guaranteed threshold",
+                                       "type":"string"
+                                    },
+                                    "target_duration":{
+                                       "description":"The monitoring duration of the targeted slo",
+                                       "type":"string"
+                                    },
+                                    "target_period":{
+                                       "description":"The period that the target slo will be calculated",
+                                       "type":"string"
+                                    },
+                                    "target_service_level":{
+                                       "description":"The full expression of the guaranteed slo",
+                                       "type":"string"
                                     }
-                                  }
-                                }
+                                 }
                               }
-                            }
-                          }
+                           }
                         }
-                      }
-                    }
+                     }
                   }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad request: HTTP bad request"
-          },
-          "500": {
-            "description": "Internal Server Error."
-          }
-        },
-        "operationId": "get_all_sla_templates",
-        "tags": [
-          "SLA-Templates-v2"
-        ]
-      }
-    },
-    "/templates/{sla_uuid}": {
-      "parameters": [
-        {
-          "name": "sla_uuid",
-          "in": "path",
-          "type": "string",
-          "required": true,
-          "description": "SLA uuid"
-        }
-      ],
-      "delete": {
-        "responses": {
-          "200": {
-            "description": "Success: SLA {sla_uuid} deleted!"
-          },
-          "404": {
-            "description": "ERROR: sla_uuid Not Found"
-          }
-        },
-        "operationId": "delete_sla_template",
-        "tags": [
-          "SLA-Templates-v2"
-        ]
+               },
+               "404":{
+                  "description":"ERROR: Not Found!"
+               }
+            },
+            "operationId":"guarantees_per_sla",
+            "tags":[
+               "SLA-Agreements-v2"
+            ]
+         }
       },
-      "get": {
-        "responses": {
-          "200": {
-            "description": "Success",
-            "headers": {
-              "Content-Type": {
-                "description": "The MIME type of the body of the response (\"application/json\").",
-                "type": "string",
-                "maximum": 1,
-                "minimum": 1
-              }
+      "/agreements/{nsi_uuid}":{
+         "parameters":[
+            {
+               "name":"nsi_uuid",
+               "in":"path",
+               "type":"string",
+               "required":true,
+               "description":"Network Service Instance uuid"
+            }
+         ],
+         "delete":{
+            "responses":{
+               "200":{
+                  "description":"Success: Agreement was deleted successfully."
+               },
+               "400":{
+                  "description":"ERROR: Agreement cannot be deleted because it's active."
+               },
+               "404":{
+                  "description":"ERROR: Agreement cannot be deleted."
+               }
             },
-            "schema": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "descriptor_schema": {
-                    "description": "The descriptor schema the template follows",
-                    "type": "string"
-                  },
-                  "name": {
-                    "description": "The name of the sla template",
-                    "type": "string"
-                  },
-                  "vendor": {
-                    "description": "The vendor of the sla template",
-                    "type": "string"
-                  },
-                  "version": {
-                    "description": "The version of the sla template",
-                    "type": "string"
-                  },
-                  "author": {
-                    "description": "The author/s of the sla template",
-                    "type": "string"
-                  },
-                  "description": {
-                    "description": "A simple description of the sla template",
-                    "type": "string"
-                  },
-                  "sla_template": {
-                    "type": "object",
-                    "properties": {
-                      "template_name": {
-                        "description": "The user defined sla template name",
-                        "type": "string"
-                      },
-                      "offer_date": {
-                        "description": "The sla template offered date",
-                        "type": "string"
-                      },
-                      "expiration_date": {
-                        "description": "The sla template expiration date",
-                        "type": "string"
-                      },
-                      "provider_name": {
-                        "description": "The network provider that requested the creation of the template. e.g. Telefonica.",
-                        "type": "string"
-                      },
-                      "template_initiator": {
-                        "description": "The user who created the sla template",
-                        "type": "string"
-                      },
-                      "service": {
-                        "type": "object",
-                        "properties": {
-                          "ns_uuid": {
-                            "description": "The accosiated ns uuid",
-                            "type": "string"
-                          },
-                          "ns_name": {
-                            "description": "The accosiated ns vendor",
-                            "type": "string"
-                          },
-                          "ns_vendor": {
-                            "description": "The accosiated ns vendor",
-                            "type": "string"
-                          },
-                          "ns_version": {
-                            "description": "The accosiated ns version",
-                            "type": "string"
-                          },
-                          "guaranteeTerms": {
-                            "type": "array",
-                            "items": {
-                              "type": "object",
-                              "properties": {
-                                "guaranteeID": {
-                                  "description": "The id of the selected guarantee term",
-                                  "type": "string"
-                                },
-                                "guarantee_name": {
-                                  "description": "The name of the selected guarantee term",
-                                  "type": "string"
-                                },
-                                "guarantee_definition": {
-                                  "description": "A short definition of the selected guarantee term",
-                                  "type": "string"
-                                },
-                                "guarantee_threshold": {
-                                  "description": "The value of the selected guarantee term",
-                                  "type": "string"
-                                },
-                                "guarantee_operator": {
-                                  "description": "The operator describing the expression of the selected guarantee term",
-                                  "type": "string"
-                                },
-                                "guarantee_unit": {
-                                  "description": "The unit describing the selected guarantee term",
-                                  "type": "string"
-                                },
-                                "guarantee_period": {
-                                  "description": "The period that the guarantee term will be calculated",
-                                  "type": "string"
-                                },
-                                "guarantee_service_level": {
-                                  "description": "The corresponding service level",
-                                  "type": "string"
-                                },
-                                "target_slo": {
-                                  "type": "array",
-                                  "items": {
-                                    "type": "object",
-                                    "properties": {
-                                      "target_kpi": {
-                                        "description": "The target slo that is going to be monitored",
-                                        "type": "string"
-                                      },
-                                      "target_value": {
-                                        "description": "The monitoring target_value of the guarantee",
-                                        "type": "string"
-                                      },
-                                      "target_operator": {
-                                        "description": "The operator describing the realtion between the target slo and thne guaranteed threshold",
-                                        "type": "string"
-                                      },
-                                      "target_duration": {
-                                        "description": "The monitoring duration of the targeted slo",
-                                        "type": "string"
-                                      },
-                                      "target_period": {
-                                        "description": "The period that the target slo will be calculated",
-                                        "type": "string"
-                                      },
-                                      "target_service_level": {
-                                        "description": "The full expression of the guaranteed slo",
-                                        "type": "string"
-                                      }
-                                    }
-                                  }
-                                }
-                              }
-                            }
-                          },
-                          "licences": {
-                            "type": "object",
-                            "properties": {
-                              "service_based": {
-                                "type": "object",
-                                "properties": {
-                                  "service_licence_type": {
-                                    "description": "The type of the license for the NS - Public|Trial|Private",
-                                    "type": "string"
-                                  },
-                                  "service_licence_instances": {
-                                    "description": "The allowed NS instances the the license can provide",
-                                    "type": "string"
-                                  },
-                                  "service_licence_expiration_date": {
-                                    "description": "The expiration date of the license",
-                                    "type": "string"
-                                  }
-                                }
-                              }
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "ERROR: SLA Not Found"
-          }
-        },
-        "operationId": "get_sla_by_uuid",
-        "tags": [
-          "SLA-Templates-v2"
-        ]
-      }
-    },
-    "/agreements": {
-      "get": {
-        "responses": {
-          "200": {
-            "description": "Success",
-            "headers": {
-              "Content-Type": {
-                "description": "The MIME type of the body of the response (\"application/json\").",
-                "type": "string",
-                "maximum": 1,
-                "minimum": 1
-              }
-            },
-            "schema": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "ns_uuid": {
-                    "description": "The uuid of the accosiated NS",
-                    "type": "string"
-                  },
-                  "ns_name": {
-                    "description": "The name of the  accosiated NS",
-                    "type": "string"
-                  },
-                  "sla_uuid": {
-                    "description": "The uuid of the accosiated NS",
-                    "type": "string"
-                  },
-                  "sla_name": {
-                    "description": "The name of the accosiated NS",
-                    "type": "string"
-                  },
-                  "sla_date": {
-                    "description": "The date when the agreement was created",
-                    "type": "string"
-                  },
-                  "sla_status": {
-                    "description": "The status of the agreement.",
-                    "type": "string"
-                  },
-                  "cust_username": {
-                    "description": "The cust_username of the customer who signed the aqgreement",
-                    "type": "string"
-                  },
-                  "cust_email": {
-                    "description": "The email of the customer who signed the aqgreement",
-                    "type": "string"
-                  },
-                  "inst_status": {
-                    "description": "The status of the agreement (pending, ready, terminated)",
-                    "type": "string"
-                  },
-                  "correlation_id": {
-                    "description": "The correlation_id that reference to the nsi record",
-                    "type": "string"
-                  },
-                  "nsi_uuid": {
-                    "description": "The NS Instance uuid that is accosiated to.",
-                    "type": "string"
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad request: HTTP bad request"
-          }
-        },
-        "operationId": "all-agreements",
-        "tags": [
-          "SLA-Agreements-v2"
-        ]
-      }
-    },
-    "/agreements/all": {
-      "get": {
-        "responses": {
-          "200": {
-            "description": "Success",
-            "headers": {
-              "Content-Type": {
-                "description": "The MIME type of the body of the response (\"application/json\").",
-                "type": "string",
-                "maximum": 1,
-                "minimum": 1
-              }
-            },
-            "schema": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "ns_uuid": {
-                    "description": "The uuid of the accosiated NS",
-                    "type": "string"
-                  },
-                  "ns_name": {
-                    "description": "The name of the  accosiated NS",
-                    "type": "string"
-                  },
-                  "sla_uuid": {
-                    "description": "The uuid of the accosiated NS",
-                    "type": "string"
-                  },
-                  "sla_name": {
-                    "description": "The name of the accosiated NS",
-                    "type": "string"
-                  },
-                  "sla_date": {
-                    "description": "The date when the agreement was created",
-                    "type": "string"
-                  },
-                  "sla_status": {
-                    "description": "The status of the agreement.",
-                    "type": "string"
-                  },
-                  "cust_username": {
-                    "description": "The cust_username of the customer who signed the aqgreement",
-                    "type": "string"
-                  },
-                  "cust_email": {
-                    "description": "The email of the customer who signed the aqgreement",
-                    "type": "string"
-                  },
-                  "inst_status": {
-                    "description": "The status of the agreement (pending, ready, terminated)",
-                    "type": "string"
-                  },
-                  "correlation_id": {
-                    "description": "The correlation_id that reference to the nsi record",
-                    "type": "string"
-                  },
-                  "nsi_uuid": {
-                    "description": "The NS Instance uuid that is accosiated to.",
-                    "type": "string"
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad request: HTTP bad request"
-          }
-        },
-        "operationId": "all-agreements",
-        "tags": [
-          "SLA-Agreements-v2"
-        ]
-      }
-    },
-    "/agreements/{sla_uuid}/{nsi_uuid}": {
-      "parameters": [
-        {
-          "name": "sla_uuid",
-          "in": "path",
-          "required": true,
-          "type": "string",
-          "description": "The ID of the SLA"
-        },
-        {
-          "name": "nsi_uuid",
-          "in": "path",
-          "required": true,
-          "type": "string",
-          "description": "The ID of the corresponding NS - the instantiated NS"
-        }
-      ],
-      "get": {
-        "responses": {
-          "200": {
-            "description": "Success",
-            "headers": {
-              "Content-Type": {
-                "description": "The MIME type of the body of the response (\"application/json\").",
-                "type": "string",
-                "maximum": 1,
-                "minimum": 1
-              }
-            },
-            "schema": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "descriptor_schema": {
-                    "description": "The descriptor schema the template follows",
-                    "type": "string"
-                  },
-                  "name": {
-                    "description": "The name of the sla template",
-                    "type": "string"
-                  },
-                  "vendor": {
-                    "description": "The vendor of the sla template",
-                    "type": "string"
-                  },
-                  "version": {
-                    "description": "The version of the sla template",
-                    "type": "string"
-                  },
-                  "author": {
-                    "description": "The author/s of the sla template",
-                    "type": "string"
-                  },
-                  "description": {
-                    "description": "A simple description of the sla template",
-                    "type": "string"
-                  },
-                  "sla_template": {
-                    "type": "object",
-                    "properties": {
-                      "template_name": {
-                        "description": "The user defined sla template name",
-                        "type": "string"
-                      },
-                      "offer_date": {
-                        "description": "The sla template offered date",
-                        "type": "string"
-                      },
-                      "expiration_date": {
-                        "description": "The sla template expiration date",
-                        "type": "string"
-                      },
-                      "provider_name": {
-                        "description": "The network provider that requested the creation of the template. e.g. Telefonica.",
-                        "type": "string"
-                      },
-                      "template_initiator": {
-                        "description": "The user who created the sla template",
-                        "type": "string"
-                      },
-                      "service": {
-                        "type": "object",
-                        "properties": {
-                          "ns_uuid": {
-                            "description": "The accosiated ns uuid",
-                            "type": "string"
-                          },
-                          "ns_name": {
-                            "description": "The accosiated ns vendor",
-                            "type": "string"
-                          },
-                          "ns_vendor": {
-                            "description": "The accosiated ns vendor",
-                            "type": "string"
-                          },
-                          "ns_version": {
-                            "description": "The accosiated ns version",
-                            "type": "string"
-                          },
-                          "guaranteeTerms": {
-                            "type": "array",
-                            "items": {
-                              "type": "object",
-                              "properties": {
-                                "guaranteeID": {
-                                  "description": "The id of the selected guarantee term",
-                                  "type": "string"
-                                },
-                                "guarantee_name": {
-                                  "description": "The name of the selected guarantee term",
-                                  "type": "string"
-                                },
-                                "guarantee_definition": {
-                                  "description": "A short definition of the selected guarantee term",
-                                  "type": "string"
-                                },
-                                "guarantee_threshold": {
-                                  "description": "The value of the selected guarantee term",
-                                  "type": "string"
-                                },
-                                "guarantee_operator": {
-                                  "description": "The operator describing the expression of the selected guarantee term",
-                                  "type": "string"
-                                },
-                                "guarantee_unit": {
-                                  "description": "The unit describing the selected guarantee term",
-                                  "type": "string"
-                                },
-                                "guarantee_period": {
-                                  "description": "The period that the guarantee term will be calculated",
-                                  "type": "string"
-                                },
-                                "guarantee_service_level": {
-                                  "description": "The corresponding service level",
-                                  "type": "string"
-                                },
-                                "target_slo": {
-                                  "type": "array",
-                                  "items": {
-                                    "type": "object",
-                                    "properties": {
-                                      "target_kpi": {
-                                        "description": "The target slo that is going to be monitored",
-                                        "type": "string"
-                                      },
-                                      "target_value": {
-                                        "description": "The monitoring target_value of the guarantee",
-                                        "type": "string"
-                                      },
-                                      "target_operator": {
-                                        "description": "The operator describing the realtion between the target slo and thne guaranteed threshold",
-                                        "type": "string"
-                                      },
-                                      "target_duration": {
-                                        "description": "The monitoring duration of the targeted slo",
-                                        "type": "string"
-                                      },
-                                      "target_period": {
-                                        "description": "The period that the target slo will be calculated",
-                                        "type": "string"
-                                      },
-                                      "target_service_level": {
-                                        "description": "The full expression of the guaranteed slo",
-                                        "type": "string"
-                                      }
-                                    }
-                                  }
-                                }
-                              }
-                            }
-                          },
-                          "licences": {
-                            "type": "object",
-                            "properties": {
-                              "service_based": {
-                                "type": "object",
-                                "properties": {
-                                  "service_licence_type": {
-                                    "description": "The type of the license for the NS - Public|Trial|Private",
-                                    "type": "string"
-                                  },
-                                  "service_licence_instances": {
-                                    "description": "The allowed NS instances the the license can provide",
-                                    "type": "string"
-                                  },
-                                  "service_licence_expiration_date": {
-                                    "description": "The expiration date of the license",
-                                    "type": "string"
-                                  }
-                                }
-                              }
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "ERROR: SLA not found"
-          }
-        },
-        "operationId": "get_agreement",
-        "tags": [
-          "SLA-Agreements-v2"
-        ]
-      }
-    },
-    "/agreements/service/{nsi_uuid}": {
-      "parameters": [
-        {
-          "name": "nsi_uuid",
-          "in": "path",
-          "type": "string",
-          "description": "NSI uuid",
-          "required": true
-        }
-      ],
-      "get": {
-        "responses": {
-          "200": {
-            "description": "Success",
-            "headers": {
-              "Content-Type": {
-                "description": "The MIME type of the body of the response (\"application/json\").",
-                "type": "string",
-                "maximum": 1,
-                "minimum": 1
-              }
-            },
-            "schema": {
-              "type": "object",
-              "properties": {
-                "cust_sla": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "ns_uuid": {
-                        "description": "The ns_uuid",
-                        "type": "string"
-                      },
-                      "sla_uuid": {
-                        "description": "The sla_uuid",
-                        "type": "string"
-                      },
-                      "cust_uuid": {
-                        "description": "The sla_uuid",
-                        "type": "string"
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "NOT Found: NS not found"
-          }
-        },
-        "operationId": "agreements_per_InsNs",
-        "tags": [
-          "SLA-Agreements-v2"
-        ]
-      }
-    },
-    "/agreements/guarantee-terms/{sla_uuid}": {
-      "parameters": [
-        {
-          "name": "sla_uuid",
-          "in": "path",
-          "type": "string",
-          "description": "SLA uuid",
-          "required": true
-        }
-      ],
-      "get": {
-        "responses": {
-          "200": {
-            "description": "Success",
-            "headers": {
-              "Content-Type": {
-                "description": "The MIME type of the body of the response (\"application/json\").",
-                "type": "string",
-                "maximum": 1,
-                "minimum": 1
-              }
-            },
-            "schema": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "guaranteeID": {
-                    "description": "The id of the selected guarantee term",
-                    "type": "string"
-                  },
-                  "guarantee_name": {
-                    "description": "The name of the selected guarantee term",
-                    "type": "string"
-                  },
-                  "guarantee_definition": {
-                    "description": "A short definition of the selected guarantee term",
-                    "type": "string"
-                  },
-                  "guarantee_threshold": {
-                    "description": "The value of the selected guarantee term",
-                    "type": "string"
-                  },
-                  "guarantee_operator": {
-                    "description": "The operator describing the expression of the selected guarantee term",
-                    "type": "string"
-                  },
-                  "guarantee_unit": {
-                    "description": "The unit describing the selected guarantee term",
-                    "type": "string"
-                  },
-                  "guarantee_period": {
-                    "description": "The period that the guarantee term will be calculated",
-                    "type": "string"
-                  },
-                  "guarantee_service_level": {
-                    "description": "The corresponding service level",
-                    "type": "string"
-                  },
-                  "target_slo": {
-                    "type": "array",
-                    "items": {
-                      "type": "object",
-                      "properties": {
-                        "target_kpi": {
-                          "description": "The target slo that is going to be monitored",
-                          "type": "string"
-                        },
-                        "target_value": {
-                          "description": "The monitoring target_value of the guarantee",
-                          "type": "string"
-                        },
-                        "target_operator": {
-                          "description": "The operator describing the realtion between the target slo and thne guaranteed threshold",
-                          "type": "string"
-                        },
-                        "target_duration": {
-                          "description": "The monitoring duration of the targeted slo",
-                          "type": "string"
-                        },
-                        "target_period": {
-                          "description": "The period that the target slo will be calculated",
-                          "type": "string"
-                        },
-                        "target_service_level": {
-                          "description": "The full expression of the guaranteed slo",
-                          "type": "string"
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "ERROR: Not Found!"
-          }
-        },
-        "operationId": "guarantees_per_sla",
-        "tags": [
-          "SLA-Agreements-v2"
-        ]
-      }
-    },
-    "/agreements/{nsi_uuid}": {
-      "parameters": [
-        {
-          "name": "nsi_uuid",
-          "in": "path",
-          "type": "string",
-          "required": true,
-          "description": "Network Service Instance uuid"
-        }
-      ],
-      "delete": {
-        "responses": {
-          "200": {
-            "description": "Success: Agreement was deleted successfully."
-          },
-          "400": {
-            "description": "ERROR: Agreement cannot be deleted because it's active."
-          },
-          "404": {
-            "description": "ERROR: Agreement cannot be deleted."
-          }
-        },
-        "operationId": "delete_sla_template",
-        "tags": [
-          "SLA-Agreements-v2"
-        ]
-      }
-    },
-    "/agreements/customer": {
-      "get": {
-        "responses": {
-          "200": {
-            "description": "Success: Agreement was deleted successfully.",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "ns_uuid": {
-                  "description": "The ns_uuid",
-                  "type": "string"
-                },
-                "nsi_uuid": {
-                  "description": "The nsi_uuid",
-                  "type": "string"
-                },
-                "sla_uuid": {
-                  "description": "The sla_uuid",
-                  "type": "string"
-                },
-                "cust_username": {
-                  "description": "The cust_username",
-                  "type": "string"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "ERROR: Agreement cannot be deleted because it's active."
-          },
-          "404": {
-            "description": "ERROR: Agreement cannot be deleted."
-          }
-        },
-        "operationId": "get_agreement_per_signin_customer",
-        "tags": [
-          "SLA-Agreements-v2"
-        ],
-        "security": "bearerAuth"
-      }
-    },
-    "/violations": {
-      "get": {
-        "responses": {
-          "200": {
-            "description": "Success",
-            "headers": {
-              "Content-Type": {
-                "description": "The MIME type of the body of the response (\"application/json\").",
-                "type": "string",
-                "maximum": 1,
-                "minimum": 1
-              }
-            },
-            "schema": {
-              "type": "object",
-              "properties": {
-                "violation_time": {
-                  "description": "The SLA Violation time",
-                  "type": "string"
-                },
-                "cust_uuid": {
-                  "description": "The customer uuid who selected this SLA durng the NS instantiation process",
-                  "type": "string"
-                },
-                "ns_uuid": {
-                  "description": "The ns_uuid which is instantiated with this SLA",
-                  "type": "string"
-                },
-                "alert_state": {
-                  "description": "The alert_state of the violation alert",
-                  "type": "string"
-                },
-                "sla_uuid": {
-                  "description": "The sla_uuid of the violated SLA",
-                  "type": "string"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad request: HTTP bad request"
-          }
-        },
-        "operationId": "all-violations",
-        "tags": [
-          "SLA-Violations-v2"
-        ]
-      }
-    },
-    "/violations/{ns_uuid}/{sla_uuid}": {
-      "parameters": [
-        {
-          "name": "sla_uuid",
-          "in": "path",
-          "required": true,
-          "type": "string",
-          "description": "The ID of the SLA"
-        },
-        {
-          "name": "ns_uuid",
-          "in": "path",
-          "required": true,
-          "type": "string",
-          "description": "The ID of the corresponding NS - the instantiated NS"
-        }
-      ],
-      "get": {
-        "responses": {
-          "200": {
-            "description": "Success",
-            "headers": {
-              "Content-Type": {
-                "description": "The MIME type of the body of the response (\"application/json\").",
-                "type": "string",
-                "maximum": 1,
-                "minimum": 1
-              }
-            },
-            "schema": {
-              "type": "object",
-              "properties": {
-                "violation_time": {
-                  "description": "The SLA Violation time",
-                  "type": "string"
-                },
-                "cust_uuid": {
-                  "description": "The customer uuid who selected this SLA durng the NS instantiation process",
-                  "type": "string"
-                },
-                "ns_uuid": {
-                  "description": "The ns_uuid which is instantiated with this SLA",
-                  "type": "string"
-                },
-                "alert_state": {
-                  "description": "The alert_state of the violation alert",
-                  "type": "string"
-                },
-                "sla_uuid": {
-                  "description": "The sla_uuid of the violated SLA",
-                  "type": "string"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad HTTP request"
-          }
-        },
-        "operationId": "specific-violation",
-        "tags": [
-          "SLA-Violations-v2"
-        ]
-      }
-    },
-    "/violations/violationspercentage": {
-      "parameters": [
-        {
-          "name": "d",
-          "in": "query",
-          "required": false,
-          "type": "integer",
-          "description": "Specify the number of the last days, which we want to get the percentage"
-        }
-      ],
-      "get": {
-        "responses": {
-          "200": {
-            "description": "Success",
-            "headers": {
-              "Content-Type": {
-                "description": "The MIME type of the body of the response (\"application/json\").",
-                "type": "string",
-                "maximum": 1,
-                "minimum": 1
-              }
-            },
-            "schema": {
-              "type": "object",
-              "properties": {
-                "totalAgreements": {
-                  "description": "The number of the total agreements",
-                  "type": "string"
-                },
-                "percentage_violated": {
-                  "description": "The percentage of the violated agreements",
-                  "type": "string"
-                },
-                "percentage_active": {
-                  "description": "The percentage of the active agreements",
-                  "type": "string"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad HTTP request"
-          }
-        },
-        "operationId": "violations-percentage",
-        "tags": [
-          "SLA-Violations-v2"
-        ]
-      }
-    },
-    "/licenses": {
-      "get": {
-        "responses": {
-          "200": {
-            "description": "Success",
-            "headers": {
-              "Content-Type": {
-                "description": "The MIME type of the body of the response (\"application/json\").",
-                "type": "string",
-                "maximum": 1,
-                "minimum": 1
-              }
-            },
-            "schema": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "sla_uuid": {
-                    "description": "The uuid of the accosiated SLA",
-                    "type": "string"
-                  },
-                  "nsd_uuid": {
-                    "description": "The uuid of the  accosiated NS",
-                    "type": "string"
-                  },
-                  "nsi_uuid": {
-                    "description": "The uuid of the accosiated NS Instance",
-                    "type": "string"
-                  },
-                  "cust_userrname": {
-                    "description": "The name of the customer that the license belongs to",
-                    "type": "string"
-                  },
-                  "cust_email": {
-                    "description": "The email of the customer that the license belongs to",
-                    "type": "string"
-                  },
-                  "license_type": {
-                    "description": "The license type (Trial|Public|Private)",
-                    "type": "string"
-                  },
-                  "license_exp_date": {
-                    "description": "The license expiration date",
-                    "type": "string"
-                  },
-                  "allowed_instances": {
-                    "description": "The license allowed NS instances",
-                    "type": "string"
-                  },
-                  "current_instances": {
-                    "description": "The license current NS instances)",
-                    "type": "string"
-                  },
-                  "license_status": {
-                    "description": "The license status (inactive|active|bought|expired)",
-                    "type": "string"
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad request: HTTP bad request"
-          }
-        },
-        "operationId": "all-licenses",
-        "tags": [
-          "SLA-Licenses-v1"
-        ]
+            "operationId":"delete_sla_agreement",
+            "tags":[
+               "SLA-Agreements-v2"
+            ]
+         }
       },
-      "delete": {
-        "responses": {
-          "200": {
-            "description": "License was deleted"
-          },
-          "404": {
-            "description": "License was not deleted"
-          }
-        },
-        "parameters": [
-          {
-            "name": "sla_uuid",
-            "in": "formData",
-            "required": true,
-            "type": "string",
-            "description": "SLA UUID"
-          },
-          {
-            "name": "cust_username",
-            "in": "formData",
-            "required": true,
-            "type": "string",
-            "description": "Name of customer that the license belongs to"
-          },
-          {
-            "name": "ns_uuid",
-            "in": "formData",
-            "required": true,
-            "type": "string",
-            "description": "NS uuid"
-          }
-        ],
-        "consumes": [
-          "multipart/form-data"
-        ],
-        "operationId": "delete_license",
-        "tags": [
-          "SLA-Licenses-v1"
-        ]
-      }
-    },
-    "/licenses/status/{sla_uuid}/{ns_uuid}": {
-      "get": {
-        "parameters": [
-          {
-            "name": "sla_uuid",
-            "in": "path",
-            "required": true,
-            "type": "string",
-            "description": "SLA UUID"
-          },
-          {
-            "name": "ns_uuid",
-            "in": "path",
-            "required": true,
-            "type": "string",
-            "description": "NS uuid"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "headers": {
-              "Content-Type": {
-                "description": "The MIME type of the body of the response (\"application/json\").",
-                "type": "string",
-                "maximum": 1,
-                "minimum": 1
-              }
+      "/agreements/customer":{
+         "get":{
+            "responses":{
+               "200":{
+                  "description":"Success: Agreement was deleted successfully.",
+                  "schema":{
+                     "type":"object",
+                     "properties":{
+                        "ns_uuid":{
+                           "description":"The ns_uuid",
+                           "type":"string"
+                        },
+                        "nsi_uuid":{
+                           "description":"The nsi_uuid",
+                           "type":"string"
+                        },
+                        "sla_uuid":{
+                           "description":"The sla_uuid",
+                           "type":"string"
+                        },
+                        "cust_username":{
+                           "description":"The cust_username",
+                           "type":"string"
+                        }
+                     }
+                  }
+               },
+               "400":{
+                  "description":"ERROR: Agreement cannot be deleted because it's active."
+               },
+               "404":{
+                  "description":"ERROR: Agreement cannot be deleted."
+               }
             },
-            "schema": {
-              "type": "object",
-              "properties": {
-                "license_type": {
-                  "description": "The license type (Trial|Private|Public)",
-                  "type": "string"
-                },
-                "license_status": {
-                  "description": "The license status)",
-                  "type": "string"
-                },
-                "allowed_instances": {
-                  "description": "The license allowed instances",
-                  "type": "string"
-                },
-                "current_instances": {
-                  "description": "The license cuurent instances",
-                  "type": "string"
-                },
-                "allowed_to_instantiate": {
-                  "description": "true|false",
-                  "type": "boolean"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "ERROR:connecting to database"
-          }
-        },
-        "operationId": "get-license-status",
-        "tags": [
-          "SLA-Licenses-v1"
-        ]
-      }
-    },
-    "/licenses/buy": {
-      "post": {
-        "404": {
-          "description": "Error: Private license could not be bought"
-        },
-        "responses": {
-          "200": {
-            "description": "Success: Private license bought"
-          }
-        }
+            "operationId":"get_agreement_per_signin_customer",
+            "tags":[
+               "SLA-Agreements-v2"
+            ]
+         }
       },
-      "operationId": "buy_license",
-      "parameters": [
-        {
-          "name": "ns_uuid",
-          "in": "formData",
-          "required": true,
-          "type": "string",
-          "description": "Network Service UUID"
-        },
-        {
-          "name": "sla_uuid",
-          "in": "formData",
-          "required": true,
-          "type": "string",
-          "description": "SLA UUID"
-        }
-      ],
-      "consumes": [
-        "multipart/form-data"
-      ],
-      "tags": [
-        "SLA-Licenses-v1-v2"
-      ],
-      "security": "bearerAuth"
-    },
-    "/licenses/utilized": {
-      "get": {
-        "responses": {
-          "200": {
-            "description": "Nº Licenses Utilized",
-            "headers": {
-              "Content-Type": {
-                "description": "The MIME type of the body of the response (\"application/json\").",
-                "type": "string",
-                "maximum": 1,
-                "minimum": 1
-              }
-            },
-            "schema": {
-              "type": "object",
-              "properties": {
-                "utilized_licenses": {
-                  "description": "The number utilized_licenses",
-                  "type": "string"
-                }
-              }
-            }
-          }
-        },
-        "operationId": "licenses-utilized",
-        "tags": [
-          "SLA-Licenses-v1"
-        ]
-      }
-    },
-    "/licenses/acquired": {
-      "get": {
-        "responses": {
-          "200": {
-            "description": "Nº Licenses acquired",
-            "headers": {
-              "Content-Type": {
-                "description": "The MIME type of the body of the response (\"application/json\").",
-                "type": "string",
-                "maximum": 1,
-                "minimum": 1
-              }
-            },
-            "schema": {
-              "type": "object",
-              "properties": {
-                "acquired_licenses": {
-                  "description": "The number acquired licenses",
-                  "type": "string"
-                }
-              }
-            }
-          }
-        },
-        "operationId": "licenses-acquired",
-        "tags": [
-          "SLA-Licenses-v1"
-        ]
-      }
-    },
-    "/licenses/expired": {
-      "get": {
-        "responses": {
-          "200": {
-            "description": "Nº Licenses expired",
-            "headers": {
-              "Content-Type": {
-                "description": "The MIME type of the body of the response (\"application/json\").",
-                "type": "string",
-                "maximum": 1,
-                "minimum": 1
-              }
-            },
-            "schema": {
-              "type": "object",
-              "properties": {
-                "expired_licenses": {
-                  "description": "The number expired licenses",
-                  "type": "string"
-                }
-              }
-            }
-          }
-        },
-        "operationId": "licenses-expired",
-        "tags": [
-          "SLA-Licenses-v1"
-        ]
-      }
-    },
-    "/mgmt/services/templates/": {
-      "get": {
-        "responses": {
-          "200": {
-            "description": "Success",
-            "headers": {
-              "Content-Type": {
-                "description": "The MIME type of the body of the response (\"application/json\").",
-                "type": "string",
-                "maximum": 1,
-                "minimum": 1
-              }
-            },
-            "schema": {
-              "type": "object",
-              "properties": {
-                "ns_template": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "ns_uuid": {
-                        "description": "The ns_uuid",
-                        "type": "string"
-                      },
-                      "sla_uuid": {
-                        "description": "The sla_uuid",
-                        "type": "string"
-                      }
-                    }
+      "/violations":{
+         "get":{
+            "responses":{
+               "200":{
+                  "description":"Success",
+                  "headers":{
+                     "Content-Type":{
+                        "description":"The MIME type of the body of the response (\"application/json\").",
+                        "type":"string",
+                        "maximum":1,
+                        "minimum":1
+                     }
+                  },
+                  "schema":{
+                     "type":"object",
+                     "properties":{
+                        "violation_time":{
+                           "description":"The SLA Violation time",
+                           "type":"string"
+                        },
+                        "cust_uuid":{
+                           "description":"The customer uuid who selected this SLA durng the NS instantiation process",
+                           "type":"string"
+                        },
+                        "ns_uuid":{
+                           "description":"The ns_uuid which is instantiated with this SLA",
+                           "type":"string"
+                        },
+                        "alert_state":{
+                           "description":"The alert_state of the violation alert",
+                           "type":"string"
+                        },
+                        "sla_uuid":{
+                           "description":"The sla_uuid of the violated SLA",
+                           "type":"string"
+                        }
+                     }
                   }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad request: HTTP bad request"
-          }
-        },
-        "operationId": "get_correlated_sla_ns",
-        "parameters": [],
-        "tags": [
-          "SLA-Management-v2"
-        ]
-      }
-    },
-    "/mgmt/services/templates/true": {
-      "get": {
-        "responses": {
-          "200": {
-            "description": "Success",
-            "headers": {
-              "Content-Type": {
-                "description": "The MIME type of the body of the response (\"application/json\").",
-                "type": "string",
-                "maximum": 1,
-                "minimum": 1
-              }
+               },
+               "400":{
+                  "description":"Bad request: HTTP bad request"
+               }
             },
-            "schema": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "ns_uuid": {
-                    "description": "The sla_uuid",
-                    "type": "string"
+            "operationId":"all-violations",
+            "tags":[
+               "SLA-Violations-v2"
+            ]
+         }
+      },
+      "/violations/{ns_uuid}/{sla_uuid}":{
+         "parameters":[
+            {
+               "name":"sla_uuid",
+               "in":"path",
+               "required":true,
+               "type":"string",
+               "description":"The ID of the SLA"
+            },
+            {
+               "name":"ns_uuid",
+               "in":"path",
+               "required":true,
+               "type":"string",
+               "description":"The ID of the corresponding NS - the instantiated NS"
+            }
+         ],
+         "get":{
+            "responses":{
+               "200":{
+                  "description":"Success",
+                  "headers":{
+                     "Content-Type":{
+                        "description":"The MIME type of the body of the response (\"application/json\").",
+                        "type":"string",
+                        "maximum":1,
+                        "minimum":1
+                     }
+                  },
+                  "schema":{
+                     "type":"object",
+                     "properties":{
+                        "violation_time":{
+                           "description":"The SLA Violation time",
+                           "type":"string"
+                        },
+                        "cust_uuid":{
+                           "description":"The customer uuid who selected this SLA durng the NS instantiation process",
+                           "type":"string"
+                        },
+                        "ns_uuid":{
+                           "description":"The ns_uuid which is instantiated with this SLA",
+                           "type":"string"
+                        },
+                        "alert_state":{
+                           "description":"The alert_state of the violation alert",
+                           "type":"string"
+                        },
+                        "sla_uuid":{
+                           "description":"The sla_uuid of the violated SLA",
+                           "type":"string"
+                        }
+                     }
                   }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad request: HTTP bad request"
-          }
-        },
-        "operationId": "get_ns_assosiated_Slas",
-        "parameters": [],
-        "tags": [
-          "SLA-Management-v2"
-        ]
-      }
-    },
-    "/mgmt/services/templates/false": {
-      "get": {
-        "responses": {
-          "200": {
-            "description": "Success",
-            "headers": {
-              "Content-Type": {
-                "description": "The MIME type of the body of the response (\"application/json\").",
-                "type": "string",
-                "maximum": 1,
-                "minimum": 1
-              }
+               },
+               "400":{
+                  "description":"Bad HTTP request"
+               }
             },
-            "schema": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "ns_uuid": {
-                    "description": "The sla_uuid",
-                    "type": "string"
+            "operationId":"specific-violation",
+            "tags":[
+               "SLA-Violations-v2"
+            ]
+         }
+      },
+      "/violations/violationspercentage":{
+         "parameters":[
+            {
+               "name":"d",
+               "in":"query",
+               "required":false,
+               "type":"integer",
+               "description":"Specify the number of the last days, which we want to get the percentage"
+            }
+         ],
+         "get":{
+            "responses":{
+               "200":{
+                  "description":"Success",
+                  "headers":{
+                     "Content-Type":{
+                        "description":"The MIME type of the body of the response (\"application/json\").",
+                        "type":"string",
+                        "maximum":1,
+                        "minimum":1
+                     }
+                  },
+                  "schema":{
+                     "type":"object",
+                     "properties":{
+                        "totalAgreements":{
+                           "description":"The number of the total agreements",
+                           "type":"string"
+                        },
+                        "percentage_violated":{
+                           "description":"The percentage of the violated agreements",
+                           "type":"string"
+                        },
+                        "percentage_active":{
+                           "description":"The percentage of the active agreements",
+                           "type":"string"
+                        }
+                     }
                   }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad request: HTTP bad request"
-          }
-        },
-        "operationId": "get_ns_withno_slas",
-        "parameters": [],
-        "tags": [
-          "SLA-Management-v2"
-        ]
-      }
-    },
-    "/mgmt/services/agreements/true": {
-      "get": {
-        "responses": {
-          "200": {
-            "description": "Success",
-            "headers": {
-              "Content-Type": {
-                "description": "The MIME type of the body of the response (\"application/json\").",
-                "type": "string",
-                "maximum": 1,
-                "minimum": 1
-              }
+               },
+               "400":{
+                  "description":"Bad HTTP request"
+               }
             },
-            "schema": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "ns_uuid": {
-                    "description": "The sla_uuid",
-                    "type": "string"
+            "operationId":"violations-percentage",
+            "tags":[
+               "SLA-Violations-v2"
+            ]
+         }
+      },
+      "/licenses":{
+         "get":{
+            "responses":{
+               "200":{
+                  "description":"Success",
+                  "headers":{
+                     "Content-Type":{
+                        "description":"The MIME type of the body of the response (\"application/json\").",
+                        "type":"string",
+                        "maximum":1,
+                        "minimum":1
+                     }
+                  },
+                  "schema":{
+                     "type":"array",
+                     "items":{
+                        "type":"object",
+                        "properties":{
+                           "sla_uuid":{
+                              "description":"The uuid of the accosiated SLA",
+                              "type":"string"
+                           },
+                           "nsd_uuid":{
+                              "description":"The uuid of the  accosiated NS",
+                              "type":"string"
+                           },
+                           "nsi_uuid":{
+                              "description":"The uuid of the accosiated NS Instance",
+                              "type":"string"
+                           },
+                           "cust_userrname":{
+                              "description":"The name of the customer that the license belongs to",
+                              "type":"string"
+                           },
+                           "cust_email":{
+                              "description":"The email of the customer that the license belongs to",
+                              "type":"string"
+                           },
+                           "license_type":{
+                              "description":"The license type (Trial|Public|Private)",
+                              "type":"string"
+                           },
+                           "license_exp_date":{
+                              "description":"The license expiration date",
+                              "type":"string"
+                           },
+                           "allowed_instances":{
+                              "description":"The license allowed NS instances",
+                              "type":"string"
+                           },
+                           "current_instances":{
+                              "description":"The license current NS instances)",
+                              "type":"string"
+                           },
+                           "license_status":{
+                              "description":"The license status (inactive|active|bought|expired)",
+                              "type":"string"
+                           }
+                        }
+                     }
                   }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad request: HTTP bad request"
-          }
-        },
-        "operationId": "get_ns_with_agreements",
-        "parameters": [],
-        "tags": [
-          "SLA-Management-v2"
-        ]
-      }
-    },
-    "/mgmt/services/agreements/false": {
-      "get": {
-        "responses": {
-          "200": {
-            "description": "Success",
-            "headers": {
-              "Content-Type": {
-                "description": "The MIME type of the body of the response (\"application/json\").",
-                "type": "string",
-                "maximum": 1,
-                "minimum": 1
-              }
+               },
+               "400":{
+                  "description":"Bad request: HTTP bad request"
+               }
             },
-            "schema": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "ns_uuid": {
-                    "description": "The sla_uuid",
-                    "type": "string"
+            "operationId":"all-licenses",
+            "tags":[
+               "SLA-Licenses-v1"
+            ]
+         },
+         "delete":{
+            "responses":{
+               "200":{
+                  "description":"License was deleted"
+               },
+               "404":{
+                  "description":"License was not deleted"
+               }
+            },
+            "parameters":[
+               {
+                  "name":"sla_uuid",
+                  "in":"formData",
+                  "required":true,
+                  "type":"string",
+                  "description":"SLA UUID"
+               },
+               {
+                  "name":"cust_username",
+                  "in":"formData",
+                  "required":true,
+                  "type":"string",
+                  "description":"Name of customer that the license belongs to"
+               },
+               {
+                  "name":"ns_uuid",
+                  "in":"formData",
+                  "required":true,
+                  "type":"string",
+                  "description":"NS uuid"
+               }
+            ],
+            "consumes":[
+               "multipart/form-data"
+            ],
+            "operationId":"delete_license",
+            "tags":[
+               "SLA-Licenses-v1"
+            ]
+         }
+      },
+      "/licenses/status/{sla_uuid}/{ns_uuid}":{
+         "get":{
+            "parameters":[
+               {
+                  "name":"sla_uuid",
+                  "in":"path",
+                  "required":true,
+                  "type":"string",
+                  "description":"SLA UUID"
+               },
+               {
+                  "name":"ns_uuid",
+                  "in":"path",
+                  "required":true,
+                  "type":"string",
+                  "description":"NS uuid"
+               }
+            ],
+            "responses":{
+               "200":{
+                  "description":"Success",
+                  "headers":{
+                     "Content-Type":{
+                        "description":"The MIME type of the body of the response (\"application/json\").",
+                        "type":"string",
+                        "maximum":1,
+                        "minimum":1
+                     }
+                  },
+                  "schema":{
+                     "type":"object",
+                     "properties":{
+                        "license_type":{
+                           "description":"The license type (Trial|Private|Public)",
+                           "type":"string"
+                        },
+                        "license_status":{
+                           "description":"The license status)",
+                           "type":"string"
+                        },
+                        "allowed_instances":{
+                           "description":"The license allowed instances",
+                           "type":"string"
+                        },
+                        "current_instances":{
+                           "description":"The license cuurent instances",
+                           "type":"string"
+                        },
+                        "allowed_to_instantiate":{
+                           "description":"true|false",
+                           "type":"boolean"
+                        }
+                     }
                   }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad request: HTTP bad request"
-          }
-        },
-        "operationId": "get_ns_with_no_agreements",
-        "parameters": [],
-        "tags": [
-          "SLA-Management-v2"
-        ]
-      }
-    },
-    "/mgmt/deploymentflavours/{nsd_uuid}": {
-      "get": {
-        "parameters": [
-          {
-            "name": "nsd_uuid",
-            "in": "path",
-            "type": "string",
-            "required": true,
-            "description": "NSD uuid"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "headers": {
-              "Content-Type": {
-                "description": "The MIME type of the body of the response (\"application/json\").",
-                "type": "string",
-                "maximum": 1,
-                "minimum": 1
-              }
+               },
+               "404":{
+                  "description":"ERROR:connecting to database"
+               }
             },
-            "schema": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "f_name": {
-                    "description": "The deployment flavour name of the corresponding NS",
-                    "type": "string"
+            "operationId":"get-license-status",
+            "tags":[
+               "SLA-Licenses-v1"
+            ]
+         }
+      },
+      "/licenses/buy":{
+         "post":{
+            "responses":{
+               "201":{
+                  "description":"Success:Private license bought"
+               },
+               "400":{
+                  "description":"Bad request: HTTP bad request"
+               },
+               "404":{
+                  "description":"Not Found: NS not found."
+               },
+               "500":{
+                  "description":"Internal Server Error."
+               }
+            },
+            "parameters":[
+               {
+                  "name":"ns_uuid",
+                  "in":"formData",
+                  "required":true,
+                  "type":"string",
+                  "description":"Network Service UUID"
+               },
+               {
+                  "name":"sla_uuid",
+                  "in":"formData",
+                  "required":true,
+                  "type":"string",
+                  "description":"SLA UUID"
+               }
+            ],
+            "consumes":[
+               "multipart/form-data"
+            ],
+            "tags":[
+               "SLA-Licenses-v1"
+            ],
+            "operationId":"buy_license"
+         }
+      },
+      "/licenses/utilized":{
+         "get":{
+            "responses":{
+               "200":{
+                  "description":"Nº Licenses Utilized",
+                  "headers":{
+                     "Content-Type":{
+                        "description":"The MIME type of the body of the response (\"application/json\").",
+                        "type":"string",
+                        "maximum":1,
+                        "minimum":1
+                     }
+                  },
+                  "schema":{
+                     "type":"object",
+                     "properties":{
+                        "utilized_licenses":{
+                           "description":"The number utilized_licenses",
+                           "type":"string"
+                        }
+                     }
                   }
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "ERROR: NS uuid not found"
-          }
-        },
-        "operationId": "get_dflavour_for_ns",
-        "tags": [
-          "SLA-Management-v2"
-        ]
-      }
-    },
-    "/mgmt/deploymentflavours/{nsd_uuid}/{sla_uuid}": {
-      "get": {
-        "parameters": [
-          {
-            "name": "nsd_uuid",
-            "in": "path",
-            "type": "string",
-            "required": true,
-            "description": "NSD uuid"
-          },
-          {
-            "name": "sla_uuid",
-            "in": "path",
-            "type": "string",
-            "required": true,
-            "description": "SLA uuid"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "headers": {
-              "Content-Type": {
-                "description": "The MIME type of the body of the response (\"application/json\").",
-                "type": "string",
-                "maximum": 1,
-                "minimum": 1
-              }
+               }
             },
-            "schema": {
-              "type": "object",
-              "properties": {
-                "d_flavour_name": {
-                  "description": "The deployment flavour name for a specific SLA",
-                  "type": "string"
-                }
-              }
-            }
-          }
-        },
-        "operationId": "get_dflavour_for_specific_sla",
-        "tags": [
-          "SLA-Management-v2"
-        ]
+            "operationId":"licenses-utilized",
+            "tags":[
+               "SLA-Licenses-v1"
+            ]
+         }
+      },
+      "/licenses/acquired":{
+         "get":{
+            "responses":{
+               "200":{
+                  "description":"Nº Licenses acquired",
+                  "headers":{
+                     "Content-Type":{
+                        "description":"The MIME type of the body of the response (\"application/json\").",
+                        "type":"string",
+                        "maximum":1,
+                        "minimum":1
+                     }
+                  },
+                  "schema":{
+                     "type":"object",
+                     "properties":{
+                        "acquired_licenses":{
+                           "description":"The number acquired licenses",
+                           "type":"string"
+                        }
+                     }
+                  }
+               }
+            },
+            "operationId":"licenses-acquired",
+            "tags":[
+               "SLA-Licenses-v1"
+            ]
+         }
+      },
+      "/licenses/expired":{
+         "get":{
+            "responses":{
+               "200":{
+                  "description":"Nº Licenses expired",
+                  "headers":{
+                     "Content-Type":{
+                        "description":"The MIME type of the body of the response (\"application/json\").",
+                        "type":"string",
+                        "maximum":1,
+                        "minimum":1
+                     }
+                  },
+                  "schema":{
+                     "type":"object",
+                     "properties":{
+                        "expired_licenses":{
+                           "description":"The number expired licenses",
+                           "type":"string"
+                        }
+                     }
+                  }
+               }
+            },
+            "operationId":"licenses-expired",
+            "tags":[
+               "SLA-Licenses-v1"
+            ]
+         }
+      },
+      "/mgmt/services/templates/":{
+         "get":{
+            "responses":{
+               "200":{
+                  "description":"Success",
+                  "headers":{
+                     "Content-Type":{
+                        "description":"The MIME type of the body of the response (\"application/json\").",
+                        "type":"string",
+                        "maximum":1,
+                        "minimum":1
+                     }
+                  },
+                  "schema":{
+                     "type":"object",
+                     "properties":{
+                        "ns_template":{
+                           "type":"array",
+                           "items":{
+                              "type":"object",
+                              "properties":{
+                                 "ns_uuid":{
+                                    "description":"The ns_uuid",
+                                    "type":"string"
+                                 },
+                                 "sla_uuid":{
+                                    "description":"The sla_uuid",
+                                    "type":"string"
+                                 }
+                              }
+                           }
+                        }
+                     }
+                  }
+               },
+               "400":{
+                  "description":"Bad request: HTTP bad request"
+               }
+            },
+            "operationId":"get_correlated_sla_ns",
+            "parameters":[
+
+            ],
+            "tags":[
+               "SLA-Management-v2"
+            ]
+         }
+      },
+      "/mgmt/services/templates/true":{
+         "get":{
+            "responses":{
+               "200":{
+                  "description":"Success",
+                  "headers":{
+                     "Content-Type":{
+                        "description":"The MIME type of the body of the response (\"application/json\").",
+                        "type":"string",
+                        "maximum":1,
+                        "minimum":1
+                     }
+                  },
+                  "schema":{
+                     "type":"array",
+                     "items":{
+                        "type":"object",
+                        "properties":{
+                           "ns_uuid":{
+                              "description":"The sla_uuid",
+                              "type":"string"
+                           }
+                        }
+                     }
+                  }
+               },
+               "400":{
+                  "description":"Bad request: HTTP bad request"
+               }
+            },
+            "operationId":"get_ns_assosiated_Slas",
+            "parameters":[
+
+            ],
+            "tags":[
+               "SLA-Management-v2"
+            ]
+         }
+      },
+      "/mgmt/services/templates/false":{
+         "get":{
+            "responses":{
+               "200":{
+                  "description":"Success",
+                  "headers":{
+                     "Content-Type":{
+                        "description":"The MIME type of the body of the response (\"application/json\").",
+                        "type":"string",
+                        "maximum":1,
+                        "minimum":1
+                     }
+                  },
+                  "schema":{
+                     "type":"array",
+                     "items":{
+                        "type":"object",
+                        "properties":{
+                           "ns_uuid":{
+                              "description":"The sla_uuid",
+                              "type":"string"
+                           }
+                        }
+                     }
+                  }
+               },
+               "400":{
+                  "description":"Bad request: HTTP bad request"
+               }
+            },
+            "operationId":"get_ns_withno_slas",
+            "parameters":[
+
+            ],
+            "tags":[
+               "SLA-Management-v2"
+            ]
+         }
+      },
+      "/mgmt/services/agreements/true":{
+         "get":{
+            "responses":{
+               "200":{
+                  "description":"Success",
+                  "headers":{
+                     "Content-Type":{
+                        "description":"The MIME type of the body of the response (\"application/json\").",
+                        "type":"string",
+                        "maximum":1,
+                        "minimum":1
+                     }
+                  },
+                  "schema":{
+                     "type":"array",
+                     "items":{
+                        "type":"object",
+                        "properties":{
+                           "ns_uuid":{
+                              "description":"The sla_uuid",
+                              "type":"string"
+                           }
+                        }
+                     }
+                  }
+               },
+               "400":{
+                  "description":"Bad request: HTTP bad request"
+               }
+            },
+            "operationId":"get_ns_with_agreements",
+            "parameters":[
+
+            ],
+            "tags":[
+               "SLA-Management-v2"
+            ]
+         }
+      },
+      "/mgmt/services/agreements/false":{
+         "get":{
+            "responses":{
+               "200":{
+                  "description":"Success",
+                  "headers":{
+                     "Content-Type":{
+                        "description":"The MIME type of the body of the response (\"application/json\").",
+                        "type":"string",
+                        "maximum":1,
+                        "minimum":1
+                     }
+                  },
+                  "schema":{
+                     "type":"array",
+                     "items":{
+                        "type":"object",
+                        "properties":{
+                           "ns_uuid":{
+                              "description":"The sla_uuid",
+                              "type":"string"
+                           }
+                        }
+                     }
+                  }
+               },
+               "400":{
+                  "description":"Bad request: HTTP bad request"
+               }
+            },
+            "operationId":"get_ns_with_no_agreements",
+            "parameters":[
+
+            ],
+            "tags":[
+               "SLA-Management-v2"
+            ]
+         }
+      },
+      "/mgmt/deploymentflavours/{nsd_uuid}":{
+         "get":{
+            "parameters":[
+               {
+                  "name":"nsd_uuid",
+                  "in":"path",
+                  "type":"string",
+                  "required":true,
+                  "description":"NSD uuid"
+               }
+            ],
+            "responses":{
+               "200":{
+                  "description":"Success",
+                  "headers":{
+                     "Content-Type":{
+                        "description":"The MIME type of the body of the response (\"application/json\").",
+                        "type":"string",
+                        "maximum":1,
+                        "minimum":1
+                     }
+                  },
+                  "schema":{
+                     "type":"array",
+                     "items":{
+                        "type":"object",
+                        "properties":{
+                           "f_name":{
+                              "description":"The deployment flavour name of the corresponding NS",
+                              "type":"string"
+                           }
+                        }
+                     }
+                  }
+               },
+               "404":{
+                  "description":"ERROR: NS uuid not found"
+               }
+            },
+            "operationId":"get_dflavour_for_ns",
+            "tags":[
+               "SLA-Management-v2"
+            ]
+         }
+      },
+      "/mgmt/deploymentflavours/{nsd_uuid}/{sla_uuid}":{
+         "get":{
+            "parameters":[
+               {
+                  "name":"nsd_uuid",
+                  "in":"path",
+                  "type":"string",
+                  "required":true,
+                  "description":"NSD uuid"
+               },
+               {
+                  "name":"sla_uuid",
+                  "in":"path",
+                  "type":"string",
+                  "required":true,
+                  "description":"SLA uuid"
+               }
+            ],
+            "responses":{
+               "200":{
+                  "description":"Success",
+                  "headers":{
+                     "Content-Type":{
+                        "description":"The MIME type of the body of the response (\"application/json\").",
+                        "type":"string",
+                        "maximum":1,
+                        "minimum":1
+                     }
+                  },
+                  "schema":{
+                     "type":"object",
+                     "properties":{
+                        "d_flavour_name":{
+                           "description":"The deployment flavour name for a specific SLA",
+                           "type":"string"
+                        }
+                     }
+                  }
+               }
+            },
+            "operationId":"get_dflavour_for_specific_sla",
+            "tags":[
+               "SLA-Management-v2"
+            ]
+         }
       }
-    }
-  }
+   }
 }
