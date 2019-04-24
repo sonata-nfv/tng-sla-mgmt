@@ -204,10 +204,10 @@ public class templatesAPIs {
 				response.append(inputLine);
 			}
 			in.close();
-			JSONParser parser = new JSONParser();
-			Object existingTemplates = parser.parse(response.toString());
-			apiresponse = Response.ok((Object) existingTemplates);
-			apiresponse.header("Content-Length", response.length());
+
+			String cat_response = response.toString();
+			apiresponse = Response.ok(cat_response);
+			apiresponse.header("Content-Length", cat_response.length());
 
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
