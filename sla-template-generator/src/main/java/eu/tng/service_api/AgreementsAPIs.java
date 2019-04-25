@@ -336,7 +336,7 @@ public class AgreementsAPIs {
 	 * api call in order to get a specific sla agreement
 	 */
 	@GET
-	@Produces(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.TEXT_PLAIN)
 	@Path("/{sla_uuid}/{nsi_uuid}")
 	public Response getAgreementDetails(@PathParam("sla_uuid") String sla_uuid,
 			@PathParam("nsi_uuid") String nsi_uuid) {
@@ -396,11 +396,6 @@ public class AgreementsAPIs {
 			customer_info.put("cust_email", cust_email);
 			sla_template.put("customer_info", customer_info);
 
-			existingTemplates = agreement;
-
-			apiresponse = Response.ok((Object) existingTemplates);
-			apiresponse.header("Content-Length", agreement.toJSONString().length() - 9);
-
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 			String timestamps = timestamp.toString();
@@ -411,13 +406,19 @@ public class AgreementsAPIs {
 			logger.info(
 					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 					type, timestamps, operation, message, status);
+			
+			existingTemplates = agreement;
+			
+			String agreement_s = agreement.toString();
+			apiresponse = Response.ok(agreement_s);
+			apiresponse.header("Content-Length", agreement_s.length());
 
 			return apiresponse.status(200).build();
 
 		} catch (Exception e) {
 
 			JSONObject error = new JSONObject();
-			error.put("ERROR: ", "SLA Not Found");
+			error.put("ERROR: ", "Agreement Not Found");
 			apiresponse = Response.ok((Object) error);
 			apiresponse.header("Content-Length", error.toJSONString().length());
 
