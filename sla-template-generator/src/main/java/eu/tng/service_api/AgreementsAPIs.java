@@ -378,8 +378,14 @@ public class AgreementsAPIs {
 			JSONObject agrPerSlaNs = dbo.selectAgreementPerSlaNs(sla_uuid, nsi_uuid);
 			dbo.closePostgreSQL();
 
+			System.out.println("Agreement customer info ==> " + agrPerSlaNs);
+			
 			String cust_username = (String) agrPerSlaNs.get("cust_username");
+			System.out.println("Agreement cust_username ==> " + cust_username);
+
 			String cust_email = (String) agrPerSlaNs.get("cust_email");
+			System.out.println("Agreement cust_email ==> " + cust_email);
+
 			String sla_date = (String) agrPerSlaNs.get("sla_date");
 			
 			// update the template with the necessary customer info - convert it to
