@@ -870,27 +870,33 @@ public class db_operations {
 		Statement stmt = null;
 		JSONObject root = new JSONObject();
 
-		sla_uuid = sla_uuid.trim();
-		nsi_uuid = nsi_uuid.trim();
+		//sla_uuid = sla_uuid.trim();
+		//nsi_uuid = nsi_uuid.trim();
 
 		try {
 			c.setAutoCommit(false);
 			stmt = c.createStatement();
-			ResultSet rs = stmt.executeQuery("SELECT * FROM cust_sla WHERE sla_uuid = '" + sla_uuid + "' AND nsi_uuid='"
-					+ nsi_uuid + "' AND  inst_status='READY';");
+//			ResultSet rs = stmt.executeQuery("SELECT * FROM cust_sla WHERE sla_uuid = '" + sla_uuid + "' AND nsi_uuid='"
+//					+ nsi_uuid + "' AND  inst_status='READY';");
 
+			ResultSet rs = stmt.executeQuery("SELECT * FROM cust_sla WHERE sla_uuid='" +sla_uuid+ "' AND AND nsi_uuid='"+nsi_uuid+"' AND inst_status='READY';");
+			
 			while (rs.next()) {
 				String cust_username = rs.getString("cust_username");
 				String cust_email = rs.getString("cust_email");
 				String sla_date = rs.getString("sla_date");
 
-				new JSONObject();
+				System.out.print("[*****] " + cust_username + " " + cust_email);
 				root.put("cust_username", cust_username);
 				root.put("cust_email", cust_email);
 				root.put("sla_date", sla_date);
 			}
+			
 			rs.close();
 			stmt.close();
+			
+			System.out.print("[*****] " + root);
+
 		} catch (Exception e) {
 
 			// logging

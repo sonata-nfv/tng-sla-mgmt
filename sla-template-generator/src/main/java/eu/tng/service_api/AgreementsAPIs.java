@@ -415,7 +415,10 @@ public class AgreementsAPIs {
 			
 			existingTemplates = agreement;
 			
-			String agreement_s = agreement.toString();
+			String agreement_s = existingTemplates.toString();
+			System.out.println("Specific Agreement ==> " + agreement_s);
+			System.out.println("Specific Agreement Length ==> " + agreement_s.length());
+
 			apiresponse = Response.ok(agreement_s);
 			apiresponse.header("Content-Length", agreement_s.length());
 
