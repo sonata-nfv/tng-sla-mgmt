@@ -869,10 +869,6 @@ public class db_operations {
 
 		Statement stmt = null;
 		JSONObject root = new JSONObject();
-
-		//sla_uuid = sla_uuid.trim();
-		//nsi_uuid = nsi_uuid.trim();
-
 		try {
 			c.setAutoCommit(false);
 			stmt = c.createStatement();
@@ -884,7 +880,6 @@ public class db_operations {
 				String cust_email = rs.getString("cust_email");
 				String sla_date = rs.getString("sla_date");
 
-				System.out.print("[*****] " + cust_username + " " + cust_email);
 				root.put("cust_username", cust_username);
 				root.put("cust_email", cust_email);
 				root.put("sla_date", sla_date);
@@ -893,8 +888,6 @@ public class db_operations {
 			rs.close();
 			stmt.close();
 			
-			System.out.print("[*****] " + root);
-
 		} catch (Exception e) {
 
 			// logging

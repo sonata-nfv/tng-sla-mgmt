@@ -91,7 +91,7 @@ public class AgreementsAPIs {
 		db_operations.connectPostgreSQL();
 		db_operations.createTableCustSla();
 		JSONObject correlations = db_operations.getActiveAgreements();
-		dbo.closePostgreSQL();
+		db_operations.closePostgreSQL();
 
 		apiresponse = Response.ok((Object) correlations);
 		apiresponse.header("Content-Length", correlations.toString().length());
@@ -124,7 +124,7 @@ public class AgreementsAPIs {
 		db_operations.connectPostgreSQL();
 		db_operations.createTableCustSla();
 		JSONObject correlations = db_operations.getAgreements();
-		dbo.closePostgreSQL();
+		db_operations.closePostgreSQL();
 
 		apiresponse = Response.ok((Object) correlations);
 		apiresponse.header("Content-Length", correlations.toString().length());
@@ -156,16 +156,16 @@ public class AgreementsAPIs {
 		URL url = null;
 
 		db_operations dbo = new db_operations();
-		dbo.connectPostgreSQL();
+		db_operations.connectPostgreSQL();
 		JSONObject agrPerNs = dbo.selectAgreementPerNSI(nsi_uuid);
 		String sla_status = (String) agrPerNs.get("sla_status");
-		dbo.closePostgreSQL();
+		db_operations.closePostgreSQL();
 
 		if (sla_status.equals("VIOLATED")) {
 
-			dbo.connectPostgreSQL();
+			db_operations.connectPostgreSQL();
 			boolean deleted = dbo.deleteAgreement(nsi_uuid);
-			dbo.closePostgreSQL();
+			db_operations.closePostgreSQL();
 
 			if (deleted == true) {
 				JSONObject success_delete = new JSONObject();
@@ -240,14 +240,14 @@ public class AgreementsAPIs {
 		if (connect == true) {
 			db_operations.createTableCustSla();
 			JSONObject agrPerNs = dbo.selectAgreementPerNSI(nsi_uuid);
-			dbo.closePostgreSQL();
+			db_operations.closePostgreSQL();
 
 			apiresponse = Response.ok(agrPerNs);
 			apiresponse.header("Content-Length", agrPerNs.toString().length());
 			return apiresponse.status(200).build();
 
 		} else {
-			dbo.closePostgreSQL();
+			db_operations.closePostgreSQL();
 
 			JSONObject error = new JSONObject();
 			error.put("ERROR: ", "connecting to database");
@@ -314,14 +314,14 @@ public class AgreementsAPIs {
 		if (connect == true) {
 			db_operations.createTableCustSla();
 			JSONObject agrPerNs = dbo.selectAgreementPerCustomer(cust_username);
-			dbo.closePostgreSQL();
+			db_operations.closePostgreSQL();
 
 			apiresponse = Response.ok(agrPerNs);
 			apiresponse.header("Content-Length", agrPerNs.toString().length());
 			return apiresponse.status(200).build();
 
 		} else {
-			dbo.closePostgreSQL();
+			db_operations.closePostgreSQL();
 
 			JSONObject error = new JSONObject();
 			error.put("ERROR: ", "connecting to database");
@@ -335,6 +335,7 @@ public class AgreementsAPIs {
 	/**
 	 * api call in order to get a specific sla agreement
 	 */
+	@SuppressWarnings("unchecked")
 	@GET
 	@Produces(MediaType.TEXT_PLAIN)
 	@Path("/{sla_uuid}/{nsi_uuid}")
@@ -373,19 +374,13 @@ public class AgreementsAPIs {
 
 			// get customer details from db
 			db_operations dbo = new db_operations();
-			dbo.connectPostgreSQL();
+			db_operations.connectPostgreSQL();
 			db_operations.createTableCustSla();
 			JSONObject agrPerSlaNs = dbo.selectAgreementPerSlaNs(sla_uuid, nsi_uuid);
-			dbo.closePostgreSQL();
-
-			System.out.println("Agreement customer info ==> " + agrPerSlaNs);
+			db_operations.closePostgreSQL();
 			
 			String cust_username = (String) agrPerSlaNs.get("cust_username");
-			System.out.println("Agreement cust_username ==> " + cust_username);
-
 			String cust_email = (String) agrPerSlaNs.get("cust_email");
-			System.out.println("Agreement cust_email ==> " + cust_email);
-
 			String sla_date = (String) agrPerSlaNs.get("sla_date");
 			
 			// update the template with the necessary customer info - convert it to
@@ -416,9 +411,6 @@ public class AgreementsAPIs {
 			existingTemplates = agreement;
 			
 			String agreement_s = existingTemplates.toString();
-			System.out.println("Specific Agreement ==> " + agreement_s);
-			System.out.println("Specific Agreement Length ==> " + agreement_s.length());
-
 			apiresponse = Response.ok(agreement_s);
 			apiresponse.header("Content-Length", agreement_s.length());
 
@@ -529,13 +521,13 @@ public class AgreementsAPIs {
 					sla_name1.get(0).toString(), sla_status1.get(0).toString(), cust_email1.get(0).toString(),
 					cust_username1.get(0).toString(), inst_status1.get(0).toString(), correlation_id1.get(0).toString());
 			db_operations.UpdateRecordAgreement("READY", correlation_id1.get(0), ns_uuid1.get(0));
-			dbo.closePostgreSQL();
+			db_operations.closePostgreSQL();
 
 			apiresponse = Response.ok();
 			return apiresponse.status(200).build();
 
 		} else {
-			dbo.closePostgreSQL();
+			db_operations.closePostgreSQL();
 
 			JSONObject error = new JSONObject();
 			error.put("ERROR: ", "connecting to database");
