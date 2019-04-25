@@ -876,10 +876,8 @@ public class db_operations {
 		try {
 			c.setAutoCommit(false);
 			stmt = c.createStatement();
-//			ResultSet rs = stmt.executeQuery("SELECT * FROM cust_sla WHERE sla_uuid = '" + sla_uuid + "' AND nsi_uuid='"
-//					+ nsi_uuid + "' AND  inst_status='READY';");
 
-			ResultSet rs = stmt.executeQuery("SELECT * FROM cust_sla WHERE sla_uuid='" +sla_uuid+ "' AND AND nsi_uuid='"+nsi_uuid+"' AND inst_status='READY';");
+			ResultSet rs = stmt.executeQuery("SELECT * FROM cust_sla WHERE sla_uuid='" +sla_uuid+ "' AND nsi_uuid='"+nsi_uuid+"' AND inst_status='READY';");
 			
 			while (rs.next()) {
 				String cust_username = rs.getString("cust_username");
