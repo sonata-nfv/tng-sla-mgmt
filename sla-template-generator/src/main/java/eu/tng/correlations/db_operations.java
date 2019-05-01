@@ -41,8 +41,11 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.util.Date;
+import java.util.TimeZone;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -344,21 +347,14 @@ public class db_operations {
 	public static void createTableCustSla() {
 		try {
 			stmt = c.createStatement();
-//			String sql = "CREATE TABLE IF NOT EXISTS cust_sla" + "(ID  SERIAL PRIMARY KEY," + " NS_UUID TEXT NOT NULL, "
-//					+ "NSI_UUID TEXT NULL," + "NS_NAME TEXT NOT NULL," + "SLA_UUID  TEXT NOT NULL,"
-//					+ "SLA_NAME TEXT NOT NULL," + "SLA_DATE TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,"
-//					+ "SLA_STATUS TEXT NOT NULL," + "CUST_EMAIL TEXT NOT NULL," + "CUST_USERNAME  TEXT NOT NULL,"
-//					+ "INST_ID TEXT NOT NULL," + "INST_STATUS  TEXT NOT NULL )";
-			
 			String sql = "CREATE TABLE IF NOT EXISTS cust_sla" + "(ID  SERIAL PRIMARY KEY," + " NS_UUID TEXT NOT NULL, "
 					+ "NSI_UUID TEXT NULL," + "NS_NAME TEXT NOT NULL," + "SLA_UUID  TEXT NOT NULL,"
-					+ "SLA_NAME TEXT NOT NULL," + "SLA_DATE TIMESTAMPZ DEFAULT NOW(),"
+					+ "SLA_NAME TEXT NOT NULL," + "SLA_DATE TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,"
 					+ "SLA_STATUS TEXT NOT NULL," + "CUST_EMAIL TEXT NOT NULL," + "CUST_USERNAME  TEXT NOT NULL,"
 					+ "INST_ID TEXT NOT NULL," + "INST_STATUS  TEXT NOT NULL )";
-			
 			stmt.executeUpdate(sql);
 			stmt.close();
-			
+
 			ThreadContext.clearAll();
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
@@ -637,6 +633,11 @@ public class db_operations {
 				String inst_status = rs.getString("inst_status");
 				String inst_id = rs.getString("inst_id");
 				String nsi_uuid = rs.getString("nsi_uuid");
+				
+				TimeZone tz = TimeZone.getTimeZone("UTC");
+				DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'"); // iso date format yyyy-MM-dd'T'HH:mm'Z'
+				df.setTimeZone(tz);
+				sla_date = df.format(sla_date);
 
 				JSONObject obj = new JSONObject();
 				obj.put("ns_uuid", ns_uuid);
