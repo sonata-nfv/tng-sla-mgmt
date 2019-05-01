@@ -249,56 +249,63 @@ public class templatesAPIs {
 	 */
 	@SuppressWarnings({ "null", "unchecked" })
 	@Produces(MediaType.TEXT_PLAIN)
-	@Consumes("application/x-www-form-urlencoded")
+	@Consumes({"application/x-www-form-urlencoded", "application/json"})
 	@POST
-	public Response createTemplate(final MultivaluedMap<String, String> formParams, @Context HttpHeaders headers) {
+	public Response createTemplate(final MultivaluedMap<String, String> formParams) {
 
-		String template_initiator = "admin";
-		// Get Authorization Token
-		try {
-			// get jwt token
-			String Authorization = headers.getRequestHeader("Authorization").get(0);
-			String token = Authorization.substring(7);
-
-			// logging
-			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-			String timestamps = timestamp.toString();
-			String type = "I";
-			String operation = "Get Authorization token";
-			String message = "Authorization token feched succesfully! --> " + token;
-			String status = String.valueOf(200);
-			logger.info(
-					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
-					type, timestamps, operation, message, status);
-
-			// decode jwt token
-			JSONObject auth_info = JwtTokenDecode.DecodeToken(token);
-
-			System.out.println("[***] Auth info ==> " + auth_info);
-			try {
-				template_initiator = (String) auth_info.get("username");
-				System.out.println("[***] Auth info: Username  ==> " + template_initiator);
-
-			} catch (JSONException e) {
-				System.out.println(e);
-			}
-		} catch (Exception e) {
-			// logging
-			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-			String timestamps = timestamp.toString();
-			String type = "W";
-			String operation = "Get Authorization token";
-			String message = "Authorization token not included in thw request --> " + e;
-			String status = "";
-			logger.info(
-					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
-					type, timestamps, operation, message, status);
-		}
+//		// Get Authorization Token
+//		try {
+//			// get jwt token
+//			String Authorization = headers.getRequestHeader("Authorization").get(0);
+//			String token = Authorization.substring(7);
+//
+//			// logging
+//			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+//			String timestamps = timestamp.toString();
+//			String type = "I";
+//			String operation = "Get Authorization token";
+//			String message = "Authorization token feched succesfully! --> " + token;
+//			String status = String.valueOf(200);
+//			logger.info(
+//					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+//					type, timestamps, operation, message, status);
+//
+//			// decode jwt token
+//			JSONObject auth_info = JwtTokenDecode.DecodeToken(token);
+//
+//			System.out.println("[***] Auth info ==> " + auth_info);
+//			try {
+//				template_initiator = (String) auth_info.get("username");
+//				System.out.println("[***] Auth info: Username  ==> " + template_initiator);
+//
+//			} catch (JSONException e) {
+//				System.out.println(e);
+//			}
+//		} catch (Exception e) {
+//			// logging
+//			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+//			String timestamps = timestamp.toString();
+//			String type = "W";
+//			String operation = "Get Authorization token";
+//			String message = "Authorization token not included in thw request --> " + e;
+//			String status = "";
+//			logger.info(
+//					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+//					type, timestamps, operation, message, status);
+//		}
 
 		ResponseBuilder apiresponse = null;
 
+		
+		String template_initiator = "admin";		
+		List<String> customer_name = formParams.get("customer_name");
+		System.out.println("[1] USERNAME==> " + customer_name.get(0));
+		List<String> customer_email = formParams.get("customer_email");
+		System.out.println("[2] customer_email==> " + customer_email.get(0));
+		
 		List<String> nsd_uuid = formParams.get("nsd_uuid");
 		List<String> templateName = formParams.get("templateName");
+		System.out.println("[3] template name ==> " + templateName.get(0));
 		List<String> expireDate = formParams.get("expireDate");
 
 		List<String> service_licence_type = formParams.get("service_licence_type");
@@ -310,28 +317,28 @@ public class templatesAPIs {
 		try {
 			List<String> provider_name_list = formParams.get("provider_name");
 			provider_name = provider_name_list.get(0);
-			System.out.println("[*] Provider name  ==> " + provider_name);
+			System.out.println("[4] Provider name  ==> " + provider_name);
 		} catch (Exception e) {
 			provider_name = "default";
-			System.out.println("[*] Provider name  ==> " + provider_name);
+			System.out.println("[4] Provider name  ==> " + provider_name);
 		}
 		// optional flavour_name
 		String dflavour_name = "";
 		try {
 			List<String> dflavour_name_list = formParams.get("dflavour_name");
 			dflavour_name = dflavour_name_list.get(0);
-			System.out.println("[*] Selected Deployment Flavour Name ==> " + dflavour_name);
+			System.out.println("[5] Selected Deployment Flavour Name ==> " + dflavour_name);
 		} catch (Exception e) {
 			dflavour_name = "default";
-			System.out.println("[*] Selected Deployment Flavour Name ==> " + dflavour_name);
+			System.out.println("[5] Selected Deployment Flavour Name ==> " + dflavour_name);
 		}
 
 		ArrayList<String> guarantees = new ArrayList<String>();
 		guarantees.addAll(formParams.get("guaranteeId"));
 
 		CreateTemplate ct = new CreateTemplate();
-		System.out.println("[1] templates API --> provider name: " + provider_name);
-		System.out.println("[2] templates API --> initiator name: " + template_initiator);
+		System.out.println("[6] templates API --> provider name: " + provider_name);
+		System.out.println("[7] templates API --> initiator name: " + template_initiator);
 		JSONObject template = ct.createTemplate(nsd_uuid.get(0), templateName.get(0), expireDate.get(0), guarantees,
 				service_licence_type.get(0), allowed_service_instances.get(0), service_licence_expiration_date.get(0),
 				provider_name, template_initiator);
