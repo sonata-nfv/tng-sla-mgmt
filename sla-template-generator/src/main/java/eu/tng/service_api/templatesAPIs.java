@@ -244,6 +244,7 @@ public class templatesAPIs {
 
 	}
 
+	
 	/**
 	 * api call in order to generate a sla template
 	 */
@@ -251,7 +252,7 @@ public class templatesAPIs {
 	@Produces({MediaType.TEXT_PLAIN, MediaType.APPLICATION_XML})
 	@Consumes({"application/x-www-form-urlencoded", "application/json"})
 	@POST
-	public Response createTemplate(final MultivaluedMap<String, String> formParams, CustomerProfile customerProfile) {
+	public Response createTemplate(final MultivaluedMap<String, String> formParams, final CreateTemplateModel bodyParams) {
 
 //		// Get Authorization Token
 //		try {
@@ -296,20 +297,22 @@ public class templatesAPIs {
 
 		ResponseBuilder apiresponse = null;
 
-		System.out.println(" [***] PARAMETERS FROM REQUEST ==> " + formParams.toString());
+		String customer_name="admin";
+		System.out.println(" [***] PARAMETERS FROM FORM ==> " + formParams.toString());
+		System.out.println(" [***] PARAMETERS FROM BODY ==> " + bodyParams.toString());
 
-//		String template_initiator = "admin";		
-//		List<String> customer_name = formParams.get("customer_name");
-//		System.out.println("[1] USERNAME==> " + customer_name);
+
+//		String customer_name1 = "admin";		
+//		customer_name1 = formParams.get("customer_name").get(0);
+//		System.out.println("[1] USERNAME==> " + customer_name1);
 //		List<String> customer_email = formParams.get("customer_email");
 //		System.out.println("[2] customer_email==> " + customer_email);
 		
-		//we can make use of UserProfile now
-        String customer_name = customerProfile.getCutomerName();
-        String customer_email = customerProfile.getCustomerEmail();
-		System.out.println("[1] customer_name==> " + customer_name);
-		System.out.println("[2] customer_email==> " + customer_email);
-
+		
+		System.out.println("customer_name = " + bodyParams.param1);
+		customer_name= bodyParams.param1 ;
+	    System.out.println("customer_email = " + bodyParams.param2);
+		
 		
 		List<String> nsd_uuid = formParams.get("nsd_uuid");
 		List<String> templateName = formParams.get("templateName");
