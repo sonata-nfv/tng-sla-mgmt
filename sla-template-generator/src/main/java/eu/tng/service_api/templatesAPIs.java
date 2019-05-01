@@ -330,11 +330,12 @@ public class templatesAPIs {
 			// extract from the dflavour name the user info			
 			cust_info = dflavour_name.substring(dflavour_name.length(), dflavour_name_withuinfo.length());
 			String js_cust_info = "{"+cust_info;
-			JSONParser parser = new JSONParser();
-			JSONObject jsonObject_cust_info = (JSONObject) parser.parse(js_cust_info);
-			System.out.println("[*]Customer info jsonIbject ==> " + jsonObject_cust_info);
-			String customer_name = (String) jsonObject_cust_info.get("customer_name");
-			System.out.println("[****] Template initiator ==> " + customer_name);
+			System.out.println("js_cust_info ==> " + js_cust_info);
+//			JSONParser parser = new JSONParser();
+//			JSONObject jsonObject_cust_info = (JSONObject) parser.parse(js_cust_info);
+//			System.out.println("[*]Customer info jsonIbject ==> " + jsonObject_cust_info);
+//			String customer_name = (String) jsonObject_cust_info.get("customer_name");
+//			System.out.println("[****] Template initiator ==> " + customer_name);
 			
 		} catch (Exception e) {
 			dflavour_name = "default";
