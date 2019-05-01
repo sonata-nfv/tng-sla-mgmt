@@ -296,12 +296,13 @@ public class templatesAPIs {
 
 		ResponseBuilder apiresponse = null;
 
-		
+		System.out.println(" [***] PARAMETERS FROM REQUEST ==> " + formParams.toString());
+
 		String template_initiator = "admin";		
 		List<String> customer_name = formParams.get("customer_name");
-		System.out.println("[1] USERNAME==> " + customer_name.get(0));
+		System.out.println("[1] USERNAME==> " + customer_name);
 		List<String> customer_email = formParams.get("customer_email");
-		System.out.println("[2] customer_email==> " + customer_email.get(0));
+		System.out.println("[2] customer_email==> " + customer_email);
 		
 		List<String> nsd_uuid = formParams.get("nsd_uuid");
 		List<String> templateName = formParams.get("templateName");
