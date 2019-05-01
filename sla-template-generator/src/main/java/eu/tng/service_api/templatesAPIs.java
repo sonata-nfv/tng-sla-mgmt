@@ -327,10 +327,10 @@ public class templatesAPIs {
 			dflavour_name = dflavour_name_withuinfo.substring(0, dflavour_name.length() - 68);
 			System.out.println("[5] Selected Deployment Flavour Name ==> " + dflavour_name);
 
-			// extract from the dflavour name the user info			
-			cust_info = dflavour_name.substring(dflavour_name.length(), dflavour_name_withuinfo.length());
-			String js_cust_info = "{"+cust_info;
-			System.out.println("js_cust_info ==> " + js_cust_info);
+//			// extract from the dflavour name the user info			
+//			cust_info = dflavour_name.substring(dflavour_name.length(), dflavour_name_withuinfo.length());
+//			String js_cust_info = "{"+cust_info;
+//			System.out.println("js_cust_info ==> " + js_cust_info);
 //			JSONParser parser = new JSONParser();
 //			JSONObject jsonObject_cust_info = (JSONObject) parser.parse(js_cust_info);
 //			System.out.println("[*]Customer info jsonIbject ==> " + jsonObject_cust_info);
@@ -340,7 +340,7 @@ public class templatesAPIs {
 		} catch (Exception e) {
 			dflavour_name = "default";
 		}
-
+		
 		//guarantees 
 		ArrayList<String> guarantees = new ArrayList<String>();
 		guarantees.addAll(formParams.get("guaranteeId"));
