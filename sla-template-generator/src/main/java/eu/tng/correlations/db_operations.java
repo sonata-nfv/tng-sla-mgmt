@@ -42,6 +42,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.Date;
@@ -634,16 +635,26 @@ public class db_operations {
 				String inst_id = rs.getString("inst_id");
 				String nsi_uuid = rs.getString("nsi_uuid");
 				
+				/** useful variables **/
 				TimeZone tz = TimeZone.getTimeZone("UTC");
 				DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'"); // iso date format yyyy-MM-dd'T'HH:mm'Z'
 				df.setTimeZone(tz);
-				sla_date = df.format(sla_date);
+
+				SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+				Date date2 = null;
+				try {
+					date2 = formatter.parse(sla_date);
+				} catch (ParseException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				String sla_date_new = df.format(date2);
 
 				JSONObject obj = new JSONObject();
 				obj.put("ns_uuid", ns_uuid);
 				obj.put("ns_name", ns_name);
 				obj.put("sla_name", sla_name);
-				obj.put("sla_date", sla_date);
+				obj.put("sla_date", sla_date_new);
 				obj.put("sla_status", sla_status);
 				obj.put("sla_uuid", sla_uuid);
 				obj.put("cust_email", cust_email);
