@@ -317,21 +317,28 @@ public class templatesAPIs {
 			provider_name = "default";
 		}
 		// optional flavour_name
+		String dflavour_name_withuinfo = "";
 		String dflavour_name = "";
+		String cust_info = "";
 		try {
 			List<String> dflavour_name_list = formParams.get("dflavour_name");
-			dflavour_name = dflavour_name_list.get(0);
-			System.out.println("[5] Selected Deployment Flavour Name WITH USER INFO  ==> " + dflavour_name);
-			dflavour_name = dflavour_name.substring(0, dflavour_name.length() - 68);
+			dflavour_name_withuinfo = dflavour_name_list.get(0);
+			// remove from the dflavour name the user info	to get only the dflavour name		
+			dflavour_name = dflavour_name_withuinfo.substring(0, dflavour_name.length() - 68);
 			System.out.println("[5] Selected Deployment Flavour Name ==> " + dflavour_name);
+
+			// extract from the dflavour name the user info			
+			cust_info = dflavour_name.substring(dflavour_name.length(), dflavour_name_withuinfo.length());
+			String js_cust_info = "{"+cust_info;
+			JSONParser parser = new JSONParser();
+			JSONObject jsonObject_cust_info = (JSONObject) parser.parse(js_cust_info);
+			System.out.println("[*]Customer info jsonIbject ==> " + jsonObject_cust_info);
+			String customer_name = (String) jsonObject_cust_info.get("customer_name");
+			System.out.println("[****] Template initiator ==> " + customer_name);
+			
 		} catch (Exception e) {
 			dflavour_name = "default";
 		}
-		// template_initiator info
-		String template_initiator = "tango";
-		//template_initiator = dflavour_name.substring(0, dflavour_name.length() - 68);
-		System.out.println("[****] Template initiator ==> " + template_initiator);
-
 
 		//guarantees 
 		ArrayList<String> guarantees = new ArrayList<String>();
@@ -341,7 +348,7 @@ public class templatesAPIs {
 		System.out.println("[6] templates API --> provider name: " + provider_name);
 		JSONObject template = ct.createTemplate(nsd_uuid.get(0), templateName.get(0), expireDate.get(0), guarantees,
 				service_licence_type.get(0), allowed_service_instances.get(0), service_licence_expiration_date.get(0),
-				provider_name, template_initiator);
+				provider_name, "admin");
 
 		if (template == null) {
 			String dr = null;
