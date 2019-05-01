@@ -249,10 +249,10 @@ public class templatesAPIs {
 	 * api call in order to generate a sla template
 	 */
 	@SuppressWarnings({ "null", "unchecked" })
-	@Produces({MediaType.TEXT_PLAIN, MediaType.APPLICATION_XML})
-	@Consumes({"application/x-www-form-urlencoded", "application/json"})
+	@Produces(MediaType.TEXT_PLAIN)
+	@Consumes("application/x-www-form-urlencoded")
 	@POST
-	public Response createTemplate(final MultivaluedMap<String, String> formParams, final CreateTemplateModel bodyParams) {
+	public Response createTemplate(final MultivaluedMap<String, String> formParams) {
 
 //		// Get Authorization Token
 //		try {
@@ -297,32 +297,16 @@ public class templatesAPIs {
 
 		ResponseBuilder apiresponse = null;
 
-		String customer_name="admin";
-		System.out.println(" [***] PARAMETERS FROM FORM ==> " + formParams.toString());
-		System.out.println(" [***] PARAMETERS FROM BODY ==> " + bodyParams.toString());
-
-
-//		String customer_name1 = "admin";		
-//		customer_name1 = formParams.get("customer_name").get(0);
-//		System.out.println("[1] USERNAME==> " + customer_name1);
-//		List<String> customer_email = formParams.get("customer_email");
-//		System.out.println("[2] customer_email==> " + customer_email);
-		
-		
-		System.out.println("customer_name = " + bodyParams.param1);
-		customer_name= bodyParams.param1 ;
-	    System.out.println("customer_email = " + bodyParams.param2);
-		
-		
+		System.out.println(" [***] PARAMETERS FROM FORM ==> " + formParams.toString());	
+			
+		// general sla info
 		List<String> nsd_uuid = formParams.get("nsd_uuid");
 		List<String> templateName = formParams.get("templateName");
-		System.out.println("[3] template name ==> " + templateName.get(0));
 		List<String> expireDate = formParams.get("expireDate");
-
+		// license info
 		List<String> service_licence_type = formParams.get("service_licence_type");
 		List<String> allowed_service_instances = formParams.get("allowed_service_instances");
 		List<String> service_licence_expiration_date = formParams.get("service_licence_expiration_date");
-
 		// optional provider name
 		String provider_name = "";
 		try {
@@ -331,19 +315,25 @@ public class templatesAPIs {
 			System.out.println("[4] Provider name  ==> " + provider_name);
 		} catch (Exception e) {
 			provider_name = "default";
-			System.out.println("[4] Provider name  ==> " + provider_name);
 		}
 		// optional flavour_name
 		String dflavour_name = "";
 		try {
 			List<String> dflavour_name_list = formParams.get("dflavour_name");
 			dflavour_name = dflavour_name_list.get(0);
+			System.out.println("[5] Selected Deployment Flavour Name WITH USER INFO  ==> " + dflavour_name);
+			dflavour_name = dflavour_name.substring(0, dflavour_name.length() - 68);
 			System.out.println("[5] Selected Deployment Flavour Name ==> " + dflavour_name);
 		} catch (Exception e) {
 			dflavour_name = "default";
-			System.out.println("[5] Selected Deployment Flavour Name ==> " + dflavour_name);
 		}
+		// template_initiator info
+		String template_initiator = "tango";
+		//template_initiator = dflavour_name.substring(0, dflavour_name.length() - 68);
+		System.out.println("[****] Template initiator ==> " + template_initiator);
 
+
+		//guarantees 
 		ArrayList<String> guarantees = new ArrayList<String>();
 		guarantees.addAll(formParams.get("guaranteeId"));
 
@@ -351,7 +341,7 @@ public class templatesAPIs {
 		System.out.println("[6] templates API --> provider name: " + provider_name);
 		JSONObject template = ct.createTemplate(nsd_uuid.get(0), templateName.get(0), expireDate.get(0), guarantees,
 				service_licence_type.get(0), allowed_service_instances.get(0), service_licence_expiration_date.get(0),
-				provider_name, customer_name);
+				provider_name, template_initiator);
 
 		if (template == null) {
 			String dr = null;
