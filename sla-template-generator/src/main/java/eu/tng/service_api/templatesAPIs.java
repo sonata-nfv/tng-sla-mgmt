@@ -248,10 +248,10 @@ public class templatesAPIs {
 	 * api call in order to generate a sla template
 	 */
 	@SuppressWarnings({ "null", "unchecked" })
-	@Produces(MediaType.TEXT_PLAIN)
+	@Produces({MediaType.TEXT_PLAIN, MediaType.APPLICATION_XML})
 	@Consumes({"application/x-www-form-urlencoded", "application/json"})
 	@POST
-	public Response createTemplate(final MultivaluedMap<String, String> formParams) {
+	public Response createTemplate(final MultivaluedMap<String, String> formParams, CustomerProfile customerProfile) {
 
 //		// Get Authorization Token
 //		try {
@@ -298,11 +298,18 @@ public class templatesAPIs {
 
 		System.out.println(" [***] PARAMETERS FROM REQUEST ==> " + formParams.toString());
 
-		String template_initiator = "admin";		
-		List<String> customer_name = formParams.get("customer_name");
-		System.out.println("[1] USERNAME==> " + customer_name);
-		List<String> customer_email = formParams.get("customer_email");
+//		String template_initiator = "admin";		
+//		List<String> customer_name = formParams.get("customer_name");
+//		System.out.println("[1] USERNAME==> " + customer_name);
+//		List<String> customer_email = formParams.get("customer_email");
+//		System.out.println("[2] customer_email==> " + customer_email);
+		
+		//we can make use of UserProfile now
+        String customer_name = customerProfile.getCutomerName();
+        String customer_email = customerProfile.getCustomerEmail();
+		System.out.println("[1] customer_name==> " + customer_name);
 		System.out.println("[2] customer_email==> " + customer_email);
+
 		
 		List<String> nsd_uuid = formParams.get("nsd_uuid");
 		List<String> templateName = formParams.get("templateName");
@@ -339,10 +346,9 @@ public class templatesAPIs {
 
 		CreateTemplate ct = new CreateTemplate();
 		System.out.println("[6] templates API --> provider name: " + provider_name);
-		System.out.println("[7] templates API --> initiator name: " + template_initiator);
 		JSONObject template = ct.createTemplate(nsd_uuid.get(0), templateName.get(0), expireDate.get(0), guarantees,
 				service_licence_type.get(0), allowed_service_instances.get(0), service_licence_expiration_date.get(0),
-				provider_name, template_initiator);
+				provider_name, customer_name);
 
 		if (template == null) {
 			String dr = null;
