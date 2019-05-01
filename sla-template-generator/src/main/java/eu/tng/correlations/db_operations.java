@@ -344,14 +344,21 @@ public class db_operations {
 	public static void createTableCustSla() {
 		try {
 			stmt = c.createStatement();
+//			String sql = "CREATE TABLE IF NOT EXISTS cust_sla" + "(ID  SERIAL PRIMARY KEY," + " NS_UUID TEXT NOT NULL, "
+//					+ "NSI_UUID TEXT NULL," + "NS_NAME TEXT NOT NULL," + "SLA_UUID  TEXT NOT NULL,"
+//					+ "SLA_NAME TEXT NOT NULL," + "SLA_DATE TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,"
+//					+ "SLA_STATUS TEXT NOT NULL," + "CUST_EMAIL TEXT NOT NULL," + "CUST_USERNAME  TEXT NOT NULL,"
+//					+ "INST_ID TEXT NOT NULL," + "INST_STATUS  TEXT NOT NULL )";
+			
 			String sql = "CREATE TABLE IF NOT EXISTS cust_sla" + "(ID  SERIAL PRIMARY KEY," + " NS_UUID TEXT NOT NULL, "
 					+ "NSI_UUID TEXT NULL," + "NS_NAME TEXT NOT NULL," + "SLA_UUID  TEXT NOT NULL,"
-					+ "SLA_NAME TEXT NOT NULL," + "SLA_DATE TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,"
+					+ "SLA_NAME TEXT NOT NULL," + "SLA_DATE TIMESTAMPZ DEFAULT NOW(),"
 					+ "SLA_STATUS TEXT NOT NULL," + "CUST_EMAIL TEXT NOT NULL," + "CUST_USERNAME  TEXT NOT NULL,"
 					+ "INST_ID TEXT NOT NULL," + "INST_STATUS  TEXT NOT NULL )";
+			
 			stmt.executeUpdate(sql);
 			stmt.close();
-
+			
 			ThreadContext.clearAll();
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
