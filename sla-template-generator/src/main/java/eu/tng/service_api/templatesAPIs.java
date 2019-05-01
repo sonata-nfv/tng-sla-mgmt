@@ -251,7 +251,7 @@ public class templatesAPIs {
 	@Produces(MediaType.TEXT_PLAIN)
 	@Consumes({"application/x-www-form-urlencoded", "application/json"})
 	@POST
-	public Response createTemplate(final MultivaluedMap<String, String> formParams, UserProfile userProfile) {
+	public Response createTemplate(final MultivaluedMap<String, String> formParams) {
 
 //		// Get Authorization Token
 //		try {
@@ -297,15 +297,12 @@ public class templatesAPIs {
 		ResponseBuilder apiresponse = null;
 
 		System.out.println(" [***] PARAMETERS FROM REQUEST ==> " + formParams.toString());
-		
+
 		String template_initiator = "admin";		
-
-		//we can make use of UserProfile now
-        String customer_name = userProfile.getCutomerName();
-        String customer_email = userProfile.getCustomerEmail();
-		System.out.println("[1] customer_name==> " + customer_name);
+		List<String> customer_name = formParams.get("customer_name");
+		System.out.println("[1] USERNAME==> " + customer_name);
+		List<String> customer_email = formParams.get("customer_email");
 		System.out.println("[2] customer_email==> " + customer_email);
-
 		
 		List<String> nsd_uuid = formParams.get("nsd_uuid");
 		List<String> templateName = formParams.get("templateName");
