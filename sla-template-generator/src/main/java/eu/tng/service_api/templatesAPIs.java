@@ -252,58 +252,21 @@ public class templatesAPIs {
 	@Consumes("application/x-www-form-urlencoded")
 	@POST
 	public Response createTemplate(final MultivaluedMap<String, String> formParams, @Context HttpHeaders headers) {
-	    
-	    if (formParams.get("cust_username") != null && formParams.get("cust_email") != null) {
-	        String cust_username = formParams.get("cust_username").get(0);
-	        String cust_email = formParams.get("cust_email").get(0);
-	        System.out.println("[*** DEBUGGING] cust_username" + cust_username + " cust_email" + cust_email);
-	      }
-	    else
-	    {
-	        System.out.println("I have not received anything from you");
-	    }
-
-		String template_initiator = "admin";
-		// Get Authorization Token
-		try {
-			// get jwt token
-			String Authorization = headers.getRequestHeader("Authorization").get(0);
-			String token = Authorization.substring(7);
-
-			// logging
-			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-			String timestamps = timestamp.toString();
-			String type = "I";
-			String operation = "Get Authorization token";
-			String message = "Authorization token feched succesfully! --> " + token;
-			String status = String.valueOf(200);
-			logger.info(
-					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
-					type, timestamps, operation, message, status);
-
-			// decode jwt token
-			JSONObject auth_info = JwtTokenDecode.DecodeToken(token);
-
-			System.out.println("[***] Auth info ==> " + auth_info);
-			try {
-				template_initiator = (String) auth_info.get("username");
-				System.out.println("[***] Auth info: Username  ==> " + template_initiator);
+	    	
+			String template_initiator = "";
+			String template_initiator_email = "";
+            try {
+	            template_initiator = headers.getRequestHeader("X-User-Name").get(0);
+				System.out.println("[***] Auth info: Initiator Username  ==> " + template_initiator);
+				
+				template_initiator_email = headers.getRequestHeader("X-User-Email").get(0);
+                System.out.println("[***] Auth info: Initiator Email  ==> " + template_initiator_email);
 
 			} catch (JSONException e) {
+			    template_initiator = "admin";
 				System.out.println(e);
 			}
-		} catch (Exception e) {
-			// logging
-			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-			String timestamps = timestamp.toString();
-			String type = "W";
-			String operation = "Get Authorization token";
-			String message = "Authorization token not included in thw request --> " + e;
-			String status = "";
-			logger.info(
-					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
-					type, timestamps, operation, message, status);
-		}
+		
 
 		ResponseBuilder apiresponse = null;
 
