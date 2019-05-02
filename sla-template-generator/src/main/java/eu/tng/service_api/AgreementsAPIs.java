@@ -268,14 +268,14 @@ public class AgreementsAPIs {
 	public Response getAgreementsPerCustonmer(@Context HttpHeaders headers) {
 		
 		String cust_username = "";
-        try {
-        	cust_username = headers.getRequestHeader("X-User-Name").get(0);
-			System.out.println("[***] Auth info: Username  ==> " + cust_username);
-
-		} catch (JSONException e) {
-			cust_username = "admin";
-			System.out.println(e);
-		}
+//        try {
+//        	cust_username = headers.getRequestHeader("X-User-Name").get(0);
+//			System.out.println("[***] Auth info: Username  ==> " + cust_username);
+//
+//		} catch (JSONException e) {
+//			cust_username = "admin";
+//			System.out.println(e);
+//		}
 	
 		
 		ResponseBuilder apiresponse = null;
