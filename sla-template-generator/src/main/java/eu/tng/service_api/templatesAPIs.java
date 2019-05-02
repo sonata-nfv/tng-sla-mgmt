@@ -252,6 +252,16 @@ public class templatesAPIs {
 	@Consumes("application/x-www-form-urlencoded")
 	@POST
 	public Response createTemplate(final MultivaluedMap<String, String> formParams, @Context HttpHeaders headers) {
+	    
+	    if (formParams.get("cust_username") != null && formParams.get("cust_email") != null) {
+	        String cust_username = formParams.get("cust_username").get(0);
+	        String cust_email = formParams.get("cust_email").get(0);
+	        System.out.println("[*** DEBUGGING] cust_username" + cust_username + " cust_email" + cust_email);
+	      }
+	    else
+	    {
+	        System.out.println("I have not received anything from you");
+	    }
 
 		String template_initiator = "admin";
 		// Get Authorization Token
