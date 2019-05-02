@@ -268,44 +268,15 @@ public class AgreementsAPIs {
 	public Response getAgreementsPerCustonmer(@Context HttpHeaders headers) {
 		
 		String cust_username = "";
-		// Get Authorization Token
-		try {
-			// get jwt token
-			String Authorization = headers.getRequestHeader("Authorization").get(0);
-			String token = Authorization.substring(7);
+        try {
+        	cust_username = headers.getRequestHeader("X-User-Name").get(0);
+			System.out.println("[***] Auth info: Username  ==> " + cust_username);
 
-			// logging
-			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-			String timestamps = timestamp.toString();
-			String type = "I";
-			String operation = "Get Authorization token";
-			String message = "Authorization token feched succesfully! --> " + token;
-			String status = String.valueOf(200);
-			logger.info(
-					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
-					type, timestamps, operation, message, status);
-
-			// decode jwt token
-			JSONObject auth_info = JwtTokenDecode.DecodeToken(token);
-
-			try {
-				cust_username = (String) auth_info.get("username");
-			} catch (JSONException e) {
-				System.out.println(e);
-			}
-		} 
-		catch (Exception e) {
-			// logging
-			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-			String timestamps = timestamp.toString();
-			String type = "W";
-			String operation = "Get Authorization token";
-			String message = "Authorization token not included in thw request --> " + e;
-			String status = "";
-			logger.info(
-					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
-					type, timestamps, operation, message, status);
+		} catch (JSONException e) {
+			cust_username = "admin";
+			System.out.println(e);
 		}
+	
 		
 		ResponseBuilder apiresponse = null;
 		db_operations dbo = new db_operations();
