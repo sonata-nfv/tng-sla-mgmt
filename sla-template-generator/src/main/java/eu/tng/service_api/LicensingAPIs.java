@@ -63,12 +63,12 @@ import eu.tng.correlations.db_operations;
 import eu.tng.correlations.ns_template_corr;
 
 @Path("/licenses")
-@Consumes(MediaType.TEXT_PLAIN)
+@Consumes(MediaType.APPLICATION_JSON)
 public class LicensingAPIs {
 
 	final static Logger logger = LogManager.getLogger();
 
-	@Produces(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.TEXT_PLAIN)
 	@GET
 	public Response getLicenses() {
 		ResponseBuilder apiresponse = null;
