@@ -347,12 +347,20 @@ public class db_operations {
 	 */
 	public static void createTableCustSla() {
 		try {
+//			stmt = c.createStatement();
+//			String sql = "CREATE TABLE IF NOT EXISTS cust_sla" + "(ID  SERIAL PRIMARY KEY," + " NS_UUID TEXT NOT NULL, "
+//					+ "NSI_UUID TEXT NULL," + "NS_NAME TEXT NOT NULL," + "SLA_UUID  TEXT NOT NULL,"
+//					+ "SLA_NAME TEXT NOT NULL," + "SLA_DATE TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,"
+//					+ "SLA_STATUS TEXT NOT NULL," + "CUST_EMAIL TEXT NOT NULL," + "CUST_USERNAME  TEXT NOT NULL,"
+//					+ "INST_ID TEXT NOT NULL," + "INST_STATUS  TEXT NOT NULL )";
+			
 			stmt = c.createStatement();
 			String sql = "CREATE TABLE IF NOT EXISTS cust_sla" + "(ID  SERIAL PRIMARY KEY," + " NS_UUID TEXT NOT NULL, "
 					+ "NSI_UUID TEXT NULL," + "NS_NAME TEXT NOT NULL," + "SLA_UUID  TEXT NOT NULL,"
-					+ "SLA_NAME TEXT NOT NULL," + "SLA_DATE TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,"
+					+ "SLA_NAME TEXT NOT NULL," + "SLA_DATE TEXT NOT NULL,"
 					+ "SLA_STATUS TEXT NOT NULL," + "CUST_EMAIL TEXT NOT NULL," + "CUST_USERNAME  TEXT NOT NULL,"
 					+ "INST_ID TEXT NOT NULL," + "INST_STATUS  TEXT NOT NULL )";
+			
 			stmt.executeUpdate(sql);
 			stmt.close();
 
@@ -389,13 +397,21 @@ public class db_operations {
 	public void insertRecordAgreement(String ns_uuid, String ns_name, String sla_uuid, String sla_name,
 			String sla_status, String cust_email, String cust_username, String inst_status, String correlation_id) {
 
+		/** useful variables **/
+		TimeZone tz = TimeZone.getTimeZone("UTC");
+		DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'"); // iso date format yyyy-MM-dd'T'HH:mm'Z'
+		df.setTimeZone(tz);
+		/** current date */
+		Date date = new Date();
+		String sla_date = df.format(date);
+		
 		try {
 			c.setAutoCommit(false);
 			Statement stmt = c.createStatement();
 			String sql = "INSERT INTO cust_sla "
-					+ " (ns_uuid, ns_name, sla_uuid, sla_name, sla_status, cust_email, cust_username, inst_status, inst_id) "
+					+ " (ns_uuid, ns_name, sla_uuid, sla_name, sla_date, sla_status, cust_email, cust_username, inst_status, inst_id) "
 					+ "VALUES ('" + ns_uuid + "','" + ns_name + "','" + sla_uuid + "' ,'" + sla_name + "' ,'"
-					+ sla_status + "','" + cust_email + "','" + cust_username + "', '" + inst_status + "' , '"
+					+ sla_status + "','" + sla_date + "','" + cust_email + "','" + cust_username + "', '" + inst_status + "' , '"
 					+ correlation_id + "');";
 			stmt.executeUpdate(sql);
 			stmt.close();
