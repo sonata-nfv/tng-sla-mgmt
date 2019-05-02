@@ -63,7 +63,7 @@ import eu.tng.correlations.db_operations;
 import eu.tng.correlations.ns_template_corr;
 
 @Path("/licenses")
-@Consumes(MediaType.APPLICATION_JSON)
+@Consumes(MediaType.TEXT_PLAIN)
 public class LicensingAPIs {
 
 	final static Logger logger = LogManager.getLogger();
@@ -80,7 +80,7 @@ public class LicensingAPIs {
 		dbo.closePostgreSQL();
 
 		apiresponse = Response.ok((Object) all_licenses);
-		apiresponse.header("Content-Length", all_licenses.toJSONString().length() - 2);
+		apiresponse.header("Content-Length", all_licenses.toJSONString().length());
 
 		// logging
 		Timestamp timestamp = new Timestamp(System.currentTimeMillis());
@@ -158,7 +158,7 @@ public class LicensingAPIs {
 	 */
 	@SuppressWarnings("unchecked")
 	@GET
-	@Produces(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.TEXT_PLAIN)
 	@Path("/status/{sla_uuid}/{ns_uuid}")
 	public Response getLicenseInfoPerCustomer(@PathParam("sla_uuid") String sla_uuid, @PathParam("ns_uuid") String ns_uuid, @Context HttpHeaders headers) {
 
@@ -271,7 +271,7 @@ public class LicensingAPIs {
 			db_operations.closePostgreSQL();
 			// API Response
 			apiresponse = Response.ok((Object) license_info_response);
-			apiresponse.header("Content-Length", license_info_response.toJSONString().length() - 2);
+			apiresponse.header("Content-Length", license_info_response.toJSONString().length());
 			return apiresponse.status(200).build();
 
 		} else {
@@ -316,7 +316,7 @@ public class LicensingAPIs {
 	 * api for buying a private license
 	 */
 	@SuppressWarnings("null")
-	@Produces(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.TEXT_PLAIN)
 	@Consumes("application/x-www-form-urlencoded")
 	@Path("/buy")
 	@POST

@@ -81,7 +81,7 @@ public class AgreementsAPIs {
 	/**
 	 * api call in order to get a list with the active agreements
 	 */
-	@Produces(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.TEXT_PLAIN)
 	@GET
 	public Response getActiveAgreements() {
 
@@ -114,7 +114,7 @@ public class AgreementsAPIs {
 	 * api call in order to get a list with all the existing agreements
 	 */
 	@GET
-	@Produces(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.TEXT_PLAIN)
 	@Path("/all")
 	public Response getAgreements() {
 
@@ -229,7 +229,7 @@ public class AgreementsAPIs {
 	 * api call in order to get a list with all the existing agreements per NSI
 	 */
 	@GET
-	@Produces(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.TEXT_PLAIN)
 	@Path("service/{nsi_uuid}")
 	public Response getAgreementsPerNS(@PathParam("nsi_uuid") String nsi_uuid) {
 
@@ -263,7 +263,7 @@ public class AgreementsAPIs {
 	 * api call in order to get a list with all the existing agreements per Customer
 	 */
 	@GET
-	@Produces(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.TEXT_PLAIN)
 	@Path("customer")
 	public Response getAgreementsPerCustonmer(@Context HttpHeaders headers) {
 		
@@ -415,7 +415,7 @@ public class AgreementsAPIs {
 	 * get the garantee terms for a specific agreement
 	 */
 	@GET
-	@Produces(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.TEXT_PLAIN)
 	@Path("guarantee-terms/{sla_uuid}")
 	public Response getAgreementTerms(@PathParam("sla_uuid") String sla_uuid) {
 
@@ -426,7 +426,7 @@ public class AgreementsAPIs {
 		if (gt != null) {
 			apiresponse = Response.ok(gt);
 			System.out.println(gt.toString().length());
-			apiresponse.header("Content-Length", gt.toString().length() - 1);
+			apiresponse.header("Content-Length", gt.toString().length());
 
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
@@ -465,7 +465,7 @@ public class AgreementsAPIs {
 	 * api call in order to generate a sla agreement
 	 */
 	@SuppressWarnings("null")
-	@Produces(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.TEXT_PLAIN)
 	@Consumes("application/x-www-form-urlencoded")
 	@POST
 	@Path("create")
