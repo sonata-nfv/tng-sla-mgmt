@@ -399,7 +399,7 @@ public class db_operations {
 
 		/** useful variables **/
 		TimeZone tz = TimeZone.getTimeZone("UTC");
-		DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'"); // iso date format yyyy-MM-dd'T'HH:mm'Z'
+		DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'"); // '
 		df.setTimeZone(tz);
 		/** current date */
 		Date date = new Date();
@@ -411,7 +411,7 @@ public class db_operations {
 			String sql = "INSERT INTO cust_sla "
 					+ " (ns_uuid, ns_name, sla_uuid, sla_name, sla_date, sla_status, cust_email, cust_username, inst_status, inst_id) "
 					+ "VALUES ('" + ns_uuid + "','" + ns_name + "','" + sla_uuid + "' ,'" + sla_name + "' ,'"
-					+ sla_status + "','" + sla_date + "','" + cust_email + "','" + cust_username + "', '" + inst_status + "' , '"
+					+ sla_date + "','" + sla_status + "','" + cust_email + "','" + cust_username + "', '" + inst_status + "' , '"
 					+ correlation_id + "');";
 			stmt.executeUpdate(sql);
 			stmt.close();
