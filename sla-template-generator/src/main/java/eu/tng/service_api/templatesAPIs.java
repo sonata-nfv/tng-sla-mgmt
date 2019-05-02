@@ -264,6 +264,7 @@ public class templatesAPIs {
 
 			} catch (JSONException e) {
 			    template_initiator = "admin";
+			    template_initiator_email = "admin-email";
 				System.out.println(e);
 			}
 		
