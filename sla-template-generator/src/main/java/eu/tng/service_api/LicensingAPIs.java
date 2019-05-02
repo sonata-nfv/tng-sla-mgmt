@@ -80,7 +80,7 @@ public class LicensingAPIs {
 		dbo.closePostgreSQL();
 
 		apiresponse = Response.ok((Object) all_licenses);
-		apiresponse.header("Content-Length", all_licenses.toJSONString().length() - 2);
+		apiresponse.header("Content-Length", all_licenses.toJSONString().length() - 4);
 
 		// logging
 		Timestamp timestamp = new Timestamp(System.currentTimeMillis());
