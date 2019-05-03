@@ -41,8 +41,13 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.sql.Timestamp;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -303,10 +308,26 @@ public class templatesAPIs {
 		ArrayList<String> guarantees = new ArrayList<String>();
 		guarantees.addAll(formParams.get("guaranteeId"));
 
+		// format based on ISO date the license exoiration date
+		TimeZone tz = TimeZone.getTimeZone("UTC");
+		DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'"); // iso date format yyyy-MM-dd'T'HH:mm'Z'
+		df.setTimeZone(tz);
+		SimpleDateFormat formatter_lic = new SimpleDateFormat("dd/MM/yyyy");
+		String dateInString_lic = service_licence_expiration_date.get(0);
+		Date date_lic = null;
+		try {
+			date_lic = formatter_lic.parse(dateInString_lic);
+		}
+		catch (Exception e) {
+			// TODO: handle exception
+		}
+		String service_licence_expiration_date_formatted = df.format(date_lic);
+		
+		
 		CreateTemplate ct = new CreateTemplate();
 		System.out.println("[1] templates API --> provider name: " + provider_name);
 		System.out.println("[2] templates API --> initiator name: " + template_initiator);
-		JSONObject template = ct.createTemplate(nsd_uuid.get(0), templateName.get(0), expireDate.get(0), guarantees,
+		JSONObject template = ct.createTemplate(nsd_uuid.get(0), templateName.get(0),service_licence_expiration_date_formatted, guarantees,
 				service_licence_type.get(0), allowed_service_instances.get(0), service_licence_expiration_date.get(0),
 				provider_name, template_initiator);
 
