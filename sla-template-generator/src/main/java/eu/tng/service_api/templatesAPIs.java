@@ -327,9 +327,8 @@ public class templatesAPIs {
 		CreateTemplate ct = new CreateTemplate();
 		System.out.println("[1] templates API --> provider name: " + provider_name);
 		System.out.println("[2] templates API --> initiator name: " + template_initiator);
-		JSONObject template = ct.createTemplate(nsd_uuid.get(0), templateName.get(0),service_licence_expiration_date_formatted, guarantees,
-				service_licence_type.get(0), allowed_service_instances.get(0), service_licence_expiration_date.get(0),
-				provider_name, template_initiator);
+		JSONObject template = ct.createTemplate(nsd_uuid.get(0), templateName.get(0), expireDate.get(0), guarantees,
+				service_licence_type.get(0), allowed_service_instances.get(0),service_licence_expiration_date_formatted,			provider_name, template_initiator);
 
 		if (template == null) {
 			String dr = null;
