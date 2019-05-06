@@ -266,18 +266,17 @@ public class AgreementsAPIs {
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("customer")
 	public Response getAgreementsPerCustonmer(@Context HttpHeaders headers) {
-		
+
 		String cust_username = "";
-//        try {
-//        	cust_username = headers.getRequestHeader("X-User-Name").get(0);
-//			System.out.println("[***] Auth info: Username  ==> " + cust_username);
-//
-//		} catch (JSONException e) {
-//			cust_username = "admin";
-//			System.out.println(e);
-//		}
-	
-		
+		// try {
+		// cust_username = headers.getRequestHeader("X-User-Name").get(0);
+		// System.out.println("[***] Auth info: Username ==> " + cust_username);
+		//
+		// } catch (JSONException e) {
+		// cust_username = "admin";
+		// System.out.println(e);
+		// }
+
 		ResponseBuilder apiresponse = null;
 		db_operations dbo = new db_operations();
 		boolean connect = db_operations.connectPostgreSQL();
@@ -349,11 +348,11 @@ public class AgreementsAPIs {
 			db_operations.createTableCustSla();
 			JSONObject agrPerSlaNs = dbo.selectAgreementPerSlaNs(sla_uuid, nsi_uuid);
 			db_operations.closePostgreSQL();
-			
+
 			String cust_username = (String) agrPerSlaNs.get("cust_username");
 			String cust_email = (String) agrPerSlaNs.get("cust_email");
 			String sla_date = (String) agrPerSlaNs.get("sla_date");
-			
+
 			// update the template with the necessary customer info - convert it to
 			// agreement
 			JSONObject slad = (JSONObject) agreement.get("slad");
@@ -378,9 +377,9 @@ public class AgreementsAPIs {
 			logger.info(
 					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 					type, timestamps, operation, message, status);
-			
+
 			existingTemplates = agreement;
-			
+
 			String agreement_s = existingTemplates.toString();
 			apiresponse = Response.ok(agreement_s);
 			apiresponse.header("Content-Length", agreement_s.length());
@@ -490,8 +489,21 @@ public class AgreementsAPIs {
 			db_operations.createTableCustSla();
 			dbo.insertRecordAgreement(ns_uuid1.get(0).toString(), ns_name1.toString(), sla_uuid1.get(0).toString(),
 					sla_name1.get(0).toString(), sla_status1.get(0).toString(), cust_email1.get(0).toString(),
-					cust_username1.get(0).toString(), inst_status1.get(0).toString(), correlation_id1.get(0).toString());
+					cust_username1.get(0).toString(), inst_status1.get(0).toString(),
+					correlation_id1.get(0).toString());
 			db_operations.UpdateRecordAgreement("READY", correlation_id1.get(0), ns_uuid1.get(0));
+
+			org.json.simple.JSONObject LicenseinfoTemplate = db_operations
+					.getLicenseinfoTemplates(sla_uuid1.get(0).toString(), ns_uuid1.get(0).toString());
+			String license_type = (String) LicenseinfoTemplate.get("license_type");
+			String license_exp_date = (String) LicenseinfoTemplate.get("license_exp_date");
+			String license_period = (String) LicenseinfoTemplate.get("license_period");
+			String allowed_instances = (String) LicenseinfoTemplate.get("allowed_instances");
+
+			db_operations.insertLicenseRecord(sla_uuid1.get(0).toString(), ns_uuid1.get(0).toString(), "test",
+					cust_username1.get(0).toString(), cust_email1.get(0).toString(), license_type, license_exp_date,
+					allowed_instances, "test", "test", "test");
+
 			db_operations.closePostgreSQL();
 
 			apiresponse = Response.ok();

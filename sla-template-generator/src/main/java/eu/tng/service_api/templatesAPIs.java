@@ -84,39 +84,6 @@ public class templatesAPIs {
 	@GET
 	public Response getTemplates(@Context HttpHeaders headers) {
 
-		// Get Authorization Token
-		try {
-			// get jwt token
-			String Authorization = headers.getRequestHeader("Authorization").get(0);
-			String token = Authorization.substring(7);
-
-			// logging
-			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-			String timestamps = timestamp.toString();
-			String type = "I";
-			String operation = "Get Authorization token";
-			String message = "Authorization token feched succesfully! --> " + token;
-			String status = String.valueOf(200);
-			logger.info(
-					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
-					type, timestamps, operation, message, status);
-			// decode jwt token
-			JSONObject auth_info = JwtTokenDecode.DecodeToken(token);
-			String template_initiator = (String) auth_info.get("username");
-
-		} catch (Exception e) {
-			// logging
-			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-			String timestamps = timestamp.toString();
-			String type = "W";
-			String operation = "Get Authorization token";
-			String message = "Authorization token not included in thw request --> " + e;
-			String status = "";
-			logger.info(
-					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
-					type, timestamps, operation, message, status);
-		}
-
 		ResponseBuilder apiresponse = null;
 		try {
 			String url = System.getenv("CATALOGUES_URL") + "slas/template-descriptors";
@@ -327,9 +294,8 @@ public class templatesAPIs {
 		CreateTemplate ct = new CreateTemplate();
 		System.out.println("[1] templates API --> provider name: " + provider_name);
 		System.out.println("[2] templates API --> initiator name: " + template_initiator);
-		JSONObject template = ct.createTemplate(nsd_uuid.get(0), templateName.get(0),service_licence_expiration_date_formatted, guarantees,
-				service_licence_type.get(0), allowed_service_instances.get(0), service_licence_expiration_date.get(0),
-				provider_name, template_initiator);
+		JSONObject template = ct.createTemplate(nsd_uuid.get(0), templateName.get(0), expireDate.get(0), guarantees,
+				service_licence_type.get(0), allowed_service_instances.get(0),service_licence_expiration_date.get(0),			provider_name, template_initiator);
 
 		if (template == null) {
 			String dr = null;
@@ -485,7 +451,7 @@ public class templatesAPIs {
 						System.out.println("[*] dflavour_name (templatesAPI.class) ==> " + dflavour_name);
 
 						nstemplcorr.createNsTempCorr(nsd_uuid.get(0), sla_uuid, service_licence_type.get(0),
-								service_licence_expiration_date.get(0), allowed_service_instances.get(0), "inactive", dflavour_name);
+								service_licence_expiration_date_formatted, allowed_service_instances.get(0), "inactive", dflavour_name);
 
 						br.close();
 
