@@ -270,7 +270,7 @@ public class LicensingAPIs {
 			db_operations.closePostgreSQL();
 			// API Response
 			apiresponse = Response.ok((Object) license_info_response);
-			apiresponse.header("Content-Length", license_info_response.toJSONString().length() - 2);
+			apiresponse.header("Content-Length", license_info_response.toString().length());
 			return apiresponse.status(200).build();
 
 		} else {
