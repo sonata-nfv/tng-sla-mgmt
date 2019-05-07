@@ -158,7 +158,7 @@ public class LicensingAPIs {
 	 */
 	@SuppressWarnings("unchecked")
 	@GET
-	@Produces(MediaType.TEXT_PLAIN)
+	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/status/{sla_uuid}/{ns_uuid}")
 	public Response getLicenseInfoPerCustomer(@PathParam("sla_uuid") String sla_uuid, @PathParam("ns_uuid") String ns_uuid, @Context HttpHeaders headers) {
 
