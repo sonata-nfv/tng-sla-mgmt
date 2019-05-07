@@ -158,24 +158,24 @@ public class LicensingAPIs {
 	 */
 	@SuppressWarnings("unchecked")
 	@GET
-	@Produces(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.TEXT_PLAIN)
 	@Path("/status/{sla_uuid}/{ns_uuid}")
 	public Response getLicenseInfoPerCustomer(@PathParam("sla_uuid") String sla_uuid, @PathParam("ns_uuid") String ns_uuid, @Context HttpHeaders headers) {
 
 		String cust_username = "";
 		String cust_email = "";
 
-//        try {
-//        	cust_username = headers.getRequestHeader("X-User-Name").get(0);
-//			System.out.println("[***] Auth info: Initiator Username  ==> " + cust_username);
-//			cust_email = headers.getRequestHeader("X-User-Email").get(0);
-//            System.out.println("[***] Auth info: Initiator Email  ==> " + cust_email);
-//
-//		} catch (JSONException e) {
-//			cust_username = "admin";
-//			cust_email = "admin-email";
-//			System.out.println(e);
-//		}
+        try {
+       	cust_username = headers.getRequestHeader("X-User-Name").get(0);
+			System.out.println("[***] Auth info: Initiator Username  ==> " + cust_username);
+			cust_email = headers.getRequestHeader("X-User-Email").get(0);
+            System.out.println("[***] Auth info: Initiator Email  ==> " + cust_email);
+
+		} catch (JSONException e) {
+			cust_username = "admin";
+			cust_email = "admin-email";
+			System.out.println(e);
+		}
 
 		ResponseBuilder apiresponse = null;
 		db_operations dbo = new db_operations();
