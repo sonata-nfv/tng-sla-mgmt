@@ -165,17 +165,17 @@ public class LicensingAPIs {
 		String cust_username = "";
 		String cust_email = "";
 
-//        try {
-//        	cust_username = headers.getRequestHeader("X-User-Name").get(0);
-//			System.out.println("[***] Auth info: Initiator Username  ==> " + cust_username);
-//			cust_email = headers.getRequestHeader("X-User-Email").get(0);
-//            System.out.println("[***] Auth info: Initiator Email  ==> " + cust_email);
-//
-//		} catch (JSONException e) {
-//			cust_username = "admin";
-//			cust_email = "admin-email";
-//			System.out.println(e);
-//		}
+        try {
+       	cust_username = headers.getRequestHeader("X-User-Name").get(0);
+			System.out.println("[***] Auth info: Initiator Username  ==> " + cust_username);
+			cust_email = headers.getRequestHeader("X-User-Email").get(0);
+            System.out.println("[***] Auth info: Initiator Email  ==> " + cust_email);
+
+		} catch (JSONException e) {
+			cust_username = "admin";
+			cust_email = "admin-email";
+			System.out.println(e);
+		}
 
 		ResponseBuilder apiresponse = null;
 		db_operations dbo = new db_operations();
@@ -269,8 +269,8 @@ public class LicensingAPIs {
 			// close db connection
 			db_operations.closePostgreSQL();
 			// API Response
-			apiresponse = Response.ok((Object) license_info_response);
-			apiresponse.header("Content-Length", license_info_response.toJSONString().length() - 2);
+			apiresponse = Response.ok(license_info_response);
+			apiresponse.header("Content-Length", license_info_response.toString().length());
 			return apiresponse.status(200).build();
 
 		} else {
