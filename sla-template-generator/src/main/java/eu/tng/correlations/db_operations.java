@@ -729,6 +729,7 @@ public class db_operations {
 			c.setAutoCommit(false);
 			stmt = c.createStatement();
 			ResultSet rs = stmt.executeQuery("SELECT * FROM cust_sla WHERE inst_status = 'READY';");
+		
 			while (rs.next()) {
 				String ns_uuid = rs.getString("ns_uuid");
 				String ns_name = rs.getString("ns_name");
@@ -742,6 +743,13 @@ public class db_operations {
 				String inst_id = rs.getString("inst_id");
 				String nsi_uuid = rs.getString("nsi_uuid");
 
+				JSONObject license_info_record = getLicenseInfo(sla_uuid, cust_username, ns_uuid);
+				String license_type = (String) license_info_record.get("license_type");
+				String license_status = (String) license_info_record.get("license_status");
+				String license_allowed_instances = (String) license_info_record.get("allowed_instances");
+				String license_current_instances = (String) license_info_record.get("current_instances");
+				String license_expiration_date = (String) license_info_record.get("license_expiration_date");
+
 				JSONObject obj = new JSONObject();
 				obj.put("ns_uuid", ns_uuid);
 				obj.put("ns_name", ns_name);
@@ -754,6 +762,11 @@ public class db_operations {
 				obj.put("inst_status", inst_status);
 				obj.put("correlation_id", inst_id);
 				obj.put("nsi_uuid", nsi_uuid);
+				obj.put("license_type", license_type);
+				obj.put("license_status", license_status);
+				obj.put("license_allowed_instances", license_allowed_instances);
+				obj.put("license_current_instances", license_current_instances);
+				obj.put("license_expiration_date", license_expiration_date);
 
 				agreements.add(obj);
 			}
