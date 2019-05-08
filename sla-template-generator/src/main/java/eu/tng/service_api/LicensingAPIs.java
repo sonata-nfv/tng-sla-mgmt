@@ -74,10 +74,10 @@ public class LicensingAPIs {
 		ResponseBuilder apiresponse = null;
 
 		db_operations dbo = new db_operations();
-		dbo.connectPostgreSQL();
-		dbo.createTableLicensing();
-		JSONArray all_licenses = dbo.getAllLicenses();
-		dbo.closePostgreSQL();
+		db_operations.connectPostgreSQL();
+		db_operations.createTableLicensing();
+		JSONArray all_licenses = db_operations.getAllLicenses();
+		db_operations.closePostgreSQL();
 
 		apiresponse = Response.ok((Object) all_licenses);
 		apiresponse.header("Content-Length", all_licenses.toJSONString().length());
@@ -95,6 +95,36 @@ public class LicensingAPIs {
 
 		return apiresponse.status(200).build();
 	}
+	
+	@Produces(MediaType.APPLICATION_JSON)
+	@GET
+	@Path("/{nsi_uuid}")
+	public Response getSpecificLicense(@PathParam("nsi_uuid") String nsi_uuid) {
+		ResponseBuilder apiresponse = null;
+
+		db_operations dbo = new db_operations();
+		db_operations.connectPostgreSQL();
+		db_operations.createTableLicensing();
+		JSONObject specific_license = db_operations.getSpecificLicense(nsi_uuid);
+		db_operations.closePostgreSQL();
+
+		apiresponse = Response.ok((Object) specific_license);
+		apiresponse.header("Content-Length", specific_license.toJSONString().length());
+
+		// logging
+		Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+		String timestamps = timestamp.toString();
+		String type = "I";
+		String operation = "Getting all licensing information";
+		String message = ("[*] Success! all licensing information received");
+		String status = "200";
+		logger.info(
+				"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+				type, timestamps, operation, message, status);
+
+		return apiresponse.status(200).build();
+	}
+
 
 	/**
 	 * delete Licensing record
@@ -111,9 +141,9 @@ public class LicensingAPIs {
 		List<String> ns_uuid = formParams.get("ns_uuid");
 
 		db_operations db = new db_operations();
-		db.connectPostgreSQL();
+		db_operations.connectPostgreSQL();
 		boolean delete = db.deleteLicenseRecord(sla_uuid.get(0), cust_username.get(0), ns_uuid.get(0));
-		db.closePostgreSQL();
+		db_operations.closePostgreSQL();
 
 		if (delete == true) {
 
@@ -274,7 +304,7 @@ public class LicensingAPIs {
 			return apiresponse.status(200).build();
 
 		} else {
-			dbo.closePostgreSQL();
+			db_operations.closePostgreSQL();
 
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
