@@ -256,7 +256,7 @@ public class LicensingAPIs {
 
 					// API Response
 					JSONObject error = new JSONObject();
-					error.put("ERROR", "Invalide parameters");
+					error.put("ERROR", "Invalid parameters");
 					apiresponse = Response.ok((Object) error);
 					apiresponse.header("Content-Length", error.toString().length());
 					return apiresponse.status(400).build();
