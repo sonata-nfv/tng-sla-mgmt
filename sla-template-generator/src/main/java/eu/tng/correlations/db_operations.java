@@ -2016,13 +2016,25 @@ public class db_operations {
 				license_info.put("sla_uuid", sla_uuid);
 				license_info.put("ns_uuid", ns_uuid);
 				license_info.put("nsi_uuid", nsi_uuid);
-				license_info.put("cust_username", cust_email);				
+				license_info.put("cust_username", cust_username);	
+				license_info.put("cust_email", cust_email);				
 				license_info.put("license_status", license_status);
 				license_info.put("license_type", license_type);
 				license_info.put("license_expiration_date", license_expiration_date);
 				license_info.put("allowed_instances", allowed_instances);
 				license_info.put("current_instances", current_instances);
+				
+				// get names from the agreements table
+				ResultSet rs_names = stmt.executeQuery("SELECT * FROM cust_sla WHERE nsi_uuid = '" + nsi_uuid + "';");
 
+				while (rs_names.next()) {
+					String sla_name = rs.getString("sla_name");
+					String ns_name = rs.getString("ns_name");
+
+					license_info.put("sla_name", sla_name);
+					license_info.put("ns_name", ns_name);
+				}
+				
 			}
 			rs.close();
 			stmt.close();
