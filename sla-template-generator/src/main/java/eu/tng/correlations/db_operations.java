@@ -2035,7 +2035,7 @@ public class db_operations {
 					stmt_names = c.createStatement();
 					ResultSet rs_name = stmt.executeQuery("SELECT * FROM cust_sla WHERE nsi_uuid = '" + nsi_uuid + "';");
 					
-					while (rs.next()) {
+					while (rs_name.next()) {
 						String sla_name = rs.getString("sla_name");
 						String ns_name = rs.getString("ns_name");
 
