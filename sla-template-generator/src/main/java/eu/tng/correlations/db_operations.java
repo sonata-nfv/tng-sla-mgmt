@@ -199,8 +199,7 @@ public class db_operations {
 	 * Insert Record ns-template correlation
 	 */
 	public boolean insertRecord(String tablename, String ns_uuid, String sla_uuid, String license_type,
-			String license_exp_date, String allowed_instances, String license_status,
-			String d_flavour_name) {
+			String license_exp_date, String allowed_instances, String license_status, String d_flavour_name) {
 		boolean result = false;
 		try {
 			c.setAutoCommit(false);
@@ -208,8 +207,7 @@ public class db_operations {
 			String sql = "INSERT INTO " + tablename
 					+ " (ns_uuid,sla_uuid, license_type, license_exp_date, allowed_instances, license_status,d_flavour_name) "
 					+ "VALUES ('" + ns_uuid + "','" + sla_uuid + "', '" + license_type + "','" + license_exp_date
-					+ "','" + allowed_instances + "','" + license_status + "','"
-					+ d_flavour_name + "');";
+					+ "','" + allowed_instances + "','" + license_status + "','" + d_flavour_name + "');";
 			stmt.executeUpdate(sql);
 			stmt.close();
 			c.commit();
@@ -347,20 +345,24 @@ public class db_operations {
 	 */
 	public static void createTableCustSla() {
 		try {
-//			stmt = c.createStatement();
-//			String sql = "CREATE TABLE IF NOT EXISTS cust_sla" + "(ID  SERIAL PRIMARY KEY," + " NS_UUID TEXT NOT NULL, "
-//					+ "NSI_UUID TEXT NULL," + "NS_NAME TEXT NOT NULL," + "SLA_UUID  TEXT NOT NULL,"
-//					+ "SLA_NAME TEXT NOT NULL," + "SLA_DATE TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,"
-//					+ "SLA_STATUS TEXT NOT NULL," + "CUST_EMAIL TEXT NOT NULL," + "CUST_USERNAME  TEXT NOT NULL,"
-//					+ "INST_ID TEXT NOT NULL," + "INST_STATUS  TEXT NOT NULL )";
-			
+			// stmt = c.createStatement();
+			// String sql = "CREATE TABLE IF NOT EXISTS cust_sla" + "(ID SERIAL PRIMARY
+			// KEY," + " NS_UUID TEXT NOT NULL, "
+			// + "NSI_UUID TEXT NULL," + "NS_NAME TEXT NOT NULL," + "SLA_UUID TEXT NOT
+			// NULL,"
+			// + "SLA_NAME TEXT NOT NULL," + "SLA_DATE TIMESTAMP NOT NULL DEFAULT
+			// CURRENT_TIMESTAMP,"
+			// + "SLA_STATUS TEXT NOT NULL," + "CUST_EMAIL TEXT NOT NULL," + "CUST_USERNAME
+			// TEXT NOT NULL,"
+			// + "INST_ID TEXT NOT NULL," + "INST_STATUS TEXT NOT NULL )";
+
 			stmt = c.createStatement();
 			String sql = "CREATE TABLE IF NOT EXISTS cust_sla" + "(ID  SERIAL PRIMARY KEY," + " NS_UUID TEXT NOT NULL, "
 					+ "NSI_UUID TEXT NULL," + "NS_NAME TEXT NOT NULL," + "SLA_UUID  TEXT NOT NULL,"
-					+ "SLA_NAME TEXT NOT NULL," + "SLA_DATE TEXT NOT NULL,"
-					+ "SLA_STATUS TEXT NOT NULL," + "CUST_EMAIL TEXT NOT NULL," + "CUST_USERNAME  TEXT NOT NULL,"
-					+ "INST_ID TEXT NOT NULL," + "INST_STATUS  TEXT NOT NULL )";
-			
+					+ "SLA_NAME TEXT NOT NULL," + "SLA_DATE TEXT NOT NULL," + "SLA_STATUS TEXT NOT NULL,"
+					+ "CUST_EMAIL TEXT NOT NULL," + "CUST_USERNAME  TEXT NOT NULL," + "INST_ID TEXT NOT NULL,"
+					+ "INST_STATUS  TEXT NOT NULL )";
+
 			stmt.executeUpdate(sql);
 			stmt.close();
 
@@ -404,14 +406,14 @@ public class db_operations {
 		/** current date */
 		Date date = new Date();
 		String sla_date = df.format(date);
-		
+
 		try {
 			c.setAutoCommit(false);
 			Statement stmt = c.createStatement();
 			String sql = "INSERT INTO cust_sla "
 					+ " (ns_uuid, ns_name, sla_uuid, sla_name, sla_date, sla_status, cust_email, cust_username, inst_status, inst_id) "
-					+ "VALUES ('" + ns_uuid + "','" + ns_name + "','" + sla_uuid + "' ,'" + sla_name + "' ,'"
-					+ sla_date + "','" + sla_status + "','" + cust_email + "','" + cust_username + "', '" + inst_status + "' , '"
+					+ "VALUES ('" + ns_uuid + "','" + ns_name + "','" + sla_uuid + "' ,'" + sla_name + "' ,'" + sla_date
+					+ "','" + sla_status + "','" + cust_email + "','" + cust_username + "', '" + inst_status + "' , '"
 					+ correlation_id + "');";
 			stmt.executeUpdate(sql);
 			stmt.close();
@@ -650,10 +652,11 @@ public class db_operations {
 				String inst_status = rs.getString("inst_status");
 				String inst_id = rs.getString("inst_id");
 				String nsi_uuid = rs.getString("nsi_uuid");
-				
+
 				/** useful variables **/
 				TimeZone tz = TimeZone.getTimeZone("UTC");
-				DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'"); // iso date format yyyy-MM-dd'T'HH:mm'Z'
+				DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'"); // iso date format
+																					// yyyy-MM-dd'T'HH:mm'Z'
 				df.setTimeZone(tz);
 
 				SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
@@ -729,7 +732,7 @@ public class db_operations {
 			c.setAutoCommit(false);
 			stmt = c.createStatement();
 			ResultSet rs = stmt.executeQuery("SELECT * FROM cust_sla WHERE inst_status = 'READY';");
-		
+
 			while (rs.next()) {
 				String ns_uuid = rs.getString("ns_uuid");
 				String ns_name = rs.getString("ns_name");
@@ -921,8 +924,9 @@ public class db_operations {
 			c.setAutoCommit(false);
 			stmt = c.createStatement();
 
-			ResultSet rs = stmt.executeQuery("SELECT * FROM cust_sla WHERE sla_uuid='" +sla_uuid+ "' AND nsi_uuid='"+nsi_uuid+"' AND inst_status='READY';");
-			
+			ResultSet rs = stmt.executeQuery("SELECT * FROM cust_sla WHERE sla_uuid='" + sla_uuid + "' AND nsi_uuid='"
+					+ nsi_uuid + "' AND inst_status='READY';");
+
 			while (rs.next()) {
 				String cust_username = rs.getString("cust_username");
 				String cust_email = rs.getString("cust_email");
@@ -932,10 +936,10 @@ public class db_operations {
 				root.put("cust_email", cust_email);
 				root.put("sla_date", sla_date);
 			}
-			
+
 			rs.close();
 			stmt.close();
-			
+
 		} catch (Exception e) {
 
 			// logging
@@ -2006,7 +2010,7 @@ public class db_operations {
 				sla_uuid = rs.getString("sla_uuid");
 				ns_uuid = rs.getString("ns_uuid");
 				cust_username = rs.getString("cust_username");
-				cust_email = rs.getString("cust_email");		
+				cust_email = rs.getString("cust_email");
 				license_status = rs.getString("license_status");
 				license_type = rs.getString("license_type");
 				license_expiration_date = rs.getString("license_exp_date");
@@ -2016,16 +2020,49 @@ public class db_operations {
 				license_info.put("sla_uuid", sla_uuid);
 				license_info.put("ns_uuid", ns_uuid);
 				license_info.put("nsi_uuid", nsi_uuid);
-				license_info.put("cust_username", cust_email);				
+				license_info.put("cust_username", cust_username);
+				license_info.put("cust_email", cust_email);
 				license_info.put("license_status", license_status);
 				license_info.put("license_type", license_type);
 				license_info.put("license_expiration_date", license_expiration_date);
 				license_info.put("allowed_instances", allowed_instances);
 				license_info.put("current_instances", current_instances);
 
+				// get names from the agreements table
+				Statement stmt_names = null;
+				try {
+					c.setAutoCommit(false);
+					stmt_names = c.createStatement();
+					ResultSet rs_name = stmt
+							.executeQuery("SELECT * FROM cust_sla WHERE nsi_uuid = '" + nsi_uuid + "';");
+
+					while (rs_name.next()) {
+						String sla_name = rs_name.getString("sla_name");
+						String ns_name = rs_name.getString("ns_name");
+
+						license_info.put("sla_name", sla_name);
+						license_info.put("ns_name", ns_name);
+					}
+					rs_name.close();
+					stmt_names.close();
+
+				} catch (Exception e) {
+					// logging
+					Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+					String timestamps = timestamp.toString();
+					String type = "W";
+					String operation = "Get specific license record";
+					String message = ("Error Getting names from cust_sla  ==> " + e.getMessage());
+					String status = "";
+					logger.warn(
+							"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+							type, timestamps, operation, message, status);
+				}
+
 			}
 			rs.close();
 			stmt.close();
+
 		} catch (Exception e) {
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
@@ -2041,7 +2078,7 @@ public class db_operations {
 
 		return license_info;
 	}
-	
+
 	public static boolean CreateLicenseInstance(String correlation_id, String license_status, String nsi_uuid) {
 
 		Statement stmt = null;
