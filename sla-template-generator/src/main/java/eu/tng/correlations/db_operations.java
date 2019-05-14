@@ -2033,16 +2033,19 @@ public class db_operations {
 				try {
 					c.setAutoCommit(false);
 					stmt_names = c.createStatement();
-					ResultSet rs_name = stmt.executeQuery("SELECT * FROM cust_sla WHERE nsi_uuid = '" + nsi_uuid + "';");
-					
+					ResultSet rs_name = stmt
+							.executeQuery("SELECT * FROM cust_sla WHERE nsi_uuid = '" + nsi_uuid + "';");
+
 					while (rs_name.next()) {
-						String sla_name = rs.getString("sla_name");
-						String ns_name = rs.getString("ns_name");
+						String sla_name = rs_name.getString("sla_name");
+						String ns_name = rs_name.getString("ns_name");
 
 						license_info.put("sla_name", sla_name);
 						license_info.put("ns_name", ns_name);
 					}
-					
+					rs_name.close();
+					stmt_names.close();
+
 				} catch (Exception e) {
 					// logging
 					Timestamp timestamp = new Timestamp(System.currentTimeMillis());
@@ -2057,6 +2060,9 @@ public class db_operations {
 				}
 
 			}
+			rs.close();
+			stmt.close();
+
 		} catch (Exception e) {
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
