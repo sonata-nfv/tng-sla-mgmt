@@ -470,7 +470,6 @@ public class LicensingAPIs {
 		JSONObject LicenseinfoTemplate = db_operations.getLicenseinfoTemplates(sla_uuid.get(0), ns_uuid.get(0));
 		String license_type = (String) LicenseinfoTemplate.get("license_type");
 		String license_exp_date = (String) LicenseinfoTemplate.get("license_exp_date");
-		String license_period = (String) LicenseinfoTemplate.get("license_period");
 		String allowed_instances = (String) LicenseinfoTemplate.get("allowed_instances");
 		String current_instances = "0";
 
