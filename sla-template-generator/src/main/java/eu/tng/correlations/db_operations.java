@@ -2025,7 +2025,8 @@ public class db_operations {
 				license_info.put("current_instances", current_instances);
 				
 				// get names from the agreements table
-				ResultSet rs_names = stmt.executeQuery("SELECT * FROM cust_sla WHERE nsi_uuid = '" + nsi_uuid + "';");
+				Statement stmt_names = null;
+				ResultSet rs_names = stmt_names.executeQuery("SELECT * FROM cust_sla WHERE nsi_uuid = '" + nsi_uuid + "';");
 
 				while (rs_names.next()) {
 					String sla_name = rs.getString("sla_name");
