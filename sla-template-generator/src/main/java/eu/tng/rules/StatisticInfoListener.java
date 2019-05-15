@@ -60,7 +60,7 @@ public class StatisticInfoListener implements ServletContextListener {
 		System.out.println("[*] StatisticInfoListener started!!");
 		
 		// run every 1 minute 60*1000 - add 60 sec delay between job executions.
-		final long timeInterval = 60 * 1000;
+		final long timeInterval = 24 * 60 * 60 * 1000;
 		Runnable runnable = new Runnable() {
 
 			public void run() {
