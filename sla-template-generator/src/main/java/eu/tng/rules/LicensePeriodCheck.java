@@ -35,23 +35,13 @@
 
 package eu.tng.rules;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Timer;
-import java.util.TimerTask;
-
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
-import javax.ws.rs.core.Response;
-
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
@@ -59,10 +49,7 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.json.JSONArray;
 import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-
 import eu.tng.correlations.db_operations;
 
 /**
@@ -111,8 +98,9 @@ public class LicensePeriodCheck implements ServletContextListener {
 			public void run() {
 				while (true) {
 					// code for task to run
-					DateFormat format = new SimpleDateFormat("dd/MM/yyyy");
-
+					
+					SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+		
 					Date currentDate = new Date();
 
 					// get expiration date for all licenses
@@ -121,8 +109,6 @@ public class LicensePeriodCheck implements ServletContextListener {
 					db_operations.createTableLicensing();
 					org.json.simple.JSONArray licenses = db_operations.getAllLicenses();
 					db_operations.closePostgreSQL();
-
-					Date license_exp_date = null;
 
 					if (licenses.size() == 0) {
 						System.out.println("[*] No licenses yet.");
@@ -133,9 +119,13 @@ public class LicensePeriodCheck implements ServletContextListener {
 									.get("license_exp_date");
 
 							if (license_exp_date_string != null || license_exp_date_string != "") {
+										
+								String dateInString = license_exp_date_string;
+								Date license_exp_date = null;
 								try {
-									license_exp_date = format.parse(license_exp_date_string);
+									license_exp_date = formatter.parse(dateInString);
 								} catch (ParseException e) {
+									// TODO Auto-generated catch block
 									System.out.println("Error formating the expiration date ==> " + e);
 								}
 
