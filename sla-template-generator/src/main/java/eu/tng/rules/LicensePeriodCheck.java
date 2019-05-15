@@ -98,9 +98,8 @@ public class LicensePeriodCheck implements ServletContextListener {
 			public void run() {
 				while (true) {
 					// code for task to run
-					
-					SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-		
+					DateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+
 					Date currentDate = new Date();
 
 					// get expiration date for all licenses
@@ -109,6 +108,8 @@ public class LicensePeriodCheck implements ServletContextListener {
 					db_operations.createTableLicensing();
 					org.json.simple.JSONArray licenses = db_operations.getAllLicenses();
 					db_operations.closePostgreSQL();
+
+					Date license_exp_date = null;
 
 					if (licenses.size() == 0) {
 						System.out.println("[*] No licenses yet.");
@@ -119,13 +120,14 @@ public class LicensePeriodCheck implements ServletContextListener {
 									.get("license_exp_date");
 
 							if (license_exp_date_string != null || license_exp_date_string != "") {
-										
-								String dateInString = license_exp_date_string;
-								Date license_exp_date = null;
 								try {
-									license_exp_date = formatter.parse(dateInString);
+									String license_exp_date_sub = license_exp_date_string.substring(0, 10);
+									System.out.println("substring date" + license_exp_date_sub);
+
+									license_exp_date = format.parse(license_exp_date_sub);
+									System.out.println("formateed exp date " + license_exp_date);
+
 								} catch (ParseException e) {
-									// TODO Auto-generated catch block
 									System.out.println("Error formating the expiration date ==> " + e);
 								}
 
