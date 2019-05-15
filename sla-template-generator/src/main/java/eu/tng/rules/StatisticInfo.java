@@ -45,7 +45,8 @@ public class StatisticInfo {
 
 
         } finally {
-            PushGateway pg = new PushGateway(System.getenv("MONITORING_PUSH_GATEWAY"));
+            //PushGateway pg = new PushGateway(System.getenv("MONITORING_PUSH_GATEWAY"));]
+        	PushGateway pg = new PushGateway("http://pre-int-sp-ath.5gtango.eu:9091");
             System.out.println("[*] pg => "+ pg.toString());
 
             try {
