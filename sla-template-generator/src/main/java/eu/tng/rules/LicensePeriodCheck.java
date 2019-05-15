@@ -35,13 +35,23 @@
 
 package eu.tng.rules;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Timer;
+import java.util.TimerTask;
+
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
+import javax.ws.rs.core.Response;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
@@ -49,7 +59,10 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.json.JSONArray;
 import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+
 import eu.tng.correlations.db_operations;
 
 /**
@@ -121,12 +134,10 @@ public class LicensePeriodCheck implements ServletContextListener {
 
 							if (license_exp_date_string != null || license_exp_date_string != "") {
 								try {
-									String license_exp_date_sub = license_exp_date_string.substring(0, 10);
-									System.out.println("substring date" + license_exp_date_sub);
-
-									license_exp_date = format.parse(license_exp_date_sub);
-									System.out.println("formateed exp date " + license_exp_date);
-
+									license_exp_date_string = license_exp_date_string.substring(0, license_exp_date_string.length() - 1);
+									System.out.println(license_exp_date_string);
+									license_exp_date = format.parse(license_exp_date_string);
+									System.out.println(license_exp_date);
 								} catch (ParseException e) {
 									System.out.println("Error formating the expiration date ==> " + e);
 								}
