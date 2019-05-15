@@ -72,9 +72,9 @@ public class StatisticInfoListener implements ServletContextListener {
 					StatisticInfo si = new StatisticInfo();
 					
 					si.violationspercentageAll();
-					si.getLicensesAcquired();
-					si.getLicensesExpired();
-					si.getLicensesUtilized();
+					//si.getLicensesAcquired();
+					//si.getLicensesExpired();
+					//si.getLicensesUtilized();
 
 					// code for task to run ends here
 					try {

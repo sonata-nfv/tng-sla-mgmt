@@ -34,19 +34,27 @@ public class StatisticInfo {
 			percentage_active = (activeAgreements * 100) / totalAgreements;
 		}
 		
-		// create the gauge metric for the push gateway
+		// create the gauge metric for the push gatewayl
         Gauge gauge_percentage_violated = Gauge.build().name("percentage_violated_agreements").help("The percentage of the violated agreements").register(registry);
+        System.out.println("[*] gauge_percentage_violated ==> " + gauge_percentage_violated);
         try {
             // Set the value of the metric
         	gauge_percentage_violated.set(percentage_violated);
+            System.out.println("[*] gauge_percentage_violated ==> " + gauge_percentage_violated);
+            System.out.println("[*] gauge_percentage_violated with value ==> " + gauge_percentage_violated);
+
+
         } finally {
             PushGateway pg = new PushGateway(System.getenv("MONITORING_PUSH_GATEWAY"));
+            System.out.println("[*] pg => "+ pg.toString());
+
             try {
                 pg.pushAdd(registry, "SLA_job");
                 System.out.print("Success");
             } catch (IOException e) {
                 // TODO Auto-generated catch block
-                e.printStackTrace();
+                System.out.println("[*] error to push gateway => "+ e);
+
             }
         }
 		
