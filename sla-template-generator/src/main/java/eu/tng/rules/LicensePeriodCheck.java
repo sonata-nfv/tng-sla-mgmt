@@ -135,6 +135,8 @@ public class LicensePeriodCheck implements ServletContextListener {
 							if (license_exp_date_string != null || license_exp_date_string != "") {
 								try {
 									license_exp_date_string = license_exp_date_string.substring(0, license_exp_date_string.length() - 1);
+									license_exp_date_string = license_exp_date_string.replace("T", " ");
+									 
 									System.out.println(license_exp_date_string);
 									license_exp_date = format.parse(license_exp_date_string);
 									System.out.println(license_exp_date);
