@@ -482,10 +482,7 @@ public class LicensingAPIs {
 		db_operations.closePostgreSQL();
 
 		if (update == true) {
-			// call StatisticInfo.java class to send data to prometheus
-			StatisticInfo si = new StatisticInfo();
-			si.getLicensesAcquired();
-			
+		
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 			String timestamps = timestamp.toString();

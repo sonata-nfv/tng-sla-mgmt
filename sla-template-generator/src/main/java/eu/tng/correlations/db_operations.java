@@ -431,14 +431,6 @@ public class db_operations {
 			logger.info(
 					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 					type, timestamps, operation, message, status);
-
-			// call StatisticInfo.java class to send data to prometheus
-			StatisticInfo si = new StatisticInfo();
-			si.violationspercentageAll();
-			si.violationspercentageDays(30);
-			si.violationspercentageDays(7);
-			si.violationspercentageDays(1);
-
 		} 
 		catch (Exception e) {
 			// logging
@@ -1377,13 +1369,6 @@ public class db_operations {
 					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 					type, timestamps, operation, message, status);
 			
-			// call StatisticInfo.java class to send data to prometheus
-			StatisticInfo si = new StatisticInfo();
-			si.violationspercentageAll();
-			si.violationspercentageDays(30);
-			si.violationspercentageDays(7);
-			si.violationspercentageDays(1);
-
 		} catch (Exception e) {
 
 			// logging
@@ -2120,10 +2105,6 @@ public class db_operations {
 					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 					type, timestamps, operation, message, status);
 			
-			// call StatisticInfo.java class to send data to prometheus
-			StatisticInfo si = new StatisticInfo();
-			si.getLicensesUtilized();
-
 		} catch (Exception e) {
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 			String timestamps = timestamp.toString();

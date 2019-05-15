@@ -148,11 +148,7 @@ public class LicensePeriodCheck implements ServletContextListener {
 									db_operations.deactivateLicenseForNSI(license_nsi_uuid, "expired");
 									System.out.println("[*] License expired! Expiration date reached.");
 									db_operations.closePostgreSQL();		
-									
-									// call StatisticInfo.java class to send data to prometheus
-									StatisticInfo si = new StatisticInfo();
-									si.getLicensesExpired();
-				
+					
 									// send termination request for the service
 									HttpClient httpClient = HttpClientBuilder.create().build();
 									try {
