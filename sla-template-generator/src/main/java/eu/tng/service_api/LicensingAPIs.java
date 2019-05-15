@@ -61,6 +61,7 @@ import org.json.simple.JSONObject;
 
 import eu.tng.correlations.db_operations;
 import eu.tng.correlations.ns_template_corr;
+import eu.tng.rules.StatisticInfo;
 
 @Path("/licenses")
 @Consumes(MediaType.APPLICATION_JSON)
@@ -481,6 +482,10 @@ public class LicensingAPIs {
 		db_operations.closePostgreSQL();
 
 		if (update == true) {
+			// call StatisticInfo.java class to send data to prometheus
+			StatisticInfo si = new StatisticInfo();
+			si.getLicensesAcquired();
+			
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 			String timestamps = timestamp.toString();
@@ -497,6 +502,7 @@ public class LicensingAPIs {
 			apiresponse = Response.ok((Object) success);
 			apiresponse.header("Content-Length", success.toJSONString().length());
 			return apiresponse.status(200).build();
+				
 		} else {
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
