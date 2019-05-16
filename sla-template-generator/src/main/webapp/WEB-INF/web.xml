@@ -19,41 +19,33 @@
 	under Grant number 761493 through * the Horizon 2020 and 5G-PPP programmes. 
 	The authors would like to * acknowledge the contributions of their colleagues 
 	of the 5GTANGO * partner consortium (www.5gtango.eu). * */ -->
-<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns="http://java.sun.com/xml/ns/javaee"
-	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
-	version="2.5">
-	<servlet>
-		<servlet-name>SLA Templates APIs</servlet-name>
-		<servlet-class>com.sun.jersey.spi.container.servlet.ServletContainer</servlet-class>
-		<init-param>
-			<param-name>com.sun.jersey.config.property.packages</param-name>
-			<param-value>eu.tng.service_api</param-value>
-		</init-param>
-		<load-on-startup>1</load-on-startup>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>SLA Templates APIs</servlet-name>
-		<url-pattern>/tng-sla-mgmt/api/slas/v1/*</url-pattern>
-	</servlet-mapping>
-
-	<listener>
-		<listener-class>eu.tng.messaging.MqServiceInstantiateConsumer</listener-class>
-	</listener>
-	<listener>
-		<listener-class>eu.tng.messaging.MqServiceTerminateConsumer</listener-class>
-	</listener>
-	<listener>
-		<listener-class>eu.tng.messaging.MqMonitoringConsumer</listener-class>
-	</listener>
-
-	<!-- Listener for getting violation alerts (produced by the SLAM) from RabbitMQ 
-		<listener> <listener-class>eu.tng.messaging.MqSlaViolationsConsumer</listener-class> 
-		</listener> -->
-	
-	<listener>
-		<listener-class>eu.tng.rules.LicensePeriodCheck</listener-class>
-	</listener> 
-	
-
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
+  <servlet>
+    <servlet-name>SLA Templates APIs</servlet-name>
+    <servlet-class>com.sun.jersey.spi.container.servlet.ServletContainer</servlet-class>
+    <init-param>
+      <param-name>com.sun.jersey.config.property.packages</param-name>
+      <param-value>eu.tng.service_api</param-value>
+    </init-param>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>SLA Templates APIs</servlet-name>
+    <url-pattern>/tng-sla-mgmt/api/slas/v1/*</url-pattern>
+  </servlet-mapping>
+  <listener>
+    <listener-class>eu.tng.messaging.MqServiceInstantiateConsumer</listener-class>
+  </listener>
+  <listener>
+    <listener-class>eu.tng.messaging.MqServiceTerminateConsumer</listener-class>
+  </listener>
+  <listener>
+    <listener-class>eu.tng.messaging.MqMonitoringConsumer</listener-class>
+  </listener>
+  <listener>
+    <listener-class>eu.tng.rules.LicensePeriodCheck</listener-class>
+  </listener>
+  <listener>
+    <listener-class>eu.tng.rules.ListenerStatisticInfo</listener-class>
+  </listener>
 </web-app>
