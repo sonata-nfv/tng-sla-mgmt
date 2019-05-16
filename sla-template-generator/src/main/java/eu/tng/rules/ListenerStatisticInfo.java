@@ -79,7 +79,7 @@ public class ListenerStatisticInfo implements ServletContextListener {
 					if (totalAgreements > 0) {
 						percentage_violated = (violatedAgreements * 100) / totalAgreements;
 					}
-					// create the gauge metric for the push gatewayl
+					// create the gauge metric for the push gateway
 					Gauge gauge_percentage_violated = Gauge.build().name("percentage_violated_agreements")
 							.help("The percentage of the violated agreements").register(registry);
 					try {
@@ -87,17 +87,16 @@ public class ListenerStatisticInfo implements ServletContextListener {
 						gauge_percentage_violated.set(percentage_violated);
 					} finally {
 						String pg_url = System.getenv("MONITORING_PUSH_GATEWAY");
-						System.out.println("PG URL ==> " + pg_url);
 						PushGateway pg = new PushGateway(pg_url);
 						try {
 							pg.pushAdd(registry, "SLA_job");
-							System.out.print("[*] Success! Statistic info pushed to PushGateway");
+							System.out.println("[*] Success! Statistic info pushed to PushGateway");
 						} catch (Exception e) {
 							// TODO Auto-generated catch block
 							System.out.println("[*] Error to push gateway => " + e);
 						}
 					}
-					System.out.println("[*] violations percntage ==> " + percentage_violated);
+					System.out.println("[*] violations perecntage ==> " + percentage_violated);
 					
 
 					/**
@@ -119,7 +118,6 @@ public class ListenerStatisticInfo implements ServletContextListener {
 					} finally {
 
 						String pg_url = System.getenv("MONITORING_PUSH_GATEWAY");
-						System.out.println("PG URL ==> " + pg_url);
 						PushGateway pg = new PushGateway(pg_url);
 						try {
 							pg.pushAdd(registry, "SLA_job");
@@ -150,16 +148,15 @@ public class ListenerStatisticInfo implements ServletContextListener {
 
 						String pg_url = System.getenv("MONITORING_PUSH_GATEWAY");
 						PushGateway pg = new PushGateway(pg_url);
-						System.out.println("PG URL ==> " + pg_url);
 						try {
 							pg.pushAdd(registry, "SLA_job");
-							System.out.print("[*] Success! Statistic info pushed to PushGateway");
+							System.out.println("[*] Success! Statistic info pushed to PushGateway");
 						} catch (Exception e) {
 							// TODO Auto-generated catch block
 							System.out.println("[*] Error to push gateway => " + e);
 						}
 					}
-					System.out.println("[*] getLicensesExpired ==> " + gauge_licenses_expired_number);
+					System.out.println("[*] getLicensesExpired ==> " + licenses_expired_number);
 					
 					/**
 					 ***
@@ -177,11 +174,10 @@ public class ListenerStatisticInfo implements ServletContextListener {
 
 					} finally {
 						String pg_url = System.getenv("MONITORING_PUSH_GATEWAY");
-						System.out.println("PG URL ==> " + pg_url);
 						PushGateway pg = new PushGateway(pg_url);
 						try {
 							pg.pushAdd(registry, "SLA_job");
-							System.out.print("[*] Success! Statistic info pushed to PushGateway");
+							System.out.println("[*] Success! Statistic info pushed to PushGateway");
 						} catch (Exception e) {
 							// TODO Auto-generated catch block
 							System.out.println("[*] Error to push gateway => " + e);
