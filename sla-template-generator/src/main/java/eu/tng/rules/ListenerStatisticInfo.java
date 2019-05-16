@@ -64,15 +64,17 @@ public class ListenerStatisticInfo implements ServletContextListener {
 					// open connection to database
 					db_operations db = new db_operations();
 					db_operations.connectPostgreSQL();
+					// create tables if not exist
+					db_operations.createTableCustSla();
+					db_operations.createTableLicensing();
 
+					
 					/**
 					 ***
 					 * Nº SLA Agreements vs. Violations
 					 ***
 					 */
-					db_operations.createTableCustSla();
 					double totalAgreements = db.countTotalAgreements();
-					double activeAgreements = db.countActiveAgreements();
 					double violatedAgreements = db.countViolatedAgreements();
 					double percentage_violated = 0;
 					if (totalAgreements > 0) {
@@ -104,7 +106,6 @@ public class ListenerStatisticInfo implements ServletContextListener {
 					 * Nº Licenses Utilized
 					 ***
 					 */
-					db_operations.createTableLicensing();
 					double licenses_utilized_number = db.countUtilizedLicense();
 
 					// create the gauge metric for the push gateway
@@ -160,7 +161,6 @@ public class ListenerStatisticInfo implements ServletContextListener {
 					 * Nº Licenses Acquired
 					 ***
 					 */
-					db_operations.createTableLicensing();
 					double licenses_acquired_number = db.countAcquiredLicense();
 					// create the gauge metric for the push gateway
 			        Gauge gauge_licenses_acquired_number = Gauge.build().name("licenses_acquired_number").help("The number of acquired licenses").register(registry);
