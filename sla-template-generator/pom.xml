@@ -195,6 +195,12 @@
 			<artifactId>extended-jsonlayout</artifactId>
 			<version>1.0.0</version>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/io.prometheus/simpleclient_pushgateway -->
+		<dependency>
+			<groupId>io.prometheus</groupId>
+			<artifactId>simpleclient_pushgateway</artifactId>
+			<version>0.6.0</version>
+		</dependency>
 
 	</dependencies>
 	<properties>
