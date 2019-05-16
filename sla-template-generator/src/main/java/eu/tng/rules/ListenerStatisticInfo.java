@@ -51,7 +51,8 @@ public class ListenerStatisticInfo implements ServletContextListener {
 	public void contextInitialized(ServletContextEvent arg0) {
 		System.out.println("[*] Statistic Info Listener started!!");
 
-		final long timeInterval = 60 * 60 * 1000;
+		// 60 secs time interval
+		final long timeInterval = 60 * 1000;
 		Runnable runnable = new Runnable() {
 			public void run() {
 				while (true) {
