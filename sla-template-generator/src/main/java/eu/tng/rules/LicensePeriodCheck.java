@@ -133,19 +133,35 @@ public class LicensePeriodCheck implements ServletContextListener {
 									.get("license_exp_date");
 
 							if (license_exp_date_string != null || license_exp_date_string != "") {
-								try {
-									license_exp_date_string = license_exp_date_string.substring(0, license_exp_date_string.length() - 1);
-									license_exp_date_string = license_exp_date_string.replace("T", " ");
-									 
-									System.out.println(license_exp_date_string);
-									license_exp_date = format.parse(license_exp_date_string);
-									System.out.println(license_exp_date);
-								} catch (ParseException e) {
-									System.out.println("Error formating the expiration date ==> " + e);
-								}
+								
+								SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
+						        String dateInString = license_exp_date_string;
+						        try {
+						            Date date = formatter.parse(dateInString.replaceAll("Z$", "+0000"));
+						            System.out.println("expiration date ==> " + date);
+						           
+						            System.out.println("formatted expiration date ==> " + formatter.format(date));
+						        } 
+						        catch (ParseException e) {
+						        	System.out.println("Error formating the expiration date ==> " + e);
+						        }
+								
+								
+//								try {
+//									license_exp_date_string = license_exp_date_string.substring(0, license_exp_date_string.length() - 1);
+//									license_exp_date_string = license_exp_date_string.replace("T", " ");
+//									 
+//									System.out.println(license_exp_date_string);
+//									license_exp_date = format.parse(license_exp_date_string);
+//									System.out.println(license_exp_date);
+//								} catch (ParseException e) {
+//									System.out.println("Error formating the expiration date ==> " + e);
+//								}
 
 								String license_nsi_uuid = (String) ((JSONObject) license_item).get("nsi_uuid");
 
+								System.out.println("[!!!] Current date= " + currentDate + " [!!!] license_exp_date = "+ license_exp_date);
+								
 								if (currentDate.after(license_exp_date)) {
 									db_operations.connectPostgreSQL();
 									
