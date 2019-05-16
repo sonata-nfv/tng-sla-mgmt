@@ -97,7 +97,7 @@ public class ListenerStatisticInfo implements ServletContextListener {
 						try {
 							pg.pushAdd(registry, "SLA_job");
 							System.out.print("[*] Success! Statistic info pushed to PushGateway");
-						} catch (IOException e) {
+						} catch (Exception e) {
 							// TODO Auto-generated catch block
 							System.out.println("[*] Error to push gateway => " + e);
 						}
