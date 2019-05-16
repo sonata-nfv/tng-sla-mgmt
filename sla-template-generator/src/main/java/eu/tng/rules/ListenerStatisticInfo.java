@@ -63,19 +63,18 @@ public class ListenerStatisticInfo implements ServletContextListener {
 
 					// open connection to database
 					db_operations db = new db_operations();
-					db_operations.connectPostgreSQL();
-					// create tables if not exist
-					db_operations.createTableCustSla();
-					db_operations.createTableLicensing();
-
 					
 					/**
 					 ***
 					 * Nº SLA Agreements vs. Violations
 					 ***
 					 */
+					db_operations.connectPostgreSQL();
+					db_operations.createTableCustSla();
 					double totalAgreements = db.countTotalAgreements();
 					double violatedAgreements = db.countViolatedAgreements();
+					db_operations.closePostgreSQL();
+					
 					double percentage_violated = 0;
 					if (totalAgreements > 0) {
 						percentage_violated = (violatedAgreements * 100) / totalAgreements;
@@ -106,7 +105,10 @@ public class ListenerStatisticInfo implements ServletContextListener {
 					 * Nº Licenses Utilized
 					 ***
 					 */
+					db_operations.connectPostgreSQL();
+					db_operations.createTableLicensing();
 					double licenses_utilized_number = db.countUtilizedLicense();
+					db_operations.closePostgreSQL();
 
 					// create the gauge metric for the push gateway
 					Gauge gauge_licenses_utilized_number = Gauge.build().name("licenses_utilized_number")
@@ -134,7 +136,10 @@ public class ListenerStatisticInfo implements ServletContextListener {
 					 * Nº Licenses Expired 
 					 ***
 					 */
-					double licenses_expired_number = db.countExpiredLicense();				
+					db_operations.connectPostgreSQL();
+					double licenses_expired_number = db.countExpiredLicense();		
+					db_operations.closePostgreSQL();
+					
 					// create the gauge metric for the push gateway
 			        Gauge gauge_licenses_expired_number = Gauge.build().name("licenses_expired_number").help("The number of expired licenses").register(registry);
 					try {
@@ -161,7 +166,9 @@ public class ListenerStatisticInfo implements ServletContextListener {
 					 * Nº Licenses Acquired
 					 ***
 					 */
+					db_operations.connectPostgreSQL();
 					double licenses_acquired_number = db.countAcquiredLicense();
+					db_operations.closePostgreSQL();
 					// create the gauge metric for the push gateway
 			        Gauge gauge_licenses_acquired_number = Gauge.build().name("licenses_acquired_number").help("The number of acquired licenses").register(registry);
 					try {
@@ -182,11 +189,6 @@ public class ListenerStatisticInfo implements ServletContextListener {
 					}
 					System.out.println("[*] getLicensesAcquired ==> " + licenses_acquired_number);
 
-
-					// close connection to databse
-					db_operations.closePostgreSQL();
-
-					
 					
 					try {
 						Thread.sleep(timeInterval);
