@@ -51,7 +51,7 @@ public class ListenerStatisticInfo implements ServletContextListener {
 	public void contextInitialized(ServletContextEvent arg0) {
 		System.out.println("[*] Statistic Info Listener started!!");
 
-		final long timeInterval = 60 * 1000;
+		final long timeInterval = 60 * 60 * 1000;
 		Runnable runnable = new Runnable() {
 			public void run() {
 				while (true) {
@@ -60,40 +60,34 @@ public class ListenerStatisticInfo implements ServletContextListener {
 
 					// define the push gateway registry
 					CollectorRegistry registry = new CollectorRegistry();
-					
+
 					// open connection to database
 					db_operations db = new db_operations();
 					db_operations.connectPostgreSQL();
-					
+
 					/**
+					 ***
 					 * Nº SLA Agreements vs. Violations
+					 ***
 					 */
+					db_operations.createTableCustSla();
 					double totalAgreements = db.countTotalAgreements();
 					double activeAgreements = db.countActiveAgreements();
 					double violatedAgreements = db.countViolatedAgreements();
 					double percentage_violated = 0;
-					double percentage_active = 0;
 					if (totalAgreements > 0) {
 						percentage_violated = (violatedAgreements * 100) / totalAgreements;
-						percentage_active = (activeAgreements * 100) / totalAgreements;
 					}
 					// create the gauge metric for the push gatewayl
 					Gauge gauge_percentage_violated = Gauge.build().name("percentage_violated_agreements")
 							.help("The percentage of the violated agreements").register(registry);
-					System.out.println("[*] gauge_percentage_violated ==> " + gauge_percentage_violated);
 					try {
 						// Set the value of the metric
 						gauge_percentage_violated.set(percentage_violated);
-						System.out.println("[*] gauge_percentage_violated ==> " + gauge_percentage_violated);
-						System.out.println("[*] gauge_percentage_violated with value ==> " + gauge_percentage_violated);
-					} 
-					finally {
-						
+					} finally {
 						String pg_url = System.getenv("MONITORING_PUSH_GATEWAY");
 						System.out.println("PG URL ==> " + pg_url);
 						PushGateway pg = new PushGateway(pg_url);
-												
-						System.out.println("[*] pg => " + pg.toString());
 						try {
 							pg.pushAdd(registry, "SLA_job");
 							System.out.print("[*] Success! Statistic info pushed to PushGateway");
@@ -102,12 +96,98 @@ public class ListenerStatisticInfo implements ServletContextListener {
 							System.out.println("[*] Error to push gateway => " + e);
 						}
 					}
-					System.out.println("[*] violationspercentageAll ==> " + percentage_violated);
+					System.out.println("[*] violations percntage ==> " + percentage_violated);
 					
+
+					/**
+					 ***
+					 * Nº Licenses Utilized
+					 ***
+					 */
+					db_operations.createTableLicensing();
+					double licenses_utilized_number = db.countUtilizedLicense();
+
+					// create the gauge metric for the push gateway
+					Gauge gauge_licenses_utilized_number = Gauge.build().name("licenses_utilized_number")
+							.help("The number of utiized licenses").register(registry);
+					try {
+						// Set the value of the metric
+						gauge_licenses_utilized_number.set(licenses_utilized_number);
+					} finally {
+
+						String pg_url = System.getenv("MONITORING_PUSH_GATEWAY");
+						System.out.println("PG URL ==> " + pg_url);
+						PushGateway pg = new PushGateway(pg_url);
+						try {
+							pg.pushAdd(registry, "SLA_job");
+							System.out.print("[*] Success! Statistic info pushed to PushGateway");
+						} catch (Exception e) {
+							// TODO Auto-generated catch block
+							System.out.println("[*] Error to push gateway => " + e);
+						}
+					}
+					System.out.println("[*] getLicensesUtilized ==> " + licenses_utilized_number);
 					
+					/**
+					 ***
+					 * Nº Licenses Expired 
+					 ***
+					 */
+					double licenses_expired_number = db.countExpiredLicense();				
+					// create the gauge metric for the push gateway
+			        Gauge gauge_licenses_expired_number = Gauge.build().name("licenses_expired_number").help("The number of expired licenses").register(registry);
+					try {
+						// Set the value of the metric
+						gauge_licenses_expired_number.set(licenses_expired_number);
+
+					} finally {
+
+						String pg_url = System.getenv("MONITORING_PUSH_GATEWAY");
+						PushGateway pg = new PushGateway(pg_url);
+						System.out.println("PG URL ==> " + pg_url);
+						try {
+							pg.pushAdd(registry, "SLA_job");
+							System.out.print("[*] Success! Statistic info pushed to PushGateway");
+						} catch (Exception e) {
+							// TODO Auto-generated catch block
+							System.out.println("[*] Error to push gateway => " + e);
+						}
+					}
+					System.out.println("[*] getLicensesExpired ==> " + gauge_licenses_expired_number);
+					
+					/**
+					 ***
+					 * Nº Licenses Acquired
+					 ***
+					 */
+					db_operations.createTableLicensing();
+					double licenses_acquired_number = db.countAcquiredLicense();
+					// create the gauge metric for the push gateway
+			        Gauge gauge_licenses_acquired_number = Gauge.build().name("licenses_acquired_number").help("The number of acquired licenses").register(registry);
+					try {
+						// Set the value of the metric
+						gauge_licenses_acquired_number.set(licenses_acquired_number);
+
+					} finally {
+						String pg_url = System.getenv("MONITORING_PUSH_GATEWAY");
+						System.out.println("PG URL ==> " + pg_url);
+						PushGateway pg = new PushGateway(pg_url);
+						try {
+							pg.pushAdd(registry, "SLA_job");
+							System.out.print("[*] Success! Statistic info pushed to PushGateway");
+						} catch (Exception e) {
+							// TODO Auto-generated catch block
+							System.out.println("[*] Error to push gateway => " + e);
+						}
+					}
+					System.out.println("[*] getLicensesAcquired ==> " + licenses_acquired_number);
+
+
 					// close connection to databse
 					db_operations.closePostgreSQL();
 
+					
+					
 					try {
 						Thread.sleep(timeInterval);
 					} catch (InterruptedException e) {
