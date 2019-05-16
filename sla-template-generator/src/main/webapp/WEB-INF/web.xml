@@ -50,9 +50,10 @@
 	<!-- Listener for getting violation alerts (produced by the SLAM) from RabbitMQ 
 		<listener> <listener-class>eu.tng.messaging.MqSlaViolationsConsumer</listener-class> 
 		</listener> -->
-
+	
 	<listener>
 		<listener-class>eu.tng.rules.LicensePeriodCheck</listener-class>
-	</listener>
+	</listener> 
+	
 
 </web-app>

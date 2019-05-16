@@ -111,9 +111,9 @@ public class LicensePeriodCheck implements ServletContextListener {
 			public void run() {
 				while (true) {
 					// code for task to run
-					DateFormat format = new SimpleDateFormat("dd/MM/yyyy");
-
+	
 					Date currentDate = new Date();
+					Date exp_date = new Date();
 
 					// get expiration date for all licenses
 					db_operations dbo = new db_operations();
@@ -121,8 +121,6 @@ public class LicensePeriodCheck implements ServletContextListener {
 					db_operations.createTableLicensing();
 					org.json.simple.JSONArray licenses = db_operations.getAllLicenses();
 					db_operations.closePostgreSQL();
-
-					Date license_exp_date = null;
 
 					if (licenses.size() == 0) {
 						System.out.println("[*] No licenses yet.");
@@ -133,17 +131,21 @@ public class LicensePeriodCheck implements ServletContextListener {
 									.get("license_exp_date");
 
 							if (license_exp_date_string != null || license_exp_date_string != "") {
-								try {
-									license_exp_date = format.parse(license_exp_date_string);
-								} catch (ParseException e) {
-									System.out.println("Error formating the expiration date ==> " + e);
-								}
-
+								SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
+						        String dateInString = license_exp_date_string;
+						        try {
+						            exp_date = formatter.parse(dateInString.replaceAll("Z$", "+0000"));						           						        } 
+						        catch (ParseException e) {
+						        	System.out.println("Error formating the expiration date ==> " + e);
+						        }
+							
 								String license_nsi_uuid = (String) ((JSONObject) license_item).get("nsi_uuid");
-
-								if (currentDate.after(license_exp_date)) {
+								
+								if (currentDate.after(exp_date)) {
 									db_operations.connectPostgreSQL();
 									
+									System.out.println("[*] License expired: Current date after license expiration date");
+
 									// sde-activate the license
 									db_operations.deactivateLicenseForNSI(license_nsi_uuid, "expired");
 									System.out.println("[*] License expired! Expiration date reached.");
