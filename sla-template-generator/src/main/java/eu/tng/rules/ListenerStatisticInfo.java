@@ -1,6 +1,8 @@
 package eu.tng.rules;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.sql.Timestamp;
 
 import javax.servlet.ServletContextEvent;
@@ -64,23 +66,17 @@ public class ListenerStatisticInfo implements ServletContextListener {
 					db_operations.connectPostgreSQL();
 					
 					/**
-					 * Nº SLA Agreements vs. Violations (in the last 24h / 7 days / 30 days) This
-					 * function is called every time an agreement is created and every time a
-					 * violation occurs call from > db_operations > insertRecordAgreement and >
-					 * db_operations > insertRecordViolation
+					 * Nº SLA Agreements vs. Violations
 					 */
-					
 					double totalAgreements = db.countTotalAgreements();
 					double activeAgreements = db.countActiveAgreements();
 					double violatedAgreements = db.countViolatedAgreements();
 					double percentage_violated = 0;
 					double percentage_active = 0;
-
 					if (totalAgreements > 0) {
 						percentage_violated = (violatedAgreements * 100) / totalAgreements;
 						percentage_active = (activeAgreements * 100) / totalAgreements;
 					}
-
 					// create the gauge metric for the push gatewayl
 					Gauge gauge_percentage_violated = Gauge.build().name("percentage_violated_agreements")
 							.help("The percentage of the violated agreements").register(registry);
@@ -90,24 +86,23 @@ public class ListenerStatisticInfo implements ServletContextListener {
 						gauge_percentage_violated.set(percentage_violated);
 						System.out.println("[*] gauge_percentage_violated ==> " + gauge_percentage_violated);
 						System.out.println("[*] gauge_percentage_violated with value ==> " + gauge_percentage_violated);
-
-					} finally {
-						// PushGateway pg = new PushGateway(System.getenv("MONITORING_PUSH_GATEWAY"));]
-						PushGateway pg = new PushGateway("http://pre-int-sp-ath.5gtango.eu:9091");
+					} 
+					finally {
+						
+						// PushGateway pg = new PushGateway(System.getenv("MONITORING_PUSH_GATEWAY"));
+						String pg_url = System.getenv("MONITORING_PUSH_GATEWAY");
+						System.out.println("PG URL ==> " + pg_url);
+						PushGateway pg = new PushGateway(pg_url);
 						System.out.println("[*] pg => " + pg.toString());
-
 						try {
 							pg.pushAdd(registry, "SLA_job");
 							System.out.print("[*] Success! Statistic info pushed to PushGateway");
 						} catch (IOException e) {
 							// TODO Auto-generated catch block
 							System.out.println("[*] Error to push gateway => " + e);
-
 						}
 					}
-
 					System.out.println("[*] violationspercentageAll ==> " + percentage_violated);
-					
 					
 					
 					// close connection to databse
