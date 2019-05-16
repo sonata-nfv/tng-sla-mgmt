@@ -90,7 +90,7 @@ public class ListenerStatisticInfo implements ServletContextListener {
 						String pg_url = System.getenv("MONITORING_PUSH_GATEWAY");
 						PushGateway pg = new PushGateway(pg_url);
 						try {
-							pg.pushAdd(registry, "SLA_job");
+							pg.pushAdd(registry, "SLA");
 							System.out.println("[*] Success! Statistic info pushed to PushGateway");
 						} catch (Exception e) {
 							// TODO Auto-generated catch block
@@ -121,7 +121,7 @@ public class ListenerStatisticInfo implements ServletContextListener {
 						String pg_url = System.getenv("MONITORING_PUSH_GATEWAY");
 						PushGateway pg = new PushGateway(pg_url);
 						try {
-							pg.pushAdd(registry, "SLA_job");
+							pg.pushAdd(registry, "SLA");
 							System.out.print("[*] Success! Statistic info pushed to PushGateway");
 						} catch (Exception e) {
 							// TODO Auto-generated catch block
@@ -150,7 +150,7 @@ public class ListenerStatisticInfo implements ServletContextListener {
 						String pg_url = System.getenv("MONITORING_PUSH_GATEWAY");
 						PushGateway pg = new PushGateway(pg_url);
 						try {
-							pg.pushAdd(registry, "SLA_job");
+							pg.pushAdd(registry, "SLA");
 							System.out.println("[*] Success! Statistic info pushed to PushGateway");
 						} catch (Exception e) {
 							// TODO Auto-generated catch block
@@ -177,7 +177,7 @@ public class ListenerStatisticInfo implements ServletContextListener {
 						String pg_url = System.getenv("MONITORING_PUSH_GATEWAY");
 						PushGateway pg = new PushGateway(pg_url);
 						try {
-							pg.pushAdd(registry, "SLA_job");
+							pg.pushAdd(registry, "SLA");
 							System.out.println("[*] Success! Statistic info pushed to PushGateway");
 						} catch (Exception e) {
 							// TODO Auto-generated catch block
