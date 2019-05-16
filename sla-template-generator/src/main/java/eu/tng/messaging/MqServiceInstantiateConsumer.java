@@ -371,7 +371,6 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 									.getLicenseinfoTemplates(sla_uuid, ns_uuid);
 							String license_type = (String) LicenseinfoTemplate.get("license_type");
 							String license_exp_date = (String) LicenseinfoTemplate.get("license_exp_date");
-							String license_period = (String) LicenseinfoTemplate.get("license_period");
 							String allowed_instances = (String) LicenseinfoTemplate.get("allowed_instances");
 
 							// check if there are already instances for this ns_uuid - cust_username
