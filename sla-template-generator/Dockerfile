@@ -43,7 +43,7 @@ ENV BROKER_HOST broker
 
 # Set MONITORING URL Environment Variables
 ENV MONITORING_URL http://son-monitor-manager:8000/api/v1/
-ENV MONITORING_PUSH_GATEWAY http://son-monitor-pushgateway:9091
+ENV MONITORING_PUSH_GATEWAY son-monitor-pushgateway:9091
 
 # Make port 8080 available outside this container
 EXPOSE 8080
