@@ -89,12 +89,10 @@ public class ListenerStatisticInfo implements ServletContextListener {
 					} 
 					finally {
 						
-						//String pg_url = System.getenv("MONITORING_PUSH_GATEWAY");
-						//System.out.println("PG URL ==> " + pg_url);
-						//PushGateway pg = new PushGateway(pg_url);
-						
-						PushGateway pg = new PushGateway("son-monitor-pushgateway:9091");
-						
+						String pg_url = System.getenv("MONITORING_PUSH_GATEWAY");
+						System.out.println("PG URL ==> " + pg_url);
+						PushGateway pg = new PushGateway(pg_url);
+												
 						System.out.println("[*] pg => " + pg.toString());
 						try {
 							pg.pushAdd(registry, "SLA_job");
