@@ -111,9 +111,9 @@ public class LicensePeriodCheck implements ServletContextListener {
 			public void run() {
 				while (true) {
 					// code for task to run
-					DateFormat format = new SimpleDateFormat("dd/MM/yyyy");
-
+	
 					Date currentDate = new Date();
+					Date exp_date = new Date();
 
 					// get expiration date for all licenses
 					db_operations dbo = new db_operations();
@@ -121,8 +121,6 @@ public class LicensePeriodCheck implements ServletContextListener {
 					db_operations.createTableLicensing();
 					org.json.simple.JSONArray licenses = db_operations.getAllLicenses();
 					db_operations.closePostgreSQL();
-
-					Date license_exp_date = null;
 
 					if (licenses.size() == 0) {
 						System.out.println("[*] No licenses yet.");
@@ -137,34 +135,22 @@ public class LicensePeriodCheck implements ServletContextListener {
 								SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
 						        String dateInString = license_exp_date_string;
 						        try {
-						            Date date = formatter.parse(dateInString.replaceAll("Z$", "+0000"));
-						            System.out.println("expiration date ==> " + date);
-						           
-						            System.out.println("formatted expiration date ==> " + formatter.format(date));
-						        } 
+						            exp_date = formatter.parse(dateInString.replaceAll("Z$", "+0000"));
+						            System.out.println("expiration date ==> " + exp_date);
+						           						        } 
 						        catch (ParseException e) {
 						        	System.out.println("Error formating the expiration date ==> " + e);
 						        }
-								
-								
-//								try {
-//									license_exp_date_string = license_exp_date_string.substring(0, license_exp_date_string.length() - 1);
-//									license_exp_date_string = license_exp_date_string.replace("T", " ");
-//									 
-//									System.out.println(license_exp_date_string);
-//									license_exp_date = format.parse(license_exp_date_string);
-//									System.out.println(license_exp_date);
-//								} catch (ParseException e) {
-//									System.out.println("Error formating the expiration date ==> " + e);
-//								}
-
+							
 								String license_nsi_uuid = (String) ((JSONObject) license_item).get("nsi_uuid");
 
-								System.out.println("[!!!] Current date= " + currentDate + " [!!!] license_exp_date = "+ license_exp_date);
+								System.out.println("[!!!] Current date= " + currentDate + " [!!!] license_exp_date = "+ exp_date);
 								
-								if (currentDate.after(license_exp_date)) {
+								if (currentDate.after(exp_date)) {
 									db_operations.connectPostgreSQL();
 									
+									System.out.println("[*] License expired: Current date after licens expiration date");
+
 									// sde-activate the license
 									db_operations.deactivateLicenseForNSI(license_nsi_uuid, "expired");
 									System.out.println("[*] License expired! Expiration date reached.");
