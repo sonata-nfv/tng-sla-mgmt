@@ -131,25 +131,20 @@ public class LicensePeriodCheck implements ServletContextListener {
 									.get("license_exp_date");
 
 							if (license_exp_date_string != null || license_exp_date_string != "") {
-								
 								SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
 						        String dateInString = license_exp_date_string;
 						        try {
-						            exp_date = formatter.parse(dateInString.replaceAll("Z$", "+0000"));
-						            System.out.println("expiration date ==> " + exp_date);
-						           						        } 
+						            exp_date = formatter.parse(dateInString.replaceAll("Z$", "+0000"));						           						        } 
 						        catch (ParseException e) {
 						        	System.out.println("Error formating the expiration date ==> " + e);
 						        }
 							
 								String license_nsi_uuid = (String) ((JSONObject) license_item).get("nsi_uuid");
-
-								System.out.println("[!!!] Current date= " + currentDate + " [!!!] license_exp_date = "+ exp_date);
 								
 								if (currentDate.after(exp_date)) {
 									db_operations.connectPostgreSQL();
 									
-									System.out.println("[*] License expired: Current date after licens expiration date");
+									System.out.println("[*] License expired: Current date after license expiration date");
 
 									// sde-activate the license
 									db_operations.deactivateLicenseForNSI(license_nsi_uuid, "expired");
