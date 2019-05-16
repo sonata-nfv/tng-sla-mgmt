@@ -502,7 +502,7 @@ public class AgreementsAPIs {
 
 			db_operations.insertLicenseRecord(sla_uuid1.get(0).toString(), ns_uuid1.get(0).toString(), "test",
 					cust_username1.get(0).toString(), cust_email1.get(0).toString(), license_type, license_exp_date,
-					allowed_instances, "test", "test", "test");
+					allowed_instances, "0", "active", "");
 
 			db_operations.closePostgreSQL();
 
