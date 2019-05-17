@@ -136,7 +136,8 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 					String status = "";
 					String correlation_id = null;
 					JSONObject jsonObjectMessage = null;
-					String nsi_id = "";
+					String ns_id = "";
+					String network_service_name ="";
 					Object sla_id = null;
 					ArrayList<String> vc_id_list = new ArrayList<String>();
 					ArrayList<String> vnfr_id_list = new ArrayList<String>();
@@ -170,7 +171,11 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 							"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 							type1, timestamps1, operation1, message1, status1);
 
-					/** if message coming from the MANO - contain status key **/
+					
+					/** 
+					 * if message coming from the MANO - contain status key 
+					 * 
+					 **/
 					if (jsonObjectMessage.has("status")) {
 						status = (String) jsonObjectMessage.get("status");
 
@@ -187,14 +192,23 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 
 						if (status.equals("READY")) {
 
-							// Debug 2
 							System.out.println("RabbitMQ Message (when status ready)" + jsonObjectMessage);
 
 							// get info for the monitoring metrics
 							if (sla_id != null) {
-								// Get service uuid
+								
+								// Get service uuid (ns_uuid)
 								JSONObject nsr = (JSONObject) jsonObjectMessage.getJSONObject("nsr");
-								nsi_id = (String) nsr.get("id");
+								ns_id = (String) nsr.get("id");
+								
+								// Get network_service_name 
+								db_operations dbo = new db_operations();
+								db_operations.connectPostgreSQL();
+								org.json.simple.JSONObject ns_name_obj = dbo.selectAgreementPerSLA(sla_id.toString());
+								network_service_name = (String) ns_name_obj.get("ns_name");
+								System.out.println("[*] NS NAME of the service that is being instantiated => " + network_service_name);
+								db_operations.closePostgreSQL();
+								
 								// Get vnfrs
 								JSONArray vnfrs = (JSONArray) jsonObjectMessage.getJSONArray("vnfrs");
 								for (int i = 0; i < (vnfrs).length(); i++) {
@@ -206,7 +220,7 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 										for (int j = 0; j < vdus.length(); j++) {
 											String vdu_reference = (String) ((JSONObject) vdus.getJSONObject(j))
 													.get("vdu_reference");
-											// if vnfr is the haproxy function - continue to the monitoring creation
+											 //if vnfr is the haproxy function - continue to the monitoring creation
 											// metrics
 											if (vdu_reference.startsWith("haproxy") == true) {
 												// get vnfr id
@@ -223,17 +237,8 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 											}
 										}
 									} catch (Exception e) {
-										// TODO: handle exception
-										// logging
-										timestamp = new Timestamp(System.currentTimeMillis());
-										timestamps = timestamp.toString();
-										type = "I";
-										operation = "RabbitMQ Listener - NS Instantiation";
-										message2 = "[*] No vdus for this vnfr - use cdus instead. Exception ==> " + e;
-										status2 = "";
-										logger.info(
-												"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
-												type, timestamps, operation, message2, status2);
+										System.out.println(
+												"[*] No vdus for this vnfr - use cdus instead. Exception ==> " + e);
 									}
 
 									// Get cdus_reference foreach vnfr
@@ -243,9 +248,12 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 										for (int j = 0; j < cdus.length(); j++) {
 											String cdu_reference = (String) ((JSONObject) cdus.getJSONObject(j))
 													.get("cdu_reference");
-											// if vnfr is the haproxy function - continue to the monitoring creation
-											// metrics
-											if (cdu_reference.startsWith("haproxy") == true) {
+											
+											if ((cdu_reference.startsWith("vnf-mse") == true)
+													|| (cdu_reference.startsWith("vnf-cms") == true)
+													|| (cdu_reference.startsWith("vnf-ma") == true)) {
+												String vnfr_name = vnfrs.getJSONObject(i).getString("name");
+												System.out.println("VNFR NAME ==> " +vnfr_name);
 												// get vnfr id
 												String vnfr_id = (String) ((JSONObject) vnfrs.get(i)).get("id");
 												vnfr_id_list.add(vnfr_id);
@@ -255,35 +263,44 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 											}
 										}
 									} catch (Exception e) {
-										// TODO: handle exception
-										// TODO: handle exception
-										// logging
-										timestamp = new Timestamp(System.currentTimeMillis());
-										timestamps = timestamp.toString();
-										type = "I";
-										operation = "RabbitMQ Listener - NS Instantiation";
-										message2 = "[*] No cdus for this vnfr. Exception ==> " + e;
-										status2 = "";
-										logger.info(
-												"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
-												type, timestamps, operation, message2, status2);
+										System.out.println("[*] No cdus for this vnfr. Exception ==> " + e);
 									}
 
 								}
 
 								// Update NSI Records - to create agreement
-								db_operations dbo = new db_operations();
 								db_operations.connectPostgreSQL();
-								db_operations.UpdateRecordAgreement(status, correlation_id, nsi_id);
+								db_operations.UpdateRecordAgreement(status, correlation_id, ns_id);
 
 								// create monitoring rules to check sla violations
 								// MonitoringRules mr = new MonitoringRules();
 								// MonitoringRules.createMonitroingRules(String.valueOf(sla_id), vnfr_id_list,
 								// vc_id_list,nsi_id);
+								
+								/**
+								 * call Monitoring Rules for Immersive Media Service
+								 */
+								MonitoringRulesImmersiveMedia mr_immersive = new MonitoringRulesImmersiveMedia();
+								MonitoringRulesImmersiveMedia.createMonitoringRules(String.valueOf(sla_id), vnfr_id_list,
+								vc_id_list,ns_id);
+								
+								/**
+								 * call Monitoring Rules for Communication Service
+								 */
+								MonitoringRulesCommunication mr_communication = new MonitoringRulesCommunication();
+								MonitoringRulesCommunication.createMonitoringRules(String.valueOf(sla_id), vnfr_id_list,
+								vc_id_list,ns_id);
+								
+								/**
+								 * call Monitoring Rules for Industrial Service
+								 */
+								MonitoringRulesIndustrial mr_industrial = new MonitoringRulesIndustrial();
+								MonitoringRulesIndustrial.createMonitoringRules(String.valueOf(sla_id), vnfr_id_list,
+								vc_id_list,ns_id);
 
 								// UPDATE LIcense record with NSI - to create license instance
 								// check if there are already instances for this ns_uuid - cust_username
-								db_operations.CreateLicenseInstance(correlation_id, "active", nsi_id);
+								db_operations.CreateLicenseInstance(correlation_id, "active", ns_id);
 								db_operations.closePostgreSQL();
 
 							} else {
@@ -293,8 +310,7 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 								String type3 = "I";
 								String operation3 = "RabbitMQ Listener - NS Instantiation";
 								String message3 = "[*] Instantiation without SLA. Message aborted.";
-								
-								
+
 								String status3 = "";
 								logger.info(
 										"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
@@ -404,8 +420,8 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 								// update me right current instances
 								else {
 									db_operations.insertLicenseRecord(sla_uuid, ns_uuid, "", cust_username, cust_email,
-											license_type, license_exp_date, allowed_instances,
-											current_instances, "bought", correlation_id);
+											license_type, license_exp_date, allowed_instances, current_instances,
+											"bought", correlation_id);
 									db_operations.UpdateLicenseCurrentInstances(sla_uuid, ns_uuid, cust_username,
 											current_instances);
 								}
@@ -414,8 +430,8 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 							else {
 								db_operations.createTableLicensing();
 								db_operations.insertLicenseRecord(sla_uuid, ns_uuid, "", cust_username, cust_email,
-										license_type, license_exp_date, allowed_instances,
-										current_instances, "inactive", correlation_id);
+										license_type, license_exp_date, allowed_instances, current_instances,
+										"inactive", correlation_id);
 								db_operations.UpdateLicenseCurrentInstances(sla_uuid, ns_uuid, cust_username,
 										current_instances);
 

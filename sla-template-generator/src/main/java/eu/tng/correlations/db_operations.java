@@ -907,6 +907,45 @@ public class db_operations {
 		}
 		return root;
 	}
+	
+	/**
+	 * Get all agreements per customer
+	 * 
+	 * @param custuuid
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public JSONObject selectAgreementPerSLA(String sla_uuid) {
+
+		Statement stmt = null;
+		JSONObject root = new JSONObject();
+		try {
+			c.setAutoCommit(false);
+			stmt = c.createStatement();
+			ResultSet rs = stmt.executeQuery(
+					"SELECT * FROM cust_sla WHERE sla_uuid = '" + sla_uuid + "' LIMIT 1;");
+
+			while (rs.next()) {
+				String ns_name = rs.getString("ns_name");
+				root.put("ns_name", ns_name);
+			}
+			rs.close();
+			stmt.close();
+			
+		} catch (Exception e) {
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			String timestamps = timestamp.toString();
+			String type = "W";
+			String operation = "Get ns name from SLA Agreement per sla uuid";
+			String message = ("Error getting ns name  ==> " + e.getMessage());
+			String status = "";
+			logger.warn(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
+		}
+		return root;
+	}
 
 	/**
 	 * Get specific agreement per nsi and sla
