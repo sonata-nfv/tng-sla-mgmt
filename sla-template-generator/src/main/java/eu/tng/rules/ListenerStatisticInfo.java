@@ -50,6 +50,8 @@ public class ListenerStatisticInfo implements ServletContextListener {
 	 */
 	public void contextInitialized(ServletContextEvent arg0) {
 		System.out.println("[*] Statistic Info Listener started!!");
+		System.out.println("[*] This is a new change to test promoting to qualification!!!");
+
 
 		// 60 secs time interval
 		final long timeInterval = 60 * 1000;
