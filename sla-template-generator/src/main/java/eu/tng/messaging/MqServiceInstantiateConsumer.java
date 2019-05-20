@@ -142,6 +142,8 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 					ArrayList<String> vc_id_list = new ArrayList<String>();
 					ArrayList<String> vnfr_id_list = new ArrayList<String>();
 					ArrayList<String> cdu_id_list = new ArrayList<String>();
+					ArrayList<String> vnfr_name_list = new ArrayList<String>();
+
 
 					// Parse message payload
 					String message = new String(delivery.getBody(), "UTF-8");
@@ -253,7 +255,7 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 													|| (cdu_reference.startsWith("vnf-cms") == true)
 													|| (cdu_reference.startsWith("vnf-ma") == true)) {
 												String vnfr_name = vnfrs.getJSONObject(i).getString("name");
-												System.out.println("VNFR NAME ==> " +vnfr_name);
+												vnfr_name_list.add(vnfr_name);
 												// get vnfr id
 												String vnfr_id = (String) ((JSONObject) vnfrs.get(i)).get("id");
 												vnfr_id_list.add(vnfr_id);
@@ -272,31 +274,17 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 								db_operations.connectPostgreSQL();
 								db_operations.UpdateRecordAgreement(status, correlation_id, ns_id);
 
-								// create monitoring rules to check sla violations
+								// create monitoring rules to check sla violations for haproxy
 								// MonitoringRules mr = new MonitoringRules();
 								// MonitoringRules.createMonitroingRules(String.valueOf(sla_id), vnfr_id_list,
 								// vc_id_list,nsi_id);
 								
-								/**
-								 * call Monitoring Rules for Immersive Media Service
-								 */
-								MonitoringRulesImmersiveMedia mr_immersive = new MonitoringRulesImmersiveMedia();
-								MonitoringRulesImmersiveMedia.createMonitoringRules(String.valueOf(sla_id), vnfr_id_list,
-								vc_id_list,ns_id);
-								
-								/**
-								 * call Monitoring Rules for Communication Service
-								 */
-								MonitoringRulesCommunication mr_communication = new MonitoringRulesCommunication();
-								MonitoringRulesCommunication.createMonitoringRules(String.valueOf(sla_id), vnfr_id_list,
-								vc_id_list,ns_id);
-								
-								/**
-								 * call Monitoring Rules for Industrial Service
-								 */
-								MonitoringRulesIndustrial mr_industrial = new MonitoringRulesIndustrial();
-								MonitoringRulesIndustrial.createMonitoringRules(String.valueOf(sla_id), vnfr_id_list,
-								vc_id_list,ns_id);
+								// Monitoring rules for Immersive Media 
+								if (network_service_name.equals("mediapilot-service")) {
+									 MonitoringRulesImmersiveMedia mr_immersive = new MonitoringRulesImmersiveMedia();
+									 mr_immersive.createMonitoringRules(String.valueOf(sla_id), vnfr_id_list, vnfr_name_list,
+									cdu_id_list ,ns_id);
+								}
 
 								// UPDATE LIcense record with NSI - to create license instance
 								// check if there are already instances for this ns_uuid - cust_username

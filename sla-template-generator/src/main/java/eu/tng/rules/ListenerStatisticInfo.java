@@ -49,7 +49,7 @@ public class ListenerStatisticInfo implements ServletContextListener {
 	 * @see ServletContextListener#contextInitialized(ServletContextEvent)
 	 */
 	public void contextInitialized(ServletContextEvent arg0) {
-		System.out.println("[*] Statistic Info Listener started!!");
+//		System.out.println("[*] Statistic Info Listener started!!");
 		System.out.println("[*] This is a new change to test promoting to qualification!!!");
 
 
@@ -99,7 +99,7 @@ public class ListenerStatisticInfo implements ServletContextListener {
 							System.out.println("[*] Error to push gateway => " + e);
 						}
 					}
-					System.out.println("[*] violations perecntage ==> " + percentage_violated);
+					//System.out.println("[*] violations perecntage ==> " + percentage_violated);
 					
 
 					/**
@@ -127,10 +127,10 @@ public class ListenerStatisticInfo implements ServletContextListener {
 							System.out.print("[*] Success! Statistic info pushed to PushGateway");
 						} catch (Exception e) {
 							// TODO Auto-generated catch block
-							System.out.println("[*] Error to push gateway => " + e);
+							//System.out.println("[*] Error to push gateway => " + e);
 						}
 					}
-					System.out.println("[*] getLicensesUtilized ==> " + licenses_utilized_number);
+					//System.out.println("[*] getLicensesUtilized ==> " + licenses_utilized_number);
 					
 					/**
 					 ***
@@ -156,10 +156,10 @@ public class ListenerStatisticInfo implements ServletContextListener {
 							System.out.println("[*] Success! Statistic info pushed to PushGateway");
 						} catch (Exception e) {
 							// TODO Auto-generated catch block
-							System.out.println("[*] Error to push gateway => " + e);
+							//System.out.println("[*] Error to push gateway => " + e);
 						}
 					}
-					System.out.println("[*] getLicensesExpired ==> " + licenses_expired_number);
+					//System.out.println("[*] getLicensesExpired ==> " + licenses_expired_number);
 					
 					/**
 					 ***
@@ -183,16 +183,16 @@ public class ListenerStatisticInfo implements ServletContextListener {
 							System.out.println("[*] Success! Statistic info pushed to PushGateway");
 						} catch (Exception e) {
 							// TODO Auto-generated catch block
-							System.out.println("[*] Error to push gateway => " + e);
+							//System.out.println("[*] Error to push gateway => " + e);
 						}
 					}
-					System.out.println("[*] getLicensesAcquired ==> " + licenses_acquired_number);
+					//System.out.println("[*] getLicensesAcquired ==> " + licenses_acquired_number);
 
 					
 					try {
 						Thread.sleep(timeInterval);
 					} catch (InterruptedException e) {
-						System.out.println("[*] Thread Error ==> " + e);
+						//System.out.println("[*] Thread Error ==> " + e);
 					}
 				}
 			}
