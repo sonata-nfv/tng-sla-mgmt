@@ -58,7 +58,7 @@ public class ListenerStatisticInfo implements ServletContextListener {
 		Runnable runnable = new Runnable() {
 			public void run() {
 				while (true) {
-					System.out.println("[*] statistic info run!! ");
+					//System.out.println("[*] statistic info run!! ");
 					// code for task to run ends here
 
 					// define the push gateway registry
@@ -93,7 +93,7 @@ public class ListenerStatisticInfo implements ServletContextListener {
 						PushGateway pg = new PushGateway(pg_url);
 						try {
 							pg.pushAdd(registry, "SLA");
-							System.out.println("[*] Success! Statistic info pushed to PushGateway");
+							//System.out.println("[*] Success! Statistic info pushed to PushGateway");
 						} catch (Exception e) {
 							// TODO Auto-generated catch block
 							System.out.println("[*] Error to push gateway => " + e);
@@ -124,10 +124,10 @@ public class ListenerStatisticInfo implements ServletContextListener {
 						PushGateway pg = new PushGateway(pg_url);
 						try {
 							pg.pushAdd(registry, "SLA");
-							System.out.print("[*] Success! Statistic info pushed to PushGateway");
+							//System.out.print("[*] Success! Statistic info pushed to PushGateway");
 						} catch (Exception e) {
 							// TODO Auto-generated catch block
-							//System.out.println("[*] Error to push gateway => " + e);
+							System.out.println("[*] Error to push gateway => " + e);
 						}
 					}
 					//System.out.println("[*] getLicensesUtilized ==> " + licenses_utilized_number);
@@ -153,10 +153,10 @@ public class ListenerStatisticInfo implements ServletContextListener {
 						PushGateway pg = new PushGateway(pg_url);
 						try {
 							pg.pushAdd(registry, "SLA");
-							System.out.println("[*] Success! Statistic info pushed to PushGateway");
+							//System.out.println("[*] Success! Statistic info pushed to PushGateway");
 						} catch (Exception e) {
 							// TODO Auto-generated catch block
-							//System.out.println("[*] Error to push gateway => " + e);
+							System.out.println("[*] Error to push gateway => " + e);
 						}
 					}
 					//System.out.println("[*] getLicensesExpired ==> " + licenses_expired_number);
@@ -180,10 +180,10 @@ public class ListenerStatisticInfo implements ServletContextListener {
 						PushGateway pg = new PushGateway(pg_url);
 						try {
 							pg.pushAdd(registry, "SLA");
-							System.out.println("[*] Success! Statistic info pushed to PushGateway");
+							//System.out.println("[*] Success! Statistic info pushed to PushGateway");
 						} catch (Exception e) {
 							// TODO Auto-generated catch block
-							//System.out.println("[*] Error to push gateway => " + e);
+							System.out.println("[*] Error to push gateway => " + e);
 						}
 					}
 					//System.out.println("[*] getLicensesAcquired ==> " + licenses_acquired_number);
@@ -192,7 +192,7 @@ public class ListenerStatisticInfo implements ServletContextListener {
 					try {
 						Thread.sleep(timeInterval);
 					} catch (InterruptedException e) {
-						//System.out.println("[*] Thread Error ==> " + e);
+						System.out.println("[*] Thread Error ==> " + e);
 					}
 				}
 			}
