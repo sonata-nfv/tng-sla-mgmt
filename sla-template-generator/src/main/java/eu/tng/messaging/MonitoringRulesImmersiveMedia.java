@@ -38,10 +38,11 @@ public class MonitoringRulesImmersiveMedia {
 			 * Create the rules
 			 **/
 			for (int i=0; i<slos.size(); i++) {
-				String curr_slo = (String) slos.get(i);
+				JSONObject curr_slo = (JSONObject) slos.get(i);
+				String curr_slo_name = (String) curr_slo.get("name");
 				
 				System.out.println("CURRENT SLO" + curr_slo);
-				if (curr_slo.equals("input_connections")) {
+				if (curr_slo_name.equals("input_connections")) {
 					
 					System.out.println("CURRENT SLO input_connections");
 					root.put("sla_cnt", sla_uuid);
