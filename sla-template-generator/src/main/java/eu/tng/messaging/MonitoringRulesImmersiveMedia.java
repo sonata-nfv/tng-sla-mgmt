@@ -61,53 +61,42 @@ public class MonitoringRulesImmersiveMedia {
 						
 						if (vnf_name.equals("vnf-mse"))	{
 							
-							System.out.println("vnf_mse vnf_mse vnf_mse");
-							
 							String vnf_id = (String) vnfr_id_list.get(k);							
 							System.out.println("vnf_id " +vnf_id);
 														
 							JSONArray vnfs = new JSONArray();
+
 							JSONObject nvfid = new JSONObject();
 							nvfid.put("nvfid", vnf_id);
 							vnfs.add(nvfid);
 		
-							try {
-								org.json.JSONArray jsArray = new org.json.JSONArray(k); // k is the current vnfr 
-								org.json.JSONArray current_vdus_array = ((org.json.JSONArray) jsArray).getJSONObject(k).getJSONArray("cloudnative_deployment_units");
-										
-								System.out.println("current_vdus_array " +current_vdus_array);
-								
-								JSONArray vdus = new JSONArray();
-								JSONObject vduObject = new JSONObject();
-								
-								for (int j = 0; j < ((List) current_vdus_array).size(); j++) {							
-									JSONObject vdu_obj = (JSONObject) current_vdus_array.get(j);
-									String vdu_id = (String) vdu_obj.get("id");
-									
-									System.out.println("vdu_id " +vdu_id);
-									
-									vduObject.put("vdu_id", vdu_id);
+							System.out.println("vnfs " +vnfs);
+							
+							JSONArray vdus = new JSONArray();
+							JSONObject vdu_id = new JSONObject();
+							vdu_id.put("vdu_id", "cdu01-"+nvfid);
+							vdus.add(vdu_id);
+							System.out.println("vdus " +vdus);
+							
+							JSONArray rules = new JSONArray();
+							JSONObject json_rule = new JSONObject();
+							json_rule.put("name", "sla_rule_" + name + "_cdu01-" + vdu_id);
+							json_rule.put("duration", "10s");
+							json_rule.put("description", "");
+							String vdu_id_quotes = "\"" + vdu_id + "\"";
+							String condition = "delta(input_conn{resource_id=" + vdu_id_quotes + "}["+ target_period + "]) > " + target_value;
+							json_rule.put("condition", condition);
+							json_rule.put("summary", "");
+							
+							rules.add(json_rule);
+							
+							System.out.println("rules " +rules);
 
-									JSONArray rules = new JSONArray();
-									JSONObject json_rule = new JSONObject();
-									json_rule.put("name", "sla_rule_" + name + "_cdu01-" + vdu_id);
-									json_rule.put("duration", "10s");
-									json_rule.put("description", "");
-									String vdu_id_quotes = "\"" + vdu_id + "\"";
-									String condition = "delta(input_conn{resource_id=" + vdu_id_quotes + "}["+ target_period + "]) > " + target_value;
-									json_rule.put("condition", condition);
-									json_rule.put("summary", "");
-									
-									rules.add(json_rule);
-									vduObject.put("rules", rules);
-									
-								}
-								vdus.add(vduObject);
-															
-								vnfs.add(vdus);
-							} catch (Exception e) {
-								System.out.print("Error parsing currnet cdu list  " + e);
-							}
+							vdus.add(rules);
+							System.out.println("updated vdus" +vdus);
+							
+							vnfs.add(vdus);	
+							System.out.println("updated vnfs" +vnfs);
 							
 							root.put("vnfs", vnfs);							
 							
