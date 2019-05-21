@@ -53,7 +53,8 @@ public class MonitoringRulesImmersiveMedia {
 				if (slo_name.equals("input_connections")) {
 					for (int vnfr_name_iteration = 0; vnfr_name_iteration < vnfr_name_list.size(); vnfr_name_iteration++) {
 						if (vnfr_name_list.get(vnfr_name_iteration).equals("vnf-mse")) {
-														
+								
+							System.out.println("VNFR NAME ==> " + vnfr_name_list.get(vnfr_name_iteration));
 							/**
 							 * Create the rules
 							 **/
@@ -66,6 +67,7 @@ public class MonitoringRulesImmersiveMedia {
 								JSONObject nvfid = new JSONObject();
 								// get the id in the same porition with the name
 								nvfid.put("nvfid", vnfr_id_list.get(vnfr_name_iteration));
+								System.out.println("VNFR ID FOR MSE ==> " + vnfr_id_list.get(vnfr_name_iteration));
 								vnfs.add(nvfid);
 
 								// ** cdus array **/
@@ -108,6 +110,9 @@ public class MonitoringRulesImmersiveMedia {
 
 							}
 							root.put("vnfs", vnfs);							
+						}
+						else {
+							System.out.println("VNFR NAME is NOT MSE ==> " + vnfr_name_list.get(vnfr_name_iteration));
 						}
 					}
 					
@@ -253,10 +258,12 @@ public class MonitoringRulesImmersiveMedia {
 	
 	private static ArrayList<String> createCondition(String name, String target_period, String target_value,
 			String vdu_id) {
+		
 		String trimed_target_value = target_value.substring(0, target_value.length() - 1);
+		
 		ArrayList<String> dc = new ArrayList<String>();
 		String vdu_id_quotes = "\"" + vdu_id + "\"";
-		if (name.equals("input_connection")) {
+		if (name.equals("input_connections")) {
 			System.out.println("[*] Start creating condition for input connections metric.....");
 			String description_connections = "Trigger events if VM input connections are more than " + target_value
 					+ " seconds in window of: 60 second";
