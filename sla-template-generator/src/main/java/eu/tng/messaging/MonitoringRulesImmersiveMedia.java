@@ -7,6 +7,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -39,48 +40,69 @@ public class MonitoringRulesImmersiveMedia {
 			for (int i=0; i<slos.size(); i++) {
 				String curr_slo = (String) slos.get(i);
 				
+				System.out.println("CURRENT SLO" + curr_slo);
 				if (curr_slo.equals("input_connections")) {
 					
+					System.out.println("CURRENT SLO input_connections");
 					root.put("sla_cnt", sla_uuid);
 					
 					String name = (String) ((JSONObject) slos.get(i)).get("name");
+					System.out.println("name" + name);
 					String target_period = (String) ((JSONObject) slos.get(i)).get("target_period");
+					System.out.println("target_period" + target_period);
 					String target_value = (String) ((JSONObject) slos.get(i)).get("target_value");
-					
-					
-					
+					System.out.println("target_value" + target_value);
+
 					for (int k=0; k<vnfr_name_list.size(); k++) {
 						
 						String vnf_name = (String) vnfr_name_list.get(k);
+						System.out.println("vnf_name" + vnf_name);
 						
 						if (vnf_name.equals("vnf_mse"))	{
 							
+							System.out.println("vnf_mse vnf_mse vnf_mse");
+							
 							String vnf_id = (String) vnfr_id_list.get(k);
+							System.out.println("vnf_id " +vnf_id);
+
 														
 							JSONArray vnfs = new JSONArray();
 							JSONObject nvfid = new JSONObject();
 							nvfid.put("nvfid", vnf_id);
 							vnfs.add(nvfid);
 		
+							org.json.JSONArray jsArray = new org.json.JSONArray(k); // k is the current vnfr 
+							org.json.JSONArray current_vdus_array = ((org.json.JSONArray) jsArray).getJSONObject(k).getJSONArray("cloudnative_deployment_units");
+									
+							System.out.println("current_vdus_array " +current_vdus_array);
 							
 							JSONArray vdus = new JSONArray();
-							JSONObject vdu_id = new JSONObject();
-							vdu_id.put("vdu_id", vdu_id);
+							JSONObject vduObject = new JSONObject();
 							
-							JSONArray rules = new JSONArray();
-							JSONObject json_rule = new JSONObject();
-							json_rule.put("name", "sla_rule_" + name + "_cdu01-" + vdu_id);
-							json_rule.put("duration", "10s");
-							json_rule.put("description", "");
-							
-							String vdu_id_quotes = "\"" + vdu_id + "\"";
-							String condition = "delta(input_conn{resource_id=" + vdu_id_quotes + "}["+ target_period + "]) > " + target_value;
-							
-							json_rule.put("condition", condition);
-							json_rule.put("summary", "");
-							
-							vdus.add(rules);							
-							
+							for (int j = 0; j < ((List) current_vdus_array).size(); j++) {							
+								JSONObject vdu_obj = (JSONObject) current_vdus_array.get(j);
+								String vdu_id = (String) vdu_obj.get("id");
+								
+								System.out.println("vdu_id " +vdu_id);
+								
+								vduObject.put("vdu_id", vdu_id);
+
+								JSONArray rules = new JSONArray();
+								JSONObject json_rule = new JSONObject();
+								json_rule.put("name", "sla_rule_" + name + "_cdu01-" + vdu_id);
+								json_rule.put("duration", "10s");
+								json_rule.put("description", "");
+								String vdu_id_quotes = "\"" + vdu_id + "\"";
+								String condition = "delta(input_conn{resource_id=" + vdu_id_quotes + "}["+ target_period + "]) > " + target_value;
+								json_rule.put("condition", condition);
+								json_rule.put("summary", "");
+								
+								rules.add(json_rule);
+								vduObject.put("rules", rules);
+								
+							}
+							vdus.add(vduObject);
+														
 							vnfs.add(vdus);
 							root.put("vnfs", vnfs);							
 							
