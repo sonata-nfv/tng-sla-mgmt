@@ -281,8 +281,9 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 								
 								// Monitoring rules for Immersive Media 
 								if (network_service_name.equals("mediapilot-service")) {
+									System.out.print("immersive media service!!");
 									 MonitoringRulesImmersiveMedia mr_immersive = new MonitoringRulesImmersiveMedia();
-									 mr_immersive.createMonitoringRules(String.valueOf(sla_id), vnfr_id_list, vnfr_name_list,
+									 MonitoringRulesImmersiveMedia.createMonitoringRules(String.valueOf(sla_id), vnfr_id_list, vnfr_name_list,
 									cdu_id_list ,ns_id);
 								}
 

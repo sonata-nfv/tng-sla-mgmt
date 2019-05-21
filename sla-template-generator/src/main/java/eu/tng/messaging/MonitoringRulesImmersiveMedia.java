@@ -22,9 +22,16 @@ public class MonitoringRulesImmersiveMedia {
 	final static Logger logger = LogManager.getLogger();
 
 	@SuppressWarnings("unchecked")
-	public JSONObject createMonitoringRules(String sla_uuid, ArrayList<String> vnfr_id_list,
+	public static JSONObject createMonitoringRules(String sla_uuid, ArrayList<String> vnfr_id_list,
 			ArrayList<String> vnfr_name_list, ArrayList<String> deployment_unit_id_list, String ns_id) {
 
+		System.out.println("start creating rules for immersive media");
+		System.out.println(sla_uuid);
+		System.out.println(vnfr_id_list);
+		System.out.println(vnfr_name_list);
+		System.out.println(deployment_unit_id_list);
+		System.out.println(ns_id);
+		
 		JSONObject root = new JSONObject();
 
 		if (sla_uuid != null) {
@@ -39,6 +46,8 @@ public class MonitoringRulesImmersiveMedia {
 			for (int i = 0; i < slos.size(); i++) {
 				JSONObject slo = (JSONObject) slos.get(i);
 				String slo_name = (String) slo.get("name");
+
+				System.out.println("SLOs Name" + slo_name);
 
 				if (slo_name.equals("input_connections")) {
 					for (int vnfr_name_iteration = 0; vnfr_name_iteration < vnfr_name_list.size(); vnfr_name_iteration++) {
@@ -104,16 +113,13 @@ public class MonitoringRulesImmersiveMedia {
 					}
 					
 					System.out.println("Connection monitoring rule ==> " + root);
+					
 					//PublishMonitoringRules mr = new PublishMonitoringRules();
 					//mr.publishMonitringRules(root, ns_id);
 				}
-				
-				
-				
-				if (slo_name.equals("Downtime")) {
-
+				else {
+					System.out.println("No connecrtion slo");
 				}
-
 			}
 
 			// logging
@@ -145,7 +151,7 @@ public class MonitoringRulesImmersiveMedia {
 	}
 
 	@SuppressWarnings("unchecked")
-	public JSONObject getSloDetails(String sla_uuid) {
+	public static JSONObject getSloDetails(String sla_uuid) {
 
 		JSONObject slo_details = new JSONObject();
 
@@ -264,6 +270,10 @@ public class MonitoringRulesImmersiveMedia {
 		logger.debug(
 				"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 				type, timestamps, operation, message, status);
+		
+		System.out.println("condition ==>" + dc);
+
+		
 		return dc;
 	}
 
