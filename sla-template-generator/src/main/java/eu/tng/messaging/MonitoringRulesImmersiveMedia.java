@@ -41,7 +41,6 @@ public class MonitoringRulesImmersiveMedia {
 				JSONObject curr_slo = (JSONObject) slos.get(i);
 				String curr_slo_name = (String) curr_slo.get("name");
 				
-				System.out.println("CURRENT SLO" + curr_slo);
 				if (curr_slo_name.equals("input_connections")) {
 					
 					root.put("sla_cnt", sla_uuid);
@@ -78,24 +77,21 @@ public class MonitoringRulesImmersiveMedia {
 							json_rule.put("summary", "");
 							
 							rules.add(json_rule);
-							
 							vdu_obj.put("rules", rules);
 							
+							vdus.add(vdu_obj);
 							vnf_obj.put("vdus", vdus);
 							
 							vnfs.add(vnf_obj);	
-							
 							root.put("vnfs", vnfs);							
-							
-							System.out.println("MONITORING RULE: " + root);
-							
+						
 						}
 						else {
 							System.out.println("No rule needed for this vnf");
 						}
 						
 					}
-					
+					System.out.println("Monitroing Rule ==> " + root);
 				}
 				else if (curr_slo.equals("status")) {
 					System.out.println("SLO : STATUS -> Not supported yet");
@@ -140,9 +136,6 @@ public class MonitoringRulesImmersiveMedia {
 	public static JSONObject getSloDetails(String sla_uuid) {
 
 		JSONObject slo_details = new JSONObject();
-
-		System.out.println("getting slo details for ==> " + sla_uuid);
-
 		// String url =
 		// "http://pre-int-sp-ath.5gtango.eu:4011/catalogues/api/v2/slas/template-descriptors/"
 		// + sla_uuid;
@@ -174,8 +167,6 @@ public class MonitoringRulesImmersiveMedia {
 						Object obj = parser.parse(output);
 						JSONObject jsonObject = (JSONObject) obj;
 						
-						System.out.println("slo ==> " + jsonObject);
-						
 						JSONObject slad = (JSONObject) jsonObject.get("slad");
 						JSONObject sla_template = (JSONObject) slad.get("sla_template");
 						JSONObject ns = (JSONObject) sla_template.get("service");
@@ -202,8 +193,6 @@ public class MonitoringRulesImmersiveMedia {
 						}
 
 						slo_details.put("slos", slos);
-						System.out.println("slo details ==> " + slo_details);
-
 
 					} catch (ParseException e) {
 						// logging
