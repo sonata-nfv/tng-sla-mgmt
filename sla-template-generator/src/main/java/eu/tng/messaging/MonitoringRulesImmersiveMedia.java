@@ -200,19 +200,20 @@ public class MonitoringRulesImmersiveMedia {
 						for (int i = 0; i < guaranteeTerms.size(); i++) {
 							JSONObject slo = new JSONObject();
 
-							JSONObject target_slo = (JSONObject) ((JSONObject) guaranteeTerms.get(i)).get("target_slo");
-							String target_name = (String) target_slo.get("target_kpi");
-							String target_duration = (String) target_slo.get("target_duration");
-							String target_value = (String) target_slo.get("target_value");
-							String target_period = (String) target_slo.get("target_period");
+							JSONArray target_slo = (JSONArray) ((JSONObject) guaranteeTerms.get(i)).get("target_slo");
+							for (int j = 0; j < target_slo.size(); j++) {
+								JSONObject target_slo_obj = (JSONObject) target_slo.get(j);
+								String target_name = (String) target_slo_obj.get("target_kpi");
+								String target_duration = (String) target_slo_obj.get("target_duration");
+								String target_value = (String) target_slo_obj.get("target_value");
+								String target_period = (String) target_slo_obj.get("target_period");
 
-							slo.put("name", target_name);
-							slo.put("duration", target_duration);
-							slo.put("target_value", target_value);
-							slo.put("target_period", target_period);
-
+								slo.put("name", target_name);
+								slo.put("duration", target_duration);
+								slo.put("target_value", target_value);
+								slo.put("target_period", target_period);
+							}
 							slos.add(slo);
-
 						}
 
 						slo_details.put("slos", slos);
