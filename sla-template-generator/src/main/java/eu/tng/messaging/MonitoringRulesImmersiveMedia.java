@@ -47,11 +47,11 @@ public class MonitoringRulesImmersiveMedia {
 					System.out.println("CURRENT SLO input_connections");
 					root.put("sla_cnt", sla_uuid);
 					
-					String name = (String) ((JSONObject) slos.get(i)).get("name");
+					String name = (String) curr_slo.get("name");
 					System.out.println("name" + name);
-					String target_period = (String) ((JSONObject) slos.get(i)).get("target_period");
+					String target_period = (String) curr_slo.get("target_period");
 					System.out.println("target_period" + target_period);
-					String target_value = (String) ((JSONObject) slos.get(i)).get("target_value");
+					String target_value = (String) curr_slo.get("target_value");
 					System.out.println("target_value" + target_value);
 
 					for (int k=0; k<vnfr_name_list.size(); k++) {
@@ -59,7 +59,7 @@ public class MonitoringRulesImmersiveMedia {
 						String vnf_name = (String) vnfr_name_list.get(k);
 						System.out.println("vnf_name" + vnf_name);
 						
-						if (vnf_name.equals("vnf_mse"))	{
+						if (vnf_name.equals("vnf-mse"))	{
 							
 							System.out.println("vnf_mse vnf_mse vnf_mse");
 							
@@ -115,7 +115,7 @@ public class MonitoringRulesImmersiveMedia {
 					
 				}
 				else if (curr_slo.equals("status")) {
-					break;
+					System.out.println("SLO : STATUS -> Not supported yet");
 				}
 				else
 				{
