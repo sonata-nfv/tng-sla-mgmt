@@ -53,9 +53,7 @@ public class MonitoringRulesImmersiveMedia {
 				if (slo_name.equals("input_connections")) {
 					for (int vnfr_name_iteration = 0; vnfr_name_iteration < vnfr_name_list.size(); vnfr_name_iteration++) {
 						if (vnfr_name_list.get(vnfr_name_iteration).equals("vnf-mse")) {
-							
-							
-							
+														
 							/**
 							 * Create the rules
 							 **/
