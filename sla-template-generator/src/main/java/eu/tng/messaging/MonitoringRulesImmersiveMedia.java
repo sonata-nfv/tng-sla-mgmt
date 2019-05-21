@@ -25,106 +25,82 @@ public class MonitoringRulesImmersiveMedia {
 	public static JSONObject createMonitoringRules(String sla_uuid, ArrayList<String> vnfr_id_list,
 			ArrayList<String> vnfr_name_list, ArrayList<String> deployment_unit_id_list, String ns_id) {
 
-		System.out.println("start creating rules for immersive media");
-		System.out.println(sla_uuid);
-		System.out.println(vnfr_id_list);
-		System.out.println(vnfr_name_list);
-		System.out.println(deployment_unit_id_list);
-		System.out.println(ns_id);
 		
 		JSONObject root = new JSONObject();
 
 		if (sla_uuid != null && !sla_uuid.isEmpty()) {
-			System.out.println("SLA != NULL");
 			// call function getSlaDetails
 			JSONObject slo_list = getSloDetails(sla_uuid);
 			JSONArray slos = (JSONArray) slo_list.get("slos");
-			System.out.println("Monitroed SLOs: " + slos);
 
 			/**
 			 * Create the rules
 			 **/
-			for (int i = 0; i < slos.size(); i++) {
-				JSONObject slo = (JSONObject) slos.get(i);
-				String slo_name = (String) slo.get("name");
-
-				System.out.println("SLOs Name" + slo_name);
-
-				if (slo_name.equals("input_connections")) {
-					for (int vnfr_name_iteration = 0; vnfr_name_iteration < vnfr_name_list.size(); vnfr_name_iteration++) {
-						if (vnfr_name_list.get(vnfr_name_iteration).equals("vnf-mse")) {
-								
-							System.out.println("VNFR NAME ==> " + vnfr_name_list.get(vnfr_name_iteration));
-							/**
-							 * Create the rules
-							 **/
-							// ** sla id field **/
-							root.put("sla_cnt", sla_uuid);
-
-							// ** vnfs array **/
+			for (int i=0; i<slos.size(); i++) {
+				String curr_slo = (String) slos.get(i);
+				
+				if (curr_slo.equals("input_connections")) {
+					
+					root.put("sla_cnt", sla_uuid);
+					
+					String name = (String) ((JSONObject) slos.get(i)).get("name");
+					String target_period = (String) ((JSONObject) slos.get(i)).get("target_period");
+					String target_value = (String) ((JSONObject) slos.get(i)).get("target_value");
+					
+					
+					
+					for (int k=0; k<vnfr_name_list.size(); k++) {
+						
+						String vnf_name = (String) vnfr_name_list.get(k);
+						
+						if (vnf_name.equals("vnf_mse"))	{
+							
+							String vnf_id = (String) vnfr_id_list.get(k);
+														
 							JSONArray vnfs = new JSONArray();
-							for (int  vnfr_id_iteration= 0; vnfr_id_iteration < vnfr_id_list.size(); vnfr_id_iteration++) {
-								JSONObject nvfid = new JSONObject();
-								// get the id in the same porition with the name
-								nvfid.put("nvfid", vnfr_id_list.get(vnfr_name_iteration));
-								System.out.println("VNFR ID FOR MSE ==> " + vnfr_id_list.get(vnfr_name_iteration));
-								vnfs.add(nvfid);
-
-								// ** cdus array **/
-								JSONArray vdus = new JSONArray();
-								for (int deployment_unit_iteration = 0; deployment_unit_iteration < deployment_unit_id_list.size(); deployment_unit_iteration++) {
-									JSONObject vduid = new JSONObject();
-									vduid.put("vdu_id", deployment_unit_id_list.get(deployment_unit_iteration));
-									vdus.add(vduid);
-
-									// ** rules array **/
-									JSONArray rules = new JSONArray();
-									JSONObject rule = new JSONObject();
-									String name = (String) ((JSONObject) slos.get(i)).get("name");
-									String target_period = (String) ((JSONObject) slos.get(i)).get("target_period");
-									String target_value = (String) ((JSONObject) slos.get(i)).get("target_value");
-									
-									// call function createCondition
-									@SuppressWarnings("rawtypes")
-									ArrayList dc = createCondition(name, target_period, target_value, deployment_unit_id_list.get(deployment_unit_iteration));
-									System.out.println("[*] Condition created ==> " + dc.toString());
-									String description = (String) dc.get(0);
-									String condition = (String) dc.get(1);
-
-									rule.put("name", "sla_rule_" + name + "_" + ns_id.replaceAll("-", "_"));
-									rule.put("duration", "10s");
-									rule.put("description", description);
-									rule.put("condition", condition);
-									rule.put("summary", "");
-									JSONObject notification_type = new JSONObject();
-									notification_type.put("id", "2");
-									notification_type.put("type", "rabbitmq");
-									rule.put("notification_type", notification_type);
-
-									rules.add(rule);
-
-
-									vduid.put("rules", rules);
-								}
-								nvfid.put("vdus", vdus);
-
-							}
+							JSONObject nvfid = new JSONObject();
+							nvfid.put("nvfid", vnf_id);
+							vnfs.add(nvfid);
+		
+							
+							JSONArray vdus = new JSONArray();
+							JSONObject vdu_id = new JSONObject();
+							vdu_id.put("vdu_id", vdu_id);
+							
+							JSONArray rules = new JSONArray();
+							JSONObject json_rule = new JSONObject();
+							json_rule.put("name", "sla_rule_" + name + "_cdu01-" + vdu_id);
+							json_rule.put("duration", "10s");
+							json_rule.put("description", "");
+							
+							String vdu_id_quotes = "\"" + vdu_id + "\"";
+							String condition = "delta(input_conn{resource_id=" + vdu_id_quotes + "}["+ target_period + "]) > " + target_value;
+							
+							json_rule.put("condition", condition);
+							json_rule.put("summary", "");
+							
+							vdus.add(rules);							
+							
+							vnfs.add(vdus);
 							root.put("vnfs", vnfs);							
+							
+							System.out.println("MONITORING RULE: " + root);
+							
 						}
-						else {
-							System.out.println("VNFR NAME is NOT MSE ==> " + vnfr_name_list.get(vnfr_name_iteration));
-						}
+						
 					}
 					
-					System.out.println("Connection monitoring rule ==> " + root);
-					
-					//PublishMonitoringRules mr = new PublishMonitoringRules();
-					//mr.publishMonitringRules(root, ns_id);
 				}
-				else {
-					System.out.println("No connecrtion slo");
+				else if (curr_slo.equals("status")) {
+					break;
+				}
+				else
+				{
+					System.out.println("SLO NOT SUPPORTED");
 				}
 			}
+			
+			
 
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
@@ -255,7 +231,7 @@ public class MonitoringRulesImmersiveMedia {
 		return slo_details;
 
 	}
-	
+	/*
 	private static ArrayList<String> createCondition(String name, String target_period, String target_value,
 			String vdu_id) {
 		
@@ -289,6 +265,6 @@ public class MonitoringRulesImmersiveMedia {
 
 		
 		return dc;
-	}
+	}*/
 
 }
