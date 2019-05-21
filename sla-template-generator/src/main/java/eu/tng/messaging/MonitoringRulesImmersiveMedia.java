@@ -64,14 +64,15 @@ public class MonitoringRulesImmersiveMedia {
 							JSONArray vdus = new JSONArray();
 							
 							JSONObject vdu_obj = new JSONObject();
-							vdu_obj.put("vdu_id", "cdu01-"+nvfid);
+							String vdu_id = deployment_unit_id_list.get(k);
+							vdu_obj.put("vdu_id", "cdu01-"+vdu_id);
 							
 							JSONArray rules = new JSONArray();
 							JSONObject json_rule = new JSONObject();
-							json_rule.put("name", "sla_rule_" + name + "_cdu01-" + nvfid);
+							json_rule.put("name", "sla_rule_" + name + "_cdu01-" + vdu_id);
 							json_rule.put("duration", "10s");
 							json_rule.put("description", "");
-							String vdu_id_quotes = "\"_cdu01-" + nvfid + "\"";
+							String vdu_id_quotes = "\"_cdu01-" + vdu_id + "\"";
 							String condition = "delta(input_conn{resource_id=" + vdu_id_quotes + "}["+ target_period + "]) > " + target_value;
 							json_rule.put("condition", condition);
 							json_rule.put("summary", "");

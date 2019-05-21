@@ -257,7 +257,7 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 												String vnfr_name = vnfrs.getJSONObject(i).getString("name");
 												vnfr_name_list.add(vnfr_name);
 												// get vnfr id
-												String vnfr_id = (String) ((JSONObject) vnfrs.get(i)).get("id");
+												String vnfr_id = (String) ((JSONObject) vnfrs.get(i)).get("descriptor_reference");
 												vnfr_id_list.add(vnfr_id);
 												// get cdu id (cdu_id)
 												String cdu_id = cdus.getJSONObject(j).getString("id");
