@@ -34,7 +34,8 @@ public class MonitoringRulesImmersiveMedia {
 		
 		JSONObject root = new JSONObject();
 
-		if (sla_uuid != null) {
+		if (sla_uuid != null && !sla_uuid.isEmpty()) {
+			System.out.println("SLA != NULL");
 			// call function getSlaDetails
 			JSONObject slo_list = getSloDetails(sla_uuid);
 			JSONArray slos = (JSONArray) slo_list.get("slos");
@@ -155,6 +156,8 @@ public class MonitoringRulesImmersiveMedia {
 
 		JSONObject slo_details = new JSONObject();
 
+		System.out.println("getting slo details for ==> " + sla_uuid);
+
 		// String url =
 		// "http://pre-int-sp-ath.5gtango.eu:4011/catalogues/api/v2/slas/template-descriptors/"
 		// + sla_uuid;
@@ -185,9 +188,12 @@ public class MonitoringRulesImmersiveMedia {
 					try {
 						Object obj = parser.parse(output);
 						JSONObject jsonObject = (JSONObject) obj;
+						
+						System.out.println("slo ==> " + jsonObject);
+						
 						JSONObject slad = (JSONObject) jsonObject.get("slad");
 						JSONObject sla_template = (JSONObject) slad.get("sla_template");
-						JSONObject ns = (JSONObject) sla_template.get("ns");
+						JSONObject ns = (JSONObject) sla_template.get("service");
 						JSONArray guaranteeTerms = (JSONArray) ns.get("guaranteeTerms");
 
 						JSONArray slos = new JSONArray();
@@ -210,6 +216,8 @@ public class MonitoringRulesImmersiveMedia {
 						}
 
 						slo_details.put("slos", slos);
+						System.out.println("slo details ==> " + slo_details);
+
 
 					} catch (ParseException e) {
 						// logging
