@@ -120,22 +120,6 @@ public class MonitoringRulesImmersiveMedia {
 							"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 							type, timestamps, operation, message, status);			
 					
-
-					// Clear root (i.e. rule object)
-					Iterator keys = (Iterator) root.keySet();
-					while (keys.hasNext())
-						root.remove((String)((Iterator)root.keySet()).next());
-					
-					// logging
-					timestamp = new Timestamp(System.currentTimeMillis());
-					timestamps = timestamp.toString();
-					type = "I";
-					operation = "Clear root object for storing the monitoring rules";
-					message = "[*] Empty monitoring root " + root;
-					status = "";
-					logger.info(
-							"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
-							type, timestamps, operation, message, status);
 				}
 
 				else if (curr_slo.equals("status")) {
