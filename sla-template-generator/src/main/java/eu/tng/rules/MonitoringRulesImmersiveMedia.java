@@ -101,11 +101,11 @@ public class MonitoringRulesImmersiveMedia {
                     System.out.println("ELSEIF TOU Downtime");
                     
                     for (int k = 0; k < vnfr_name_list.size(); k++) {
-
+                        
                         String vnf_name = (String) vnfr_name_list.get(k);
 
                         if (vnf_name.equals("vnf-cms")) {
-
+                            System.out.println("VNF NAME: vnf-cms");
                             JSONArray vnfs = new JSONArray();
 
                             JSONObject vnf_obj = new JSONObject();
