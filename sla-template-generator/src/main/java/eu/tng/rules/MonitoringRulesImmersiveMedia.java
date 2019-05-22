@@ -35,9 +35,11 @@ public class MonitoringRulesImmersiveMedia {
 			for (int i = 0; i < slos.size(); i++) {
 				JSONObject curr_slo = (JSONObject) slos.get(i);
 				String curr_slo_name = (String) curr_slo.get("name");
-
+				System.out.println("CURRENT SLO: " + curr_slo_name);
 				if (curr_slo_name.equals("input_connections")) {
-
+				    
+				    System.out.println("IF TOU input_connections");
+				    
 					String name = (String) curr_slo.get("name");
 					String target_period = (String) curr_slo.get("target_period");
 					String target_value = (String) curr_slo.get("target_value");
@@ -96,6 +98,8 @@ public class MonitoringRulesImmersiveMedia {
                     String target_period = (String) curr_slo.get("target_period");
                     String target_value = (String) curr_slo.get("target_value");
 
+                    System.out.println("ELSEIF TOU Downtime");
+                    
                     for (int k = 0; k < vnfr_name_list.size(); k++) {
 
                         String vnf_name = (String) vnfr_name_list.get(k);
@@ -177,6 +181,8 @@ public class MonitoringRulesImmersiveMedia {
 				}
 			}
 			
+			
+			System.out.println("MONITORING RULE: " + root);
 			// Publish monitoring rule
             PublishMonitoringRules mr = new PublishMonitoringRules();
             mr.publishMonitringRules(root, nsi_id);
