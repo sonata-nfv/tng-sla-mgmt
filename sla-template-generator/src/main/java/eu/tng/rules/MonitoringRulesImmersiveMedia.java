@@ -65,7 +65,7 @@ public class MonitoringRulesImmersiveMedia {
 
 							JSONArray rules = new JSONArray();
 							JSONObject json_rule = new JSONObject();
-							json_rule.put("name", "sla_rule_" + name);
+							json_rule.put("name", "sla_rule_conns" + name);
 							json_rule.put("duration", "10s");
 							json_rule.put("description", "");
 							String vdu_id_quotes = "\"cdu01-" + vdu_id + "\"";
@@ -122,7 +122,7 @@ public class MonitoringRulesImmersiveMedia {
 					
 				}
 
-				else if (curr_slo.equals("Downtime")) {
+				else if (curr_slo_name.equals("Downtime")) {
 				    String name = (String) curr_slo.get("name");
                     String target_period = (String) curr_slo.get("target_period");
                     String target_value = (String) curr_slo.get("target_value");
@@ -131,7 +131,7 @@ public class MonitoringRulesImmersiveMedia {
 
                         String vnf_name = (String) vnfr_name_list.get(k);
 
-                        if (vnf_name.equals("vnf-ma")) {
+                        if (vnf_name.equals("vnf-cms")) {
 
                             JSONArray vnfs = new JSONArray();
 
@@ -147,7 +147,7 @@ public class MonitoringRulesImmersiveMedia {
 
                             JSONArray rules = new JSONArray();
                             JSONObject json_rule = new JSONObject();
-                            json_rule.put("name", "sla_rule_" + name);
+                            json_rule.put("name", "sla_rule_status" + name);
                             json_rule.put("duration", "10s");
                             json_rule.put("description", "");
                             String vdu_id_quotes = "\"cdu01-" + vdu_id + "\"";
