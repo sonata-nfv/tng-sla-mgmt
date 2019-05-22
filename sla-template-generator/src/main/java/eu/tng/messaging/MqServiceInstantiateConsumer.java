@@ -293,8 +293,9 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 
 								// UPDATE LIcense record with NSI - to create license instance
 								// check if there are already instances for this ns_uuid - cust_username
-								//db_operations.CreateLicenseInstance(correlation_id, "active", nsi_id);
-								//db_operations.closePostgreSQL();
+								db_operations.connectPostgreSQL();
+								db_operations.CreateLicenseInstance(correlation_id, "active", nsi_id);
+								db_operations.closePostgreSQL();
 
 							} else {
 								// logging
