@@ -137,7 +137,7 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 					String status = "";
 					String correlation_id = null;
 					JSONObject jsonObjectMessage = null;
-					String ns_id = "";
+					String nsi_id = "";
 					String network_service_name = "";
 					Object sla_id = null;
 					ArrayList<String> vc_id_list = new ArrayList<String>();
@@ -209,7 +209,7 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 
 								// Get service uuid (ns_uuid)
 								JSONObject nsr = (JSONObject) jsonObjectMessage.getJSONObject("nsr");
-								ns_id = (String) nsr.get("id");
+								nsi_id = (String) nsr.get("id");
 
 								// Get network_service_name
 								db_operations dbo = new db_operations();
@@ -277,8 +277,8 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 
 								// Update NSI Records - to create agreement
 								db_operations.connectPostgreSQL();
-								db_operations.UpdateRecordAgreement(status, correlation_id, ns_id);
-
+								db_operations.UpdateRecordAgreement("READY", correlation_id, nsi_id);
+								db_operations.closePostgreSQL();
 								// create monitoring rules to check sla violations for haproxy
 								// MonitoringRules mr = new MonitoringRules();
 								// MonitoringRules.createMonitroingRules(String.valueOf(sla_id), vnfr_id_list,
@@ -288,13 +288,13 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 								if (network_service_name.equals("mediapilot-service")) {
 									MonitoringRulesImmersiveMedia mr_immersive = new MonitoringRulesImmersiveMedia();
 									MonitoringRulesImmersiveMedia.createMonitoringRules(String.valueOf(sla_id),
-											vnfr_id_list, vnfr_name_list, cdu_id_list, ns_id);
+											vnfr_id_list, vnfr_name_list, cdu_id_list, nsi_id);
 								}
 
 								// UPDATE LIcense record with NSI - to create license instance
 								// check if there are already instances for this ns_uuid - cust_username
-								db_operations.CreateLicenseInstance(correlation_id, "active", ns_id);
-								db_operations.closePostgreSQL();
+								//db_operations.CreateLicenseInstance(correlation_id, "active", nsi_id);
+								//db_operations.closePostgreSQL();
 
 							} else {
 								// logging
