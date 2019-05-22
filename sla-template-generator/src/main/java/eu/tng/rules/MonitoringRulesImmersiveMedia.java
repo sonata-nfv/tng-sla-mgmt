@@ -23,7 +23,7 @@ public class MonitoringRulesImmersiveMedia {
 
 	@SuppressWarnings("unchecked")
 	public static JSONObject createMonitoringRules(String sla_uuid, ArrayList<String> vnfr_id_list,
-			ArrayList<String> vnfr_name_list, ArrayList<String> deployment_unit_id_list, String ns_id) {
+			ArrayList<String> vnfr_name_list, ArrayList<String> deployment_unit_id_list, String nsi_id) {
 
 		JSONObject root = new JSONObject();
 
@@ -40,8 +40,6 @@ public class MonitoringRulesImmersiveMedia {
 				String curr_slo_name = (String) curr_slo.get("name");
 
 				if (curr_slo_name.equals("input_connections")) {
-
-					root.put("sla_cnt", sla_uuid);
 
 					String name = (String) curr_slo.get("name");
 					String target_period = (String) curr_slo.get("target_period");
@@ -63,16 +61,15 @@ public class MonitoringRulesImmersiveMedia {
 
 							JSONObject vdu_obj = new JSONObject();
 							String vdu_id = deployment_unit_id_list.get(k);
-							vdu_obj.put("vdu_id", "cdu01-" + vdu_id);
+							vdu_obj.put("vdu_id", vdu_id);
 
 							JSONArray rules = new JSONArray();
 							JSONObject json_rule = new JSONObject();
-							json_rule.put("name", "sla_rule_" + name + "_cdu01-" + vdu_id);
+							json_rule.put("name", "sla_rule_" + name + "cdu01-" + vdu_id);
 							json_rule.put("duration", "10s");
 							json_rule.put("description", "");
 							String vdu_id_quotes = "\"cdu01-" + vdu_id + "\"";
-							String condition = "delta(input_conn{resource_id=" + vdu_id_quotes + "}[" + target_period
-									+ "]) > " + target_value;
+							String condition = "input_conn{container_name=" + vdu_id_quotes + "} > " + target_value;
 							json_rule.put("condition", condition);
 							json_rule.put("summary", "");
 
@@ -89,7 +86,11 @@ public class MonitoringRulesImmersiveMedia {
 							vnf_obj.put("vdus", vdus);
 
 							vnfs.add(vnf_obj);
+							
 							root.put("vnfs", vnfs);
+							
+							root.put("sla_cnt", sla_uuid);
+							root.put("sonata_service_id", nsi_id);
 
 						}
 
@@ -107,7 +108,7 @@ public class MonitoringRulesImmersiveMedia {
 
 					// Publish monitoring rule
 					PublishMonitoringRules mr = new PublishMonitoringRules();
-					mr.publishMonitringRules(root, ns_id);
+					mr.publishMonitringRules(root, nsi_id);
 					// logging
 					timestamp = new Timestamp(System.currentTimeMillis());
 					timestamps = timestamp.toString();

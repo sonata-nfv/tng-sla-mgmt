@@ -73,7 +73,7 @@ public class PublishMonitoringRules {
 			 * service_id + "/configuration ";
 			 */
 
-			String url = System.getenv("MONITORING_URL") + "slamng/rules/service/" + service_id + "/configuration ";
+			String url = System.getenv("MONITORING_URL_V2") + "/sla/monitoring-rules";
 
 			URL object = new URL(url);
 
