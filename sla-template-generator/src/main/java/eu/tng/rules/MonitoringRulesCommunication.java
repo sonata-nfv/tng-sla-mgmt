@@ -1,4 +1,4 @@
-package eu.tng.messaging;
+package eu.tng.rules;
 
 import java.util.ArrayList;
 

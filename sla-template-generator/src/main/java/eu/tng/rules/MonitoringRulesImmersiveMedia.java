@@ -1,4 +1,4 @@
-package eu.tng.messaging;
+package eu.tng.rules;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -15,8 +15,6 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-
-import eu.tng.rules.PublishMonitoringRules;
 
 public class MonitoringRulesImmersiveMedia {
 
