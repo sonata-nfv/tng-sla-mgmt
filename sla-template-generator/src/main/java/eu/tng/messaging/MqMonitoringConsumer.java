@@ -137,7 +137,7 @@ public class MqMonitoringConsumer implements ServletContextListener {
 					// Parse headers
 					try {
 						String message = new String(delivery.getBody(), "UTF-8");
-						
+						System.out.print("VIOLATION ALERT: " + message.toString() );
 						//Ack the message
 						channel_monitor.basicAck(delivery.getEnvelope().getDeliveryTag(), false);
 						
@@ -145,7 +145,7 @@ public class MqMonitoringConsumer implements ServletContextListener {
 						System.out.println(jmessage);
 
 						nsi_uuid = jmessage.getString("serviceID"); // this is the service instantce id
-						alert_time = jmessage.getString("time");
+						//alert_time = jmessage.getString("time");
 						alert_state = jmessage.getString("alertstate");
 
 						db_operations dbo = new db_operations();
