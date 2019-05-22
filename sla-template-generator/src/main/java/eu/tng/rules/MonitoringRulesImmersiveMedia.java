@@ -160,19 +160,7 @@ public class MonitoringRulesImmersiveMedia {
                             "{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
                             type, timestamps, operation, message, status);
 
-                    // Publish monitoring rule
-                    PublishMonitoringRules mr = new PublishMonitoringRules();
-                    mr.publishMonitringRules(root, nsi_id);
-                    // logging
-                    timestamp = new Timestamp(System.currentTimeMillis());
-                    timestamps = timestamp.toString();
-                    type = "I";
-                    operation = "Publishing monitoring rule for SLA violation checks";
-                    message = "Rule published succesfully!";
-                    status = "";
-                    logger.info(
-                            "{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
-                            type, timestamps, operation, message, status);  
+                     
 				}
 
 				else {
@@ -188,6 +176,20 @@ public class MonitoringRulesImmersiveMedia {
 							type, timestamps, operation, message, status);
 				}
 			}
+			
+			// Publish monitoring rule
+            PublishMonitoringRules mr = new PublishMonitoringRules();
+            mr.publishMonitringRules(root, nsi_id);
+            // logging
+            Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+            String timestamps = timestamp.toString();
+            String type = "I";
+            String operation = "Publishing monitoring rule for SLA violation checks";
+            String message = "Rule published succesfully!";
+            String status = "";
+            logger.info(
+                    "{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+                    type, timestamps, operation, message, status); 
 
 		} else {
 			// logging
