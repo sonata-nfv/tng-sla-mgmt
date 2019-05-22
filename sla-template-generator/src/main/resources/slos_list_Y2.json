@@ -308,6 +308,63 @@
           "target_service_level": "Jitter less than 50 ms"
         }
       ]
-    }
+    },
+    {
+      "guaranteeID": "g16",
+      "guarantee_name": "Gold No. of Connections of Media Service",
+      "guarantee_threshold": "20",
+      "guarantee_operator": "",
+      "guarantee_unit": "",
+      "guarantee_period": "",
+      "guarantee_definition": "The number of connections of the CMS",
+      "target_slo": [
+        {
+          "target_kpi": "input_connections",
+          "target_value": "20",
+          "target_operator": "less",
+          "target_duration": "10s",
+          "target_period": "24h",
+          "target_service_level": ""
+        }
+      ]
+    },
+    {
+      "guaranteeID": "g17",
+      "guarantee_name": "Silver No. of Connections of Media Service",
+      "guarantee_threshold": "10",
+      "guarantee_operator": "",
+      "guarantee_unit": "",
+      "guarantee_period": "",
+      "guarantee_definition": "The number of connections of the CMS",
+      "target_slo": [
+        {
+          "target_kpi": "input_connections",
+          "target_value": "10",
+          "target_operator": "less",
+          "target_duration": "10s",
+          "target_period": "24h",
+          "target_service_level": ""
+        }
+      ]
+    },
+    {
+      "guaranteeID": "g18",
+      "guarantee_name": "Bronze No. of Connections of Media Service",
+      "guarantee_threshold": "5",
+      "guarantee_operator": "",
+      "guarantee_unit": "",
+      "guarantee_period": "",
+      "guarantee_definition": "The number of connections of the CMS",
+      "target_slo": [
+        {
+          "target_kpi": "input_connections",
+          "target_value": "50",
+          "target_operator": "less",
+          "target_duration": "10s",
+          "target_period": "24h",
+          "target_service_level": ""
+        }
+      ]
+    }  
   ]
 }
