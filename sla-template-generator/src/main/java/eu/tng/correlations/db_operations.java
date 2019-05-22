@@ -378,7 +378,7 @@ public class db_operations {
 	 */
 	public static void UpdateRecordAgreement(String inst_status, String correlation_id, String nsi_uuid) {
 
-		String SQL = "UPDATE cust_sla " + "SET inst_status = ?, nsi_uuid = ?" + "WHERE inst_id = ?";
+		String SQL = "UPDATE cust_sla SET inst_status = ?, nsi_uuid = ? WHERE inst_id = ?";
 		boolean result = false;
 		try {
 			PreparedStatement pstmt = c.prepareStatement(SQL);
@@ -396,7 +396,7 @@ public class db_operations {
 			String operation = "Updating SLA Agreement status";
 			String message = "Set status READY?" + result + " ==> " + e.getMessage();
 			String status = "";
-			logger.info(
+			logger.error(
 					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 					type, timestamps, operation, message, status);
 		}
@@ -1192,7 +1192,7 @@ public class db_operations {
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	public JSONObject getViolatedSLA(String nsi_uuid) {
+	public static JSONObject getViolatedSLA(String nsi_uuid) {
 
 		Statement stmt = null;
 

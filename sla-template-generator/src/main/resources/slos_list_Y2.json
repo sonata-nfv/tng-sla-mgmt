@@ -358,7 +358,7 @@
       "target_slo": [
         {
           "target_kpi": "input_connections",
-          "target_value": "50",
+          "target_value": "5",
           "target_operator": "less",
           "target_duration": "10s",
           "target_period": "24h",
