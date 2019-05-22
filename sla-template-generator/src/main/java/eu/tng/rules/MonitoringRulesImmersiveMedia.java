@@ -7,6 +7,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
@@ -24,7 +25,6 @@ public class MonitoringRulesImmersiveMedia {
 	public static JSONObject createMonitoringRules(String sla_uuid, ArrayList<String> vnfr_id_list,
 			ArrayList<String> vnfr_name_list, ArrayList<String> deployment_unit_id_list, String ns_id) {
 
-		
 		JSONObject root = new JSONObject();
 
 		if (sla_uuid != null && !sla_uuid.isEmpty()) {
@@ -35,57 +35,58 @@ public class MonitoringRulesImmersiveMedia {
 			/**
 			 * Create the rules
 			 **/
-			for (int i=0; i<slos.size(); i++) {
+			for (int i = 0; i < slos.size(); i++) {
 				JSONObject curr_slo = (JSONObject) slos.get(i);
 				String curr_slo_name = (String) curr_slo.get("name");
-				
+
 				if (curr_slo_name.equals("input_connections")) {
-					
+
 					root.put("sla_cnt", sla_uuid);
-					
+
 					String name = (String) curr_slo.get("name");
 					String target_period = (String) curr_slo.get("target_period");
 					String target_value = (String) curr_slo.get("target_value");
 
-					for (int k=0; k<vnfr_name_list.size(); k++) {
-						
+					for (int k = 0; k < vnfr_name_list.size(); k++) {
+
 						String vnf_name = (String) vnfr_name_list.get(k);
-						
-						if (vnf_name.equals("vnf-mse"))	{
-																					
+
+						if (vnf_name.equals("vnf-mse")) {
+
 							JSONArray vnfs = new JSONArray();
-							
+
 							JSONObject vnf_obj = new JSONObject();
 							String nvfid = vnfr_id_list.get(k);
 							vnf_obj.put("nvfid", nvfid);
-														
+
 							JSONArray vdus = new JSONArray();
-							
+
 							JSONObject vdu_obj = new JSONObject();
 							String vdu_id = deployment_unit_id_list.get(k);
-							vdu_obj.put("vdu_id", "cdu01-"+vdu_id);
-							
+							vdu_obj.put("vdu_id", "cdu01-" + vdu_id);
+
 							JSONArray rules = new JSONArray();
 							JSONObject json_rule = new JSONObject();
 							json_rule.put("name", "sla_rule_" + name + "_cdu01-" + vdu_id);
 							json_rule.put("duration", "10s");
 							json_rule.put("description", "");
 							String vdu_id_quotes = "\"_cdu01-" + vdu_id + "\"";
-							String condition = "delta(input_conn{resource_id=" + vdu_id_quotes + "}["+ target_period + "]) > " + target_value;
+							String condition = "delta(input_conn{resource_id=" + vdu_id_quotes + "}[" + target_period
+									+ "]) > " + target_value;
 							json_rule.put("condition", condition);
 							json_rule.put("summary", "");
-							
+
 							rules.add(json_rule);
 							vdu_obj.put("rules", rules);
-							
+
 							vdus.add(vdu_obj);
 							vnf_obj.put("vdus", vdus);
-							
-							vnfs.add(vnf_obj);	
-							root.put("vnfs", vnfs);							
-						
+
+							vnfs.add(vnf_obj);
+							root.put("vnfs", vnfs);
+
 						}
-						
+
 					}
 					// logging
 					Timestamp timestamp = new Timestamp(System.currentTimeMillis());
@@ -97,8 +98,39 @@ public class MonitoringRulesImmersiveMedia {
 					logger.info(
 							"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 							type, timestamps, operation, message, status);
+
+					// Publish monitoring rule
+					PublishMonitoringRules mr = new PublishMonitoringRules();
+					mr.publishMonitringRules(root, ns_id);
+					// logging
+					timestamp = new Timestamp(System.currentTimeMillis());
+					timestamps = timestamp.toString();
+					type = "I";
+					operation = "Publishing monitoring rule for SLA violation checks";
+					message = "Rule published succesfully!";
+					status = "";
+					logger.info(
+							"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+							type, timestamps, operation, message, status);			
+					
+
+					// Clear root (i.e. rule object)
+					Iterator keys = (Iterator) root.keySet();
+					while (keys.hasNext())
+						root.remove((String)((Iterator)root.keySet()).next());
+					
+					// logging
+					timestamp = new Timestamp(System.currentTimeMillis());
+					timestamps = timestamp.toString();
+					type = "I";
+					operation = "Clear root object for storing the monitoring rules";
+					message = "[*] Empty monitoring root " + root;
+					status = "";
+					logger.info(
+							"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+							type, timestamps, operation, message, status);
 				}
-				
+
 				else if (curr_slo.equals("status")) {
 					// logging
 					Timestamp timestamp = new Timestamp(System.currentTimeMillis());
@@ -111,9 +143,8 @@ public class MonitoringRulesImmersiveMedia {
 							"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 							type, timestamps, operation, message, status);
 				}
-				
-				else
-				{
+
+				else {
 					// logging
 					Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 					String timestamps = timestamp.toString();
@@ -178,7 +209,7 @@ public class MonitoringRulesImmersiveMedia {
 					try {
 						Object obj = parser.parse(output);
 						JSONObject jsonObject = (JSONObject) obj;
-						
+
 						JSONObject slad = (JSONObject) jsonObject.get("slad");
 						JSONObject sla_template = (JSONObject) slad.get("sla_template");
 						JSONObject ns = (JSONObject) sla_template.get("service");
