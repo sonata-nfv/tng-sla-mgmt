@@ -51,6 +51,7 @@ import com.rabbitmq.client.*;
 
 import eu.tng.correlations.cust_sla_corr;
 import eu.tng.correlations.db_operations;
+import eu.tng.rules.MonitoringRulesImmersiveMedia;
 
 public class MqServiceInstantiateConsumer implements ServletContextListener {
 
@@ -137,13 +138,12 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 					String correlation_id = null;
 					JSONObject jsonObjectMessage = null;
 					String ns_id = "";
-					String network_service_name ="";
+					String network_service_name = "";
 					Object sla_id = null;
 					ArrayList<String> vc_id_list = new ArrayList<String>();
 					ArrayList<String> vnfr_id_list = new ArrayList<String>();
 					ArrayList<String> cdu_id_list = new ArrayList<String>();
 					ArrayList<String> vnfr_name_list = new ArrayList<String>();
-
 
 					// Parse message payload
 					String message = new String(delivery.getBody(), "UTF-8");
@@ -173,9 +173,8 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 							"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 							type1, timestamps1, operation1, message1, status1);
 
-					
-					/** 
-					 * if message coming from the MANO - contain status key 
+					/**
+					 * if message coming from the MANO - contain status key
 					 * 
 					 **/
 					if (jsonObjectMessage.has("status")) {
@@ -193,7 +192,7 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 								type, timestamps, operation, message2, status2);
 
 						if (status.equals("READY")) {
-							
+
 							// logging
 							timestamp = new Timestamp(System.currentTimeMillis());
 							timestamps = timestamp.toString();
@@ -207,18 +206,18 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 
 							// get info for the monitoring metrics
 							if (sla_id != null) {
-								
+
 								// Get service uuid (ns_uuid)
 								JSONObject nsr = (JSONObject) jsonObjectMessage.getJSONObject("nsr");
 								ns_id = (String) nsr.get("id");
-								
-								// Get network_service_name 
+
+								// Get network_service_name
 								db_operations dbo = new db_operations();
 								db_operations.connectPostgreSQL();
 								org.json.simple.JSONObject ns_name_obj = dbo.selectAgreementPerSLA(sla_id.toString());
 								network_service_name = (String) ns_name_obj.get("ns_name");
 								db_operations.closePostgreSQL();
-								
+
 								// Get vnfrs
 								JSONArray vnfrs = (JSONArray) jsonObjectMessage.getJSONArray("vnfrs");
 								for (int i = 0; i < (vnfrs).length(); i++) {
@@ -230,7 +229,7 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 										for (int j = 0; j < vdus.length(); j++) {
 											String vdu_reference = (String) ((JSONObject) vdus.getJSONObject(j))
 													.get("vdu_reference");
-											 //if vnfr is the haproxy function - continue to the monitoring creation
+											// if vnfr is the haproxy function - continue to the monitoring creation
 											// metrics
 											if (vdu_reference.startsWith("haproxy") == true) {
 												// get vnfr id
@@ -246,7 +245,8 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 												}
 											}
 										}
-									} catch (Exception e) {}
+									} catch (Exception e) {
+									}
 
 									// Get cdus_reference foreach vnfr
 									try {
@@ -255,21 +255,23 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 										for (int j = 0; j < cdus.length(); j++) {
 											String cdu_reference = (String) ((JSONObject) cdus.getJSONObject(j))
 													.get("cdu_reference");
-											
+
 											if ((cdu_reference.startsWith("vnf-mse") == true)
 													|| (cdu_reference.startsWith("vnf-cms") == true)
 													|| (cdu_reference.startsWith("vnf-ma") == true)) {
 												String vnfr_name = vnfrs.getJSONObject(i).getString("name");
 												vnfr_name_list.add(vnfr_name);
 												// get vnfr id
-												String vnfr_id = (String) ((JSONObject) vnfrs.get(i)).get("descriptor_reference");
+												String vnfr_id = (String) ((JSONObject) vnfrs.get(i))
+														.get("descriptor_reference");
 												vnfr_id_list.add(vnfr_id);
 												// get cdu id (cdu_id)
 												String cdu_id = (String) ((JSONObject) vnfrs.get(i)).get("id");
 												cdu_id_list.add(cdu_id);
 											}
 										}
-									} catch (Exception e) {}
+									} catch (Exception e) {
+									}
 
 								}
 
@@ -281,12 +283,12 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 								// MonitoringRules mr = new MonitoringRules();
 								// MonitoringRules.createMonitroingRules(String.valueOf(sla_id), vnfr_id_list,
 								// vc_id_list,nsi_id);
-								
-								// Monitoring rules for Immersive Media 
+
+								// Monitoring rules for Immersive Media
 								if (network_service_name.equals("mediapilot-service")) {
-									 MonitoringRulesImmersiveMedia mr_immersive = new MonitoringRulesImmersiveMedia();
-									 MonitoringRulesImmersiveMedia.createMonitoringRules(String.valueOf(sla_id), vnfr_id_list, vnfr_name_list,
-									cdu_id_list ,ns_id);
+									MonitoringRulesImmersiveMedia mr_immersive = new MonitoringRulesImmersiveMedia();
+									MonitoringRulesImmersiveMedia.createMonitoringRules(String.valueOf(sla_id),
+											vnfr_id_list, vnfr_name_list, cdu_id_list, ns_id);
 								}
 
 								// UPDATE LIcense record with NSI - to create license instance
