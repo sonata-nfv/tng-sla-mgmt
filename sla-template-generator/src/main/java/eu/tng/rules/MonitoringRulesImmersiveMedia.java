@@ -97,7 +97,7 @@ public class MonitoringRulesImmersiveMedia {
 				    String name = (String) curr_slo.get("name");
                     String target_period = (String) curr_slo.get("target_period");
                     String target_value = (String) curr_slo.get("target_value");
-
+                    JSONArray vnfs = new JSONArray();
                     System.out.println("ELSEIF TOU Downtime");
                     
                     for (int k = 0; k < vnfr_name_list.size(); k++) {
@@ -106,7 +106,7 @@ public class MonitoringRulesImmersiveMedia {
 
                         if (vnf_name.equals("vnf-cms")) {
                             System.out.println("VNF NAME: vnf-cms");
-                            JSONArray vnfs = new JSONArray();
+                            
 
                             JSONObject vnf_obj = new JSONObject();
                             String nvfid = vnfr_id_list.get(k);
@@ -142,13 +142,11 @@ public class MonitoringRulesImmersiveMedia {
                             vnf_obj.put("vdus", vdus);
 
                             vnfs.add(vnf_obj);
-                            
-                            root.put("vnfs", vnfs);
-
                         }
 
                     }
                     
+                    root.put("vnfs", vnfs);
                     root.put("sla_cnt", sla_uuid);
                     root.put("sonata_service_id", nsi_id);
                     
