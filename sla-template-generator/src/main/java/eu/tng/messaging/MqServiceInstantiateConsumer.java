@@ -193,8 +193,17 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 								type, timestamps, operation, message2, status2);
 
 						if (status.equals("READY")) {
-
-							System.out.println("RabbitMQ Message (when status ready)" + jsonObjectMessage);
+							
+							// logging
+							timestamp = new Timestamp(System.currentTimeMillis());
+							timestamps = timestamp.toString();
+							type = "I";
+							operation = "Netork service instantiation";
+							message = "RabbitMQ Message (when status ready)" + jsonObjectMessage.toString();
+							status = "";
+							logger.info(
+									"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+									type, timestamps, operation, message, status);
 
 							// get info for the monitoring metrics
 							if (sla_id != null) {
@@ -208,7 +217,6 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 								db_operations.connectPostgreSQL();
 								org.json.simple.JSONObject ns_name_obj = dbo.selectAgreementPerSLA(sla_id.toString());
 								network_service_name = (String) ns_name_obj.get("ns_name");
-								System.out.println("[*] NS NAME of the service that is being instantiated => " + network_service_name);
 								db_operations.closePostgreSQL();
 								
 								// Get vnfrs
@@ -238,10 +246,7 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 												}
 											}
 										}
-									} catch (Exception e) {
-										System.out.println(
-												"[*] No vdus for this vnfr - use cdus instead. Exception ==> " + e);
-									}
+									} catch (Exception e) {}
 
 									// Get cdus_reference foreach vnfr
 									try {
@@ -264,9 +269,7 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 												cdu_id_list.add(cdu_id);
 											}
 										}
-									} catch (Exception e) {
-										System.out.println("[*] No cdus for this vnfr. Exception ==> " + e);
-									}
+									} catch (Exception e) {}
 
 								}
 
@@ -281,7 +284,6 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 								
 								// Monitoring rules for Immersive Media 
 								if (network_service_name.equals("mediapilot-service")) {
-									System.out.print("immersive media service!!");
 									 MonitoringRulesImmersiveMedia mr_immersive = new MonitoringRulesImmersiveMedia();
 									 MonitoringRulesImmersiveMedia.createMonitoringRules(String.valueOf(sla_id), vnfr_id_list, vnfr_name_list,
 									cdu_id_list ,ns_id);
