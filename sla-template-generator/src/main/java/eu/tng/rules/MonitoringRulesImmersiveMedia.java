@@ -70,12 +70,18 @@ public class MonitoringRulesImmersiveMedia {
 							json_rule.put("name", "sla_rule_" + name + "_cdu01-" + vdu_id);
 							json_rule.put("duration", "10s");
 							json_rule.put("description", "");
-							String vdu_id_quotes = "\"_cdu01-" + vdu_id + "\"";
+							String vdu_id_quotes = "\"cdu01-" + vdu_id + "\"";
 							String condition = "delta(input_conn{resource_id=" + vdu_id_quotes + "}[" + target_period
 									+ "]) > " + target_value;
 							json_rule.put("condition", condition);
 							json_rule.put("summary", "");
 
+							JSONObject notification_type = new JSONObject();
+							notification_type.put("id", "2");
+							notification_type.put("type", "rabbitmq");
+							json_rule.put("notification_type", notification_type);
+
+							
 							rules.add(json_rule);
 							vdu_obj.put("rules", rules);
 
