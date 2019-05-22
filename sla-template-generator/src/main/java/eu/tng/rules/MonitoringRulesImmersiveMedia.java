@@ -131,7 +131,7 @@ public class MonitoringRulesImmersiveMedia {
 
                         String vnf_name = (String) vnfr_name_list.get(k);
 
-                        if (vnf_name.equals("vnf-ma")) {
+                        if (vnf_name.equals("vnf-cms")) {
 
                             JSONArray vnfs = new JSONArray();
 
