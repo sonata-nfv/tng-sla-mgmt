@@ -87,34 +87,47 @@ public class MonitoringRulesImmersiveMedia {
 							root.put("vnfs", vnfs);							
 						
 						}
-						else {
-							System.out.println("No rule needed for this vnf");
-						}
 						
 					}
-					System.out.println("Monitroing Rule ==> " + root);
+					// logging
+					Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+					String timestamps = timestamp.toString();
+					String type = "I";
+					String operation = "Publishing monitoring rule for SLA violationS";
+					String message = "[*] Created Rule ==> " + root.toJSONString();
+					String status = "";
+					logger.info(
+							"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+							type, timestamps, operation, message, status);
 				}
+				
 				else if (curr_slo.equals("status")) {
-					System.out.println("SLO : STATUS -> Not supported yet");
+					// logging
+					Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+					String timestamps = timestamp.toString();
+					String type = "I";
+					String operation = "Publishing monitoring rule for SLA violationS";
+					String message = "SLO not supported yet";
+					String status = "";
+					logger.info(
+							"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+							type, timestamps, operation, message, status);
 				}
+				
 				else
 				{
-					System.out.println("SLO NOT SUPPORTED");
+					// logging
+					Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+					String timestamps = timestamp.toString();
+					String type = "I";
+					String operation = "Publishing monitoring rule for SLA violationS";
+					String message = "SLO not supported yet";
+					String status = "";
+					logger.info(
+							"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+							type, timestamps, operation, message, status);
 				}
 			}
-			
-			
-
-			// logging
-			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-			String timestamps = timestamp.toString();
-			String type = "I";
-			String operation = "Publishing monitoring rule for SLA violation checks";
-			String message = "Rule published succesfully!";
-			String status = "";
-			logger.info(
-					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
-					type, timestamps, operation, message, status);
 
 		} else {
 			// logging
@@ -227,40 +240,5 @@ public class MonitoringRulesImmersiveMedia {
 		return slo_details;
 
 	}
-	/*
-	private static ArrayList<String> createCondition(String name, String target_period, String target_value,
-			String vdu_id) {
-		
-		String trimed_target_value = target_value.substring(0, target_value.length() - 1);
-		
-		ArrayList<String> dc = new ArrayList<String>();
-		String vdu_id_quotes = "\"" + vdu_id + "\"";
-		if (name.equals("input_connections")) {
-			System.out.println("[*] Start creating condition for input connections metric.....");
-			String description_connections = "Trigger events if VM input connections are more than " + target_value
-					+ " seconds in window of: 60 second";
-			String condition_connections = "delta(input_conn{resource_id=" + vdu_id_quotes + "}["
-					+ target_period + "]) > " + trimed_target_value;
-			// String condition_avalability = "delta(haproxy_backend_downtime{resource_id="
-			// + vdu_id_quotes + "}[1h]) > -1";
-			dc.add(description_connections);
-			dc.add(condition_connections);
-		}
-		// logging
-		Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-		String timestamps = timestamp.toString();
-		String type = "D";
-		String operation = "Publishing monitoring rule for SLA violation checks";
-		String message = "[*] Monitoring condition ==> " + dc.toString();
-		String status = "";
-		logger.debug(
-				"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
-				type, timestamps, operation, message, status);
-		
-		System.out.println("condition ==>" + dc);
-
-		
-		return dc;
-	}*/
 
 }
