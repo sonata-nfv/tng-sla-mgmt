@@ -65,7 +65,7 @@ public class MonitoringRulesImmersiveMedia {
 
 							JSONArray rules = new JSONArray();
 							JSONObject json_rule = new JSONObject();
-							json_rule.put("name", "sla_rule_" + name);
+							json_rule.put("name", "sla_rule_conns" + name);
 							json_rule.put("duration", "10s");
 							json_rule.put("description", "");
 							String vdu_id_quotes = "\"cdu01-" + vdu_id + "\"";
@@ -147,7 +147,7 @@ public class MonitoringRulesImmersiveMedia {
 
                             JSONArray rules = new JSONArray();
                             JSONObject json_rule = new JSONObject();
-                            json_rule.put("name", "sla_rule_" + name);
+                            json_rule.put("name", "sla_rule_status" + name);
                             json_rule.put("duration", "10s");
                             json_rule.put("description", "");
                             String vdu_id_quotes = "\"cdu01-" + vdu_id + "\"";
