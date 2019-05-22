@@ -1192,7 +1192,7 @@ public class db_operations {
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	public JSONObject getViolatedSLA(String nsi_uuid) {
+	public static JSONObject getViolatedSLA(String nsi_uuid) {
 
 		Statement stmt = null;
 

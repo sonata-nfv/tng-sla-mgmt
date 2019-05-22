@@ -137,7 +137,7 @@ public class MqMonitoringConsumer implements ServletContextListener {
 					// Parse headers
 					try {
 						String message = new String(delivery.getBody(), "UTF-8");
-						System.out.print("VIOLATION ALERT: " + message.toString() );
+						
 						//Ack the message
 						channel_monitor.basicAck(delivery.getEnvelope().getDeliveryTag(), false);
 						
@@ -145,26 +145,22 @@ public class MqMonitoringConsumer implements ServletContextListener {
 						System.out.println(jmessage);
 
 						nsi_uuid = jmessage.getString("serviceID"); // this is the service instantce id
-						//alert_time = jmessage.getString("time");
-						alert_state = jmessage.getString("alertstate");
+						alert_time = jmessage.getString("startsAt");
+						alert_state = jmessage.getString("status");
 
 						db_operations dbo = new db_operations();
 						db_operations.connectPostgreSQL();
 						db_operations.createTableViolations();
 
-						// check if there is already a violation for this nsi
-						int count_violations = db_operations.countViolationsPerNsi(nsi_uuid);
-						// if (count_violations == 0) {
+						
 						// get the sla agreements details for this violation
-						org.json.simple.JSONObject violated_sla = dbo.getViolatedSLA(nsi_uuid);
+						org.json.simple.JSONObject violated_sla = db_operations.getViolatedSLA(nsi_uuid);
 						sla_uuid = (String) violated_sla.get("sla_uuid");
-						System.out.println("Violated sla_uuid ==> " + sla_uuid);
 						cust_username = (String) violated_sla.get("cust_username");
-						System.out.println("Violated cust_username ==> " + sla_uuid);
+
 						// insert the violation in the violation database
 						db_operations.insertRecordViolation(nsi_uuid, sla_uuid, alert_time, alert_state, cust_username);
 						db_operations.UpdateAgreementStatus(nsi_uuid);
-						// }
 						db_operations.closePostgreSQL();
 
 						try {
