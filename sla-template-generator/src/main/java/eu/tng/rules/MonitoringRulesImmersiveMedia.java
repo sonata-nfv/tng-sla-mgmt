@@ -85,38 +85,10 @@ public class MonitoringRulesImmersiveMedia {
 							vnfs.add(vnf_obj);
 							
 							root.put("vnfs", vnfs);
-							
-							root.put("sla_cnt", sla_uuid);
-							root.put("sonata_service_id", nsi_id);
-
 						}
 
 					}
-					// logging
-					Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-					String timestamps = timestamp.toString();
-					String type = "I";
-					String operation = "Publishing monitoring rule for SLA violationS";
-					String message = "[*] Created Rule ==> " + root.toJSONString();
-					String status = "";
-					logger.info(
-							"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
-							type, timestamps, operation, message, status);
-
-					// Publish monitoring rule
-					PublishMonitoringRules mr = new PublishMonitoringRules();
-					mr.publishMonitringRules(root, nsi_id);
-					// logging
-					timestamp = new Timestamp(System.currentTimeMillis());
-					timestamps = timestamp.toString();
-					type = "I";
-					operation = "Publishing monitoring rule for SLA violation checks";
-					message = "Rule published succesfully!";
-					status = "";
-					logger.info(
-							"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
-							type, timestamps, operation, message, status);			
-					
+	
 				}
 
 				else if (curr_slo_name.equals("Downtime")) {
@@ -168,13 +140,15 @@ public class MonitoringRulesImmersiveMedia {
                             vnfs.add(vnf_obj);
                             
                             root.put("vnfs", vnfs);
-                            
-                            root.put("sla_cnt", sla_uuid);
-                            root.put("sonata_service_id", nsi_id);
 
                         }
 
                     }
+                    
+                    root.put("sla_cnt", sla_uuid);
+                    root.put("sonata_service_id", nsi_id);
+                    
+                    
                     // logging
                     Timestamp timestamp = new Timestamp(System.currentTimeMillis());
                     String timestamps = timestamp.toString();
