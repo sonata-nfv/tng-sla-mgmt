@@ -122,7 +122,7 @@ public class MonitoringRulesImmersiveMedia {
 					
 				}
 
-				else if (curr_slo.equals("Downtime")) {
+				else if (curr_slo_name.equals("Downtime")) {
 				    String name = (String) curr_slo.get("name");
                     String target_period = (String) curr_slo.get("target_period");
                     String target_value = (String) curr_slo.get("target_value");
