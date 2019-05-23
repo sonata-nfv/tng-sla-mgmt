@@ -35,34 +35,19 @@
 
 package eu.tng.rules;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.sql.Timestamp;
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Timer;
-import java.util.TimerTask;
-
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
-import javax.ws.rs.core.Response;
-
-import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.json.JSONArray;
 import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-
 import eu.tng.correlations.db_operations;
 
 /**
@@ -73,12 +58,13 @@ public class LicensePeriodCheck implements ServletContextListener {
 
 	static Logger logger = LogManager.getLogger();
 
-	/**
-	 * Default constructor.
-	 */
-	public LicensePeriodCheck() {
-		// TODO Auto-generated constructor stub
-	}
+	// LOGS VARIABLES
+	String timestamps = "";
+	String type = "";
+	String operation = "";
+	String message = "";
+	String status = "";
+	Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 
 	/**
 	 * @contextDestroyed
@@ -102,7 +88,16 @@ public class LicensePeriodCheck implements ServletContextListener {
 	 * contextInitialized
 	 */
 	public void contextInitialized(ServletContextEvent arg0) {
-		System.out.println("[*] License Check Listener started!!");
+		// logging
+		timestamp = new Timestamp(System.currentTimeMillis());
+		timestamps = timestamp.toString();
+		type = "I";
+		operation = "License Check Listener";
+		message = ("[*] License Check Listener started!!");
+		status = "";
+		logger.info(
+				"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+				type, timestamps, operation, message, status);
 
 		// run every 24h - 24*60*60*1000 add 24 hours delay between job executions.
 		final long timeInterval = 24 * 60 * 60 * 1000;
@@ -111,12 +106,11 @@ public class LicensePeriodCheck implements ServletContextListener {
 			public void run() {
 				while (true) {
 					// code for task to run
-	
+
 					Date currentDate = new Date();
 					Date exp_date = new Date();
 
-					// get expiration date for all licenses
-					db_operations dbo = new db_operations();
+					new db_operations();
 					db_operations.connectPostgreSQL();
 					db_operations.createTableLicensing();
 					org.json.simple.JSONArray licenses = db_operations.getAllLicenses();
@@ -132,43 +126,79 @@ public class LicensePeriodCheck implements ServletContextListener {
 
 							if (license_exp_date_string != null || license_exp_date_string != "") {
 								SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
-						        String dateInString = license_exp_date_string;
-						        try {
-						            exp_date = formatter.parse(dateInString.replaceAll("Z$", "+0000"));						           						        } 
-						        catch (ParseException e) {
-						        	System.out.println("Error formating the expiration date ==> " + e);
-						        }
-							
+								String dateInString = license_exp_date_string;
+								try {
+									exp_date = formatter.parse(dateInString.replaceAll("Z$", "+0000"));
+								} catch (ParseException e) {
+
+									// logging
+									timestamp = new Timestamp(System.currentTimeMillis());
+									timestamps = timestamp.toString();
+									type = "I";
+									operation = "License Check Listener";
+									message = ("[*] Error formating date: " + e.getMessage());
+									status = "";
+									logger.info(
+											"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+											type, timestamps, operation, message, status);
+								}
+
 								String license_nsi_uuid = (String) ((JSONObject) license_item).get("nsi_uuid");
-								
+
 								if (currentDate.after(exp_date)) {
 									db_operations.connectPostgreSQL();
-									
-									System.out.println("[*] License expired: Current date after license expiration date");
+
+									// logging
+									timestamp = new Timestamp(System.currentTimeMillis());
+									timestamps = timestamp.toString();
+									type = "I";
+									operation = "License Check Listener";
+									message = ("[*] License expired: Current date after license expiration date");
+									status = "";
+									logger.info(
+											"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+											type, timestamps, operation, message, status);
 
 									// sde-activate the license
-									db_operations.deactivateLicenseForNSI(license_nsi_uuid, "expired");
-									System.out.println("[*] License expired! Expiration date reached.");
-									db_operations.closePostgreSQL();		
-									
+									db_operations.deactivateLicenseForNSI(license_nsi_uuid, "expired");									
+									db_operations.closePostgreSQL();
+
 									// send termination request for the service
 									HttpClient httpClient = HttpClientBuilder.create().build();
 									try {
-									    //HttpPost request = new HttpPost("http://pre-int-sp-ath.5gtango.eu:32002/api/v3/requests");
+										// HttpPost request = new
+										// HttpPost("http://pre-int-sp-ath.5gtango.eu:32002/api/v3/requests");
 										HttpPost request = new HttpPost(System.getenv("GATEKEEPER_URL") + "requests");
-									    StringEntity params =new StringEntity("{\"instance_uuid\":\""+license_nsi_uuid+"\",\"request_type\":\"TERMINATE_SERVICE\"}");
-									    request.addHeader("content-type", "application/json");
-									    request.setEntity(params);
-									    HttpResponse response = httpClient.execute(request);
-									    System.out.println("URL======= " + request.toString());
-									    System.out.println("[*] Response code for terminating the service ==> " +response.getStatusLine());
+										StringEntity params = new StringEntity("{\"instance_uuid\":\""
+												+ license_nsi_uuid + "\",\"request_type\":\"TERMINATE_SERVICE\"}");
+										request.addHeader("content-type", "application/json");
+										request.setEntity(params);
+										httpClient.execute(request);
 
-									}catch (Exception ex) {
-										System.out.println("[*] ERROR in the api request for terminating the service");
+									} catch (Exception ex) {
+										// logging
+										timestamp = new Timestamp(System.currentTimeMillis());
+										timestamps = timestamp.toString();
+										type = "W";
+										operation = "License Check Listener";
+										message = ("[*] Error sending termination request: " + ex.getMessage());
+										status = "";
+										logger.warn(
+												"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+												type, timestamps, operation, message, status);
 									}
 
 								} else {
-									System.out.println("[*] License not expired! ");
+									// logging
+									timestamp = new Timestamp(System.currentTimeMillis());
+									timestamps = timestamp.toString();
+									type = "I";
+									operation = "License Check Listener";
+									message = ("[*] License not expired yet.");
+									status = "";
+									logger.info(
+											"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+											type, timestamps, operation, message, status);
 								}
 							}
 
@@ -179,8 +209,18 @@ public class LicensePeriodCheck implements ServletContextListener {
 					// code for task to run ends here
 					try {
 						Thread.sleep(timeInterval);
-					} catch (InterruptedException e) {
-						System.out.println("[*] Thread Error ==> " + e);
+					} 
+					catch (InterruptedException e) {
+						// logging
+						timestamp = new Timestamp(System.currentTimeMillis());
+						timestamps = timestamp.toString();
+						type = "I";
+						operation = "License Check Listener";
+						message = ("[*] Thread Error ==> " + e);
+						status = "";
+						logger.info(
+								"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+								type, timestamps, operation, message, status);
 					}
 				}
 			}

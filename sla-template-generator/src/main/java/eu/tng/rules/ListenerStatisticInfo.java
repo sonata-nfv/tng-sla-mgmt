@@ -1,8 +1,5 @@
 package eu.tng.rules;
 
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.sql.Timestamp;
 
 import javax.servlet.ServletContextEvent;
@@ -23,10 +20,6 @@ public class ListenerStatisticInfo implements ServletContextListener {
 
 	static Logger logger = LogManager.getLogger();
 
-	public ListenerStatisticInfo() {
-		// TODO Auto-generated constructor stub
-	}
-
 	/**
 	 * @see ServletContextListener#contextDestroyed(ServletContextEvent)
 	 */
@@ -34,11 +27,11 @@ public class ListenerStatisticInfo implements ServletContextListener {
 		// logging
 		Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 		String timestamps = timestamp.toString();
-		String type = "I";
-		String operation = "License Check Listener";
-		String message = "[*] Listener License Check Stopped! - Restarting....";
+		String type = "W";
+		String operation = "Statistic Info Listener";
+		String message = "[*] Statistic Info Listener Stopped! - Restarting....";
 		String status = "";
-		logger.info(
+		logger.warn(
 				"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 				type, timestamps, operation, message, status);
 
@@ -49,24 +42,19 @@ public class ListenerStatisticInfo implements ServletContextListener {
 	 * @see ServletContextListener#contextInitialized(ServletContextEvent)
 	 */
 	public void contextInitialized(ServletContextEvent arg0) {
-//		System.out.println("[*] Statistic Info Listener started!!");
-		System.out.println("[*] This is a new change to test promoting to qualification!!!");
-
 
 		// 60 secs time interval
 		final long timeInterval = 60 * 1000;
 		Runnable runnable = new Runnable() {
 			public void run() {
 				while (true) {
-					//System.out.println("[*] statistic info run!! ");
-					// code for task to run ends here
 
 					// define the push gateway registry
 					CollectorRegistry registry = new CollectorRegistry();
 
 					// open connection to database
 					db_operations db = new db_operations();
-					
+
 					/**
 					 ***
 					 * Nº SLA Agreements vs. Violations
@@ -77,7 +65,7 @@ public class ListenerStatisticInfo implements ServletContextListener {
 					double totalAgreements = db.countTotalAgreements();
 					double violatedAgreements = db.countViolatedAgreements();
 					db_operations.closePostgreSQL();
-					
+
 					double percentage_violated = 0;
 					if (totalAgreements > 0) {
 						percentage_violated = (violatedAgreements * 100) / totalAgreements;
@@ -93,14 +81,21 @@ public class ListenerStatisticInfo implements ServletContextListener {
 						PushGateway pg = new PushGateway(pg_url);
 						try {
 							pg.pushAdd(registry, "SLA");
-							//System.out.println("[*] Success! Statistic info pushed to PushGateway");
 						} catch (Exception e) {
-							// TODO Auto-generated catch block
-							System.out.println("[*] Error to push gateway => " + e);
+
+							// logging
+							Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+							String timestamps = timestamp.toString();
+							String type = "W";
+							String operation = "Statistic Info Listener";
+							String message = "[*] Error sending violations percentage to push gateway => "
+									+ e.getMessage();
+							String status = "";
+							logger.warn(
+									"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+									type, timestamps, operation, message, status);
 						}
 					}
-					//System.out.println("[*] violations perecntage ==> " + percentage_violated);
-					
 
 					/**
 					 ***
@@ -124,25 +119,35 @@ public class ListenerStatisticInfo implements ServletContextListener {
 						PushGateway pg = new PushGateway(pg_url);
 						try {
 							pg.pushAdd(registry, "SLA");
-							//System.out.print("[*] Success! Statistic info pushed to PushGateway");
+
 						} catch (Exception e) {
-							// TODO Auto-generated catch block
-							System.out.println("[*] Error to push gateway => " + e);
+
+							// logging
+							Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+							String timestamps = timestamp.toString();
+							String type = "W";
+							String operation = "Statistic Info Listener";
+							String message = "[*] Error sending utilized licenses to push gateway => " + e.getMessage();
+							String status = "";
+							logger.warn(
+									"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+									type, timestamps, operation, message, status);
+
 						}
 					}
-					//System.out.println("[*] getLicensesUtilized ==> " + licenses_utilized_number);
-					
+
 					/**
 					 ***
-					 * Nº Licenses Expired 
+					 * Nº Licenses Expired
 					 ***
 					 */
 					db_operations.connectPostgreSQL();
-					double licenses_expired_number = db.countExpiredLicense();		
+					double licenses_expired_number = db.countExpiredLicense();
 					db_operations.closePostgreSQL();
-					
+
 					// create the gauge metric for the push gateway
-			        Gauge gauge_licenses_expired_number = Gauge.build().name("licenses_expired_number").help("The number of expired licenses").register(registry);
+					Gauge gauge_licenses_expired_number = Gauge.build().name("licenses_expired_number")
+							.help("The number of expired licenses").register(registry);
 					try {
 						// Set the value of the metric
 						gauge_licenses_expired_number.set(licenses_expired_number);
@@ -153,14 +158,21 @@ public class ListenerStatisticInfo implements ServletContextListener {
 						PushGateway pg = new PushGateway(pg_url);
 						try {
 							pg.pushAdd(registry, "SLA");
-							//System.out.println("[*] Success! Statistic info pushed to PushGateway");
 						} catch (Exception e) {
-							// TODO Auto-generated catch block
-							System.out.println("[*] Error to push gateway => " + e);
+
+							// logging
+							Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+							String timestamps = timestamp.toString();
+							String type = "W";
+							String operation = "Statistic Info Listener";
+							String message = "[*] Error sending expired licenses to push gateway => " + e.getMessage();
+							String status = "";
+							logger.warn(
+									"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+									type, timestamps, operation, message, status);
 						}
 					}
-					//System.out.println("[*] getLicensesExpired ==> " + licenses_expired_number);
-					
+
 					/**
 					 ***
 					 * Nº Licenses Acquired
@@ -170,7 +182,8 @@ public class ListenerStatisticInfo implements ServletContextListener {
 					double licenses_acquired_number = db.countAcquiredLicense();
 					db_operations.closePostgreSQL();
 					// create the gauge metric for the push gateway
-			        Gauge gauge_licenses_acquired_number = Gauge.build().name("licenses_acquired_number").help("The number of acquired licenses").register(registry);
+					Gauge gauge_licenses_acquired_number = Gauge.build().name("licenses_acquired_number")
+							.help("The number of acquired licenses").register(registry);
 					try {
 						// Set the value of the metric
 						gauge_licenses_acquired_number.set(licenses_acquired_number);
@@ -180,19 +193,34 @@ public class ListenerStatisticInfo implements ServletContextListener {
 						PushGateway pg = new PushGateway(pg_url);
 						try {
 							pg.pushAdd(registry, "SLA");
-							//System.out.println("[*] Success! Statistic info pushed to PushGateway");
 						} catch (Exception e) {
-							// TODO Auto-generated catch block
-							System.out.println("[*] Error to push gateway => " + e);
+
+							// logging
+							Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+							String timestamps = timestamp.toString();
+							String type = "W";
+							String operation = "Statistic Info Listener";
+							String message = "[*] Error sending aquired licenses to push gateway => " + e.getMessage();
+							String status = "";
+							logger.warn(
+									"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+									type, timestamps, operation, message, status);
 						}
 					}
-					//System.out.println("[*] getLicensesAcquired ==> " + licenses_acquired_number);
 
-					
 					try {
 						Thread.sleep(timeInterval);
 					} catch (InterruptedException e) {
-						System.out.println("[*] Thread Error ==> " + e);
+						// logging
+						Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+						String timestamps = timestamp.toString();
+						String type = "I";
+						String operation = "Statistic Info Listener";
+						String message = ("[*] Thread Error ==> " + e);
+						String status = "";
+						logger.info(
+								"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+								type, timestamps, operation, message, status);
 					}
 				}
 			}
