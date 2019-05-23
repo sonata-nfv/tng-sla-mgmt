@@ -37,6 +37,8 @@ public class MonitoringRulesImmersiveMedia {
             // call function getSlaDetails
             JSONObject slo_list = getSloDetails(sla_uuid);
             JSONArray slos = (JSONArray) slo_list.get("slos");
+            JSONArray vnfs = new JSONArray();
+            
             
             root.put("sla_cnt", sla_uuid);
             root.put("sonata_service_id", nsi_id);
@@ -44,12 +46,7 @@ public class MonitoringRulesImmersiveMedia {
             
             // for every slo_name in the array slos, check if the current slo is supported
             for (int i = 0; i < vnfr_name_list.size(); i++) {
-                // get current slo name
                 
-                
-                // Define JSONArray vnfs
-                JSONArray vnfs = new JSONArray();
-
                 for (int j = 0; j < slos.size(); j++) {
                     
                     JSONObject curr_slo = (JSONObject) slos.get(j);
