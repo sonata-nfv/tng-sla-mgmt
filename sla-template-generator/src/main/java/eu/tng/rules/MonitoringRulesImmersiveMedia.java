@@ -43,20 +43,23 @@ public class MonitoringRulesImmersiveMedia {
             
             
             // for every slo_name in the array slos, check if the current slo is supported
-            for (int i = 0; i < slos.size(); i++) {
+            for (int i = 0; i < vnfr_name_list.size(); i++) {
                 // get current slo name
-                JSONObject curr_slo = (JSONObject) slos.get(i);
-                String curr_slo_name = (String) curr_slo.get("name");
-
-                // get information for the slo
-                String target_period = (String) curr_slo.get("target_period");
-                String target_value = (String) curr_slo.get("target_value");
-
+                
+                
                 // Define JSONArray vnfs
                 JSONArray vnfs = new JSONArray();
 
-                for (int j = 0; j < vnfr_name_list.size(); j++) {
-                    String curr_vnf_name = (String) vnfr_name_list.get(j);
+                for (int j = 0; j < slos.size(); j++) {
+                    
+                    JSONObject curr_slo = (JSONObject) slos.get(j);
+                    String curr_slo_name = (String) curr_slo.get("name");
+                    // get information for the slo
+                    String target_period = (String) curr_slo.get("target_period");
+                    String target_value = (String) curr_slo.get("target_value");
+                    
+                    
+                    String curr_vnf_name = (String) vnfr_name_list.get(i);
 
                     /**
                      * check if it is the vnf-ma because the input connections metric is supported
@@ -65,13 +68,13 @@ public class MonitoringRulesImmersiveMedia {
                     if (curr_slo_name.equals("input_connections") && curr_vnf_name.equals("vnf-ma")) {
 
                         JSONObject vnf_obj = new JSONObject();
-                        String nvfid = vnfr_id_list.get(j);
+                        String nvfid = vnfr_id_list.get(i);
                         vnf_obj.put("nvfid", nvfid);
 
                         // Define JSONArray vdus
                         JSONArray vdus = new JSONArray();
                         JSONObject vdu_obj = new JSONObject();
-                        String curr_vdu_id = deployment_unit_id_list.get(j);
+                        String curr_vdu_id = deployment_unit_id_list.get(i);
                         vdu_obj.put("vdu_id", curr_vdu_id);
 
                         // Define JSONArray rules
