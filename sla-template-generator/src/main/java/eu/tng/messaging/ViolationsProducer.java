@@ -70,11 +70,11 @@ public class ViolationsProducer {
 				// logging
 				Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 				String timestamps = timestamp.toString();
-				String type = "D";
+				String type = "E";
 				String operation = "RabbitMQ - Violation Producer";
-				String messageLOG = e.getMessage();
+				String messageLOG = "Error : " + e.getMessage();
 				String status = "";
-				logger.debug(
+				logger.error(
 						"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 						type, timestamps, operation, messageLOG, status);
 			}
@@ -82,11 +82,11 @@ public class ViolationsProducer {
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 			String timestamps = timestamp.toString();
-			String type = "D";
+			String type = "I";
 			String operation = "RabbitMQ - Violation Producer";
-			String messageLOG = "[*] Sent message " + routingKey + " : " + message;
+			String messageLOG = "[*] Success: Produced violation message with key: " + routingKey + " : " + message;
 			String status = "";
-			logger.debug(
+			logger.info(
 					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 					type, timestamps, operation, messageLOG, status);
 
@@ -94,11 +94,11 @@ public class ViolationsProducer {
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 			String timestamps = timestamp.toString();
-			String type = "D";
+			String type = "E";
 			String operation = "RabbitMQ - Violation Producer";
-			String messageLOG = e.getMessage();
+			String messageLOG ="Error: " + e.getMessage();
 			String status = "";
-			logger.debug(
+			logger.error(
 					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 					type, timestamps, operation, messageLOG, status);
 		}
@@ -118,11 +118,11 @@ public class ViolationsProducer {
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 			String timestamps = timestamp.toString();
-			String type = "D";
+			String type = "E";
 			String operation = "RabbitMQ - Violation Producer";
-			String messageLOG = e.getMessage();
+			String messageLOG ="Error: " + e.getMessage();
 			String status = "";
-			logger.debug(
+			logger.error(
 					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 					type, timestamps, operation, messageLOG, status);
 		}
@@ -132,11 +132,11 @@ public class ViolationsProducer {
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 			String timestamps = timestamp.toString();
-			String type = "D";
+			String type = "E";
 			String operation = "RabbitMQ - Violation Producer";
-			String messageLOG = e.getMessage();
+			String messageLOG ="Error: " + e.getMessage();
 			String status = "";
-			logger.debug(
+			logger.error(
 					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 					type, timestamps, operation, messageLOG, status);
 		}
