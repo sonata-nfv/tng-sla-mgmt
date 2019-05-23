@@ -30,32 +30,33 @@ public class MonitoringRulesImmersiveMedia {
         deployment_unit_id_list = new ArrayList<String>(new LinkedHashSet<String>(deployment_unit_id_list));
 
         JSONObject root = new JSONObject();
-       
-        
+
         if (sla_uuid != null && !sla_uuid.isEmpty()) {
 
-            // call function getSlaDetails
             JSONObject slo_list = getSloDetails(sla_uuid);
             JSONArray slos = (JSONArray) slo_list.get("slos");
             JSONArray vnfs = new JSONArray();
-            
-            
+            JSONObject vnf_obj = new JSONObject();
+            JSONArray vdus = new JSONArray();
+            JSONObject vdu_obj = new JSONObject();
+            JSONArray rules = new JSONArray();
+            JSONObject rule_obj = new JSONObject();
+            JSONObject notification_type = new JSONObject();
+
             root.put("sla_cnt", sla_uuid);
             root.put("sonata_service_id", nsi_id);
-            
-            
+
             // for every slo_name in the array slos, check if the current slo is supported
             for (int i = 0; i < vnfr_name_list.size(); i++) {
-                
+
                 for (int j = 0; j < slos.size(); j++) {
-                    
+
                     JSONObject curr_slo = (JSONObject) slos.get(j);
                     String curr_slo_name = (String) curr_slo.get("name");
                     // get information for the slo
                     String target_period = (String) curr_slo.get("target_period");
                     String target_value = (String) curr_slo.get("target_value");
-                    
-                    
+
                     String curr_vnf_name = (String) vnfr_name_list.get(i);
 
                     /**
@@ -64,19 +65,15 @@ public class MonitoringRulesImmersiveMedia {
                      */
                     if (curr_slo_name.equals("input_connections") && curr_vnf_name.equals("vnf-ma")) {
 
-                        JSONObject vnf_obj = new JSONObject();
                         String nvfid = vnfr_id_list.get(i);
                         vnf_obj.put("nvfid", nvfid);
 
                         // Define JSONArray vdus
-                        JSONArray vdus = new JSONArray();
-                        JSONObject vdu_obj = new JSONObject();
+
                         String curr_vdu_id = deployment_unit_id_list.get(i);
                         vdu_obj.put("vdu_id", curr_vdu_id);
 
                         // Define JSONArray rules
-                        JSONArray rules = new JSONArray();
-                        JSONObject rule_obj = new JSONObject();
 
                         rule_obj.put("name", "sla_rule_" + curr_slo_name);
                         rule_obj.put("duration", "10s");
@@ -87,7 +84,6 @@ public class MonitoringRulesImmersiveMedia {
                         rule_obj.put("condition", condition);
                         rule_obj.put("summary", "");
 
-                        JSONObject notification_type = new JSONObject();
                         notification_type.put("id", "2");
                         notification_type.put("type", "rabbitmq");
                         rule_obj.put("notification_type", notification_type);
@@ -98,7 +94,7 @@ public class MonitoringRulesImmersiveMedia {
                         vdus.add(vdu_obj);
                         vnf_obj.put("vdus", vdus);
                         vnfs.add(vnf_obj);
-                        
+
                         root.put("vnfs", vnfs);
                     }
 
@@ -108,19 +104,19 @@ public class MonitoringRulesImmersiveMedia {
                      */
                     if (curr_slo_name.equals("Downtime") && curr_vnf_name.equals("vnf-cms")) {
 
-                        JSONObject vnf_obj = new JSONObject();
-                        String nvfid = vnfr_id_list.get(j);
+                        vnf_obj = new JSONObject();
+                        String nvfid = vnfr_id_list.get(i);
                         vnf_obj.put("nvfid", nvfid);
 
                         // Define JSONArray vdus
-                        JSONArray vdus = new JSONArray();
-                        JSONObject vdu_obj = new JSONObject();
-                        String curr_vdu_id = deployment_unit_id_list.get(j);
+                        vdus = new JSONArray();
+                        vdu_obj = new JSONObject();
+                        String curr_vdu_id = deployment_unit_id_list.get(i);
                         vdu_obj.put("vdu_id", curr_vdu_id);
 
                         // Define JSONArray rules
-                        JSONArray rules = new JSONArray();
-                        JSONObject rule_obj = new JSONObject();
+                        rules = new JSONArray();
+                        rule_obj = new JSONObject();
 
                         rule_obj.put("name", "sla_rule_" + curr_slo_name);
                         rule_obj.put("duration", "10s");
@@ -129,12 +125,13 @@ public class MonitoringRulesImmersiveMedia {
                         String curr_vdu_id_quotes = "\"cdu01-" + curr_vdu_id + "\"";
                         String trimed_target_value = target_value.substring(0, target_value.length() - 1);
 
-                        String condition = "delta(status{container_name=" + curr_vdu_id_quotes + "}[" + target_period + "]) > " + trimed_target_value;
+                        String condition = "delta(status{container_name=" + curr_vdu_id_quotes + "}[" + target_period
+                                + "]) > " + trimed_target_value;
 
                         rule_obj.put("condition", condition);
                         rule_obj.put("summary", "");
 
-                        JSONObject notification_type = new JSONObject();
+                        notification_type = new JSONObject();
                         notification_type.put("id", "2");
                         notification_type.put("type", "rabbitmq");
                         rule_obj.put("notification_type", notification_type);
@@ -145,19 +142,18 @@ public class MonitoringRulesImmersiveMedia {
                         vdus.add(vdu_obj);
                         vnf_obj.put("vdus", vdus);
                         vnfs.add(vnf_obj);
-                        
+
                         root.put("vnfs", vnfs);
                     }
                 } // end for loop vnfr names array
-                
 
             } // end for loop slos array
-            
+
             System.out.print("MONITORING RULE TO BE SENT: " + root.toString());
             // Publish monitoring rule
             PublishMonitoringRules mr = new PublishMonitoringRules();
             mr.publishMonitringRules(root, nsi_id);
-            
+
             // logging
             Timestamp timestamp = new Timestamp(System.currentTimeMillis());
             String timestamps = timestamp.toString();
