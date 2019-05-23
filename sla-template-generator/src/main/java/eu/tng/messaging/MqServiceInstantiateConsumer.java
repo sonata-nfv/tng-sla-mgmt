@@ -51,6 +51,7 @@ import com.rabbitmq.client.*;
 
 import eu.tng.correlations.cust_sla_corr;
 import eu.tng.correlations.db_operations;
+import eu.tng.rules.MonitoringRulesCommunication;
 import eu.tng.rules.MonitoringRulesImmersiveMedia;
 
 public class MqServiceInstantiateConsumer implements ServletContextListener {
@@ -299,6 +300,13 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 									MonitoringRulesImmersiveMedia.createMonitoringRules(String.valueOf(sla_id),
 											vnfr_id_list, vnfr_name_list, cdu_id_list, nsi_id);
 								}
+								
+								// Monitoring rules for Communications Pilot
+                                if (network_service_name.equals("communication-pilot")) {
+                                    new MonitoringRulesCommunication();
+                                    MonitoringRulesCommunication.createMonitoringRules(String.valueOf(sla_id),
+                                            vnfr_id_list, vnfr_name_list, cdu_id_list, nsi_id);
+                                }
 
 								// UPDATE LIcense record with NSI - to create license instance
 								// check if there are already instances for this ns_uuid - cust_username
