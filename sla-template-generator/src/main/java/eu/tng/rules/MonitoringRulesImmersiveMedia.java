@@ -148,18 +148,30 @@ public class MonitoringRulesImmersiveMedia {
 
             } // end for loop slos array
 
-            System.out.print("MONITORING RULE TO BE SENT: " + root.toString());
+ 
+    		// logging
+    		Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+    		String timestamps = timestamp.toString();
+    		String type = "I";
+    		String operation = "Create monitoring rules for immersive media service";
+    		String message = "[*] Monitoring rule to be sent for immersive media service ==> " + root.toString();
+    		String status = "";
+    		logger.info(
+    				"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+    				type, timestamps, operation, message, status);
+    		
+    		
             // Publish monitoring rule
             PublishMonitoringRules mr = new PublishMonitoringRules();
             mr.publishMonitringRules(root, nsi_id);
 
             // logging
-            Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-            String timestamps = timestamp.toString();
-            String type = "I";
-            String operation = "Publishing monitoring rule for SLA violation checks";
-            String message = "Rule published succesfully!";
-            String status = "";
+            timestamp = new Timestamp(System.currentTimeMillis());
+            timestamps = timestamp.toString();
+            type = "I";
+    		operation = "Create monitoring rules for immersive media service";
+            message = "Rule published succesfully!";
+            status = "";
             logger.info(
                     "{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
                     type, timestamps, operation, message, status);
@@ -169,7 +181,7 @@ public class MonitoringRulesImmersiveMedia {
             Timestamp timestamp = new Timestamp(System.currentTimeMillis());
             String timestamps = timestamp.toString();
             String type = "W";
-            String operation = "Publishing monitoring rule for SLA violation checks";
+    		String operation = "Create monitoring rules for immersive media service";
             String message = "[*] ERROR: Unable to create rules. SLA ID is null";
             String status = "";
             logger.warn(
@@ -199,8 +211,8 @@ public class MonitoringRulesImmersiveMedia {
                 Timestamp timestamp = new Timestamp(System.currentTimeMillis());
                 String timestamps = timestamp.toString();
                 String type = "E";
-                String operation = "getSloDetails";
-                String message = "SLA not FOUND";
+        		String operation = "Create monitoring rules for immersive media service";
+                String message = "[*] Error: Unable to get sla details. SLA NOT FOUND";
                 String status = String.valueOf(conn.getResponseCode());
                 logger.error(
                         "{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
@@ -247,11 +259,11 @@ public class MonitoringRulesImmersiveMedia {
                         // logging
                         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
                         String timestamps = timestamp.toString();
-                        String type = "D";
-                        String operation = "getSloDetails";
-                        String message = e.getMessage();
+                        String type = "E";
+                		String operation = "Create monitoring rules for immersive media service";
+                        String message = "[*] Error: " + e.getMessage();
                         String status = String.valueOf(conn.getResponseCode());
-                        logger.debug(
+                        logger.error(
                                 "{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
                                 type, timestamps, operation, message, status);
                     }
@@ -264,11 +276,11 @@ public class MonitoringRulesImmersiveMedia {
             // logging
             Timestamp timestamp = new Timestamp(System.currentTimeMillis());
             String timestamps = timestamp.toString();
-            String type = "D";
-            String operation = "getSloDetails";
-            String message = e.getMessage();
+            String type = "E";
+    		String operation = "Create monitoring rules for immersive media service";
+            String message = "[*] Error: " + e.getMessage();
             String status = "";
-            logger.debug(
+            logger.error(
                     "{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
                     type, timestamps, operation, message, status);
         }
