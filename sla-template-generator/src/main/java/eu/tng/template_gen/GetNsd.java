@@ -46,7 +46,6 @@ import java.util.ArrayList;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -57,8 +56,8 @@ public class GetNsd {
 
 	public boolean getNSD(String nsId) {
 		Nsd setNsdFields = new Nsd();
-		ArrayList<String> mon_desc_list = new ArrayList<String>();
-		ArrayList<String> mon_metric_list = new ArrayList<String>();
+		new ArrayList<String>();
+		new ArrayList<String>();
 		boolean nsdr = false;
 		try {
 			URL url = new URL(System.getenv("CATALOGUES_URL") + "network-services/" + nsId);
