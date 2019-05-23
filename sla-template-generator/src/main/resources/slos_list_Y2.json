@@ -140,7 +140,7 @@
     },
     {
       "guaranteeID": "g7",
-      "guarantee_name": "Gold No. of Connections of Media Service",
+      "guarantee_name": "High No. of Connections of Media Service",
       "guarantee_threshold": "20",
       "guarantee_operator": "",
       "guarantee_unit": "",
@@ -159,7 +159,7 @@
     },
     {
       "guaranteeID": "g8",
-      "guarantee_name": "Silver No. of Connections of Media Service",
+      "guarantee_name": "Medium No. of Connections of Media Service",
       "guarantee_threshold": "10",
       "guarantee_operator": "",
       "guarantee_unit": "",
@@ -178,7 +178,7 @@
     },
     {
       "guaranteeID": "g9",
-      "guarantee_name": "Bronze No. of Connections of Media Service",
+      "guarantee_name": "Low No. of Connections of Media Service",
       "guarantee_threshold": "5",
       "guarantee_operator": "",
       "guarantee_unit": "",
