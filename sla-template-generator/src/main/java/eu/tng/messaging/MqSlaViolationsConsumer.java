@@ -36,88 +36,154 @@
 package eu.tng.messaging;
 
 import java.io.IOException;
+import java.sql.Timestamp;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.CancelCallback;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
-import com.rabbitmq.client.Consumer;
-import com.rabbitmq.client.DefaultConsumer;
 import com.rabbitmq.client.DeliverCallback;
 import com.rabbitmq.client.Delivery;
-import com.rabbitmq.client.Envelope;
 
 public class MqSlaViolationsConsumer implements ServletContextListener {
 
-    private static final String EXCHANGE_NAME = System.getenv("BROKER_EXCHANGE");
-    //private static final String EXCHANGE_NAME = "son-kernel";
+	private static final String EXCHANGE_NAME = System.getenv("BROKER_EXCHANGE");
 
-    @Override
-    public void contextDestroyed(ServletContextEvent arg0) {
-        System.out.println("Listener SLA Violations stopped");
-        
-    }
+	static Logger logger = LogManager.getLogger();
 
-    @Override
-    public void contextInitialized(ServletContextEvent arg0) {
-        final Channel channel_violations;
-        Connection connection;
-        String queueName_sla_violations;
+	Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+	String timestamps = "";
+	String type = "";
+	String operation = "";
+	String message = "";
+	String status = "";
 
-        try {
-            RabbitMqConnector connect = new RabbitMqConnector();
-            connection = connect.getconnection();
+	@Override
+	public void contextDestroyed(ServletContextEvent arg0) {
 
-            channel_violations = connection.createChannel();
-            channel_violations.exchangeDeclare(EXCHANGE_NAME, "topic");
-            queueName_sla_violations = "slas.tng.sla.violation";
-            channel_violations.queueDeclare(queueName_sla_violations, true, false, false, null);
-            System.out.println(" [*]  Binding queue to topic...");
-            channel_violations.basicQos(1);
-            channel_violations.queueBind(queueName_sla_violations, EXCHANGE_NAME, "tng.sla.violation");
-            System.out.println(" [*] Bound to topic \"tng.sla.violation\"");
-            System.out.println(" [*] Waiting for messages.");
+		// logging
+		Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+		String timestamps = timestamp.toString();
+		String type = "W";
+		String operation = "RabbitMQ Listener - Violation Alerts Consumer";
+		String message = "[*] Listener Violations stopped - Restarting....";
+		String status = "";
+		logger.warn(
+				"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+				type, timestamps, operation, message, status);
 
-            DeliverCallback deliverCallback = new DeliverCallback() {
-                @Override
-                public void handle(String consumerTag, Delivery delivery) throws IOException {
+	}
 
-                    JSONObject jmessage = null;                  
-                    try {
-                        String message = new String(delivery.getBody(), "UTF-8");
-						
-						//Ack the message
+	@Override
+	public void contextInitialized(ServletContextEvent arg0) {
+		final Channel channel_violations;
+		Connection connection;
+		String queueName_sla_violations;
+
+		try {
+			RabbitMqConnector connect = new RabbitMqConnector();
+			connection = connect.getconnection();
+
+			channel_violations = connection.createChannel();
+			channel_violations.exchangeDeclare(EXCHANGE_NAME, "topic");
+			queueName_sla_violations = "slas.tng.sla.violation";
+			channel_violations.queueDeclare(queueName_sla_violations, true, false, false, null);
+
+			// logging
+			timestamp = new Timestamp(System.currentTimeMillis());
+			timestamps = timestamp.toString();
+			type = "I";
+			operation = "";
+			message = "[*] Binding queue to topic...";
+			status = "";
+			logger.info(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
+
+			channel_violations.basicQos(1);
+			channel_violations.queueBind(queueName_sla_violations, EXCHANGE_NAME, "tng.sla.violation");
+			
+			// logging
+			timestamp = new Timestamp(System.currentTimeMillis());
+			timestamps = timestamp.toString();
+			type = "I";
+			operation = "";
+			message = " [*] Bound to topic \"tng.sla.violation\"";
+			status = "";
+			logger.info(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
+					
+			
+			// logging
+			timestamp = new Timestamp(System.currentTimeMillis());
+			timestamps = timestamp.toString();
+			type = "I";
+			operation = "";
+			message = " [*] Waiting for messages.";
+			status = "";
+			logger.info(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
+
+			DeliverCallback deliverCallback = new DeliverCallback() {
+				@Override
+				public void handle(String consumerTag, Delivery delivery) throws IOException {
+
+					JSONObject jmessage = null;
+					try {
+						String message = new String(delivery.getBody(), "UTF-8");
+
+						// Ack the message
 						channel_violations.basicAck(delivery.getEnvelope().getDeliveryTag(), false);
-						
-						
-                        jmessage = new JSONObject(message);
-                        System.out.println("VIOLATION MESSAGE " + jmessage);
 
-                    } catch (JSONException e) {
-                        // TODO Auto-generated catch block
-                        System.out.println("ERROR: " + e.getMessage());
-                    }
-                    
-                }
+						jmessage = new JSONObject(message);
+						System.out.println("VIOLATION MESSAGE " + jmessage);
 
-            };
+					} catch (JSONException e) {
+							
+						// logging
+						timestamp = new Timestamp(System.currentTimeMillis());
+						timestamps = timestamp.toString();
+						type = "E";
+						operation = "Rabbit MQ - NS Termination";
+						message = " [*] Error: " + e.getMessage();
+						status = "";
+						logger.error(
+								"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+								type, timestamps, operation, message, status);
+					}
+				}
+			};
 
-            // consumer
-            channel_violations.basicConsume(queueName_sla_violations, false, deliverCallback, new CancelCallback() {
-                @Override
-                public void handle(String consumerTag) throws IOException { }
-            });
+			// consumer
+			channel_violations.basicConsume(queueName_sla_violations, false, deliverCallback, new CancelCallback() {
+				@Override
+				public void handle(String consumerTag) throws IOException {
+				}
+			});
 
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            System.out.println("ERROR Connecting to MQ!" + e.getMessage());
-        }
-    }
+		} catch (IOException e) {
+			// logging
+			timestamp = new Timestamp(System.currentTimeMillis());
+			timestamps = timestamp.toString();
+			type = "E";
+			operation = "Rabbit MQ - NS Termination";
+			message = " [*] Error: Connecting to MQ!" + e.getMessage();
+			status = "";
+			logger.error(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
+			
+			
+		}
+	}
 
 }

@@ -53,7 +53,6 @@ import org.json.simple.parser.ParseException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.ThreadContext;
 
 public class cust_sla_corr {
 
@@ -71,13 +70,13 @@ public class cust_sla_corr {
 		db_operations dbo = new db_operations();
 		db_operations.connectPostgreSQL();
 		db_operations.createTableCustSla();
-		dbo.insertRecordAgreement(ns_uuid, ns_name, sla_uuid, sla_name, sla_status, cust_email, cust_username, inst_status,
-				correlation_id);
-		dbo.closePostgreSQL();
+		dbo.insertRecordAgreement(ns_uuid, ns_name, sla_uuid, sla_name, sla_status, cust_email, cust_username,
+				inst_status, correlation_id);
+		db_operations.closePostgreSQL();
 
 	}
 
-	public ArrayList getSLAdetails(String sla_uuid) {
+	public ArrayList<String> getSLAdetails(String sla_uuid) {
 		ArrayList<String> details = new ArrayList<String>();
 
 		try {
@@ -92,6 +91,16 @@ public class cust_sla_corr {
 
 			if (conn.getResponseCode() != 200) {
 				details = null;
+
+				Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+				String timestamps = timestamp.toString();
+				String type = "E";
+				String operation = "Fetching SLAD to get details. Class: " + this.getClass().getSimpleName();
+				String message = ("Error accesing url: " + url);
+				String status = String.valueOf(conn.getResponseCode());
+				logger.error(
+						"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+						type, timestamps, operation, message, status);
 			} else {
 				BufferedReader br = new BufferedReader(new InputStreamReader((conn.getInputStream())));
 				String output;
@@ -112,18 +121,20 @@ public class cust_sla_corr {
 						}
 
 					} catch (ParseException e) {
+
+						Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+						String timestamps = timestamp.toString();
+						String type = "W";
+						String operation = "Fetching SLAD to get details. Class: " + this.getClass().getSimpleName();
+						String message = ("Error fetching the SLAD to get details: " + e);
+						String status = String.valueOf(conn.getResponseCode());
+						logger.warn(
+								"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+								type, timestamps, operation, message, status);
 					}
 
 				}
-				Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-				String timestamps = timestamp.toString();
-				String type = "I";
-				String operation = "Fetching SLAD to get details";
-				String message = ("Succesfully fetched SLAD to get details.");
-				String status = String.valueOf(conn.getResponseCode());
-				logger.info(
-						"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
-						type, timestamps, operation, message, status);
+
 				conn.disconnect();
 			}
 
@@ -131,9 +142,9 @@ public class cust_sla_corr {
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 			String timestamps = timestamp.toString();
-			String type = "W";
-			String operation = "Fetching SLAD to get details";
-			String message = ("A malformed URL has occurred");
+			String type = "E";
+			String operation = "Fetching SLAD to get details. Class: " + this.getClass().getSimpleName();
+			String message = ("A malformed URL has occurred.");
 			String status = "";
 			logger.warn(
 					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
@@ -143,11 +154,11 @@ public class cust_sla_corr {
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 			String timestamps = timestamp.toString();
-			String type = "W";
-			String operation = "Ping Catalogue URL to get SLA descriptor.";
-			String message = ("Signals that an I/O exception of some sort has occurred.");
+			String type = "E";
+			String operation = "Ping Catalogue URL to get SLA descriptor. Class: " + this.getClass().getSimpleName();
+			String message = ("Signals that an I/O exception of some sort has occurred: " + e);
 			String status = "";
-			logger.warn(
+			logger.error(
 					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 					type, timestamps, operation, message, status);
 		}
@@ -157,7 +168,7 @@ public class cust_sla_corr {
 	/**
 	 * Delete a correlation between a network service and a sla template
 	 */
-	public static int deleteCorr(String sla_uuid) {
+	public int deleteCosrr(String sla_uuid) {
 		String tablename = "cust_sla";
 		db_operations dbo = new db_operations();
 		boolean connect = db_operations.connectPostgreSQL();
@@ -168,13 +179,23 @@ public class cust_sla_corr {
 		} else {
 			// failed to connect to database
 			status = 404;
+
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			String timestamps = timestamp.toString();
+			String type = "E";
+			String operation = "Ping Catalogue URL to get SLA descriptor. Class: " + this.getClass().getSimpleName();
+			String message = ("Failed to connect to database");
+			logger.error(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
 		}
-		dbo.closePostgreSQL();
+		db_operations.closePostgreSQL();
 		return status;
 
 	}
 
-	public static JSONArray getGuaranteeTerms(String sla_uuid) {
+	public JSONArray getGuaranteeTerms(String sla_uuid) {
 
 		JSONArray guaranteeTerms = null;
 		try {
@@ -205,16 +226,6 @@ public class cust_sla_corr {
 			JSONObject sla_template = (JSONObject) slad.get("sla_template");
 			JSONObject service = (JSONObject) sla_template.get("service");
 			guaranteeTerms = (JSONArray) service.get("guaranteeTerms");
-			// logging
-			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-			String timestamps = timestamp.toString();
-			String type = "I";
-			String operation = "Getting guarantee terms from SLA.";
-			String message = ("Succesfully get guarantee terms");
-			String status = (String.valueOf(con.getResponseCode()));
-			logger.info(
-					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
-					type, timestamps, operation, message, status);
 
 			return guaranteeTerms;
 
@@ -223,11 +234,11 @@ public class cust_sla_corr {
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 			String timestamps = timestamp.toString();
-			String type = "W";
-			String operation = "Getting guarantee terms from SLA.";
-			String message = ("Succesfully get guarantee terms");
-			String status = ("SLA uuid not found");
-			logger.warn(
+			String type = "E";
+			String operation = "Getting guarantee terms from SLA. Class: " + this.getClass().getSimpleName();
+			String message = ("SLA uuid not found: " + e);
+			String status = "";
+			logger.error(
 					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 					type, timestamps, operation, message, status);
 
@@ -236,6 +247,7 @@ public class cust_sla_corr {
 
 	}
 
+	@SuppressWarnings("unchecked")
 	public JSONArray nsWithAgreement() {
 		ArrayList<String> correlatedNS = new ArrayList<String>();
 
@@ -265,24 +277,13 @@ public class cust_sla_corr {
 			}
 		}
 		correlatedNS = tempArray; // assign temp to original
-		
-		// logging
-		Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-		String timestamps = timestamp.toString();
-		String type = "I";
-		String operation = "Get correlation between NS and Agreement";
-		String message = ("Succesfully get correlation between NS and Agreement");
-		String status = ("");
-		logger.warn(
-				"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
-				type, timestamps, operation, message, status);
-
 		db_operations.closePostgreSQL();
 
 		return (JSONArray) correlatedNS;
 
 	}
 
+	@SuppressWarnings("unchecked")
 	public ArrayList<String> nsWithoutAgreement() {
 		JSONArray existingNSArray = null;
 		ArrayList<String> existingNSIDs = new ArrayList<String>();
@@ -321,16 +322,6 @@ public class cust_sla_corr {
 				existingNSIDs.add((String) ns_obj.get("uuid"));
 			}
 		} catch (Exception e) {
-			// logging
-			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-			String timestamps = timestamp.toString();
-			String type = "W";
-			String operation = "Get NS without Agreement";
-			String message = ("Error getting list of NSs without agreement ==> " +e.getMessage());
-			String status = "";
-			logger.warn(
-					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
-					type, timestamps, operation, message, status);
 
 		}
 
@@ -360,17 +351,6 @@ public class cust_sla_corr {
 		}
 
 		nsWithoutAgreement = tempArray; // assign temp to original
-		
-		// logging
-		Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-		String timestamps = timestamp.toString();
-		String type = "I";
-		String operation = "Get NS without Agreement";
-		String message = ("Succesfully get list of NSs without agreement");
-		String status = "";
-		logger.info(
-				"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
-				type, timestamps, operation, message, status);
 
 		return nsWithoutAgreement;
 	}

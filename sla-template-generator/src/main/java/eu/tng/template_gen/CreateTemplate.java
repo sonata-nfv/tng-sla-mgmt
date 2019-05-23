@@ -51,33 +51,30 @@ import org.json.simple.JSONObject;
 public class CreateTemplate {
 
 	static Logger logger = LogManager.getLogger();
-
+	static String class_name = CreateTemplate.class.getSimpleName();
+	
 	Nsd getNsd = new Nsd();
 
 	@SuppressWarnings("unchecked")
 	public JSONObject createTemplate(String nsd_uuid, String templateName, String expireDate,
 			ArrayList<String> guarantees, String service_licence_type, String allowed_service_instances,
 			String service_licence_expiration_date, String provider_name, String template_initiator) {
-		
-		System.out.println("[1] Create template --> provider name: " + provider_name);
-		System.out.println("[2] Create template --> initiator name: " + template_initiator);
+
 
 		GetGuarantee guarantee = new GetGuarantee();
 		ArrayList<JSONObject> guaranteeArr = guarantee.getGuarantee(guarantees);
 
 		/** get network service descriptor for the given nsId */
 		GetNsd nsd = new GetNsd();
-		boolean correctNsUuid = nsd.getNSD(nsd_uuid);
-
 		if (nsd.getNSD(nsd_uuid) == false) {
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 			String timestamps = timestamp.toString();
-			String type = "D";
-			String operation = "Create SLA Template";
-			String message = "Wrong NSD";
+			String type = "E";
+			String operation = "Create SLA Template. Class: " + class_name;
+			String message = "[*] Error: Wrong NSD";
 			String status = "";
-			logger.debug(
+			logger.error(
 					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 					type, timestamps, operation, message, status);
 
@@ -102,8 +99,17 @@ public class CreateTemplate {
 			try {
 				date2 = formatter.parse(dateInString);
 			} catch (ParseException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				// logging
+				Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+				String timestamps = timestamp.toString();
+				String type = "E";
+				String operation = "Create SLA Template. Class: " + class_name;
+				String message = "[*] Error: " + e.getMessage();
+				String status = "";
+				logger.error(
+						"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+						type, timestamps, operation, message, status);
+
 			}
 			String validUntil_new = df.format(date2);
 			
@@ -114,8 +120,16 @@ public class CreateTemplate {
 			try {
 				date_lic = formatter_lic.parse(dateInString_lic);
 			} catch (ParseException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				// logging
+				Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+				String timestamps = timestamp.toString();
+				String type = "E";
+				String operation = "Create SLA Template. Class: " + class_name;
+				String message = "[*] Error: " + e.getMessage();
+				String status = "";
+				logger.error(
+						"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+						type, timestamps, operation, message, status);
 			}
 			String service_licence_expiration_date_new = df.format(date_lic);
 

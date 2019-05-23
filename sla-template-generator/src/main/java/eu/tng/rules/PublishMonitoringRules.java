@@ -35,21 +35,14 @@
 
 package eu.tng.rules;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.sql.Timestamp;
 
-import javax.ws.rs.core.Response;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-
-import eu.tng.correlations.ns_template_corr;
 
 public class PublishMonitoringRules {
 
@@ -64,7 +57,6 @@ public class PublishMonitoringRules {
 
 	public JSONObject publishMonitringRules(JSONObject body, String ns_id) {
 
-		String service_id = ns_id;
 		try {
 
 			/*
@@ -88,18 +80,18 @@ public class PublishMonitoringRules {
 			wr.write(body.toString());
 			wr.flush();
 
-			StringBuilder sb = new StringBuilder();
+			new StringBuilder();
 			int HttpResult = con.getResponseCode();
 
 			if (HttpResult == HttpURLConnection.HTTP_OK) {
 				// logging
 				Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 				String timestamps = timestamp.toString();
-				String type = "W";
+				String type = "I";
 				String operation = "Publishing monitoring rule for SLA violation checks";
 				String message = "[*] SLA rules were send succesfully ==> " + con.getResponseMessage();
 				String status = String.valueOf(con.getResponseCode());
-				logger.warn(
+				logger.info(
 						"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 						type, timestamps, operation, message, status);
 
@@ -118,13 +110,13 @@ public class PublishMonitoringRules {
 
 			}
 		} catch (Exception e) {
-			System.out.println("ERROR connecting with monitoring api  : " + e.getMessage());
+			
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 			String timestamps = timestamp.toString();
 			String type = "W";
 			String operation = "Publishing monitoring rule for SLA violation checks";
-			String message = "[*] ERROR connecting with monitoring api  : " + e.getMessage();
+			String message = "[*] ERROR sending monitoring rules : " + e.getMessage();
 			String status = "";
 			logger.warn(
 					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",

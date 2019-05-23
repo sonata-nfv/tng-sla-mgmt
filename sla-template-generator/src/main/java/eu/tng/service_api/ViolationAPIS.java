@@ -35,8 +35,6 @@
 
 package eu.tng.service_api;
 
-import java.sql.Timestamp;
-
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -63,6 +61,7 @@ public class ViolationAPIS {
 	 * api call in order to get a JSONObject with violations per
 	 * agreement-service-instance
 	 */
+	@SuppressWarnings("unchecked")
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/{nsi_uuid}/{sla_uuid}")
@@ -70,103 +69,54 @@ public class ViolationAPIS {
 
 		ResponseBuilder apiresponse = null;
 
-		db_operations dbo = new db_operations();
+		new db_operations();
 		boolean connect = db_operations.connectPostgreSQL();
 		if (connect == true) {
 			db_operations.createTableViolations();
 			JSONObject violations = db_operations.getViolationData(nsi_uuid, sla_uuid);
-			System.out.println("VIOLATIONS FROM VIOLATION API CLASS ==> " + violations);
-			dbo.closePostgreSQL();
+			db_operations.closePostgreSQL();
 
 			apiresponse = Response.ok(violations);
 			apiresponse.header("Content-Length", violations.toString().length());
-
-			// logging
-			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-			String timestamps = timestamp.toString();
-			String type = "I";
-			String operation = "Getting Violations";
-			String message = "SLA Violations feched succesfully";
-			String status = String.valueOf(200);
-			logger.info(
-					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
-					type, timestamps, operation, message, status);
-
 			return apiresponse.status(200).build();
 
 		} else {
-			dbo.closePostgreSQL();
+			db_operations.closePostgreSQL();
 
 			JSONObject error = new JSONObject();
-			error.put("ERROR: ", "connecting to database");
+			error.put("ERROR", "connecting to database");
 			apiresponse = Response.ok((Object) error);
 			apiresponse.header("Content-Length", error.toJSONString().length());
-
-			// logging
-			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-			String timestamps = timestamp.toString();
-			String type = "E";
-			String operation = "Getting Violations";
-			String message = "Error connecting to Database in order to get violation records";
-			String status = String.valueOf(404);
-			logger.error(
-					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
-					type, timestamps, operation, message, status);
-
 			return apiresponse.status(404).build();
 
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getAllViolationData() {
 
 		ResponseBuilder apiresponse = null;
 
-		db_operations dbo = new db_operations();
+		new db_operations();
 		boolean connect = db_operations.connectPostgreSQL();
 		if (connect == true) {
 			db_operations.createTableViolations();
 			org.json.simple.JSONArray violations = db_operations.getAllViolationData();
-			System.out.println("VIOLATIONS FROM VIOLATION API CLASS ==> " + violations);
-			dbo.closePostgreSQL();
+			db_operations.closePostgreSQL();
 
 			apiresponse = Response.ok(violations);
 			apiresponse.header("Content-Length", violations.toString().length());
-
-			// logging
-			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-			String timestamps = timestamp.toString();
-			String type = "I";
-			String operation = "Getting Violations";
-			String message = "SLA Violations feched succesfully";
-			String status = String.valueOf(200);
-			logger.info(
-					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
-					type, timestamps, operation, message, status);
-
 			return apiresponse.status(200).build();
 
 		} else {
-			dbo.closePostgreSQL();
+			db_operations.closePostgreSQL();
 
 			JSONObject error = new JSONObject();
 			error.put("ERROR: ", "connecting to database");
 			apiresponse = Response.ok((Object) error);
 			apiresponse.header("Content-Length", error.toJSONString().length());
-
-			// logging
-			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-			String timestamps = timestamp.toString();
-			String type = "E";
-			String operation = "Getting Violations";
-			String message = "Error connecting to Database in order to get violation records";
-			String status = String.valueOf(404);
-			logger.error(
-					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
-					type, timestamps, operation, message, status);
-
 			return apiresponse.status(404).build();
 
 		}
@@ -175,7 +125,7 @@ public class ViolationAPIS {
 	/**
 	 * Get Nº SLA Agreements vs. Violations (in the last 24h / 7 days / 30 days)
 	 */
-	@SuppressWarnings({ "null", "unchecked" })
+	@SuppressWarnings({ "unchecked" })
 	@Path("violationspercentage")
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
@@ -200,7 +150,6 @@ public class ViolationAPIS {
 				percentages.put("total_agreements", String.format("%.2f", totalAgreements));
 				percentages.put("percentage_violated",String.format("%.2f", percentage_violated));
 				percentages.put("percentage_active", String.format("%.2f", percentage_active));
-				System.out.println("response jsonobject ==> " + percentages);
 			} else {
 				percentages.put("total_agreements", String.valueOf(totalAgreements));
 			}
@@ -208,8 +157,6 @@ public class ViolationAPIS {
 
 		// with date range
 		else {
-			System.out.println("Date Range ==> " + d );
-
 			db_operations db = new db_operations();
 			db_operations.connectPostgreSQL();
 			double totalAgreements = db.countTotalAgreementsDateRange(d);
@@ -224,7 +171,6 @@ public class ViolationAPIS {
 				percentages.put("total_agreements", String.format("%.2f", totalAgreements));
 				percentages.put("percentage_violated",String.format("%.2f", percentage_violated));
 				percentages.put("percentage_active", String.format("%.2f", percentage_active));
-				System.out.println("response jsonobject ==> " + percentages);
 			} else {
 				percentages.put("total_agreements", String.valueOf(totalAgreements));
 			}

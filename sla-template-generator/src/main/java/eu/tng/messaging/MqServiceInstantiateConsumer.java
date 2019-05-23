@@ -56,7 +56,7 @@ import eu.tng.rules.MonitoringRulesImmersiveMedia;
 public class MqServiceInstantiateConsumer implements ServletContextListener {
 
 	static Logger logger = LogManager.getLogger();
-
+	
 	private static final String EXCHANGE_NAME = System.getenv("BROKER_EXCHANGE");
 	// private static final String EXCHANGE_NAME = "son-kernel";
 
@@ -68,11 +68,11 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 		// logging
 		Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 		String timestamps = timestamp.toString();
-		String type = "I";
-		String operation = "RabbitMQ Listener";
+		String type = "W";
+		String operation = "RabbitMQ Listener - Instantiation Consumer";
 		String message = "[*] Listener Service Instances Create stopped - Restarting....";
 		String status = "";
-		logger.info(
+		logger.warn(
 				"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 				type, timestamps, operation, message, status);
 
@@ -89,7 +89,7 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 		String queueName_service_instance;
 
 		try {
-			RabbitMqConnector connect = new RabbitMqConnector();
+			new RabbitMqConnector();
 			connection = RabbitMqConnector.MqConnector();
 
 			channel_service_instance = connection.createChannel();
@@ -100,7 +100,7 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 			String timestamps = timestamp.toString();
 			String type = "I";
-			String operation = "RabbitMQ Listener";
+			String operation = "RabbitMQ Listener - Instantiation Consumer";
 			String message = "[*] Binding queue to topic...";
 			String status = "";
 			logger.info(
@@ -109,11 +109,12 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 
 			channel_service_instance.basicQos(1);
 			channel_service_instance.queueBind(queueName_service_instance, EXCHANGE_NAME, "service.instances.create");
+			
 			// logging
 			Timestamp timestamp1 = new Timestamp(System.currentTimeMillis());
 			String timestamps1 = timestamp1.toString();
 			String type1 = "I";
-			String operation1 = "RabbitMQ Listener";
+			String operation1 = "RabbitMQ Listener - Instantiation Consumer";
 			String message1 = "[*] Bound to topic \"service.instances.create\"\"";
 			String status1 = "";
 			logger.info(
@@ -123,7 +124,7 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 			Timestamp timestamp2 = new Timestamp(System.currentTimeMillis());
 			String timestamps2 = timestamp2.toString();
 			String type2 = "I";
-			String operation2 = "RabbitMQ Listener";
+			String operation2 = "RabbitMQ Listener - Instantiation Consumer";
 			String message2 = "[*] Waiting for messages.";
 			String status2 = "";
 			logger.info(
@@ -162,17 +163,6 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 
 					correlation_id = (String) delivery.getProperties().getCorrelationId();
 
-					// logging
-					Timestamp timestamp1 = new Timestamp(System.currentTimeMillis());
-					String timestamps1 = timestamp1.toString();
-					String type1 = "I";
-					String operation1 = "RabbitMQ Listener - NS Instantiation";
-					String message1 = "[*] Correlation_id ==> " + correlation_id;
-					String status1 = "";
-					logger.info(
-							"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
-							type1, timestamps1, operation1, message1, status1);
-
 					/**
 					 * if message coming from the MANO - contain status key
 					 * 
@@ -184,8 +174,8 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 						Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 						String timestamps = timestamp.toString();
 						String type = "I";
-						String operation = "RabbitMQ Listener - NS Instantiation";
-						String message2 = "[*] Message coming from MANO - STATUS= " + status;
+						String operation = "NS Instantiation";
+						String message2 = "[*] Message coming from MANO - STATUS = " + status;
 						String status2 = "";
 						logger.info(
 								"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
@@ -198,7 +188,7 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 							timestamps = timestamp.toString();
 							type = "I";
 							operation = "Netork service instantiation";
-							message = "RabbitMQ Message (when status ready)" + jsonObjectMessage.toString();
+							message = "MANO Message when instantiation status=READY ==> " + jsonObjectMessage.toString();
 							status = "";
 							logger.info(
 									"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
@@ -245,7 +235,18 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 												}
 											}
 										}
-									} catch (Exception e) {
+									} 
+									catch (Exception e) {
+										// logging
+										timestamp = new Timestamp(System.currentTimeMillis());
+										timestamps = timestamp.toString();
+										type = "E";
+										operation = "Netork service instantiation";
+										message = "Error: " + e.getMessage();
+										status = "";
+										logger.error(
+												"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+												type, timestamps, operation, message, status);
 									}
 
 									// Get cdus_reference foreach vnfr
@@ -270,7 +271,18 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 												cdu_id_list.add(cdu_id);
 											}
 										}
-									} catch (Exception e) {
+									} 
+									catch (Exception e) {
+										// logging
+										timestamp = new Timestamp(System.currentTimeMillis());
+										timestamps = timestamp.toString();
+										type = "E";
+										operation = "Netork service instantiation";
+										message = "Error: " + e.getMessage();
+										status = "";
+										logger.error(
+												"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+												type, timestamps, operation, message, status);
 									}
 
 								}
@@ -279,14 +291,11 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 								db_operations.connectPostgreSQL();
 								db_operations.UpdateRecordAgreement("READY", correlation_id, nsi_id);
 								db_operations.closePostgreSQL();
-								// create monitoring rules to check sla violations for haproxy
-								// MonitoringRules mr = new MonitoringRules();
-								// MonitoringRules.createMonitroingRules(String.valueOf(sla_id), vnfr_id_list,
-								// vc_id_list,nsi_id);
+								
 
 								// Monitoring rules for Immersive Media
 								if (network_service_name.equals("mediapilot-service")) {
-									MonitoringRulesImmersiveMedia mr_immersive = new MonitoringRulesImmersiveMedia();
+									new MonitoringRulesImmersiveMedia();
 									MonitoringRulesImmersiveMedia.createMonitoringRules(String.valueOf(sla_id),
 											vnfr_id_list, vnfr_name_list, cdu_id_list, nsi_id);
 								}
@@ -302,9 +311,8 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 								Timestamp timestamp3 = new Timestamp(System.currentTimeMillis());
 								String timestamps3 = timestamp3.toString();
 								String type3 = "I";
-								String operation3 = "RabbitMQ Listener - NS Instantiation";
+								String operation3 = "NS Instantiation";
 								String message3 = "[*] Instantiation without SLA. Message aborted.";
-
 								String status3 = "";
 								logger.info(
 										"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
@@ -349,15 +357,39 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 						try {
 							cust_username = (String) customer.get("name");
 							cust_email = (String) customer.get("email");
-						} catch (JSONException e) {
+						} 
+						catch (JSONException e) {
 							cust_username = "";
 							cust_email = "";
+							// logging
+							Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+							String timestamps = timestamp.toString();
+							String type = "E";
+							String operation = "Netork service instantiation";
+							message = "Error: " + e.getMessage();
+							status = "";
+							logger.error(
+									"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+									type, timestamps, operation, message, status);
 						}
 
 						try {
 							sla_uuid = (String) customer.get("sla_id");
-						} catch (JSONException e) {
+						} 
+						catch (JSONException e) {
 							sla_uuid = "";
+							
+							// logging
+							Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+							String timestamps = timestamp.toString();
+							String type = "E";
+							String operation = "Netork service instantiation";
+							message = "Error: " + e.getMessage();
+							status = "";
+							logger.error(
+									"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+									type, timestamps, operation, message, status);
+							
 						}
 
 						// if sla exists create record in database
@@ -365,7 +397,6 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 
 							// CREATE AGREEMENT RECORD IN THE CUST_SLA TABLE
 							cust_sla_corr cust_sla = new cust_sla_corr();
-							@SuppressWarnings("unchecked")
 							ArrayList<String> SLADetails = cust_sla.getSLAdetails(sla_uuid);
 							sla_name = (String) SLADetails.get(1);
 							sla_status = (String) SLADetails.get(0);
@@ -389,12 +420,12 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 							String current_instances = String.valueOf(active_licenses + 1);
 
 							// logging
-							timestamp1 = new Timestamp(System.currentTimeMillis());
-							timestamps1 = timestamp1.toString();
-							type1 = "I";
-							operation1 = "Instantiation with License";
-							message1 = "[*] Active licenses for this customer and ns ==> " + active_licenses;
-							status1 = "";
+							Timestamp timestamp1 = new Timestamp(System.currentTimeMillis());
+							String timestamps1 = timestamp1.toString();
+							String type1 = "I";
+							String operation1 = "Instantiation with License";
+							String message1 = "[*] Active licenses for this customer and ns ==> " + active_licenses;
+							String status1 = "";
 							logger.info(
 									"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 									type1, timestamps1, operation1, message1, status1);
@@ -450,7 +481,7 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 			Timestamp timestamp1 = new Timestamp(System.currentTimeMillis());
 			String timestamps1 = timestamp1.toString();
 			String type1 = "E";
-			String operation1 = "RabbitMQ Listener";
+			String operation1 = "RabbitMQ Listener - NS Instantiation";
 			String message1 = "[*] ERROR Connecting to MQ!" + e.getMessage();
 			String status1 = "";
 			logger.error(

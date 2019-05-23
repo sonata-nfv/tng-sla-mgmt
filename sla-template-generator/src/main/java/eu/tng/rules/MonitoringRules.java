@@ -68,7 +68,6 @@ public class MonitoringRules {
 			// call function getSlaDetails
 			JSONObject slo_list = getSloDetails(sla_uuid);
 			JSONArray slos = (JSONArray) slo_list.get("slos");
-			System.out.println("Monitroed SLOs: " + slos);
 
 			/**
 			 * Create the rules
@@ -101,7 +100,6 @@ public class MonitoringRules {
 						// call function createCondition
 						@SuppressWarnings("rawtypes")
 						ArrayList dc = createCondition(name, target_period, target_value, vdus_id_list.get(j));
-						System.out.println("[*] Condition created ==> " + dc.toString());
 						String description = (String) dc.get(0);
 						String condition = (String) dc.get(1);
 
@@ -131,7 +129,7 @@ public class MonitoringRules {
 			String timestamps = timestamp.toString();
 			String type = "I";
 			String operation = "Publishing monitoring rule for SLA violation checks";
-			String message = "Rule published succesfully!";
+			String message = "[*] Rule published succesfully!";
 			String status = "";
 			logger.info(
 					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
@@ -159,7 +157,6 @@ public class MonitoringRules {
 		ArrayList<String> dc = new ArrayList<String>();
 		String vdu_id_quotes = "\"" + vdu_id + "\"";
 		if (name.equals("Availability")) {
-			System.out.println("[*] Start creating condition for availability metric.....");
 			String description_availability = "Trigger events if VM is down more than " + target_value
 					+ " seconds in window of: 10 second";
 			String condition_avalability = "delta(haproxy_backend_downtime{resource_id=" + vdu_id_quotes + "}["
@@ -197,16 +194,6 @@ public class MonitoringRules {
 			conn.setRequestProperty("Content-Type", "application/json");
 
 			if (conn.getResponseCode() != 200) {
-				// logging
-				Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-				String timestamps = timestamp.toString();
-				String type = "E";
-				String operation = "getSloDetails";
-				String message = "SLA not FOUND";
-				String status = String.valueOf(conn.getResponseCode());
-				logger.error(
-						"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
-						type, timestamps, operation, message, status);
 				slo_details = null;
 			} else {
 				BufferedReader br = new BufferedReader(new InputStreamReader((conn.getInputStream())));
@@ -244,16 +231,6 @@ public class MonitoringRules {
 						slo_details.put("slos", slos);
 
 					} catch (ParseException e) {
-						// logging
-						Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-						String timestamps = timestamp.toString();
-						String type = "D";
-						String operation = "getSloDetails";
-						String message = e.getMessage();
-						String status = String.valueOf(conn.getResponseCode());
-						logger.debug(
-								"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
-								type, timestamps, operation, message, status);
 					}
 
 				}
@@ -261,16 +238,6 @@ public class MonitoringRules {
 			}
 
 		} catch (IOException e) {
-			// logging
-			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-			String timestamps = timestamp.toString();
-			String type = "D";
-			String operation = "getSloDetails";
-			String message = e.getMessage();
-			String status = "";
-			logger.debug(
-					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
-					type, timestamps, operation, message, status);
 		}
 		return slo_details;
 

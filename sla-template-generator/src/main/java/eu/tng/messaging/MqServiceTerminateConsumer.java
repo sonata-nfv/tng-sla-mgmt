@@ -37,7 +37,6 @@ package eu.tng.messaging;
 
 import java.io.IOException;
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.Map;
 
 import javax.servlet.ServletContextEvent;
@@ -48,16 +47,11 @@ import org.apache.logging.log4j.Logger;
 import org.json.*;
 import org.yaml.snakeyaml.Yaml;
 
-import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.CancelCallback;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
-import com.rabbitmq.client.Consumer;
-import com.rabbitmq.client.DefaultConsumer;
 import com.rabbitmq.client.DeliverCallback;
 import com.rabbitmq.client.Delivery;
-import com.rabbitmq.client.Envelope;
-
 import eu.tng.correlations.db_operations;
 
 public class MqServiceTerminateConsumer implements ServletContextListener {
@@ -76,7 +70,17 @@ public class MqServiceTerminateConsumer implements ServletContextListener {
 
 	@Override
 	public void contextDestroyed(ServletContextEvent arg0) {
-		System.out.println("Listener Service Terminate stopped");
+		
+		// logging
+		Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+		String timestamps = timestamp.toString();
+		String type = "W";
+		String operation = "RabbitMQ Listener - Service Termination Consumer";
+		String message = "[*] Listener Service Termination stopped - Restarting....";
+		String status = "";
+		logger.warn(
+				"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+				type, timestamps, operation, message, status);
 
 	}
 
@@ -148,6 +152,7 @@ public class MqServiceTerminateConsumer implements ServletContextListener {
 
 					// parse the yaml and convert it to json
 					Yaml yaml = new Yaml();
+					@SuppressWarnings("unchecked")
 					Map<String, Object> map = (Map<String, Object>) yaml.load(message);
 					System.out.println("Message for terminating service received (printed as MAP): " + map);
 					jsonObjectMessage = new JSONObject(map);
@@ -160,8 +165,7 @@ public class MqServiceTerminateConsumer implements ServletContextListener {
 						status = map.get("status");
 
 						if (status.equals("READY")) {
-							// make the agreement status 'TERMINATED'
-							db_operations dbo = new db_operations();
+							new db_operations();
 							db_operations.connectPostgreSQL();
 							db_operations.TerminateAgreement("TERMINATED", correlation_id.toString());
 							db_operations.closePostgreSQL();
@@ -170,7 +174,7 @@ public class MqServiceTerminateConsumer implements ServletContextListener {
 							timestamp = new Timestamp(System.currentTimeMillis());
 							timestamps = timestamp.toString();
 							type = "I";
-							operation = "RabbitMQ Listener NS TRermination";
+							operation = "RabbitMQ Listener NS Termination";
 							message = "[*] Service TERMINATED, DB Updated";
 							status = "";
 							logger.info(
@@ -182,7 +186,7 @@ public class MqServiceTerminateConsumer implements ServletContextListener {
 					else {
 						nsi_uuid = map.get("service_instance_uuid");
 
-						db_operations dbo = new db_operations();
+						new db_operations();
 						db_operations.connectPostgreSQL();
 						db_operations.createTableCustSla();
 						// make update record to change the correlation id - the correlation id of the

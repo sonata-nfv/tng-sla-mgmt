@@ -53,6 +53,7 @@ import org.json.simple.parser.ParseException;
 public class GetGuarantee {
 
 	static Logger logger = LogManager.getLogger();
+	static String class_name = GetGuarantee.class.getSimpleName();
 
 	public ArrayList<JSONObject> getGuarantee(ArrayList<String> guarantees) {
 
@@ -74,7 +75,6 @@ public class GetGuarantee {
 					String guaranteeId = (String) guaranteeTermsObject.get("guaranteeID");
 
 					if (guaranteeId.equals(guarantees.get(j))) {
-						// System.out.println(guaranteeId);
 						if (j == 0) {
 							guarantee = (JSONObject) guaranteeTerms.get(i);
 							guaranteeArr.add(guarantee);
@@ -91,8 +91,8 @@ public class GetGuarantee {
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 			String timestamps = timestamp.toString();
 			String type = "I";
-			String operation = "Get Guarantee Terms";
-			String message = "Guarantee Terms received succesfully";
+			String operation = "Get Guarantee Terms. Class: " + class_name;
+			String message = "[*] Succes: Guarantee Terms received succesfully";
 			String status = "";
 			logger.info(
 					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
@@ -102,11 +102,11 @@ public class GetGuarantee {
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 			String timestamps = timestamp.toString();
-			String type = "D";
-			String operation = "Get Guarantee Terms";
-			String message = e.getMessage();
+			String type = "E";
+			String operation = "Get Guarantee Terms. Class: " + class_name;
+			String message = "[*] Error: Guarantee Terms not received! " + e.getMessage();
 			String status = "";
-			logger.debug(
+			logger.error(
 					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 					type, timestamps, operation, message, status);
 		} catch (IOException e) {
@@ -124,22 +124,22 @@ public class GetGuarantee {
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 			String timestamps = timestamp.toString();
-			String type = "D";
-			String operation = "Get Guarantee Terms";
-			String message = e.getMessage();
+			String type = "E";
+			String operation = "Get Guarantee Terms. Class: " + class_name;
+			String message = "[*] Error: Guarantee Terms not received! " + e.getMessage();
 			String status = "";
-			logger.debug(
+			logger.error(
 					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 					type, timestamps, operation, message, status);
 		} catch (URISyntaxException e) {
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 			String timestamps = timestamp.toString();
-			String type = "D";
-			String operation = "Get Guarantee Terms";
-			String message = e.getMessage();
+			String type = "E";
+			String operation = "Get Guarantee Terms. Class: " + class_name;
+			String message = "[*] Error: Guarantee Terms not received! " + e.getMessage();
 			String status = "";
-			logger.debug(
+			logger.error(
 					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 					type, timestamps, operation, message, status);
 		}

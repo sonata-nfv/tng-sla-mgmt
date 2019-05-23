@@ -41,6 +41,7 @@ public class HealthAPI {
 	 * @return
 	 * @throws InterruptedException
 	 */
+	@SuppressWarnings("unchecked")
 	@Produces(MediaType.APPLICATION_JSON)
 	@GET
 	public Response getTemplates() throws InterruptedException {
@@ -58,35 +59,34 @@ public class HealthAPI {
 		String status = "";
 		Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 
-		// check PostgreSQL connectivity and then close the connection
-		db_operations dbo = new db_operations();
+		new db_operations();
 		postgresqlOK = db_operations.connectPostgreSQL();
 		db_operations.closePostgreSQL();
 
 		// logging
 		timestamp = new Timestamp(System.currentTimeMillis());
 		timestamps = timestamp.toString();
-		type = "D";
+		type = "I";
 		operation = "Check PostgreSQL connectivity";
-		message = ("[*] OK. PostgreSQL is connected!");
+		message = ("[*] Success: PostgreSQL is connected!");
 		status = "200";
-		logger.debug(
+		logger.info(
 				"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 				type, timestamps, operation, message, status);
 
-		// check RabbitMQ connectivity
-		RabbitMqConnector connect = new RabbitMqConnector();
+		new RabbitMqConnector();
 		Connection connection = RabbitMqConnector.MqConnector();
+		
 		if (connection != null) {
 			rabbitmqOK = true;
 			// logging
 			timestamp = new Timestamp(System.currentTimeMillis());
 			timestamps = timestamp.toString();
-			type = "D";
+			type = "I";
 			operation = "check RabbitMQ connectivity";
-			message = ("[*] OK. RabbitMQ is connected!");
+			message = ("[*] Success: RabbitMQ is connected!");
 			status = "200";
-			logger.debug(
+			logger.info(
 					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 					type, timestamps, operation, message, status);
 		}
@@ -111,11 +111,11 @@ public class HealthAPI {
 				// logging
 				timestamp = new Timestamp(System.currentTimeMillis());
 				timestamps = timestamp.toString();
-				type = "D";
+				type = "I";
 				operation = "check Catalogue connectivity";
-				message = ("[*] OK. Catalogue is connected!");
+				message = ("[*] Success: Catalogue is connected!");
 				status = "200";
-				logger.debug(
+				logger.info(
 						"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 						type, timestamps, operation, message, status);
 
@@ -124,22 +124,22 @@ public class HealthAPI {
 			// logging
 			timestamp = new Timestamp(System.currentTimeMillis());
 			timestamps = timestamp.toString();
-			type = "W";
+			type = "E";
 			operation = "check Catalogue connectivity";
 			message = ("[*] Error ==> " + e.getMessage());
 			status = "";
-			logger.warn(
+			logger.error(
 					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 					type, timestamps, operation, message, status);
 		} catch (IOException e) {
 			// logging
 			timestamp = new Timestamp(System.currentTimeMillis());
 			timestamps = timestamp.toString();
-			type = "W";
+			type = "E";
 			operation = "check Catalogue connectivity";
 			message = ("[*] Error ==> " + e.getMessage());
 			status = "";
-			logger.warn(
+			logger.error(
 					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 					type, timestamps, operation, message, status);
 		}
@@ -152,14 +152,12 @@ public class HealthAPI {
 		long up = uptime_two - uptime_one;
 		if (up > 0) {
 			serverOK = true;
-			System.out.println("OK. SLAM server is up!");
-
 			// logging
 			timestamp = new Timestamp(System.currentTimeMillis());
 			timestamps = timestamp.toString();
-			type = "D";
-			operation = "check server connectivity";
-			message = ("[*] OK. SLAM Server is connected!");
+			type = "I";
+			operation = "Check server connectivity";
+			message = ("[*] Success: SLAM Server is connected!");
 			status = "";
 			logger.debug(
 					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
@@ -169,12 +167,10 @@ public class HealthAPI {
 		if (rabbitmqOK == true & postgresqlOK == true && catalogueOK == true && serverOK == true) {
 			// returns the current time in milliseconds
 			long curentTimeInMS = System.currentTimeMillis();
-			System.out.print("Current Time in milliseconds = " + curentTimeInMS);
 			long alive = curentTimeInMS - rb.getUptime();
 			SimpleDateFormat sdf = new SimpleDateFormat("MMM dd,yyyy HH:mm");
 			Date resultdate = new Date(alive);
-			System.out.print("SLAM alive since = " + sdf.format(resultdate));
-
+			
 			response.put("OK: ", "SLA Manager is available since: " + sdf.format(resultdate));
 			apiresponse = Response.ok((Object) response);
 			apiresponse.header("Content-Length", response.toString().length());
@@ -182,11 +178,11 @@ public class HealthAPI {
 			// logging
 			timestamp = new Timestamp(System.currentTimeMillis());
 			timestamps = timestamp.toString();
-			type = "D";
+			type = "I";
 			operation = "Check SLAM Health status";
-			message = ("[*] OK. SLA Manager is available since: " + sdf.format(resultdate));
+			message = ("[*] Success: SLA Manager is available since: " + sdf.format(resultdate));
 			status = "200";
-			logger.debug(
+			logger.info(
 					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 					type, timestamps, operation, message, status);
 
@@ -199,11 +195,11 @@ public class HealthAPI {
 			// logging
 			timestamp = new Timestamp(System.currentTimeMillis());
 			timestamps = timestamp.toString();
-			type = "W";
+			type = "E";
 			operation = "Check SLAM Health status";
 			message = ("[*] SLAM is not available!! ");
 			status = "400";
-			logger.warn(
+			logger.error(
 					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 					type, timestamps, operation, message, status);
 			return apiresponse.status(400).build();
@@ -211,11 +207,11 @@ public class HealthAPI {
 
 	}
 
+	@SuppressWarnings("unchecked")
 	@Path("/rabbitmq")
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response rabbitMqHealthCheck() throws IOException {
-		System.out.println("[*]  RabbitMQ Health check Triggered");
 		ResponseBuilder apiresponse = null;
 		String url = "http://pre-int-sp-ath.5gtango.eu:15672/api/consumers";
 		URL object = new URL(url);
@@ -225,10 +221,8 @@ public class HealthAPI {
 		String password = "guest";
 
 		String authString = name + ":" + password;
-		System.out.println("auth string: " + authString);
 		byte[] authEncBytes = Base64.encodeBase64(authString.getBytes());
 		String authStringEnc = new String(authEncBytes);
-		System.out.println("Base64 encoded auth string: " + authStringEnc);
 
 		con.setDoOutput(true);
 		con.setDoInput(true);
@@ -246,7 +240,6 @@ public class HealthAPI {
 		in.close();
 
 		JSONArray consumers = new JSONArray(response.toString());
-		System.out.println("Consumers: " + consumers);
 
 		int counter = 0;
 
@@ -269,16 +262,15 @@ public class HealthAPI {
 			returnResult.put("Alive", "false");
 		}
 
-		System.out.println("return result" + returnResult);
 
 		// logging
 		Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 		String timestamps = timestamp.toString();
-		String type = "D";
+		String type = "I";
 		String operation = "Check RabbitMQ status";
 		String message = ("[*] RabbitMQ ==> " + returnResult.toString());
 		String status = "200";
-		logger.warn(
+		logger.info(
 				"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 				type, timestamps, operation, message, status);
 

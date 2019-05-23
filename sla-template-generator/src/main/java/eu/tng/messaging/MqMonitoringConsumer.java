@@ -63,11 +63,11 @@ public class MqMonitoringConsumer implements ServletContextListener {
 		// logging
 		Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 		String timestamps = timestamp.toString();
-		String type = "I";
+		String type = "W";
 		String operation = "RabbitMQ Listener";
 		String message = "[*] Listener Monitoring Consumer stopped";
 		String status = "";
-		logger.info(
+		logger.warn(
 				"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 				type, timestamps, operation, message, status);
 
@@ -91,7 +91,7 @@ public class MqMonitoringConsumer implements ServletContextListener {
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 			String timestamps = timestamp.toString();
 			String type = "I";
-			String operation = "RabbitMQ Listener";
+			String operation = "RabbitMQ Listener - Monitoring Consumer";
 			String message = "[*] Binding queue to topic...";
 			String status = "";
 			logger.info(
@@ -100,11 +100,12 @@ public class MqMonitoringConsumer implements ServletContextListener {
 
 			channel_monitor.basicQos(1);
 			channel_monitor.queueBind(queueName_monitor, EXCHANGE_NAME, "son.monitoring.SLA");
+
 			// logging
 			Timestamp timestamp1 = new Timestamp(System.currentTimeMillis());
 			String timestamps1 = timestamp1.toString();
 			String type1 = "I";
-			String operation1 = "RabbitMQ Listener";
+			String operation1 = "RabbitMQ Listener - Monitoring Consumer";
 			String message1 = "[*] Bound to topic \"son.monitoring.SLA\"\"";
 			String status1 = "";
 			logger.info(
@@ -114,7 +115,7 @@ public class MqMonitoringConsumer implements ServletContextListener {
 			Timestamp timestamp2 = new Timestamp(System.currentTimeMillis());
 			String timestamps2 = timestamp2.toString();
 			String type2 = "I";
-			String operation2 = "RabbitMQ Listener";
+			String operation2 = "RabbitMQ Listener - Monitoring Consumer";
 			String message2 = "[*] Waiting for messages.";
 			String status2 = "";
 			logger.info(
@@ -122,8 +123,8 @@ public class MqMonitoringConsumer implements ServletContextListener {
 					type2, timestamps2, operation2, message2, status2);
 
 			DeliverCallback deliverCallback = new DeliverCallback() {
-                @Override
-                public void handle(String consumerTag, Delivery delivery) throws IOException {
+				@Override
+				public void handle(String consumerTag, Delivery delivery) throws IOException {
 
 					// Initialize variables
 					JSONObject jmessage = null;
@@ -137,10 +138,10 @@ public class MqMonitoringConsumer implements ServletContextListener {
 					// Parse headers
 					try {
 						String message = new String(delivery.getBody(), "UTF-8");
-						
-						//Ack the message
+
+						// Ack the message
 						channel_monitor.basicAck(delivery.getEnvelope().getDeliveryTag(), false);
-						
+
 						jmessage = new JSONObject(message);
 						System.out.println(jmessage);
 
@@ -148,11 +149,10 @@ public class MqMonitoringConsumer implements ServletContextListener {
 						alert_time = jmessage.getString("startsAt");
 						alert_state = jmessage.getString("status");
 
-						db_operations dbo = new db_operations();
+						new db_operations();
 						db_operations.connectPostgreSQL();
 						db_operations.createTableViolations();
 
-						
 						// get the sla agreements details for this violation
 						org.json.simple.JSONObject violated_sla = db_operations.getViolatedSLA(nsi_uuid);
 						sla_uuid = (String) violated_sla.get("sla_uuid");
@@ -164,14 +164,14 @@ public class MqMonitoringConsumer implements ServletContextListener {
 						db_operations.closePostgreSQL();
 
 						try {
-							JSONObject violationMessage = ViolationsProducer.createViolationMessage(nsi_uuid, sla_uuid,
-									alert_time, alert_state, cust_username, connection);
+							ViolationsProducer.createViolationMessage(nsi_uuid, sla_uuid, alert_time, alert_state,
+									cust_username, connection);
 						} catch (Exception e) {
 							Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 							String timestamps = timestamp.toString();
 							String type = "E";
 							String operation = "Parse message from Monitoring through RabbitMQ";
-							String messageLog = e.getMessage();
+							String messageLog = "[*] Error: " + e.getMessage();
 							String status = "";
 							logger.error(
 									"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
@@ -183,29 +183,29 @@ public class MqMonitoringConsumer implements ServletContextListener {
 						String timestamps = timestamp.toString();
 						String type = "E";
 						String operation = "Parse message from Monitoring through RabbitMQ";
-						String messageLog = e.getMessage();
+						String messageLog = "[*] Error: " + e.getMessage();
 						String status = "";
 						logger.error(
 								"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 								type, timestamps, operation, messageLog, status);
 					}
-					
-					
+
 				}
 
 			};
 
 			channel_monitor.basicConsume(queueName_monitor, false, deliverCallback, new CancelCallback() {
-                @Override
-                public void handle(String consumerTag) throws IOException { }
-            });
+				@Override
+				public void handle(String consumerTag) throws IOException {
+				}
+			});
 
 		} catch (IOException e) {
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 			String timestamps = timestamp.toString();
 			String type = "E";
 			String operation = "Parse message from Monitoring through RabbitMQ";
-			String messageLog = e.getMessage();
+			String messageLog = "[*] Error: " + e.getMessage();
 			String status = "";
 			logger.error(
 					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
