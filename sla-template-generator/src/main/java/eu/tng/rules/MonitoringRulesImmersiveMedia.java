@@ -38,12 +38,9 @@ public class MonitoringRulesImmersiveMedia {
             JSONObject slo_list = getSloDetails(sla_uuid);
             JSONArray slos = (JSONArray) slo_list.get("slos");
             
+            root.put("sla_cnt", sla_uuid);
+            root.put("sonata_service_id", nsi_id);
             
-            System.out.print("SLOS: " + slos);
-            System.out.print("vnfr_id_list: " + vnfr_id_list);
-            System.out.print("vnfr_name_list: " + vnfr_name_list);
-            System.out.print("deployment_unit_id_list: " + deployment_unit_id_list);
-            System.out.print("nsi_id: " + nsi_id);
             
             // for every slo_name in the array slos, check if the current slo is supported
             for (int i = 0; i < slos.size(); i++) {
@@ -101,13 +98,15 @@ public class MonitoringRulesImmersiveMedia {
                         vdus.add(vdu_obj);
                         vnf_obj.put("vdus", vdus);
                         vnfs.add(vnf_obj);
+                        
+                        root.put("vnfs", vnfs);
                     }
 
                     /**
                      * check if it is the vnf-cms because the availability metric is supported only
                      * by this vnfr
                      */
-                    else if (curr_slo_name.equals("Downtime") && curr_vnf_name.equals("vnf-cms")) {
+                    if (curr_slo_name.equals("Downtime") && curr_vnf_name.equals("vnf-cms")) {
 
                         JSONObject vnf_obj = new JSONObject();
                         String nvfid = vnfr_id_list.get(j);
@@ -146,12 +145,15 @@ public class MonitoringRulesImmersiveMedia {
                         vdus.add(vdu_obj);
                         vnf_obj.put("vdus", vdus);
                         vnfs.add(vnf_obj);
+                        
+                        root.put("vnfs", vnfs);
                     }
                 } // end for loop vnfr names array
-                root.put("vnfs", vnfs);
+                
 
             } // end for loop slos array
             
+            System.out.print("MONITORING RULE TO BE SENT: " + root.toString());
             // Publish monitoring rule
             PublishMonitoringRules mr = new PublishMonitoringRules();
             mr.publishMonitringRules(root, nsi_id);
