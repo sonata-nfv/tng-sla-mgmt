@@ -36,11 +36,10 @@
 
 package eu.tng.template_gen;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 
-import org.json.simple.JSONObject;
 import org.junit.Test;
 
 public class GetGuarantee_Test {
@@ -60,11 +59,8 @@ public class GetGuarantee_Test {
 		guarantees.add("g7");
 		guarantees.add("g8");
 		guarantees.add("g9");
-		guarantees.add("g10");
-		guarantees.add("g11");
-		guarantees.add("g12");
 
-		assertTrue(gt.getGuarantee(guarantees).size() == 12);
+		assertTrue(gt.getGuarantee(guarantees).size() == 9);
 
 	}
 
