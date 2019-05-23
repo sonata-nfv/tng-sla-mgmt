@@ -7,6 +7,9 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
+import java.util.stream.Collectors;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.simple.JSONArray;
@@ -22,8 +25,12 @@ public class MonitoringRulesImmersiveMedia {
     public static JSONObject createMonitoringRules(String sla_uuid, ArrayList<String> vnfr_id_list,
             ArrayList<String> vnfr_name_list, ArrayList<String> deployment_unit_id_list, String nsi_id) {
 
-        JSONObject root = new JSONObject();
+        vnfr_id_list = new ArrayList<String>(new LinkedHashSet<String>(vnfr_id_list));
+        vnfr_name_list = new ArrayList<String>(new LinkedHashSet<String>(vnfr_name_list));
+        deployment_unit_id_list = new ArrayList<String>(new LinkedHashSet<String>(deployment_unit_id_list));
 
+        JSONObject root = new JSONObject();
+       
         
         if (sla_uuid != null && !sla_uuid.isEmpty()) {
 
@@ -45,7 +52,6 @@ public class MonitoringRulesImmersiveMedia {
                 String curr_slo_name = (String) curr_slo.get("name");
 
                 // get information for the slo
-                String target_kpi = (String) curr_slo.get("name");
                 String target_period = (String) curr_slo.get("target_period");
                 String target_value = (String) curr_slo.get("target_value");
 
@@ -75,7 +81,7 @@ public class MonitoringRulesImmersiveMedia {
                         JSONArray rules = new JSONArray();
                         JSONObject rule_obj = new JSONObject();
 
-                        rule_obj.put("name", "sla_rule_" + target_kpi);
+                        rule_obj.put("name", "sla_rule_" + curr_slo_name);
                         rule_obj.put("duration", "10s");
                         rule_obj.put("description", "");
 
@@ -117,7 +123,7 @@ public class MonitoringRulesImmersiveMedia {
                         JSONArray rules = new JSONArray();
                         JSONObject rule_obj = new JSONObject();
 
-                        rule_obj.put("name", "sla_rule_" + target_kpi);
+                        rule_obj.put("name", "sla_rule_" + curr_slo_name);
                         rule_obj.put("duration", "10s");
                         rule_obj.put("description", "");
 
@@ -272,5 +278,4 @@ public class MonitoringRulesImmersiveMedia {
         return slo_details;
 
     }
-
 }
