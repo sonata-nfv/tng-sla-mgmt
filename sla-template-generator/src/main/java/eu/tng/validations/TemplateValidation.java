@@ -46,8 +46,6 @@ import java.util.Set;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import eu.tng.correlations.db_operations;
-
 public class TemplateValidation {
 
 	final static Logger logger = LogManager.getLogger();
