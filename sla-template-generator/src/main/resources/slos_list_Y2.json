@@ -140,177 +140,6 @@
     },
     {
       "guaranteeID": "g7",
-      "guarantee_name": "High Edge & Interconnection QoE Factory Performance",
-      "guarantee_threshold": "",
-      "guarantee_operator": "",
-      "guarantee_unit": "",
-      "guarantee_period": "",
-      "guarantee_definition": "High QoE factory performance",
-      "target_slo": [
-        {
-          "target_kpi": "Latency",
-          "target_value": "100 ms",
-          "target_operator": "less",
-          "target_duration": "10s",
-          "target_period": "",
-          "target_service_level": "Latency less than 100 ms"
-        }
-      ]
-    },
-    {
-      "guaranteeID": "g8",
-      "guarantee_name": "Medium Edge & Interconnection  QoE Factory Performance",
-      "guarantee_threshold": "",
-      "guarantee_operator": "",
-      "guarantee_unit": "",
-      "guarantee_period": "",
-      "guarantee_definition": "Medium QoE factory performance",
-      "target_slo": [
-        {
-          "target_kpi": "Latency",
-          "target_value": "500 ms",
-          "target_operator": "less",
-          "target_duration": "10s",
-          "target_period": "",
-          "target_service_level": "Latency less than 500 ms"
-        }
-      ]
-    },
-    {
-      "guaranteeID": "g9",
-      "guarantee_name": "Low Edge & Interconnection  QoE Factory Performance",
-      "guarantee_threshold": "",
-      "guarantee_operator": "",
-      "guarantee_unit": "",
-      "guarantee_period": "",
-      "guarantee_definition": "Low QoE factory performance",
-      "target_slo": [
-        {
-          "target_kpi": "Latency",
-          "target_value": "1000 ms",
-          "target_operator": "less",
-          "target_duration": "10s",
-          "target_period": "",
-          "target_service_level": "Latency less than 1000 ms"
-        }
-      ]
-    },
-    {
-      "guaranteeID": "g10",
-      "guarantee_name": "High AR Factory Performance",
-      "guarantee_threshold": "",
-      "guarantee_operator": "",
-      "guarantee_unit": "",
-      "guarantee_period": "",
-      "guarantee_definition": "High AR Factory Performance",
-      "target_slo": [
-        {
-          "target_kpi": "Jitter",
-          "target_value": "20 ms",
-          "target_operator": "less",
-          "target_duration": "10s",
-          "target_period": "",
-          "target_service_level": "Jitter less than 20 ms"
-        }
-      ]
-    },
-    {
-      "guaranteeID": "g11",
-      "guarantee_name": "Medium AR Factory Performance",
-      "guarantee_threshold": "",
-      "guarantee_operator": "",
-      "guarantee_unit": "",
-      "guarantee_period": "",
-      "guarantee_definition": "Medium AR Factory Performance",
-      "target_slo": [
-        {
-          "target_kpi": "Jitter",
-          "target_value": "35 ms",
-          "target_operator": "less",
-          "target_duration": "10s",
-          "target_period": "",
-          "target_service_level": "Jitter less than 35 ms"
-        }
-      ]
-    },
-    {
-      "guaranteeID": "g12",
-      "guarantee_name": "Low AR Factory Performance",
-      "guarantee_threshold": "",
-      "guarantee_operator": "",
-      "guarantee_unit": "",
-      "guarantee_period": "",
-      "guarantee_definition": "Low AR Factory Performance",
-      "target_slo": [
-        {
-          "target_kpi": "Jitter",
-          "target_value": "50 ms",
-          "target_operator": "less",
-          "target_duration": "10s",
-          "target_period": "",
-          "target_service_level": "Jitter less than 50 ms"
-        }
-      ]
-    },
-    {
-      "guaranteeID": "g13",
-      "guarantee_name": "High Quality Live Streaming Service",
-      "guarantee_threshold": "",
-      "guarantee_operator": "",
-      "guarantee_unit": "",
-      "guarantee_period": "",
-      "guarantee_definition": "High Quality Live Streaming Service",
-      "target_slo": [
-        {
-          "target_kpi": "Jitter",
-          "target_value": "20 ms",
-          "target_operator": "less",
-          "target_duration": "10s",
-          "target_period": "",
-          "target_service_level": "Jitter less than 20 ms"
-        }
-      ]
-    },
-    {
-      "guaranteeID": "g14",
-      "guarantee_name": "Medium Quality Live Streaming Service",
-      "guarantee_threshold": "",
-      "guarantee_operator": "",
-      "guarantee_unit": "",
-      "guarantee_period": "",
-      "guarantee_definition": "Medium Quality Live Streaming Service",
-      "target_slo": [
-        {
-          "target_kpi": "Jitter",
-          "target_value": "35 ms",
-          "target_operator": "less",
-          "target_duration": "10s",
-          "target_period": "",
-          "target_service_level": "Jitter less than 35 ms"
-        }
-      ]
-    },
-    {
-      "guaranteeID": "g15",
-      "guarantee_name": "Low Quality Live Streaming Service",
-      "guarantee_threshold": "",
-      "guarantee_operator": "",
-      "guarantee_unit": "",
-      "guarantee_period": "",
-      "guarantee_definition": "Medium Quality Live Streaming Service",
-      "target_slo": [
-        {
-          "target_kpi": "Jitter",
-          "target_value": "50 ms",
-          "target_operator": "less",
-          "target_duration": "10s",
-          "target_period": "",
-          "target_service_level": "Jitter less than 50 ms"
-        }
-      ]
-    },
-    {
-      "guaranteeID": "g16",
       "guarantee_name": "Gold No. of Connections of Media Service",
       "guarantee_threshold": "20",
       "guarantee_operator": "",
@@ -329,7 +158,7 @@
       ]
     },
     {
-      "guaranteeID": "g17",
+      "guaranteeID": "g8",
       "guarantee_name": "Silver No. of Connections of Media Service",
       "guarantee_threshold": "10",
       "guarantee_operator": "",
@@ -348,7 +177,7 @@
       ]
     },
     {
-      "guaranteeID": "g18",
+      "guaranteeID": "g9",
       "guarantee_name": "Bronze No. of Connections of Media Service",
       "guarantee_threshold": "5",
       "guarantee_operator": "",
