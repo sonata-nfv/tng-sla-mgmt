@@ -46,9 +46,13 @@ import java.util.Set;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import eu.tng.correlations.db_operations;
+
 public class TemplateValidation {
 
 	final static Logger logger = LogManager.getLogger();
+
+	static String class_name = TemplateValidation.class.getSimpleName();
 
 	/**
 	 * Validate if expireDate is a future date
@@ -75,66 +79,34 @@ public class TemplateValidation {
 
 		/** check if expire date is after today **/
 		if (today.compareTo(valid_until) > 0) {
-			
-			//logging
-			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-			String timestamps = timestamp.toString();
-			String type = "D";
-			String operation = "Validating SLA Template";
-			String message = ("Today is after valid_until ==> " + valid_until.toString());
-			String status = "";
-			logger.debug(
-					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
-					type, timestamps, operation, message, status);
 
 			valid_expire_date = false;
-			
+
 		} else if (today.compareTo(valid_until) < 0) {
-			//logging
-			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-			String timestamps = timestamp.toString();
-			String type = "D";
-			String operation = "Validating SLA Template";
-			String message = ("Today is after valid_until ==> " + valid_until.toString());
-			String status = "";
-			logger.debug(
-					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
-					type, timestamps, operation, message, status);
-			
+
 			valid_expire_date = true;
-			
+
 		} else if (today.compareTo(valid_until) == 0) {
 
-			//logging
-			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-			String timestamps = timestamp.toString();
-			String type = "D";
-			String operation = "Validating SLA Template";
-			String message = ("Today is equal to valid_until ==> " + valid_until.toString());
-			String status = "";
-			logger.debug(
-					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
-					type, timestamps, operation, message, status);
-			
 			valid_expire_date = false;
-			
+
 		} else {
 
-			//logging
-			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-			String timestamps = timestamp.toString();
-			String type = "D";
-			String operation = "Validating SLA Template";
-			String message = ("Invalid dates");
-			String status = "";
-			logger.debug(
-					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
-					type, timestamps, operation, message, status);
-			
 			valid_expire_date = false;
-			
+
 		}
 
+		// logging
+		Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+		String timestamps = timestamp.toString();
+		String type = "I";
+		String operation = "Validating SLA Template. Class: " + class_name;
+		String message = ("[*] Valid sla template exiration date? " + valid_expire_date);
+		String status = "";
+		logger.info(
+				"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+				type, timestamps, operation, message, status);
+		
 		return valid_expire_date;
 
 	}
@@ -162,20 +134,32 @@ public class TemplateValidation {
 			valid_date = true;
 
 		} catch (ParseException e) {
-			
-			//logging
+
+			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 			String timestamps = timestamp.toString();
 			String type = "E";
-			String operation = "Validating SLA Template";
-			String message = ("[*] ERROR validating date!");
+			String operation = "Validating SLA Template. Class: " + class_name;
+			String message = ("[*] ERROR validating date! " + e.getMessage());
 			String status = "";
 			logger.error(
 					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 					type, timestamps, operation, message, status);
-			
+
 			valid_date = false;
 		}
+		
+		//logging
+		Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+		String timestamps = timestamp.toString();
+		String type = "I";
+		String operation = "Validating SLA Template. Class: " + class_name;
+		String message = ("[*] SLA date format ? " + valid_date);
+		String status = "";
+		logger.info(
+				"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+				type, timestamps, operation, message, status);
+		
 		return valid_date;
 
 	}
@@ -190,19 +174,18 @@ public class TemplateValidation {
 
 		boolean valid_gt = false;
 
-		if (guarantees == null || guarantees.size() == 0) {		
-			//logging
+		if (guarantees == null || guarantees.size() == 0) {
+			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 			String timestamps = timestamp.toString();
-			String type = "W";
-			String operation = "Validating SLA Template";
-			String message = ("[*] You must select at least one guarantee term!");
+			String type = "E";
+			String operation = "Validating SLA Template. Class: " + class_name;
+			String message = ("[*] Select at least one guarantee term!");
 			String status = "";
-			logger.warn(
+			logger.error(
 					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 					type, timestamps, operation, message, status);
-			
-			
+
 			valid_gt = false;
 		} else {
 			/** check for duplicated guarantee id **/
@@ -210,17 +193,17 @@ public class TemplateValidation {
 			for (int i = 0; i < guarantees.size(); i++) {
 				String gt_uuid_temp = guarantees.get(i);
 				if (gt_ids.contains(gt_uuid_temp)) {
-					//logging
+					// logging
 					Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 					String timestamps = timestamp.toString();
-					String type = "W";
-					String operation = "Validating SLA Template";
+					String type = "E";
+					String operation = "Validating SLA Template. Class: "+ class_name;
 					String message = ("[*] Error: Duplicated guarantee id= " + gt_uuid_temp);
 					String status = "";
-					logger.warn(
+					logger.error(
 							"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 							type, timestamps, operation, message, status);
-					
+
 					valid_gt = false;
 					continue;
 				} else {
@@ -233,14 +216,14 @@ public class TemplateValidation {
 		//logging
 		Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 		String timestamps = timestamp.toString();
-		String type = "D";
-		String operation = "Validating SLA Template";
+		String type = "I";
+		String operation = "Validating SLA Template. Class: " + class_name;
 		String message = ("[*] Are guarantee terms valid? " + valid_gt);
 		String status = "";
-		logger.debug(
+		logger.info(
 				"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 				type, timestamps, operation, message, status);
-		
+
 		return valid_gt;
 
 	}
@@ -256,32 +239,33 @@ public class TemplateValidation {
 		templateName = templateName.trim();
 
 		if (templateName == null || templateName.isEmpty()) {
-			//logging
+			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 			String timestamps = timestamp.toString();
-			String type = "D";
-			String operation = "Validating SLA Template";
+			String type = "E";
+			String operation = "Validating SLA Template. Class: " + class_name;
 			String message = ("[*]ERROR: Template name is empty.");
 			String status = "";
-			logger.debug(
+			logger.error(
 					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 					type, timestamps, operation, message, status);
-			
+
 			valid_name = false;
 		} else {
 			valid_name = true;
 		}
 
-		//logging
+		// logging
 		Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 		String timestamps = timestamp.toString();
-		String type = "D";
-		String operation = "Validating SLA Template";
+		String type = "I";
+		String operation = "Validating SLA Template. Class: " + class_name;
 		String message = ("[*] Is the template name valid? " + valid_name);
 		String status = "";
-		logger.debug(
+		logger.info(
 				"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 				type, timestamps, operation, message, status);
+		
 		return valid_name;
 
 	}
@@ -308,6 +292,17 @@ public class TemplateValidation {
 		valid_create_template.add(checkGuaranteeTerms);
 		valid_create_template.add(checkName);
 
+		// logging
+		Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+		String timestamps = timestamp.toString();
+		String type = "I";
+		String operation = "Validating SLA Template. Class: " + class_name;
+		String message = ("[*] Are the SLA Template parameters valid? " + valid_create_template);
+		String status = "";
+		logger.info(
+				"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+				type, timestamps, operation, message, status);
+		
 		return valid_create_template;
 
 	}
