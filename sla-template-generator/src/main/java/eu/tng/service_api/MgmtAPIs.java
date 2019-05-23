@@ -43,15 +43,12 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.List;
-
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
@@ -139,6 +136,7 @@ public class MgmtAPIs {
 	/**
 	 * api call in order to get a predifined list with Service Guarantees
 	 */
+	@SuppressWarnings("unchecked")
 	@GET
 	@Path("/guaranteesList")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -150,8 +148,6 @@ public class MgmtAPIs {
 		try {
 			File testf = new File(this.getClass().getResource("/slos_list_Y2.json").toURI());
 			jsonObject = (JSONObject) parser.parse(new FileReader(testf));
-			System.out.println(jsonObject.toJSONString().length());
-
 			apiresponse = Response.ok(jsonObject);
 			apiresponse.header("Content-Length", jsonObject.toJSONString().length());
 
@@ -231,7 +227,6 @@ public class MgmtAPIs {
 	 * delete cust-ns-sla correlation based on sla uuid
 	 */
 
-	@SuppressWarnings("static-access")
 	@Path("/agreements/{sla_uuid}")
 	@Produces(MediaType.TEXT_PLAIN)
 	@DELETE
@@ -260,13 +255,12 @@ public class MgmtAPIs {
 	/**
 	 * Get QoS flavour names for a specific nsd
 	 */
+	@SuppressWarnings("unchecked")
 	@Path("/deploymentflavours/{nsd_uuid}")
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getNsDeploymentFlavours(@PathParam("nsd_uuid") String nsd_uuid) {
 		JSONParser parser = new JSONParser();
-		JSONObject jsonObject = null;
-
 		ResponseBuilder apiresponse = null;
 
 		try {
@@ -282,8 +276,7 @@ public class MgmtAPIs {
 			con.setRequestProperty("Accept", "application/json");
 			con.setRequestMethod("GET");
 
-			@SuppressWarnings("unused")
-			int responseCode = con.getResponseCode();
+			con.getResponseCode();
 			BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
 			String inputLine;
 			StringBuffer response = new StringBuffer();
@@ -304,7 +297,6 @@ public class MgmtAPIs {
 					String f_name = (String) ((JSONObject) deployment_flavour_item).get("name");
 					flavour_names.add(f_name);
 				}
-				System.out.println("[*] Deployment flavour name ==> " + flavour_names.toString());
 
 				apiresponse = Response.ok(flavour_names);
 				apiresponse.header("Content-Length", flavour_names.toJSONString().length());
@@ -338,7 +330,7 @@ public class MgmtAPIs {
 			String timestamps = timestamp.toString();
 			String operation = "Get NSD from catalogur";
 			String type = "E";
-			String message = "NSD with uuid=" + nsd_uuid + " NOT Found";
+			String message = "[*] Error: NSD with uuid=" + nsd_uuid + " NOT Found";
 			String status = String.valueOf(404);
 			logger.error(
 					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
@@ -415,9 +407,9 @@ public class MgmtAPIs {
 
 		ResponseBuilder apiresponse = null;
 
-		db_operations db = new db_operations();
+		new db_operations();
 		db_operations.connectPostgreSQL();
-		JSONObject dflavour_info = db.getSpecificFlavour(nsd_uuid, sla_uuid);
+		JSONObject dflavour_info = db_operations.getSpecificFlavour(nsd_uuid, sla_uuid);
 		db_operations.closePostgreSQL();
 
 		JSONObject response = dflavour_info;

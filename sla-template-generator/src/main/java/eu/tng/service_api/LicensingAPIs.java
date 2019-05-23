@@ -36,7 +36,6 @@
 package eu.tng.service_api;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
@@ -73,7 +72,7 @@ public class LicensingAPIs {
 	public Response getLicenses() {
 		ResponseBuilder apiresponse = null;
 
-		db_operations dbo = new db_operations();
+		new db_operations();
 		db_operations.connectPostgreSQL();
 		db_operations.createTableLicensing();
 		JSONArray all_licenses = db_operations.getAllLicenses();
@@ -102,7 +101,7 @@ public class LicensingAPIs {
 	public Response getSpecificLicense(@PathParam("nsi_uuid") String nsi_uuid) {
 		ResponseBuilder apiresponse = null;
 
-		db_operations dbo = new db_operations();
+		new db_operations();
 		db_operations.connectPostgreSQL();
 		db_operations.createTableLicensing();
 		JSONObject specific_license = db_operations.getSpecificLicense(nsi_uuid);
@@ -128,7 +127,6 @@ public class LicensingAPIs {
 	/**
 	 * delete Licensing record
 	 */
-	@SuppressWarnings("static-access")
 	@Produces(MediaType.TEXT_PLAIN)
 	@Consumes("application/x-www-form-urlencoded")
 	@DELETE
@@ -166,11 +164,11 @@ public class LicensingAPIs {
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 			String timestamps = timestamp.toString();
-			String type = "W";
+			String type = "E";
 			String operation = "Error: Delete license record failed";
-			String message = ("[*] Error! License record was not deleted!");
+			String message = ("[*] Error: License record was not deleted!");
 			String status = "404";
-			logger.warn(
+			logger.error(
 					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 					type, timestamps, operation, message, status);
 
@@ -193,18 +191,15 @@ public class LicensingAPIs {
 			@PathParam("ns_uuid") String ns_uuid, @Context HttpHeaders headers) {
 
 		String cust_username = "";
-		String cust_email = "";
-
 		try {
 			cust_username = headers.getRequestHeader("X-User-Name").get(0);
-			cust_email = headers.getRequestHeader("X-User-Email").get(0);
+			headers.getRequestHeader("X-User-Email").get(0);
 		} catch (JSONException e) {
 			cust_username = "admin";
-			cust_email = "admin-email";
 		}
 
 		ResponseBuilder apiresponse = null;
-		db_operations dbo = new db_operations();
+		new db_operations();
 		boolean connect = db_operations.connectPostgreSQL();
 
 		JSONObject license_info_response = new JSONObject();
@@ -232,7 +227,7 @@ public class LicensingAPIs {
 				timestamps = timestamp.toString();
 				type = "I";
 				operation = "Check if instantiation is allowed based on license status";
-				message = ("First instantiation for this customer and this NS");
+				message = ("[*] First instantiation for this customer and this NS");
 				status = "";
 				logger.info(
 						"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
@@ -246,11 +241,11 @@ public class LicensingAPIs {
 					// logging
 					timestamp = new Timestamp(System.currentTimeMillis());
 					timestamps = timestamp.toString();
-					type = "D";
+					type = "E";
 					operation = "Check if instantiation is allowed based on license status";
-					message = "Error: Invalid sla_uuid or ns_uuid";
+					message = "[*] Error: Invalid sla_uuid or ns_uuid";
 					status = String.valueOf(400);
-					logger.debug(
+					logger.error(
 							"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 							type, timestamps, operation, message, status);
 
@@ -273,16 +268,6 @@ public class LicensingAPIs {
 					}
 					license_info_response = license_info_template;
 
-					// logging
-					timestamp = new Timestamp(System.currentTimeMillis());
-					timestamps = timestamp.toString();
-					type = "I";
-					operation = "Check if instantiation is allowed based on license status";
-					message = ("License Type: " + license_type);
-					status = "";
-					logger.info(
-							"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
-							type, timestamps, operation, message, status);
 					// close db connection
 					db_operations.closePostgreSQL();
 					
@@ -303,11 +288,11 @@ public class LicensingAPIs {
 					// logging
 					timestamp = new Timestamp(System.currentTimeMillis());
 					timestamps = timestamp.toString();
-					type = "D";
+					type = "E";
 					operation = "Check if instantiation is allowed based on license status";
-					message = "Error: Invalid sla_uuid or ns_uuid";
+					message = "[*] Error: Invalid sla_uuid or ns_uuid";
 					status = String.valueOf(400);
-					logger.debug(
+					logger.error(
 							"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 							type, timestamps, operation, message, status);
 
@@ -334,7 +319,7 @@ public class LicensingAPIs {
 					timestamps = timestamp.toString();
 					type = "I";
 					operation = "Check if instantiation is allowed based on license status";
-					message = ("License Type: " + license_type + " License Status: " + license_status
+					message = ("[*] License Type: " + license_type + " License Status: " + license_status
 							+ "Allowed instances: " + license_allowed_instances + " Current instances: "
 							+ license_current_instances + " Allowed to be instantiated?? "
 							+ String.valueOf(allowed_to_instantiate));
@@ -358,9 +343,9 @@ public class LicensingAPIs {
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 			String timestamps = timestamp.toString();
-			String type = "W";
+			String type = "E";
 			String operation = "Check if instantiation is allowed based on license status";
-			String message = ("Error connecting to database");
+			String message = ("[*] Error connecting to database");
 			String status = "";
 			logger.warn(
 					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
@@ -425,24 +410,13 @@ public class LicensingAPIs {
 		} else {
 			instancesOK = false;
 		}
-		// logging
-		Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-		String timestamps = timestamp.toString();
-		String type = "I";
-		String operation = "Check if instantiation is allowed based on license status";
-		String message = ("[*] Are instances ok??? " + instancesOK);
-		String status = "";
-		logger.info(
-				"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
-				type, timestamps, operation, message, status);
-
 		return instancesOK;
 	}
 	
 	/**
 	 * api for buying a private license
 	 */
-	@SuppressWarnings("null")
+	@SuppressWarnings({ "null", "unchecked" })
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes("application/x-www-form-urlencoded")
 	@Path("/buy")
@@ -486,7 +460,7 @@ public class LicensingAPIs {
 			String timestamps = timestamp.toString();
 			String type = "I";
 			String operation = "Updating Licensing status";
-			String message = ("Update License status? ==> " + update);
+			String message = ("[*] Update License status? ==> " + update);
 			String status = "200";
 			logger.info(
 					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
