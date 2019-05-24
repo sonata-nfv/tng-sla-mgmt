@@ -1609,7 +1609,6 @@ public class db_operations {
 		
 		Statement stmt = null;
 
-		
 		try {
 			c.setAutoCommit(false);
 			stmt = c.createStatement();
@@ -1619,7 +1618,6 @@ public class db_operations {
 					+ "current_instances  TEXT," + "license_status  TEXT," + "correlation_id TEXT)";
 			stmt.executeUpdate(sql);
 			stmt.close();
-			
 			c.commit();
 
 		} catch (Exception e) {
@@ -1713,10 +1711,10 @@ public class db_operations {
 	public static void insertLicenseRecord(String sla_uuid, String ns_uuid, String nsi_uuid, String cust_username,
 			String cust_email, String license_type, String license_exp_date, String allowed_instances,
 			String current_instances, String license_status, String correlation_id) {
-
+		Statement stmt = null;
 		try {
 			c.setAutoCommit(false);
-			Statement stmt = c.createStatement();
+			stmt = c.createStatement();
 			String sql = "INSERT INTO sla_licensing  (sla_uuid, ns_uuid,nsi_uuid, cust_username, cust_email, license_type, license_exp_date, allowed_instances, current_instances, license_status,correlation_id) VALUES ('"
 					+ sla_uuid + "', '" + ns_uuid + "', '" + nsi_uuid + "','" + cust_username + "', '" + cust_email
 					+ "' ,'" + license_type + "','" + license_exp_date + "','" + allowed_instances + "','"
