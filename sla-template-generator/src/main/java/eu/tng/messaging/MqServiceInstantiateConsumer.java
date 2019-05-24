@@ -235,6 +235,19 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 													vc_id_list.add(vc_id);
 												}
 											}
+											else if (vdu_reference.startsWith("default") == true) {
+                                                // get vnfr id
+                                                String vnfr_id = (String) ((JSONObject) vnfrs.get(i)).get("id");
+                                                vnfr_id_list.add(vnfr_id);
+                                                // get vdu id (vc_id)
+                                                JSONArray vnfc_instance = (JSONArray) ((JSONObject) vdus
+                                                        .getJSONObject(j)).getJSONArray("vnfc_instance");
+                                                for (int k = 0; k < vnfc_instance.length(); k++) {
+                                                    String vc_id = (String) ((JSONObject) vnfc_instance
+                                                            .getJSONObject(j)).get("vc_id");
+                                                    vc_id_list.add(vc_id);
+                                                }
+                                            }
 										}
 									} 
 									catch (Exception e) {
