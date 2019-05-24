@@ -2211,7 +2211,7 @@ public class db_operations {
 		String SQL = "SELECT count(*) FROM sla_licensing WHERE (license_status='bought' OR license_status='active') AND license_type='private'";
 		int count = 0;
 		try {
-			// c.setAutoCommit(false);
+			c.setAutoCommit(false);
 			stmt = c.createStatement();
 			ResultSet rs = stmt.executeQuery(SQL);
 			while (rs.next()) {
