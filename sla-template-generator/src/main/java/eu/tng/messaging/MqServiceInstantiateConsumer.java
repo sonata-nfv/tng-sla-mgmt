@@ -215,22 +215,28 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 
 									// Get vdus_reference foreach vnfr
 									try {
+									    
 										JSONArray vdus = (JSONArray) ((JSONObject) vnfrs.getJSONObject(i))
 												.getJSONArray("virtual_deployment_units");
+										System.out.println("TRY FOR VDUS");
 										for (int j = 0; j < vdus.length(); j++) {
 											String vdu_reference = (String) ((JSONObject) vdus.getJSONObject(j))
 													.get("vdu_reference");
-
+											System.out.println("vdu_reference");
 											if (vdu_reference.startsWith("default") == true) {
+											    System.out.println("default");
 												// get vnfr id
 												String vnfr_id = (String) ((JSONObject) vnfrs.get(i)).get("id");
+												 System.out.println("id");
 												vnfr_id_list.add(vnfr_id);
 												// get vdu id (vc_id)
 												JSONArray vnfc_instance = (JSONArray) ((JSONObject) vdus
 														.getJSONObject(j)).getJSONArray("vnfc_instance");
+												System.out.println("vnfc_instance");
 												for (int k = 0; k < vnfc_instance.length(); k++) {
 													String vc_id = (String) ((JSONObject) vnfc_instance
 															.getJSONObject(j)).get("vc_id");
+													System.out.println("vc_id");
 													vc_id_list.add(vc_id);
 												}
 											}
@@ -241,7 +247,7 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 										timestamp = new Timestamp(System.currentTimeMillis());
 										timestamps = timestamp.toString();
 										type = "E";
-										operation = "Netork service instantiation";
+										operation = "Network service instantiation";
 										message = "Error: " + e.getMessage();
 										status = "";
 										logger.error(
@@ -253,21 +259,25 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 									try {
 										JSONArray cdus = (JSONArray) ((JSONObject) vnfrs.getJSONObject(i))
 												.getJSONArray("cloudnative_deployment_units");
+										System.out.println("cloudnative_deployment_units");
 										for (int j = 0; j < cdus.length(); j++) {
 											String cdu_reference = (String) ((JSONObject) cdus.getJSONObject(j))
 													.get("cdu_reference");
-
+											System.out.println("cdu_reference");
 											if ((cdu_reference.startsWith("vnf-mse") == true)
 													|| (cdu_reference.startsWith("vnf-cms") == true)
 													|| (cdu_reference.startsWith("vnf-ma") == true)) {
 												String vnfr_name = vnfrs.getJSONObject(i).getString("name");
+												System.out.println("name");
 												vnfr_name_list.add(vnfr_name);
 												// get vnfr id
 												String vnfr_id = (String) ((JSONObject) vnfrs.get(i))
 														.get("descriptor_reference");
+												System.out.println("descriptor_reference");
 												vnfr_id_list.add(vnfr_id);
 												// get cdu id (cdu_id)
 												String cdu_id = (String) ((JSONObject) vnfrs.get(i)).get("id");
+												System.out.println("id");
 												cdu_id_list.add(cdu_id);
 											}
 										}
