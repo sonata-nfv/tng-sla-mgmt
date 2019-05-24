@@ -63,6 +63,8 @@ public class ListenerStatisticInfo implements ServletContextListener {
 					db_operations.connectPostgreSQL();
 					db_operations.createTableCustSla();
 					double totalAgreements = db.countTotalAgreements();
+					db_operations.closePostgreSQL();
+
 					db_operations.connectPostgreSQL();
 					double violatedAgreements = db.countViolatedAgreements();
 					db_operations.closePostgreSQL();
