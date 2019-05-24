@@ -78,7 +78,7 @@ public class db_operations {
 			 * "postgres", "admin");
 			 */
 
-			//Class.forName("org.postgresql.Driver");
+			Class.forName("org.postgresql.Driver");
 			c = DriverManager.getConnection("jdbc:postgresql://" + System.getenv("DATABASE_HOST") + ":" + System.getenv("DATABASE_PORT")+ "/" + System.getenv("GTK_DB_NAME"),System.getenv("GTK_DB_USER"),System.getenv("GTK_DB_PASS"));
 						
 			
