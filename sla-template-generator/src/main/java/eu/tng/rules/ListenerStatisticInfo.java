@@ -85,10 +85,14 @@ public class ListenerStatisticInfo implements ServletContextListener {
 		db_operations db = new db_operations();
 		db_operations.connectPostgreSQL();
 		db_operations.createTableCustSla();
-
+		db_operations.closePostgreSQL();
+		
+		db_operations.connectPostgreSQL();
 		double totalAgreements = db.countTotalAgreements();
-		double violatedAgreements = db.countViolatedAgreements();
+		db_operations.closePostgreSQL();
 
+		db_operations.connectPostgreSQL();
+		double violatedAgreements = db.countViolatedAgreements();
 		db_operations.closePostgreSQL();
 
 		double percentage_violated = 0;
@@ -128,7 +132,12 @@ public class ListenerStatisticInfo implements ServletContextListener {
 		db_operations db = new db_operations();
 		db_operations.connectPostgreSQL();
 		db_operations.createTableLicensing();
+		db_operations.closePostgreSQL();
+
+		db_operations.connectPostgreSQL();
 		double licenses_utilized_number = db.countUtilizedLicense();
+		db_operations.closePostgreSQL();
+		
 		CollectorRegistry registry = new CollectorRegistry();
 
 		// create the gauge metric for the push gateway
@@ -159,16 +168,18 @@ public class ListenerStatisticInfo implements ServletContextListener {
 
 			}
 		}
-
-		db_operations.closePostgreSQL();
-
 	}
 
 	public static void calculateAcquiredL() {
 		db_operations db = new db_operations();
 		db_operations.connectPostgreSQL();
 		db_operations.createTableLicensing();
+		db_operations.closePostgreSQL();
+
+		db_operations.connectPostgreSQL();
 		double licenses_acquired_number = db.countAcquiredLicense();
+		db_operations.closePostgreSQL();
+
 				
 		CollectorRegistry registry = new CollectorRegistry();
 
@@ -198,10 +209,6 @@ public class ListenerStatisticInfo implements ServletContextListener {
 						type, timestamps, operation, message, status);
 			}
 		}
-		
-		
-		db_operations.closePostgreSQL();
-
 	}
 
 	public static void calculateExpiredL() {
@@ -209,11 +216,12 @@ public class ListenerStatisticInfo implements ServletContextListener {
 		db_operations db = new db_operations();
 		db_operations.connectPostgreSQL();
 		db_operations.createTableLicensing();
-
-		double licenses_expired_number = db.countExpiredLicense();
-
 		db_operations.closePostgreSQL();
 		
+		db_operations.connectPostgreSQL();
+		double licenses_expired_number = db.countExpiredLicense();
+		db_operations.closePostgreSQL();
+
 		CollectorRegistry registry = new CollectorRegistry();
 
 		// create the gauge metric for the push gateway
@@ -243,8 +251,6 @@ public class ListenerStatisticInfo implements ServletContextListener {
 						type, timestamps, operation, message, status);
 			}
 		}
-
-		db_operations.closePostgreSQL();
 	}
 
 }
