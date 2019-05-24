@@ -250,7 +250,7 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
                                             }
 										}
 									} 
-									catch (Exception e) {
+									catch (JSONException e) {
 										// logging
 										timestamp = new Timestamp(System.currentTimeMillis());
 										timestamps = timestamp.toString();
@@ -286,7 +286,7 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 											}
 										}
 									} 
-									catch (Exception e) {
+									catch (JSONException e) {
 										// logging
 										timestamp = new Timestamp(System.currentTimeMillis());
 										timestamps = timestamp.toString();
