@@ -193,9 +193,8 @@ public class ListenerStatisticInfo implements ServletContextListener {
 					 */
 					db_operations.connectPostgreSQL();
 					db_operations.createTableLicensing();
-					db_operations.closePostgreSQL();
-					
-					db_operations.connectPostgreSQL();
+
+					//db_operations.connectPostgreSQL();
 					double licenses_acquired_number = db.countAcquiredLicense();
 					db_operations.closePostgreSQL();
 					
