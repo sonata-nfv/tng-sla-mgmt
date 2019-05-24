@@ -112,7 +112,7 @@ public class LicensePeriodCheck implements ServletContextListener {
 
 					db_operations db = new db_operations();
 					db_operations.connectPostgreSQL();
-					db_operations.createTableLicensing();
+					//db_operations.createTableLicensing();
 					db_operations.connectPostgreSQL();
 					org.json.simple.JSONArray licenses = db_operations.getAllLicenses();
 					db_operations.closePostgreSQL();
