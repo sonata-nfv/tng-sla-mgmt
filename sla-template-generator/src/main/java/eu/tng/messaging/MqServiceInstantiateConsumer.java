@@ -205,7 +205,9 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 								// Get network_service_name
 								db_operations dbo = new db_operations();
 								db_operations.connectPostgreSQL();
+								System.out.println("sla id -->" + sla_id.toString());
 								org.json.simple.JSONObject ns_name_obj = dbo.selectAgreementPerSLA(sla_id.toString());
+								System.out.println("ns_name_obj ==> " + ns_name_obj);
 								network_service_name = (String) ns_name_obj.get("ns_name");
 								db_operations.closePostgreSQL();
 								System.out.println("NS NAME -->" + network_service_name);
