@@ -1679,6 +1679,7 @@ public class db_operations {
 			}
 			rs.close();
 			stmt.close();
+			c.commit();
 
 		} catch (Exception e) {
 			// logging
