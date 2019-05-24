@@ -943,11 +943,14 @@ public class db_operations {
 		String SQL = "SELECT count(*) FROM cust_sla where sla_uuid = '" + sla_uuid + "' AND inst_status='READY'";
 		int count = 0;
 		try {
+			c.setAutoCommit(false);
 			stmt = c.createStatement();
 			ResultSet rs = stmt.executeQuery(SQL);
 			while (rs.next()) {
 				count = rs.getInt(1);
 			}
+			c.commit();
+			stmt.close();
 
 		} catch (SQLException e) {
 			// logging
@@ -975,11 +978,14 @@ public class db_operations {
 		String SQL = "SELECT count(*) FROM cust_sla where inst_status='READY'";
 		int count = 0;
 		try {
+			c.setAutoCommit(false);
 			stmt = c.createStatement();
 			ResultSet rs = stmt.executeQuery(SQL);
 			while (rs.next()) {
 				count = rs.getInt(1);
 			}
+			c.commit();
+			stmt.close();
 
 		} catch (SQLException e) {
 			// logging
@@ -1011,11 +1017,14 @@ public class db_operations {
 
 		int count = 0;
 		try {
+			c.setAutoCommit(false);
 			stmt = c.createStatement();
 			ResultSet rs = stmt.executeQuery(SQL);
 			while (rs.next()) {
 				count = rs.getInt(1);
 			}
+			c.commit();
+			stmt.close();
 
 		} catch (SQLException e) {
 			// logging
@@ -1042,11 +1051,14 @@ public class db_operations {
 		String SQL = "SELECT count(*) FROM cust_sla where inst_status='VIOLATED'";
 		int count = 0;
 		try {
+			c.setAutoCommit(false);
 			stmt = c.createStatement();
 			ResultSet rs = stmt.executeQuery(SQL);
 			while (rs.next()) {
 				count = rs.getInt(1);
 			}
+			c.commit();
+			stmt.close();
 
 		} catch (SQLException e) {
 			// logging
@@ -1077,12 +1089,15 @@ public class db_operations {
 				+ "' AND '" + currentDate + "'";
 		int count = 0;
 		try {
+			c.setAutoCommit(false);
 			stmt = c.createStatement();
 			ResultSet rs = stmt.executeQuery(SQL);
 			while (rs.next()) {
 				count = rs.getInt(1);
 			}
-
+			c.commit();
+			stmt.close();
+			
 		} catch (SQLException e) {
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
@@ -1108,11 +1123,14 @@ public class db_operations {
 		String SQL = "SELECT count(*) FROM cust_sla where inst_status='VIOLATED' OR inst_status='READY'";
 		int count = 0;
 		try {
+			c.setAutoCommit(false);
 			stmt = c.createStatement();
 			ResultSet rs = stmt.executeQuery(SQL);
 			while (rs.next()) {
 				count = rs.getInt(1);
 			}
+			c.commit();
+			stmt.close();
 
 		} catch (SQLException e) {
 			// logging
@@ -1143,11 +1161,14 @@ public class db_operations {
 				+ minusDates + "' AND '" + currentDate + "'";
 		int count = 0;
 		try {
+			c.setAutoCommit(false);
 			stmt = c.createStatement();
 			ResultSet rs = stmt.executeQuery(SQL);
 			while (rs.next()) {
 				count = rs.getInt(1);
 			}
+			c.commit();
+			stmt.close();
 
 		} catch (SQLException e) {
 			// logging
