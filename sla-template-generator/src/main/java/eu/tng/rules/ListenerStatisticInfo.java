@@ -1,13 +1,10 @@
 package eu.tng.rules;
 
 import java.sql.Timestamp;
-
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 import eu.tng.correlations.db_operations;
 import io.prometheus.client.CollectorRegistry;
 import io.prometheus.client.Gauge;
@@ -19,11 +16,14 @@ import io.prometheus.client.Gauge;
 public class ListenerStatisticInfo implements ServletContextListener {
 
 	static Logger logger = LogManager.getLogger();
-	static db_operations db = new db_operations();
-	/**
+	static db_operations dbo = new db_operations();
+	
+	
+	/** 
 	 * @see ServletContextListener#contextDestroyed(ServletContextEvent)
 	 */
 	public void contextDestroyed(ServletContextEvent event) {
+		
 		// logging
 		Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 		String timestamps = timestamp.toString();
@@ -53,9 +53,9 @@ public class ListenerStatisticInfo implements ServletContextListener {
 					try {
 						Thread.sleep(timeInterval);
 						calculateViolations();
-						calculateAcquiredL();
-						calculateExpiredL();
-						calculateExpiredL();
+						//calculateAcquiredL();
+						//calculateExpiredL();
+						//calculateExpiredL();
 					} 
 					catch (InterruptedException e) {
 						// logging
@@ -77,22 +77,17 @@ public class ListenerStatisticInfo implements ServletContextListener {
 
 	}
 
+	@SuppressWarnings("static-access")
 	public static void calculateViolations() {
 
 		CollectorRegistry registry = new CollectorRegistry();
 
 		
-		db_operations.connectPostgreSQL();
-		db_operations.createTableCustSla();
-		db_operations.closePostgreSQL();
-		
-		db_operations.connectPostgreSQL();
-		double totalAgreements = db.countTotalAgreements();
-		db_operations.closePostgreSQL();
-
-		db_operations.connectPostgreSQL();
-		double violatedAgreements = db.countViolatedAgreements();
-		db_operations.closePostgreSQL();
+		dbo.connectPostgreSQL();
+		dbo.createTableCustSla();
+		double totalAgreements = dbo.countTotalAgreements();
+		double violatedAgreements = dbo.countViolatedAgreements();
+		dbo.closePostgreSQL();
 
 		double percentage_violated = 0;
 		if (totalAgreements > 0) {
@@ -126,14 +121,13 @@ public class ListenerStatisticInfo implements ServletContextListener {
 
 	}
 
+	@SuppressWarnings("static-access")
 	public static void calculateUtilizedL() {
 
-		db_operations.connectPostgreSQL();
-		db_operations.createTableLicensing();
-		db_operations.closePostgreSQL();
-
-		db_operations.connectPostgreSQL();
-		double licenses_utilized_number = db.countUtilizedLicense();
+		
+		dbo.connectPostgreSQL();
+		dbo.createTableLicensing();
+		double licenses_utilized_number = dbo.countUtilizedLicense();
 		db_operations.closePostgreSQL();
 		
 		CollectorRegistry registry = new CollectorRegistry();
@@ -168,13 +162,12 @@ public class ListenerStatisticInfo implements ServletContextListener {
 		}
 	}
 
+	@SuppressWarnings("static-access")
 	public static void calculateAcquiredL() {
-		db_operations.connectPostgreSQL();
-		db_operations.createTableLicensing();
-		db_operations.closePostgreSQL();
-
-		db_operations.connectPostgreSQL();
-		double licenses_acquired_number = db.countAcquiredLicense();
+		
+		dbo.connectPostgreSQL();
+		dbo.createTableLicensing();
+		double licenses_acquired_number = dbo.countAcquiredLicense();
 		db_operations.closePostgreSQL();
 
 				
@@ -208,15 +201,13 @@ public class ListenerStatisticInfo implements ServletContextListener {
 		}
 	}
 
+	@SuppressWarnings("static-access")
 	public static void calculateExpiredL() {
 
-		db_operations.connectPostgreSQL();
-		db_operations.createTableLicensing();
-		db_operations.closePostgreSQL();
-		
-		db_operations.connectPostgreSQL();
-		double licenses_expired_number = db.countExpiredLicense();
-		db_operations.closePostgreSQL();
+		dbo.connectPostgreSQL();
+		dbo.createTableLicensing();
+		double licenses_expired_number = dbo.countExpiredLicense();
+		dbo.closePostgreSQL();
 
 		CollectorRegistry registry = new CollectorRegistry();
 
