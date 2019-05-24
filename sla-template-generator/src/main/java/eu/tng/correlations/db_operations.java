@@ -297,7 +297,7 @@ public class db_operations {
 		
 		Statement stmt = null;
 		try {
-
+			c.setAutoCommit(false);
 			stmt = c.createStatement();
 			String sql = "CREATE TABLE IF NOT EXISTS cust_sla" + "(ID  SERIAL PRIMARY KEY," + " NS_UUID TEXT NOT NULL, "
 					+ "NSI_UUID TEXT NULL," + "NS_NAME TEXT NOT NULL," + "SLA_UUID  TEXT NOT NULL,"
@@ -307,7 +307,8 @@ public class db_operations {
 
 			stmt.executeUpdate(sql);
 			stmt.close();
-
+			c.commit();
+			
 			ThreadContext.clearAll();
 
 		} catch (Exception e) {
@@ -1610,6 +1611,7 @@ public class db_operations {
 
 		
 		try {
+			c.setAutoCommit(false);
 			stmt = c.createStatement();
 			String sql = "CREATE TABLE IF NOT EXISTS sla_licensing " + "(ID  SERIAL," + " NSI_UUID TEXT, "
 					+ "SLA_UUID TEXT," + "NS_UUID TEXT," + "CUST_USERNAME TEXT ," + "CUST_EMAIL  TEXT,"
@@ -1617,17 +1619,8 @@ public class db_operations {
 					+ "current_instances  TEXT," + "license_status  TEXT," + "correlation_id TEXT)";
 			stmt.executeUpdate(sql);
 			stmt.close();
-
-			// logging
-			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-			String timestamps = timestamp.toString();
-			String type = "I";
-			String operation = "Create table for Licenses. Class: " + class_name;
-			String message = ("[*] Success! Table sla_licensing created");
-			String status = "";
-			logger.info(
-					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
-					type, timestamps, operation, message, status);
+			
+			c.commit();
 
 		} catch (Exception e) {
 			// logging
@@ -2203,8 +2196,9 @@ public class db_operations {
 			while (rs.next()) {
 				count = rs.getInt(1);
 			}
+			stmt.close();
 			c.commit();
-			stmt.close();			
+						
 						
 		} catch (SQLException e) {
 			// logging
@@ -2237,8 +2231,9 @@ public class db_operations {
 			while (rs.next()) {
 				count = rs.getInt(1);
 			}
-			c.commit();
 			stmt.close();
+			c.commit();
+			
 		} 
 		catch (SQLException e) {
 			// logging
@@ -2271,8 +2266,8 @@ public class db_operations {
 			while (rs.next()) {
 				count = rs.getInt(1);
 			}
-			c.commit();
 			stmt.close();
+			c.commit();
 		} 
 		catch (SQLException e) {
 			// logging

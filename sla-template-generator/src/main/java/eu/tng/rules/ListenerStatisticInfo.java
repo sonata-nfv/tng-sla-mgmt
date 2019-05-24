@@ -142,6 +142,7 @@ public class ListenerStatisticInfo implements ServletContextListener {
 					 ***
 					 */
 					db_operations.connectPostgreSQL();
+					db_operations.createTableLicensing();
 					double licenses_expired_number = db.countExpiredLicense();
 					db_operations.closePostgreSQL();
 
@@ -179,6 +180,7 @@ public class ListenerStatisticInfo implements ServletContextListener {
 					 ***
 					 */
 					db_operations.connectPostgreSQL();
+					db_operations.createTableLicensing();
 					double licenses_acquired_number = db.countAcquiredLicense();
 					db_operations.closePostgreSQL();
 					// create the gauge metric for the push gateway
