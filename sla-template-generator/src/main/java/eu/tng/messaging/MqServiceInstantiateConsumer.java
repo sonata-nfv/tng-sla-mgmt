@@ -296,12 +296,12 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 									}
 
 								}
-
+							/*
 								// Update NSI Records - to create agreement
 								db_operations.connectPostgreSQL();
 								db_operations.UpdateRecordAgreement("READY", correlation_id, nsi_id);
 								db_operations.closePostgreSQL();
-								
+							*/
 
 								// Monitoring rules for Immersive Media
 								if (network_service_name.equals("mediapilot-service")) {
