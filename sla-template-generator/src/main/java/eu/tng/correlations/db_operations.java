@@ -1614,7 +1614,7 @@ public class db_operations {
 			stmt.close();
 			c.commit();
 
-		} catch (Exception e) {
+		} catch (SQLException e) {
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 			String timestamps = timestamp.toString();
@@ -1673,7 +1673,7 @@ public class db_operations {
 			stmt.close();
 			c.commit();
 
-		} catch (Exception e) {
+		} catch (SQLException e) {
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 			String timestamps = timestamp.toString();
@@ -1717,7 +1717,7 @@ public class db_operations {
 			stmt.close();
 			c.commit();
 
-		} catch (Exception e) {
+		} catch (SQLException e) {
 
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
@@ -1746,7 +1746,7 @@ public class db_operations {
 			stmt.close();
 			c.commit();
 
-		} catch (Exception e) {
+		} catch (SQLException e) {
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 			String timestamps = timestamp.toString();
@@ -1796,7 +1796,7 @@ public class db_operations {
 			stmt.close();
 			c.commit();
 
-		} catch (Exception e) {
+		} catch (SQLException e) {
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 			String timestamps = timestamp.toString();
@@ -1873,7 +1873,7 @@ public class db_operations {
 					stmt_names.close();
 					c.commit();
 
-				} catch (Exception e) {
+				} catch (SQLException e) {
 					// logging
 					Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 					String timestamps = timestamp.toString();
@@ -1891,7 +1891,7 @@ public class db_operations {
 			stmt.close();
 			c.commit();
 
-		} catch (Exception e) {
+		} catch (SQLException e) {
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 			String timestamps = timestamp.toString();
@@ -1931,7 +1931,7 @@ public class db_operations {
 					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 					type, timestamps, operation, message, status);
 
-		} catch (Exception e) {
+		} catch (SQLException e) {
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 			String timestamps = timestamp.toString();
 			String type = "E";

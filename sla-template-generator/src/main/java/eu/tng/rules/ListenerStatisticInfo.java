@@ -48,6 +48,7 @@ public class ListenerStatisticInfo implements ServletContextListener {
 		final long timeInterval = 60 * 1000;
 		Runnable runnable = new Runnable() {
 			public void run() {
+				
 				while (true) {
 
 					try {
