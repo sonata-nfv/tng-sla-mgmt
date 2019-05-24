@@ -53,7 +53,7 @@ public class ListenerStatisticInfo implements ServletContextListener {
 					try {
 						Thread.sleep(timeInterval);
 						calculateViolations();
-						//calculateAcquiredL();
+						calculateAcquiredL();
 						//calculateExpiredL();
 						//calculateExpiredL();
 					} 
