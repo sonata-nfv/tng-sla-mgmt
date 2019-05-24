@@ -208,7 +208,8 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 								org.json.simple.JSONObject ns_name_obj = dbo.selectAgreementPerSLA(sla_id.toString());
 								network_service_name = (String) ns_name_obj.get("ns_name");
 								db_operations.closePostgreSQL();
-
+								System.out.println("NS NAME -->" + network_service_name);
+								
 								// Get vnfrs
 								JSONArray vnfrs = (JSONArray) jsonObjectMessage.getJSONArray("vnfrs");
 								for (int i = 0; i < (vnfrs).length(); i++) {
@@ -296,12 +297,14 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 									}
 
 								}
-							/*
+							
+								System.out.println("1");
 								// Update NSI Records - to create agreement
 								db_operations.connectPostgreSQL();
 								db_operations.UpdateRecordAgreement("READY", correlation_id, nsi_id);
 								db_operations.closePostgreSQL();
-							*/
+							
+                                System.out.println("2");
 
 								// Monitoring rules for Immersive Media
 								if (network_service_name.equals("mediapilot-service")) {
@@ -311,10 +314,9 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 								}
 								
 								
-								System.out.print("SERVICE NAME " + network_service_name);
 								// Monitoring rules for Communications Pilot
                                 if (network_service_name.equals("communication-pilot")) {
-                                    System.out.print("if for monitoring rules");
+                                    System.out.print("the service is the communication-pilot");
                                     new MonitoringRulesCommunication();
                                     MonitoringRulesCommunication.createMonitoringRules(String.valueOf(sla_id),
                                             vnfr_id_list, vnfr_name_list, cdu_id_list, nsi_id);
