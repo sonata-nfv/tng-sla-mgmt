@@ -62,6 +62,9 @@ public class ListenerStatisticInfo implements ServletContextListener {
 					 */
 					db_operations.connectPostgreSQL();
 					db_operations.createTableCustSla();
+					db_operations.closePostgreSQL();
+					
+					db_operations.connectPostgreSQL();
 					double totalAgreements = db.countTotalAgreements();
 					db_operations.closePostgreSQL();
 
@@ -107,6 +110,9 @@ public class ListenerStatisticInfo implements ServletContextListener {
 					 */
 					db_operations.connectPostgreSQL();
 					db_operations.createTableLicensing();
+					db_operations.closePostgreSQL();
+					
+					db_operations.connectPostgreSQL();
 					double licenses_utilized_number = db.countUtilizedLicense();
 					db_operations.closePostgreSQL();
 
@@ -146,6 +152,9 @@ public class ListenerStatisticInfo implements ServletContextListener {
 					 */
 					db_operations.connectPostgreSQL();
 					db_operations.createTableLicensing();
+					db_operations.closePostgreSQL();
+					
+					db_operations.connectPostgreSQL();
 					double licenses_expired_number = db.countExpiredLicense();
 					db_operations.closePostgreSQL();
 
@@ -184,8 +193,12 @@ public class ListenerStatisticInfo implements ServletContextListener {
 					 */
 					db_operations.connectPostgreSQL();
 					db_operations.createTableLicensing();
+					db_operations.closePostgreSQL();
+					
+					db_operations.connectPostgreSQL();
 					double licenses_acquired_number = db.countAcquiredLicense();
 					db_operations.closePostgreSQL();
+					
 					// create the gauge metric for the push gateway
 					Gauge gauge_licenses_acquired_number = Gauge.build().name("licenses_acquired_number")
 							.help("The number of acquired licenses").register(registry);
