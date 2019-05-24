@@ -23,9 +23,19 @@ public class MonitoringRulesCommunication {
     public static JSONObject createMonitoringRules(String sla_uuid, ArrayList<String> vnfr_id_list,
             ArrayList<String> vnfr_name_list, ArrayList<String> deployment_unit_id_list, String nsi_id) {
 
-        vnfr_id_list = new ArrayList<String>(new LinkedHashSet<String>(vnfr_id_list));
-        vnfr_name_list = new ArrayList<String>(new LinkedHashSet<String>(vnfr_name_list));
-        deployment_unit_id_list = new ArrayList<String>(new LinkedHashSet<String>(deployment_unit_id_list));
+        System.out.print("MonitoringRulesCommunication CLASS");
+        System.out.print("vnfr_id_list " + vnfr_id_list);
+        System.out.print("vnfr_name_list " + vnfr_name_list);
+        System.out.print("deployment_unit_id_list " + deployment_unit_id_list);
+        System.out.print("sla_uuid " + sla_uuid);
+        System.out.print("nsi_id " + nsi_id);
+        
+        
+        /*
+            vnfr_id_list = new ArrayList<String>(new LinkedHashSet<String>(vnfr_id_list));
+            vnfr_name_list = new ArrayList<String>(new LinkedHashSet<String>(vnfr_name_list));
+            deployment_unit_id_list = new ArrayList<String>(new LinkedHashSet<String>(deployment_unit_id_list));
+        */
 
         JSONObject root = new JSONObject();
 
