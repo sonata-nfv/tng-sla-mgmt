@@ -56,7 +56,7 @@ public class ListenerStatisticInfo implements ServletContextListener {
 						calculateViolations();
 						calculateAcquiredL();
 						calculateExpiredL();
-						//calculateExpiredL();
+						calculateExpiredL();
 					} 
 					catch (InterruptedException e) {
 						// logging
