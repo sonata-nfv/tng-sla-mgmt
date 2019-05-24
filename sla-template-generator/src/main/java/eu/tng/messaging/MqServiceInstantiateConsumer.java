@@ -215,10 +215,13 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 								// Get vnfrs
 								JSONArray vnfrs = (JSONArray) jsonObjectMessage.getJSONArray("vnfrs");
 								for (int i = 0; i < (vnfrs).length(); i++) {
-
+								    
+                                    
 									// Get vdus_reference foreach vnfr
 									try {
-									    
+									    String vnfr_name = vnfrs.getJSONObject(i).getString("name");
+	                                    vnfr_name_list.add(vnfr_name);
+	                                    
 										JSONArray vdus = (JSONArray) ((JSONObject) vnfrs.getJSONObject(i))
 												.getJSONArray("virtual_deployment_units");
 										System.out.println("TRY FOR VDUS");
@@ -271,7 +274,6 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 													|| (cdu_reference.startsWith("vnf-cms") == true)
 													|| (cdu_reference.startsWith("vnf-ma") == true)) {
 												String vnfr_name = vnfrs.getJSONObject(i).getString("name");
-												System.out.println("name");
 												vnfr_name_list.add(vnfr_name);
 												// get vnfr id
 												String vnfr_id = (String) ((JSONObject) vnfrs.get(i))
@@ -300,13 +302,11 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 
 								}
 							
-								System.out.println("1");
 								// Update NSI Records - to create agreement
 								db_operations.connectPostgreSQL();
 								db_operations.UpdateRecordAgreement("READY", correlation_id, nsi_id);
 								db_operations.closePostgreSQL();
 							
-                                System.out.println("2");
 
 								// Monitoring rules for Immersive Media
 								if (network_service_name.equals("mediapilot-service")) {
@@ -321,7 +321,7 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
                                     System.out.print("the service is the communication-pilot");
                                     new MonitoringRulesCommunication();
                                     MonitoringRulesCommunication.createMonitoringRules(String.valueOf(sla_id),
-                                            vnfr_id_list, vnfr_name_list, cdu_id_list, nsi_id);
+                                            vnfr_id_list, vnfr_name_list, vc_id_list, nsi_id);
                                 }
 
 								// UPDATE LIcense record with NSI - to create license instance
