@@ -61,7 +61,7 @@ public class db_operations {
 	static Logger logger = LogManager.getLogger();
 
 	static Connection c = null;
-//	static Statement stmt = null;
+	static Statement stmt = null;
 
 	static String class_name = db_operations.class.getSimpleName();
 
@@ -170,7 +170,7 @@ public class db_operations {
 			String license_exp_date, String allowed_instances, String license_status, String d_flavour_name) {
 		boolean result = false;
 		try {
-			c.setAutoCommit(false);
+			//c.setAutoCommit(false);
 			Statement stmt = c.createStatement();
 			String sql = "INSERT INTO " + tablename
 					+ " (ns_uuid,sla_uuid, license_type, license_exp_date, allowed_instances, license_status,d_flavour_name) "
@@ -178,7 +178,7 @@ public class db_operations {
 					+ "','" + allowed_instances + "','" + license_status + "','" + d_flavour_name + "');";
 			stmt.executeUpdate(sql);
 			stmt.close();
-			c.commit();
+			//c.commit();
 			result = true;
 		} catch (Exception e) {
 			// logging
@@ -207,7 +207,7 @@ public class db_operations {
 
 		Statement stmt = null;
 		try {
-			c.setAutoCommit(false);
+			//c.setAutoCommit(false);
 			stmt = c.createStatement();
 			ResultSet rs = stmt.executeQuery(
 					"SELECT * FROM ns_template WHERE sla_uuid = '" + sla_uuid + "' AND ns_uuid='" + ns_uuid + "';");
@@ -256,7 +256,7 @@ public class db_operations {
 
 		Statement stmt = null;
 		try {
-			c.setAutoCommit(false);
+			//c.setAutoCommit(false);
 			stmt = c.createStatement();
 			ResultSet rs = stmt.executeQuery(
 					"SELECT * FROM ns_template WHERE sla_uuid = '" + sla_uuid + "' AND ns_uuid='" + ns_uuid + "';");
@@ -297,7 +297,7 @@ public class db_operations {
 		
 		Statement stmt = null;
 		try {
-			c.setAutoCommit(false);
+			//c.setAutoCommit(false);
 			stmt = c.createStatement();
 			String sql = "CREATE TABLE IF NOT EXISTS cust_sla" + "(ID  SERIAL PRIMARY KEY," + " NS_UUID TEXT NOT NULL, "
 					+ "NSI_UUID TEXT NULL," + "NS_NAME TEXT NOT NULL," + "SLA_UUID  TEXT NOT NULL,"
@@ -307,7 +307,7 @@ public class db_operations {
 
 			stmt.executeUpdate(sql);
 			stmt.close();
-			c.commit();
+			//c.commit();
 			
 			ThreadContext.clearAll();
 
@@ -345,7 +345,7 @@ public class db_operations {
 		String sla_date = df.format(date);
 
 		try {
-			c.setAutoCommit(false);
+			//c.setAutoCommit(false);
 			stmt = c.createStatement();
 			String sql = "INSERT INTO cust_sla "
 					+ " (ns_uuid, ns_name, sla_uuid, sla_name, sla_date, sla_status, cust_email, cust_username, inst_status, inst_id) "
@@ -354,7 +354,7 @@ public class db_operations {
 					+ correlation_id + "');";
 			stmt.executeUpdate(sql);
 			stmt.close();
-			c.commit();
+			//c.commit();
 
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
@@ -438,11 +438,11 @@ public class db_operations {
 		Statement stmt = null;
 		boolean result = false;
 		try {
-			c.setAutoCommit(false);
+			//c.setAutoCommit(false);
 			stmt = c.createStatement();
 			String sql = "UPDATE cust_sla SET sla_status='VIOLATED' WHERE nsi_uuid='" + nsi_uuid + "';";
 			stmt.executeUpdate(sql);
-			c.commit();
+			//c.commit();
 			stmt.close();
 			result = true;
 
@@ -516,12 +516,12 @@ public class db_operations {
 		Statement stmt = null;
 		boolean result = false;
 		try {
-			c.setAutoCommit(false);
+			//c.setAutoCommit(false);
 			stmt = c.createStatement();
 			String sql = "UPDATE cust_sla SET inst_status='" + agreement_status + "' WHERE inst_id='" + correlation_id
 					+ "';";
 			stmt.executeUpdate(sql);
-			c.commit();
+			//c.commit();
 			stmt.close();
 			result = true;
 
@@ -563,7 +563,7 @@ public class db_operations {
 		JSONArray agreements = new JSONArray();
 
 		try {
-			c.setAutoCommit(false);
+			//c.setAutoCommit(false);
 			stmt = c.createStatement();
 			ResultSet rs = stmt
 					.executeQuery("SELECT * FROM cust_sla WHERE inst_status = 'READY' OR inst_status = 'TERMINATED';");
@@ -643,7 +643,7 @@ public class db_operations {
 		JSONArray agreements = new JSONArray();
 
 		try {
-			c.setAutoCommit(false);
+			//c.setAutoCommit(false);
 			stmt = c.createStatement();
 			ResultSet rs = stmt.executeQuery("SELECT * FROM cust_sla WHERE inst_status = 'READY';");
 
@@ -722,7 +722,7 @@ public class db_operations {
 		nsi_uuid = nsi_uuid.trim();
 
 		try {
-			c.setAutoCommit(false);
+			//c.setAutoCommit(false);
 			stmt = c.createStatement();
 			ResultSet rs = stmt.executeQuery(
 					"SELECT * FROM cust_sla WHERE nsi_uuid = '" + nsi_uuid + "' AND inst_status='READY'; ");
@@ -775,7 +775,7 @@ public class db_operations {
 		cust_username = cust_username.trim();
 
 		try {
-			c.setAutoCommit(false);
+			//c.setAutoCommit(false);
 			stmt = c.createStatement();
 			ResultSet rs = stmt.executeQuery(
 					"SELECT * FROM cust_sla WHERE cust_username = '" + cust_username + "' AND inst_status='READY';");
@@ -823,7 +823,7 @@ public class db_operations {
 		Statement stmt = null;
 		JSONObject root = new JSONObject();
 		try {
-			c.setAutoCommit(false);
+		//	c.setAutoCommit(false);
 			stmt = c.createStatement();
 			ResultSet rs = stmt.executeQuery("SELECT * FROM cust_sla WHERE sla_uuid = '" + sla_uuid + "' LIMIT 1;");
 
@@ -862,7 +862,7 @@ public class db_operations {
 		Statement stmt = null;
 		JSONObject root = new JSONObject();
 		try {
-			c.setAutoCommit(false);
+			//c.setAutoCommit(false);
 			stmt = c.createStatement();
 
 			ResultSet rs = stmt.executeQuery("SELECT * FROM cust_sla WHERE sla_uuid='" + sla_uuid + "' AND nsi_uuid='"
@@ -907,11 +907,11 @@ public class db_operations {
 		Statement stmt = null;
 		boolean result = false;
 		try {
-			c.setAutoCommit(false);
+			//c.setAutoCommit(false);
 			stmt = c.createStatement();
 			String sql = "DELETE FROM  cust_sla WHERE NSI_UUID='" + nsi_uuid + "';";
 			stmt.executeUpdate(sql);
-			c.commit();
+			//c.commit();
 			stmt.close();
 			result = true;
 
@@ -944,13 +944,13 @@ public class db_operations {
 		String SQL = "SELECT count(*) FROM cust_sla where sla_uuid = '" + sla_uuid + "' AND inst_status='READY'";
 		int count = 0;
 		try {
-			c.setAutoCommit(false);
+		//	c.setAutoCommit(false);
 			stmt = c.createStatement();
 			ResultSet rs = stmt.executeQuery(SQL);
 			while (rs.next()) {
 				count = rs.getInt(1);
 			}
-			c.commit();
+			//c.commit();
 			stmt.close();
 
 		} catch (SQLException e) {
@@ -979,13 +979,13 @@ public class db_operations {
 		String SQL = "SELECT count(*) FROM cust_sla where inst_status='READY'";
 		int count = 0;
 		try {
-			c.setAutoCommit(false);
+			//c.setAutoCommit(false);
 			stmt = c.createStatement();
 			ResultSet rs = stmt.executeQuery(SQL);
 			while (rs.next()) {
 				count = rs.getInt(1);
 			}
-			c.commit();
+			//c.commit();
 			stmt.close();
 
 		} catch (SQLException e) {
@@ -1018,13 +1018,13 @@ public class db_operations {
 
 		int count = 0;
 		try {
-			c.setAutoCommit(false);
+			//c.setAutoCommit(false);
 			stmt = c.createStatement();
 			ResultSet rs = stmt.executeQuery(SQL);
 			while (rs.next()) {
 				count = rs.getInt(1);
 			}
-			c.commit();
+			//c.commit();
 			stmt.close();
 
 		} catch (SQLException e) {
@@ -1052,14 +1052,14 @@ public class db_operations {
 		String SQL = "SELECT count(*) FROM cust_sla where inst_status='VIOLATED'";
 		int count = 0;
 		try {
-			c.setAutoCommit(false);
+			// c.setAutoCommit(false);
 			stmt = c.createStatement();
 			ResultSet rs = stmt.executeQuery(SQL);
 			while (rs.next()) {
 				count = rs.getInt(1);
 			}
 			stmt.close();
-			c.commit();
+			// c.commit();
 
 		} catch (SQLException e) {
 			// logging
@@ -1090,14 +1090,14 @@ public class db_operations {
 				+ "' AND '" + currentDate + "'";
 		int count = 0;
 		try {
-			c.setAutoCommit(false);
+			//c.setAutoCommit(false);
 			stmt = c.createStatement();
 			ResultSet rs = stmt.executeQuery(SQL);
 			while (rs.next()) {
 				count = rs.getInt(1);
 			}
 			stmt.close();
-			c.commit();
+			//c.commit();
 			
 		} catch (SQLException e) {
 			// logging
@@ -1124,14 +1124,14 @@ public class db_operations {
 		String SQL = "SELECT count(*) FROM cust_sla where inst_status='VIOLATED' OR inst_status='READY'";
 		int count = 0;
 		try {
-			c.setAutoCommit(false);
+			//c.setAutoCommit(false);
 			stmt = c.createStatement();
 			ResultSet rs = stmt.executeQuery(SQL);
 			while (rs.next()) {
 				count = rs.getInt(1);
 			}
 			stmt.close();
-			c.commit();
+			//c.commit();
 
 		} catch (SQLException e) {
 			// logging
@@ -1162,14 +1162,14 @@ public class db_operations {
 				+ minusDates + "' AND '" + currentDate + "'";
 		int count = 0;
 		try {
-			c.setAutoCommit(false);
+			//c.setAutoCommit(false);
 			stmt = c.createStatement();
 			ResultSet rs = stmt.executeQuery(SQL);
 			while (rs.next()) {
 				count = rs.getInt(1);
 			}
 			stmt.close();
-			c.commit();	
+			//c.commit();	
 
 		} catch (SQLException e) {
 			// logging
@@ -1204,7 +1204,7 @@ public class db_operations {
 					+ "CUST_USERNAME  TEXT NOT NULL )";
 			stmt.executeUpdate(sql);
 			stmt.close();
-			c.commit();
+			//c.commit();
 
 		} catch (Exception e) {
 			// logging
@@ -1230,14 +1230,14 @@ public class db_operations {
 		Statement stmt = null;
 
 		try {
-			c.setAutoCommit(false);
+			//c.setAutoCommit(false);
 			stmt = c.createStatement();
 			String sql = "INSERT INTO sla_violations  (nsi_uuid, sla_uuid,violation_time, alert_state, cust_username ) VALUES ('"
 					+ nsi_uuid + "', '" + sla_uuid + "', '" + violation_time + "','" + alert_state + "', '"
 					+ cust_username + "');  ";
 			stmt.executeUpdate(sql);
 			stmt.close();
-			c.commit();
+			//c.commit();
 
 		} catch (Exception e) {
 
@@ -1270,7 +1270,7 @@ public class db_operations {
 		JSONObject violated_sla = new JSONObject();
 
 		try {
-			c.setAutoCommit(false);
+			//c.setAutoCommit(false);
 			stmt = c.createStatement();
 			ResultSet rs = stmt.executeQuery("SELECT * FROM cust_sla WHERE nsi_uuid = '" + nsi_uuid + "';");
 			while (rs.next()) {
@@ -1282,7 +1282,7 @@ public class db_operations {
 			}
 			rs.close();
 			stmt.close();
-			c.commit();
+			//c.commit();
 
 		} catch (Exception e) {
 
@@ -1314,7 +1314,7 @@ public class db_operations {
 		Statement stmt = null;
 
 		try {
-			c.setAutoCommit(false);
+			//c.setAutoCommit(false);
 			stmt = c.createStatement();
 			ResultSet rs = stmt.executeQuery(
 					"SELECT * FROM sla_violations WHERE nsi_uuid='" + nsi_uuid + "' AND sla_uuid='" + sla_uuid + "';");
@@ -1332,7 +1332,7 @@ public class db_operations {
 			}
 			rs.close();
 			stmt.close();
-			c.commit();
+			//c.commit();
 
 		} catch (Exception e) {
 			// logging
@@ -1360,7 +1360,7 @@ public class db_operations {
 		Statement stmt = null;
 
 		try {
-			c.setAutoCommit(false);
+			//c.setAutoCommit(false);
 			stmt = c.createStatement();
 			ResultSet rs = stmt.executeQuery("SELECT * FROM sla_violations;");
 			while (rs.next()) {
@@ -1381,7 +1381,7 @@ public class db_operations {
 			}
 			rs.close();
 			stmt.close();
-			c.commit();
+			//c.commit();
 
 		} catch (Exception e) {
 			// logging
@@ -1407,14 +1407,14 @@ public class db_operations {
 		
 		try {
 			
-			c.setAutoCommit(false);
+			//c.setAutoCommit(false);
 			stmt = c.createStatement();
 			ResultSet rs = stmt.executeQuery(SQL);
 			while (rs.next()) {
 				count_violations = rs.getInt(1);
 			}
 			stmt.close();
-			c.commit();
+			//c.commit();
 			
 			
 		} catch (SQLException e) {
@@ -1443,14 +1443,14 @@ public class db_operations {
 		String SQL = "SELECT count(*) FROM " + tablename + " where SLA_UUID = '" + sla_uuid + "' ";
 		int count = 0;
 		try {
-			c.setAutoCommit(false);
+			//c.setAutoCommit(false);
 			stmt = c.createStatement();
 			ResultSet rs = stmt.executeQuery(SQL);
 			while (rs.next()) {
 				count = rs.getInt(1);
 			}
 			stmt.close();
-			c.commit();
+			//c.commit();
 
 		} catch (SQLException e) {
 			// logging
@@ -1467,12 +1467,12 @@ public class db_operations {
 
 		if (count > 0) {
 			try {
-				c.setAutoCommit(false);
+			//	c.setAutoCommit(false);
 				stmt = c.createStatement();
 				String sql = "DELETE from " + tablename + " where SLA_UUID='" + sla_uuid + "';";
 				stmt.executeUpdate(sql);
 				stmt.close();
-				c.commit();
+			//	c.commit();
 				result = true;
 				
 			} catch (Exception e) {
@@ -1519,7 +1519,7 @@ public class db_operations {
 		if (tablename == "ns_template") {
 
 			try {
-				c.setAutoCommit(false);
+				//c.setAutoCommit(false);
 				stmt = c.createStatement();
 				ResultSet rs = stmt.executeQuery("SELECT * FROM " + tablename + ";");
 				while (rs.next()) {
@@ -1547,7 +1547,7 @@ public class db_operations {
 
 				rs.close();
 				stmt.close();
-				c.commit();
+				//c.commit();
 				
 			} catch (Exception e) {
 				// logging
@@ -1565,7 +1565,7 @@ public class db_operations {
 		} else if (tablename == "cust_sla") {
 
 			try {
-				c.setAutoCommit(false);
+			//	c.setAutoCommit(false);
 				stmt = c.createStatement();
 				ResultSet rs = stmt.executeQuery("SELECT * FROM " + tablename + ";");
 
@@ -1585,7 +1585,7 @@ public class db_operations {
 
 				rs.close();
 				stmt.close();
-				c.commit();
+			//	c.commit();
 
 			} catch (Exception e) {
 				// logging
@@ -1617,7 +1617,7 @@ public class db_operations {
 		Statement stmt = null;
 
 		try {
-			c.setAutoCommit(false);
+			//c.setAutoCommit(false);
 			stmt = c.createStatement();
 			String sql = "CREATE TABLE IF NOT EXISTS sla_licensing " + "(ID  SERIAL," + " NSI_UUID TEXT, "
 					+ "SLA_UUID TEXT," + "NS_UUID TEXT," + "CUST_USERNAME TEXT ," + "CUST_EMAIL  TEXT,"
@@ -1625,7 +1625,7 @@ public class db_operations {
 					+ "current_instances  TEXT," + "license_status  TEXT," + "correlation_id TEXT)";
 			stmt.executeUpdate(sql);
 			stmt.close();
-			c.commit();
+			//c.commit();
 
 		} catch (Exception e) {
 			// logging
@@ -1652,7 +1652,7 @@ public class db_operations {
 		JSONArray licenses = new JSONArray();
 		Statement stmt = null;
 		try {
-			c.setAutoCommit(false);
+			//c.setAutoCommit(false);
 			stmt = c.createStatement();
 			ResultSet rs = stmt.executeQuery("SELECT * FROM sla_licensing;");
 			while (rs.next()) {
@@ -1684,7 +1684,7 @@ public class db_operations {
 			}
 			rs.close();
 			stmt.close();
-			c.commit();
+		//	c.commit();
 
 		} catch (Exception e) {
 			// logging
@@ -1720,7 +1720,7 @@ public class db_operations {
 			String current_instances, String license_status, String correlation_id) {
 		Statement stmt = null;
 		try {
-			c.setAutoCommit(false);
+			//c.setAutoCommit(false);
 			stmt = c.createStatement();
 			String sql = "INSERT INTO sla_licensing  (sla_uuid, ns_uuid,nsi_uuid, cust_username, cust_email, license_type, license_exp_date, allowed_instances, current_instances, license_status,correlation_id) VALUES ('"
 					+ sla_uuid + "', '" + ns_uuid + "', '" + nsi_uuid + "','" + cust_username + "', '" + cust_email
@@ -1728,7 +1728,7 @@ public class db_operations {
 					+ current_instances + "','" + license_status + "', '" + correlation_id + "');  ";
 			stmt.executeUpdate(sql);
 			stmt.close();
-			c.commit();
+			//c.commit();
 
 		} catch (Exception e) {
 
@@ -1749,7 +1749,7 @@ public class db_operations {
 		Statement stmt = null;
 		boolean result = false;
 		try {
-			c.setAutoCommit(false);
+			//c.setAutoCommit(false);
 			stmt = c.createStatement();
 			String sql = "DELETE FROM sla_licensing WHERE NS_UUID='" + ns_uuid + "' AND sla_uuid='" + sla_uuid
 					+ "' AND cust_username='" + cust_username + "';";
@@ -1757,7 +1757,7 @@ public class db_operations {
 			result = true;
 			
 			stmt.close();
-			c.commit();
+			//c.commit();
 			
 
 		} catch (Exception e) {
@@ -1789,7 +1789,7 @@ public class db_operations {
 		Statement stmt = null;
 		
 		try {
-			c.setAutoCommit(false);
+			//c.setAutoCommit(false);
 			stmt = c.createStatement();
 			ResultSet rs = stmt.executeQuery("SELECT * FROM sla_licensing WHERE sla_uuid = '" + sla_uuid
 					+ "' AND ns_uuid='" + ns_uuid + "' AND  cust_username='" + cust_username + "';");
@@ -1810,7 +1810,7 @@ public class db_operations {
 			}
 			rs.close();
 			stmt.close();
-			c.commit();
+			//c.commit();
 			
 		} catch (Exception e) {
 			// logging
@@ -1845,7 +1845,7 @@ public class db_operations {
 		Statement stmt = null;
 
 		try {
-			c.setAutoCommit(false);
+		//	c.setAutoCommit(false);
 			stmt = c.createStatement();
 			ResultSet rs = stmt.executeQuery("SELECT * FROM sla_licensing WHERE nsi_uuid = '" + nsi_uuid + "';");
 
@@ -1874,7 +1874,7 @@ public class db_operations {
 				// get names from the agreements table
 				Statement stmt_names = null;
 				try {
-					c.setAutoCommit(false);
+					//c.setAutoCommit(false);
 					stmt_names = c.createStatement();
 					ResultSet rs_name = stmt
 							.executeQuery("SELECT * FROM cust_sla WHERE nsi_uuid = '" + nsi_uuid + "';");
@@ -1888,7 +1888,7 @@ public class db_operations {
 					}
 					rs_name.close();
 					stmt_names.close();
-					c.commit();
+				//	c.commit();
 					
 				} catch (Exception e) {
 					// logging
@@ -1906,7 +1906,7 @@ public class db_operations {
 			}
 			rs.close();
 			stmt.close();
-			c.commit();
+			//c.commit();
 
 		} catch (Exception e) {
 			// logging
@@ -1929,7 +1929,7 @@ public class db_operations {
 		Statement stmt = null;
 		boolean result = false;
 		try {
-			c.setAutoCommit(false);
+			//c.setAutoCommit(false);
 			stmt = c.createStatement();
 			String sql = "UPDATE sla_licensing SET nsi_uuid='" + nsi_uuid + "' AND license_status='" + license_status
 					+ "' WHERE correlation_id='" + correlation_id + "';";
@@ -1937,7 +1937,7 @@ public class db_operations {
 			result = true;
 			
 			stmt.close();
-			c.commit();
+			//c.commit();
 			
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 			String timestamps = timestamp.toString();
@@ -1979,13 +1979,13 @@ public class db_operations {
 		int count_licenses = 0;
 		try {		
 			
-			c.setAutoCommit(false);
+			//c.setAutoCommit(false);
 			stmt = c.createStatement();
 			ResultSet rs = stmt.executeQuery(SQL);
 			while (rs.next()) {
 				count_licenses = rs.getInt(1);
 			}
-			c.commit();
+			//c.commit();
 			stmt.close();
 
 		} catch (SQLException e) {
@@ -2010,14 +2010,14 @@ public class db_operations {
 		Statement stmt = null;
 		boolean result = false;
 		try {
-			c.setAutoCommit(false);
+			//c.setAutoCommit(false);
 			stmt = c.createStatement();
 			String sql = "UPDATE sla_licensing SET license_status='" + license_status + "' WHERE sla_uuid='" + sla_uuid
 					+ "' AND ns_uuid='" + ns_uuid + "' AND cust_username='" + cust_username + "';";
 			stmt.executeUpdate(sql);
 			result = true;
 			stmt.close();
-			c.commit();
+			//c.commit();
 			
 
 		} catch (Exception e) {
@@ -2041,14 +2041,14 @@ public class db_operations {
 		Statement stmt = null;
 		boolean result = false;
 		try {
-			c.setAutoCommit(false);
+			//c.setAutoCommit(false);
 			stmt = c.createStatement();
 			String sql = "UPDATE sla_licensing SET license_status='" + license_status + "' WHERE nsi_uuid='" + nsi_uuid
 					+ "';";
 			stmt.executeUpdate(sql);
 			
 			stmt.close();
-			c.commit();
+			//c.commit();
 			result = true;
 
 		} catch (Exception e) {
@@ -2073,14 +2073,14 @@ public class db_operations {
 		Statement stmt = null;
 		boolean result = false;
 		try {
-			c.setAutoCommit(false);
+		//	c.setAutoCommit(false);
 			stmt = c.createStatement();
 			String sql = "UPDATE sla_licensing SET correlation_id='" + correlation_id + "' WHERE sla_uuid='" + sla_uuid
 					+ "' AND ns_uuid='" + ns_uuid + "' AND cust_username='" + cust_username + "';";
 			stmt.executeUpdate(sql);
 			
 			stmt.close();
-			c.commit();
+		//	c.commit();
 			result = true;
 
 		} catch (Exception e) {
@@ -2107,13 +2107,13 @@ public class db_operations {
 				+ sla_uuid + "' AND license_status='active'";
 		int count_active_licenses = 0;
 		try {
-			c.setAutoCommit(false);
+			// c.setAutoCommit(false);
 			stmt = c.createStatement();
 			ResultSet rs = stmt.executeQuery(SQL);
 			while (rs.next()) {
 				count_active_licenses = rs.getInt(1);
 			}
-			c.commit();
+			// c.commit();
 			stmt.close();
 			
 			
@@ -2157,12 +2157,12 @@ public class db_operations {
 		Statement stmt = null;
 		boolean result = false;
 		try {
-			c.setAutoCommit(false);
+			//c.setAutoCommit(false);
 			stmt = c.createStatement();
 			String sql = "UPDATE sla_licensing SET current_instances='" + current_instances + "' WHERE sla_uuid='"
 					+ sla_uuid + "' AND ns_uuid='" + ns_uuid + "' AND cust_username='" + cust_username + "';";
 			stmt.executeUpdate(sql);
-			c.commit();
+			//c.commit();
 			stmt.close();
 			result = true;
 
@@ -2206,13 +2206,13 @@ public class db_operations {
 		int count = 0;
 		try {
 			
-			c.setAutoCommit(false);
+		//	c.setAutoCommit(false);
 			stmt = c.createStatement();
 			ResultSet rs = stmt.executeQuery(SQL);
 			while (rs.next()) {
 				count = rs.getInt(1);
 			}
-			c.commit();
+		//	c.commit();
 			stmt.close();
 				
 		} catch (SQLException e) {
@@ -2240,14 +2240,14 @@ public class db_operations {
 		String SQL = "SELECT count(*) FROM sla_licensing WHERE (license_status='bought' OR license_status='active') AND license_type='private'";
 		int count = 0;
 		try {
-			c.setAutoCommit(false);
+		//	c.setAutoCommit(false);
 			stmt = c.createStatement();
 			ResultSet rs = stmt.executeQuery(SQL);
 			while (rs.next()) {
 				count = rs.getInt(1);
 			}
 			stmt.close();
-			c.commit();
+		//	c.commit();
 			
 		} 
 		catch (SQLException e) {
@@ -2275,14 +2275,14 @@ public class db_operations {
 		String SQL = "SELECT count(*) FROM sla_licensing WHERE license_status='expired'";
 		int count = 0;
 		try {
-			c.setAutoCommit(false);
+		//	c.setAutoCommit(false);
 			stmt = c.createStatement();
 			ResultSet rs = stmt.executeQuery(SQL);
 			while (rs.next()) {
 				count = rs.getInt(1);
 			}
 			stmt.close();
-			c.commit();
+			//c.commit();
 		} 
 		catch (SQLException e) {
 			// logging
