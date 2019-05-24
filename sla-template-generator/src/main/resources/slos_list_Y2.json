@@ -69,7 +69,7 @@
         {
           "target_kpi": "videoPacketLost",
           "target_value": "15",
-          "target_operator": "greater",
+          "target_operator": "less than",
           "target_duration": "10s",
           "target_period": "",
           "target_service_level": "Packet Loss less than ?"
@@ -88,7 +88,7 @@
         {
           "target_kpi": "videoPacketLost",
           "target_value": "30",
-          "target_operator": "greater",
+          "target_operator": "less than",
           "target_duration": "10s",
           "target_period": "",
           "target_service_level": "Packet Loss less than ?"
@@ -107,7 +107,7 @@
         {
           "target_kpi": "videoPacketLost",
           "target_value": "50",
-          "target_operator": "greater",
+          "target_operator": "less than",
           "target_duration": "10s",
           "target_period": "",
           "target_service_level": "Packet Loss less than ?"
