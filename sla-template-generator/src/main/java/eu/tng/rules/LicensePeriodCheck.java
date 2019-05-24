@@ -105,17 +105,32 @@ public class LicensePeriodCheck implements ServletContextListener {
 
 			public void run() {
 				while (true) {
+					
+					// code for task to run ends here
+					try {
+						Thread.sleep(6000);
+					} 
+					catch (InterruptedException e) {
+						// logging
+						timestamp = new Timestamp(System.currentTimeMillis());
+						timestamps = timestamp.toString();
+						type = "I";
+						operation = "License Check Listener";
+						message = ("[*] Thread Error ==> " + e);
+						status = "";
+						logger.info(
+								"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+								type, timestamps, operation, message, status);
+					}
+					
+					
 					// code for task to run
-
 					Date currentDate = new Date();
 					Date exp_date = new Date();
 
 					db_operations db = new db_operations();
 					db_operations.connectPostgreSQL();
 					db_operations.createTableLicensing();
-					db_operations.closePostgreSQL();
-					
-					db_operations.connectPostgreSQL();
 					org.json.simple.JSONArray licenses = db_operations.getAllLicenses();
 					db_operations.closePostgreSQL();
 
