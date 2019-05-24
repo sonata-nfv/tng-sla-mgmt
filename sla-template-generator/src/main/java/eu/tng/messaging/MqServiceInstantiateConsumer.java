@@ -212,20 +212,16 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 								// Get vnfrs
 								JSONArray vnfrs = (JSONArray) jsonObjectMessage.getJSONArray("vnfrs");
 								for (int i = 0; i < (vnfrs).length(); i++) {
-								    JSONArray vdus = new JSONArray();
-								    if (vnfrs.getJSONObject(i).has("virtual_deployment_units")) {
-								        vdus = (JSONArray) ((JSONObject) vnfrs.getJSONObject(i))
-                                                .getJSONArray("virtual_deployment_units");
-								    }
+
 									// Get vdus_reference foreach vnfr
 									try {
-										
+										JSONArray vdus = (JSONArray) ((JSONObject) vnfrs.getJSONObject(i))
+												.getJSONArray("virtual_deployment_units");
 										for (int j = 0; j < vdus.length(); j++) {
 											String vdu_reference = (String) ((JSONObject) vdus.getJSONObject(j))
 													.get("vdu_reference");
-											// if vnfr is the haproxy function - continue to the monitoring creation
-											// metrics
-											if (vdu_reference.startsWith("haproxy") == true) {
+
+											if (vdu_reference.startsWith("default") == true) {
 												// get vnfr id
 												String vnfr_id = (String) ((JSONObject) vnfrs.get(i)).get("id");
 												vnfr_id_list.add(vnfr_id);
@@ -238,19 +234,6 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 													vc_id_list.add(vc_id);
 												}
 											}
-											else if (vdu_reference.startsWith("default") == true) {
-                                                // get vnfr id
-                                                String vnfr_id = (String) ((JSONObject) vnfrs.get(i)).get("id");
-                                                vnfr_id_list.add(vnfr_id);
-                                                // get vdu id (vc_id)
-                                                JSONArray vnfc_instance = (JSONArray) ((JSONObject) vdus
-                                                        .getJSONObject(j)).getJSONArray("vnfc_instance");
-                                                for (int k = 0; k < vnfc_instance.length(); k++) {
-                                                    String vc_id = (String) ((JSONObject) vnfc_instance
-                                                            .getJSONObject(j)).get("vc_id");
-                                                    vc_id_list.add(vc_id);
-                                                }
-                                            }
 										}
 									} 
 									catch (JSONException e) {
@@ -266,32 +249,28 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 												type, timestamps, operation, message, status);
 									}
 
-									
 									// Get cdus_reference foreach vnfr
 									try {
-									    if (vnfrs.getJSONObject(i).has("cloudnative_deployment_units")) {
-									        JSONArray cdus = (JSONArray) ((JSONObject) vnfrs.getJSONObject(i))
-	                                                .getJSONArray("cloudnative_deployment_units");
-	                                        for (int j = 0; j < cdus.length(); j++) {
-	                                            String cdu_reference = (String) ((JSONObject) cdus.getJSONObject(j))
-	                                                    .get("cdu_reference");
+										JSONArray cdus = (JSONArray) ((JSONObject) vnfrs.getJSONObject(i))
+												.getJSONArray("cloudnative_deployment_units");
+										for (int j = 0; j < cdus.length(); j++) {
+											String cdu_reference = (String) ((JSONObject) cdus.getJSONObject(j))
+													.get("cdu_reference");
 
-	                                            if ((cdu_reference.startsWith("vnf-mse") == true)
-	                                                    || (cdu_reference.startsWith("vnf-cms") == true)
-	                                                    || (cdu_reference.startsWith("vnf-ma") == true)) {
-	                                                String vnfr_name = vnfrs.getJSONObject(i).getString("name");
-	                                                vnfr_name_list.add(vnfr_name);
-	                                                // get vnfr id
-	                                                String vnfr_id = (String) ((JSONObject) vnfrs.get(i))
-	                                                        .get("descriptor_reference");
-	                                                vnfr_id_list.add(vnfr_id);
-	                                                // get cdu id (cdu_id)
-	                                                String cdu_id = (String) ((JSONObject) vnfrs.get(i)).get("id");
-	                                                cdu_id_list.add(cdu_id);
-	                                            }
-	                                        } 
-									    }
-										
+											if ((cdu_reference.startsWith("vnf-mse") == true)
+													|| (cdu_reference.startsWith("vnf-cms") == true)
+													|| (cdu_reference.startsWith("vnf-ma") == true)) {
+												String vnfr_name = vnfrs.getJSONObject(i).getString("name");
+												vnfr_name_list.add(vnfr_name);
+												// get vnfr id
+												String vnfr_id = (String) ((JSONObject) vnfrs.get(i))
+														.get("descriptor_reference");
+												vnfr_id_list.add(vnfr_id);
+												// get cdu id (cdu_id)
+												String cdu_id = (String) ((JSONObject) vnfrs.get(i)).get("id");
+												cdu_id_list.add(cdu_id);
+											}
+										}
 									} 
 									catch (JSONException e) {
 										// logging
@@ -305,7 +284,6 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 												"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 												type, timestamps, operation, message, status);
 									}
-									
 
 								}
 
