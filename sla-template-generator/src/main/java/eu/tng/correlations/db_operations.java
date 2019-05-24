@@ -1058,8 +1058,8 @@ public class db_operations {
 			while (rs.next()) {
 				count = rs.getInt(1);
 			}
-			c.commit();
 			stmt.close();
+			c.commit();
 
 		} catch (SQLException e) {
 			// logging
@@ -1096,8 +1096,8 @@ public class db_operations {
 			while (rs.next()) {
 				count = rs.getInt(1);
 			}
-			c.commit();
 			stmt.close();
+			c.commit();
 			
 		} catch (SQLException e) {
 			// logging
@@ -1130,8 +1130,8 @@ public class db_operations {
 			while (rs.next()) {
 				count = rs.getInt(1);
 			}
-			c.commit();
 			stmt.close();
+			c.commit();
 
 		} catch (SQLException e) {
 			// logging
@@ -1168,8 +1168,8 @@ public class db_operations {
 			while (rs.next()) {
 				count = rs.getInt(1);
 			}
-			c.commit();
 			stmt.close();
+			c.commit();	
 
 		} catch (SQLException e) {
 			// logging
@@ -1204,6 +1204,7 @@ public class db_operations {
 					+ "CUST_USERNAME  TEXT NOT NULL )";
 			stmt.executeUpdate(sql);
 			stmt.close();
+			c.commit();
 
 		} catch (Exception e) {
 			// logging
@@ -1281,6 +1282,7 @@ public class db_operations {
 			}
 			rs.close();
 			stmt.close();
+			c.commit();
 
 		} catch (Exception e) {
 
@@ -1330,6 +1332,7 @@ public class db_operations {
 			}
 			rs.close();
 			stmt.close();
+			c.commit();
 
 		} catch (Exception e) {
 			// logging
@@ -1378,6 +1381,7 @@ public class db_operations {
 			}
 			rs.close();
 			stmt.close();
+			c.commit();
 
 		} catch (Exception e) {
 			// logging
@@ -1409,9 +1413,8 @@ public class db_operations {
 			while (rs.next()) {
 				count_violations = rs.getInt(1);
 			}
-			c.commit();
 			stmt.close();
-			
+			c.commit();
 			
 			
 		} catch (SQLException e) {
@@ -1446,9 +1449,9 @@ public class db_operations {
 			while (rs.next()) {
 				count = rs.getInt(1);
 			}
-			c.commit();
 			stmt.close();
-		
+			c.commit();
+
 		} catch (SQLException e) {
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
@@ -1468,9 +1471,10 @@ public class db_operations {
 				stmt = c.createStatement();
 				String sql = "DELETE from " + tablename + " where SLA_UUID='" + sla_uuid + "';";
 				stmt.executeUpdate(sql);
-				c.commit();
 				stmt.close();
+				c.commit();
 				result = true;
+				
 			} catch (Exception e) {
 				// logging
 				Timestamp timestamp = new Timestamp(System.currentTimeMillis());
@@ -1543,6 +1547,8 @@ public class db_operations {
 
 				rs.close();
 				stmt.close();
+				c.commit();
+				
 			} catch (Exception e) {
 				// logging
 				Timestamp timestamp = new Timestamp(System.currentTimeMillis());
@@ -1579,6 +1585,7 @@ public class db_operations {
 
 				rs.close();
 				stmt.close();
+				c.commit();
 
 			} catch (Exception e) {
 				// logging
@@ -1747,9 +1754,11 @@ public class db_operations {
 			String sql = "DELETE FROM sla_licensing WHERE NS_UUID='" + ns_uuid + "' AND sla_uuid='" + sla_uuid
 					+ "' AND cust_username='" + cust_username + "';";
 			stmt.executeUpdate(sql);
-			c.commit();
-			stmt.close();
 			result = true;
+			
+			stmt.close();
+			c.commit();
+			
 
 		} catch (Exception e) {
 			// logging
@@ -1801,6 +1810,8 @@ public class db_operations {
 			}
 			rs.close();
 			stmt.close();
+			c.commit();
+			
 		} catch (Exception e) {
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
@@ -1877,7 +1888,8 @@ public class db_operations {
 					}
 					rs_name.close();
 					stmt_names.close();
-
+					c.commit();
+					
 				} catch (Exception e) {
 					// logging
 					Timestamp timestamp = new Timestamp(System.currentTimeMillis());
@@ -1894,6 +1906,7 @@ public class db_operations {
 			}
 			rs.close();
 			stmt.close();
+			c.commit();
 
 		} catch (Exception e) {
 			// logging
@@ -1921,10 +1934,11 @@ public class db_operations {
 			String sql = "UPDATE sla_licensing SET nsi_uuid='" + nsi_uuid + "' AND license_status='" + license_status
 					+ "' WHERE correlation_id='" + correlation_id + "';";
 			stmt.executeUpdate(sql);
-			c.commit();
-			stmt.close();
 			result = true;
-
+			
+			stmt.close();
+			c.commit();
+			
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 			String timestamps = timestamp.toString();
 			String type = "I";
@@ -2001,9 +2015,10 @@ public class db_operations {
 			String sql = "UPDATE sla_licensing SET license_status='" + license_status + "' WHERE sla_uuid='" + sla_uuid
 					+ "' AND ns_uuid='" + ns_uuid + "' AND cust_username='" + cust_username + "';";
 			stmt.executeUpdate(sql);
-			c.commit();
-			stmt.close();
 			result = true;
+			stmt.close();
+			c.commit();
+			
 
 		} catch (Exception e) {
 			// logging
@@ -2031,8 +2046,9 @@ public class db_operations {
 			String sql = "UPDATE sla_licensing SET license_status='" + license_status + "' WHERE nsi_uuid='" + nsi_uuid
 					+ "';";
 			stmt.executeUpdate(sql);
-			c.commit();
+			
 			stmt.close();
+			c.commit();
 			result = true;
 
 		} catch (Exception e) {
@@ -2062,8 +2078,9 @@ public class db_operations {
 			String sql = "UPDATE sla_licensing SET correlation_id='" + correlation_id + "' WHERE sla_uuid='" + sla_uuid
 					+ "' AND ns_uuid='" + ns_uuid + "' AND cust_username='" + cust_username + "';";
 			stmt.executeUpdate(sql);
-			c.commit();
+			
 			stmt.close();
+			c.commit();
 			result = true;
 
 		} catch (Exception e) {
@@ -2195,10 +2212,9 @@ public class db_operations {
 			while (rs.next()) {
 				count = rs.getInt(1);
 			}
-			stmt.close();
 			c.commit();
-						
-						
+			stmt.close();
+				
 		} catch (SQLException e) {
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
