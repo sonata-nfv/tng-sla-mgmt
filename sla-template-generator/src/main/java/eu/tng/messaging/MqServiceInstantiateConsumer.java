@@ -310,8 +310,11 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 											vnfr_id_list, vnfr_name_list, cdu_id_list, nsi_id);
 								}
 								
+								
+								System.out.print("SERVICE NAME " + network_service_name);
 								// Monitoring rules for Communications Pilot
                                 if (network_service_name.equals("communication-pilot")) {
+                                    System.out.print("if for monitoring rules");
                                     new MonitoringRulesCommunication();
                                     MonitoringRulesCommunication.createMonitoringRules(String.valueOf(sla_id),
                                             vnfr_id_list, vnfr_name_list, cdu_id_list, nsi_id);
