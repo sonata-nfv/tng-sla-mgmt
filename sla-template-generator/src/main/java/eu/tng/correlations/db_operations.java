@@ -86,7 +86,6 @@ public class db_operations {
 							System.getenv("GTK_DB_USER"), System.getenv("GTK_DB_PASS"));
 
 			connect = true;
-
 		}
 
 		catch (Exception e) {
@@ -1052,15 +1051,15 @@ public class db_operations {
 		String SQL = "SELECT count(*) FROM cust_sla where inst_status='VIOLATED'";
 		int count = 0;
 		try {
-			// c.setAutoCommit(false);
+			c.setAutoCommit(true);
 			stmt = c.createStatement();
 			ResultSet rs = stmt.executeQuery(SQL);
 			while (rs.next()) {
 				count = rs.getInt(1);
 			}
 			stmt.close();
-			// c.commit();
-
+			//c.commit();
+			
 		} catch (SQLException e) {
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
@@ -1090,7 +1089,7 @@ public class db_operations {
 				+ "' AND '" + currentDate + "'";
 		int count = 0;
 		try {
-			//c.setAutoCommit(false);
+			//c.setAutoCommit(true);
 			stmt = c.createStatement();
 			ResultSet rs = stmt.executeQuery(SQL);
 			while (rs.next()) {
@@ -1124,7 +1123,7 @@ public class db_operations {
 		String SQL = "SELECT count(*) FROM cust_sla where inst_status='VIOLATED' OR inst_status='READY'";
 		int count = 0;
 		try {
-			//c.setAutoCommit(false);
+			c.setAutoCommit(true);
 			stmt = c.createStatement();
 			ResultSet rs = stmt.executeQuery(SQL);
 			while (rs.next()) {
