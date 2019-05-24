@@ -60,7 +60,7 @@
     {
       "guaranteeID": "g4",
       "guarantee_name": "High QoE Videoconference",
-      "guarantee_threshold": "",
+      "guarantee_threshold": "15",
       "guarantee_operator": "",
       "guarantee_unit": "",
       "guarantee_period": "",
@@ -79,7 +79,7 @@
     {
       "guaranteeID": "g5",
       "guarantee_name": "Medium QoE Videoconference",
-      "guarantee_threshold": "",
+      "guarantee_threshold": "30",
       "guarantee_operator": "",
       "guarantee_unit": "",
       "guarantee_period": "",
@@ -98,7 +98,7 @@
     {
       "guaranteeID": "g6",
       "guarantee_name": "Low QoE Videoconference",
-      "guarantee_threshold": "",
+      "guarantee_threshold": "50",
       "guarantee_operator": "",
       "guarantee_unit": "",
       "guarantee_period": "",
