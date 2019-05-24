@@ -266,28 +266,32 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 												type, timestamps, operation, message, status);
 									}
 
+									
 									// Get cdus_reference foreach vnfr
 									try {
-										JSONArray cdus = (JSONArray) ((JSONObject) vnfrs.getJSONObject(i))
-												.getJSONArray("cloudnative_deployment_units");
-										for (int j = 0; j < cdus.length(); j++) {
-											String cdu_reference = (String) ((JSONObject) cdus.getJSONObject(j))
-													.get("cdu_reference");
+									    if (vnfrs.getJSONObject(i).has("cloudnative_deployment_units")) {
+									        JSONArray cdus = (JSONArray) ((JSONObject) vnfrs.getJSONObject(i))
+	                                                .getJSONArray("cloudnative_deployment_units");
+	                                        for (int j = 0; j < cdus.length(); j++) {
+	                                            String cdu_reference = (String) ((JSONObject) cdus.getJSONObject(j))
+	                                                    .get("cdu_reference");
 
-											if ((cdu_reference.startsWith("vnf-mse") == true)
-													|| (cdu_reference.startsWith("vnf-cms") == true)
-													|| (cdu_reference.startsWith("vnf-ma") == true)) {
-												String vnfr_name = vnfrs.getJSONObject(i).getString("name");
-												vnfr_name_list.add(vnfr_name);
-												// get vnfr id
-												String vnfr_id = (String) ((JSONObject) vnfrs.get(i))
-														.get("descriptor_reference");
-												vnfr_id_list.add(vnfr_id);
-												// get cdu id (cdu_id)
-												String cdu_id = (String) ((JSONObject) vnfrs.get(i)).get("id");
-												cdu_id_list.add(cdu_id);
-											}
-										}
+	                                            if ((cdu_reference.startsWith("vnf-mse") == true)
+	                                                    || (cdu_reference.startsWith("vnf-cms") == true)
+	                                                    || (cdu_reference.startsWith("vnf-ma") == true)) {
+	                                                String vnfr_name = vnfrs.getJSONObject(i).getString("name");
+	                                                vnfr_name_list.add(vnfr_name);
+	                                                // get vnfr id
+	                                                String vnfr_id = (String) ((JSONObject) vnfrs.get(i))
+	                                                        .get("descriptor_reference");
+	                                                vnfr_id_list.add(vnfr_id);
+	                                                // get cdu id (cdu_id)
+	                                                String cdu_id = (String) ((JSONObject) vnfrs.get(i)).get("id");
+	                                                cdu_id_list.add(cdu_id);
+	                                            }
+	                                        } 
+									    }
+										
 									} 
 									catch (JSONException e) {
 										// logging
