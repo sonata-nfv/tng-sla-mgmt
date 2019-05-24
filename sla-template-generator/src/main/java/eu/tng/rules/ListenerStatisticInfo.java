@@ -43,11 +43,15 @@ public class ListenerStatisticInfo implements ServletContextListener {
 	 */
 	public void contextInitialized(ServletContextEvent arg0) {
 
+		db_operations.connectPostgreSQL();
+		
 		// 60 secs time interval
 		final long timeInterval = 60 * 1000;
 		Runnable runnable = new Runnable() {
 			public void run() {
 				while (true) {
+					
+					System.out.println("statistic info thread..");
 
 					// define the push gateway registry
 					CollectorRegistry registry = new CollectorRegistry();
@@ -66,6 +70,7 @@ public class ListenerStatisticInfo implements ServletContextListener {
 					double totalAgreements = db.countTotalAgreements();
 					double violatedAgreements = db.countViolatedAgreements();
 
+					
 					double percentage_violated = 0;
 					if (totalAgreements > 0) {
 						percentage_violated = (violatedAgreements * 100) / totalAgreements;
@@ -104,6 +109,10 @@ public class ListenerStatisticInfo implements ServletContextListener {
 					 */
 					db_operations.createTableLicensing();
 					double licenses_utilized_number = db.countUtilizedLicense();
+					
+					System.out.println("licenses_utilized_number.." + licenses_utilized_number);
+
+
 
 					// create the gauge metric for the push gateway
 					Gauge gauge_licenses_utilized_number = Gauge.build().name("licenses_utilized_number")

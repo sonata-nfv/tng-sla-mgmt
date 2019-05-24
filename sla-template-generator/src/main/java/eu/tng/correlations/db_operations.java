@@ -1618,7 +1618,7 @@ public class db_operations {
 			String timestamps = timestamp.toString();
 			String type = "E";
 			String operation = "Create table for Licenses. Class: " + class_name;
-			String message = ("Error creating table sla_licensing");
+			String message = ("Error creating table sla_licensing ==> " + e.getMessage());
 			String status = "";
 			logger.error(
 					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
