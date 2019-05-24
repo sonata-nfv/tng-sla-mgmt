@@ -212,11 +212,14 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 								// Get vnfrs
 								JSONArray vnfrs = (JSONArray) jsonObjectMessage.getJSONArray("vnfrs");
 								for (int i = 0; i < (vnfrs).length(); i++) {
-
+								    JSONArray vdus = new JSONArray();
+								    if (vnfrs.getJSONObject(i).has("virtual_deployment_units")) {
+								        vdus = (JSONArray) ((JSONObject) vnfrs.getJSONObject(i))
+                                                .getJSONArray("virtual_deployment_units");
+								    }
 									// Get vdus_reference foreach vnfr
 									try {
-										JSONArray vdus = (JSONArray) ((JSONObject) vnfrs.getJSONObject(i))
-												.getJSONArray("virtual_deployment_units");
+										
 										for (int j = 0; j < vdus.length(); j++) {
 											String vdu_reference = (String) ((JSONObject) vdus.getJSONObject(j))
 													.get("vdu_reference");
@@ -298,6 +301,7 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 												"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 												type, timestamps, operation, message, status);
 									}
+									
 
 								}
 
