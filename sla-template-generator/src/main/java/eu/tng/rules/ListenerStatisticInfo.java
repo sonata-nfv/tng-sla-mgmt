@@ -43,7 +43,7 @@ public class ListenerStatisticInfo implements ServletContextListener {
 	 */
 	public void contextInitialized(ServletContextEvent arg0) {
 
-		db_operations.connectPostgreSQL();
+		
 		
 		// 60 secs time interval
 		final long timeInterval = 60 * 1000;

@@ -71,21 +71,23 @@ public class db_operations {
 	public static boolean connectPostgreSQL() {
 		boolean connect = false;
 		try {
-
-			Class.forName("org.postgresql.Driver");
+			
 			/*
 			 * c =
 			 * DriverManager.getConnection("jdbc:postgresql://localhost:5432/sla-manager",
 			 * "postgres", "admin");
 			 */
 
+			//Class.forName("org.postgresql.Driver");
 			c = DriverManager.getConnection("jdbc:postgresql://" + System.getenv("DATABASE_HOST") + ":" + System.getenv("DATABASE_PORT")+ "/" + System.getenv("GTK_DB_NAME"),System.getenv("GTK_DB_USER"),System.getenv("GTK_DB_PASS"));
+						
+			
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 			String timestamps = timestamp.toString();
 			String type = "D";
 			String operation = "Connecting to SLA Manager's internal database. Class: " + class_name;
-			String message = "Connection c ==> " + c;
+			String message = "Connected to the PostgreSQL server successfully.";
 			String status = "";
 			logger.debug(
 					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
