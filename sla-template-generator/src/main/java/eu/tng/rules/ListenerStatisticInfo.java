@@ -43,20 +43,19 @@ public class ListenerStatisticInfo implements ServletContextListener {
 	 */
 	public void contextInitialized(ServletContextEvent arg0) {
 
-		db_operations db = new db_operations();
+		
 		// 60 secs time interval
 		final long timeInterval = 60 * 1000;
 		Runnable runnable = new Runnable() {
 			public void run() {
 				while (true) {
-					
-					calculateViolations();
-					calculateAcquiredL();
-					calculateExpiredL();
-					calculateExpiredL();
-					
+
 					try {
 						Thread.sleep(timeInterval);
+						calculateViolations();
+						calculateAcquiredL();
+						calculateExpiredL();
+						calculateExpiredL();
 					} 
 					catch (InterruptedException e) {
 						// logging
@@ -128,8 +127,7 @@ public class ListenerStatisticInfo implements ServletContextListener {
 	}
 
 	public static void calculateUtilizedL() {
-		// open connection to database
-		db_operations db = new db_operations();
+
 		db_operations.connectPostgreSQL();
 		db_operations.createTableLicensing();
 		db_operations.closePostgreSQL();
@@ -171,7 +169,6 @@ public class ListenerStatisticInfo implements ServletContextListener {
 	}
 
 	public static void calculateAcquiredL() {
-		db_operations db = new db_operations();
 		db_operations.connectPostgreSQL();
 		db_operations.createTableLicensing();
 		db_operations.closePostgreSQL();
@@ -213,7 +210,6 @@ public class ListenerStatisticInfo implements ServletContextListener {
 
 	public static void calculateExpiredL() {
 
-		db_operations db = new db_operations();
 		db_operations.connectPostgreSQL();
 		db_operations.createTableLicensing();
 		db_operations.closePostgreSQL();
