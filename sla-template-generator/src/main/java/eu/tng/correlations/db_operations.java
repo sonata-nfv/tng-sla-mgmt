@@ -61,7 +61,7 @@ public class db_operations {
 	static Logger logger = LogManager.getLogger();
 
 	static Connection c = null;
-	static Statement stmt = null;
+//	static Statement stmt = null;
 
 	static String class_name = db_operations.class.getSimpleName();
 
@@ -136,6 +136,8 @@ public class db_operations {
 	 */
 	public boolean createTableNSTemplate() {
 		boolean result = false;
+		Statement stmt = null;
+
 		try {
 			stmt = c.createStatement();
 			String sql = "CREATE TABLE IF NOT EXISTS ns_template" + "(ID  SERIAL PRIMARY KEY,"
@@ -258,18 +260,17 @@ public class db_operations {
 			stmt = c.createStatement();
 			ResultSet rs = stmt.executeQuery(
 					"SELECT * FROM ns_template WHERE sla_uuid = '" + sla_uuid + "' AND ns_uuid='" + ns_uuid + "';");
-
 			while (rs.next()) {
 				d_flavour_name = rs.getString("d_flavour_name");
 				dflavour_info.put("d_flavour_name", d_flavour_name);
 			}
-
 			dflavour_info.put("sla_uuid", sla_uuid);
 			dflavour_info.put("nsd_uuid", ns_uuid);
 
 			rs.close();
 			stmt.close();
-		} catch (Exception e) {
+		} 
+		catch (Exception e) {
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 			String timestamps = timestamp.toString();
@@ -293,6 +294,8 @@ public class db_operations {
 	 * Create table if not exist - customer-sla correlation
 	 */
 	public static void createTableCustSla() {
+		
+		Statement stmt = null;
 		try {
 
 			stmt = c.createStatement();
@@ -329,6 +332,9 @@ public class db_operations {
 	public void insertRecordAgreement(String ns_uuid, String ns_name, String sla_uuid, String sla_name,
 			String sla_status, String cust_email, String cust_username, String inst_status, String correlation_id) {
 
+
+		Statement stmt = null;
+		
 		/** useful variables **/
 		TimeZone tz = TimeZone.getTimeZone("UTC");
 		DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'"); // '
@@ -339,7 +345,7 @@ public class db_operations {
 
 		try {
 			c.setAutoCommit(false);
-			Statement stmt = c.createStatement();
+			stmt = c.createStatement();
 			String sql = "INSERT INTO cust_sla "
 					+ " (ns_uuid, ns_name, sla_uuid, sla_name, sla_date, sla_status, cust_email, cust_username, inst_status, inst_id) "
 					+ "VALUES ('" + ns_uuid + "','" + ns_name + "','" + sla_uuid + "' ,'" + sla_name + "' ,'" + sla_date
@@ -932,6 +938,8 @@ public class db_operations {
 	 */
 	public int countAgreementCorrelationPeriD(String sla_uuid) {
 
+		Statement stmt = null;
+
 		String SQL = "SELECT count(*) FROM cust_sla where sla_uuid = '" + sla_uuid + "' AND inst_status='READY'";
 		int count = 0;
 		try {
@@ -962,6 +970,8 @@ public class db_operations {
 	 */
 	public int countActiveAgreements() {
 
+		Statement stmt = null;
+
 		String SQL = "SELECT count(*) FROM cust_sla where inst_status='READY'";
 		int count = 0;
 		try {
@@ -990,6 +1000,8 @@ public class db_operations {
 	 * Count active agreements in a date range
 	 */
 	public int countActiveAgreementsDateRange(int days) {
+
+		Statement stmt = null;
 
 		Timestamp currentDate = new Timestamp(System.currentTimeMillis());
 		LocalDate minusDates = LocalDate.now().minusDays(days);
@@ -1025,6 +1037,8 @@ public class db_operations {
 	 */
 	public int countViolatedAgreements() {
 
+		Statement stmt = null;
+
 		String SQL = "SELECT count(*) FROM cust_sla where inst_status='VIOLATED'";
 		int count = 0;
 		try {
@@ -1053,6 +1067,8 @@ public class db_operations {
 	 * Count violated agreements in date range
 	 */
 	public int countViolatedAgreementsDateRange(int days) {
+
+		Statement stmt = null;
 
 		Timestamp currentDate = new Timestamp(System.currentTimeMillis());
 		LocalDate minusDates = LocalDate.now().minusDays(days);
@@ -1087,6 +1103,8 @@ public class db_operations {
 	 */
 	public int countTotalAgreements() {
 
+		Statement stmt = null;
+
 		String SQL = "SELECT count(*) FROM cust_sla where inst_status='VIOLATED' OR inst_status='READY'";
 		int count = 0;
 		try {
@@ -1115,6 +1133,8 @@ public class db_operations {
 	 * Count total agreements in a date range
 	 */
 	public int countTotalAgreementsDateRange(int days) {
+
+		Statement stmt = null;
 
 		Timestamp currentDate = new Timestamp(System.currentTimeMillis());
 		LocalDate minusDates = LocalDate.now().minusDays(days);
@@ -1152,6 +1172,9 @@ public class db_operations {
 	 * Create table if not exist - sla_violations
 	 */
 	public static void createTableViolations() {
+
+		Statement stmt = null;
+
 		try {
 			stmt = c.createStatement();
 			String sql = "CREATE TABLE IF NOT EXISTS sla_violations" + "(ID  SERIAL," + " NSI_UUID TEXT PRIMARY KEY, "
@@ -1181,9 +1204,11 @@ public class db_operations {
 	public static void insertRecordViolation(String nsi_uuid, String sla_uuid, String violation_time,
 			String alert_state, String cust_username) {
 
+		Statement stmt = null;
+
 		try {
 			c.setAutoCommit(false);
-			Statement stmt = c.createStatement();
+			stmt = c.createStatement();
 			String sql = "INSERT INTO sla_violations  (nsi_uuid, sla_uuid,violation_time, alert_state, cust_username ) VALUES ('"
 					+ nsi_uuid + "', '" + sla_uuid + "', '" + violation_time + "','" + alert_state + "', '"
 					+ cust_username + "');  ";
@@ -1349,14 +1374,24 @@ public class db_operations {
 
 	public static int countViolationsPerNsi(String nsi_uuid) {
 
+		Statement stmt = null;
+
 		String SQL = "SELECT count(*) FROM sla_violations where nsi_uuid = '" + nsi_uuid + "' ";
 		int count_violations = 0;
+		
 		try {
+			
+			c.setAutoCommit(false);
 			stmt = c.createStatement();
 			ResultSet rs = stmt.executeQuery(SQL);
 			while (rs.next()) {
 				count_violations = rs.getInt(1);
 			}
+			c.commit();
+			stmt.close();
+			
+			
+			
 		} catch (SQLException e) {
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
@@ -1383,12 +1418,15 @@ public class db_operations {
 		String SQL = "SELECT count(*) FROM " + tablename + " where SLA_UUID = '" + sla_uuid + "' ";
 		int count = 0;
 		try {
+			c.setAutoCommit(false);
 			stmt = c.createStatement();
 			ResultSet rs = stmt.executeQuery(SQL);
 			while (rs.next()) {
 				count = rs.getInt(1);
 			}
-
+			c.commit();
+			stmt.close();
+		
 		} catch (SQLException e) {
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
@@ -1546,6 +1584,10 @@ public class db_operations {
 	 * Create table sla_licensing for storing licensing records
 	 */
 	public static void createTableLicensing() {
+		
+		Statement stmt = null;
+
+		
 		try {
 			stmt = c.createStatement();
 			String sql = "CREATE TABLE IF NOT EXISTS sla_licensing " + "(ID  SERIAL," + " NSI_UUID TEXT, "
@@ -1903,14 +1945,21 @@ public class db_operations {
 	 */
 	public static int countLicensePerCustSLA(String cust_username, String sla_uuid) {
 
+		Statement stmt = null;
+
 		String SQL = "SELECT count(*) FROM sla_licensing WHERE cust_username='" + cust_username + "' AND sla_uuid='"
 				+ sla_uuid + "'";
 		int count_licenses = 0;
-		try {
+		try {		
+			
+			c.setAutoCommit(false);
 			stmt = c.createStatement();
 			ResultSet rs = stmt.executeQuery(SQL);
-			rs.next();
-			count_licenses = rs.getInt(1);
+			while (rs.next()) {
+				count_licenses = rs.getInt(1);
+			}
+			c.commit();
+			stmt.close();
 
 		} catch (SQLException e) {
 			// logging
@@ -2022,14 +2071,22 @@ public class db_operations {
 
 	public static int countActiveLicensePerCustSLA(String cust_username, String sla_uuid, String license_status) {
 
+		Statement stmt = null;
+
 		String SQL = "SELECT count(*) FROM sla_licensing WHERE cust_username='" + cust_username + "' AND sla_uuid='"
 				+ sla_uuid + "' AND license_status='active'";
 		int count_active_licenses = 0;
 		try {
+			c.setAutoCommit(false);
 			stmt = c.createStatement();
 			ResultSet rs = stmt.executeQuery(SQL);
-			rs.next();
-			count_active_licenses = rs.getInt(1);
+			while (rs.next()) {
+				count_active_licenses = rs.getInt(1);
+			}
+			c.commit();
+			stmt.close();
+			
+			
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 			String timestamps = timestamp.toString();
@@ -2113,14 +2170,21 @@ public class db_operations {
 	 */
 	public int countUtilizedLicense() {
 
+		Statement stmt = null;
+
 		String SQL = "SELECT count(*) FROM sla_licensing WHERE license_status='active'";
 		int count = 0;
 		try {
+			
+			c.setAutoCommit(false);
 			stmt = c.createStatement();
 			ResultSet rs = stmt.executeQuery(SQL);
 			while (rs.next()) {
 				count = rs.getInt(1);
 			}
+			c.commit();
+			stmt.close();			
+						
 		} catch (SQLException e) {
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
@@ -2141,15 +2205,21 @@ public class db_operations {
 	 */
 	public int countAcquiredLicense() {
 
+		Statement stmt = null;
+
 		String SQL = "SELECT count(*) FROM sla_licensing WHERE (license_status='bought' OR license_status='active') AND license_type='private'";
 		int count = 0;
 		try {
+			c.setAutoCommit(false);
 			stmt = c.createStatement();
 			ResultSet rs = stmt.executeQuery(SQL);
 			while (rs.next()) {
 				count = rs.getInt(1);
 			}
-		} catch (SQLException e) {
+			c.commit();
+			stmt.close();
+		} 
+		catch (SQLException e) {
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 			String timestamps = timestamp.toString();
@@ -2169,15 +2239,21 @@ public class db_operations {
 	 */
 	public int countExpiredLicense() {
 
+		Statement stmt = null;
+
 		String SQL = "SELECT count(*) FROM sla_licensing WHERE license_status='expired'";
 		int count = 0;
 		try {
+			c.setAutoCommit(false);
 			stmt = c.createStatement();
 			ResultSet rs = stmt.executeQuery(SQL);
 			while (rs.next()) {
 				count = rs.getInt(1);
 			}
-		} catch (SQLException e) {
+			c.commit();
+			stmt.close();
+		} 
+		catch (SQLException e) {
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 			String timestamps = timestamp.toString();
