@@ -67,20 +67,12 @@
       "guarantee_definition": "High QoE Videoconference",
       "target_slo": [
         {
-          "target_kpi": "Bandwidth",
-          "target_value": "200 Mbps",
+          "target_kpi": "videoPacketLost",
+          "target_value": "15",
           "target_operator": "greater",
           "target_duration": "10s",
           "target_period": "",
-          "target_service_level": "Bandwidth more than 200 Mbps"
-        },
-        {
-          "target_kpi": "Latency",
-          "target_value": "10 ms",
-          "target_operator": "less",
-          "target_duration": "10s",
-          "target_period": "",
-          "target_service_level": "Latency less than 10 ms."
+          "target_service_level": "Packet Loss less than ?"
         }
       ]
     },
@@ -94,20 +86,12 @@
       "guarantee_definition": "Medium QoE Videoconference",
       "target_slo": [
         {
-          "target_kpi": "Bandwidth",
-          "target_value": "150 Mbps",
+          "target_kpi": "videoPacketLost",
+          "target_value": "30",
           "target_operator": "greater",
           "target_duration": "10s",
           "target_period": "",
-          "target_service_level": "Bandwidth more than 150 Mbps"
-        },
-        {
-          "target_kpi": "Latency",
-          "target_value": "20 ms",
-          "target_operator": "less",
-          "target_duration": "10s",
-          "target_period": "",
-          "target_service_level": "Latency less than 20 ms."
+          "target_service_level": "Packet Loss less than ?"
         }
       ]
     },
@@ -121,20 +105,12 @@
       "guarantee_definition": "Low QoE Videoconference",
       "target_slo": [
         {
-          "target_kpi": "Bandwidth",
-          "target_value": "100 Mbps",
+          "target_kpi": "videoPacketLost",
+          "target_value": "50",
           "target_operator": "greater",
           "target_duration": "10s",
           "target_period": "",
-          "target_service_level": "Bandwidth more than 100 Mbps"
-        },
-        {
-          "target_kpi": "Latency",
-          "target_value": "30 ms",
-          "target_operator": "less",
-          "target_duration": "10s",
-          "target_period": "",
-          "target_service_level": "Latency less than 30 ms."
+          "target_service_level": "Packet Loss less than ?"
         }
       ]
     },
