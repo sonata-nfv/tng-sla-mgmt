@@ -19,7 +19,7 @@ import io.prometheus.client.Gauge;
 public class ListenerStatisticInfo implements ServletContextListener {
 
 	static Logger logger = LogManager.getLogger();
-
+	static db_operations db = new db_operations();
 	/**
 	 * @see ServletContextListener#contextDestroyed(ServletContextEvent)
 	 */
@@ -43,6 +43,7 @@ public class ListenerStatisticInfo implements ServletContextListener {
 	 */
 	public void contextInitialized(ServletContextEvent arg0) {
 
+		db_operations db = new db_operations();
 		// 60 secs time interval
 		final long timeInterval = 60 * 1000;
 		Runnable runnable = new Runnable() {
@@ -81,8 +82,7 @@ public class ListenerStatisticInfo implements ServletContextListener {
 
 		CollectorRegistry registry = new CollectorRegistry();
 
-		// open connection to database
-		db_operations db = new db_operations();
+		
 		db_operations.connectPostgreSQL();
 		db_operations.createTableCustSla();
 		db_operations.closePostgreSQL();
