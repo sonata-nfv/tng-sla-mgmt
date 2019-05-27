@@ -2044,6 +2044,36 @@ public class db_operations {
 		return result;
 
 	}
+	
+	public static boolean deactivateLicense(String correlation_id, String license_status) {
+
+		Statement stmt = null;
+		boolean result = false;
+		try {
+			c.setAutoCommit(false);
+			stmt = c.createStatement();
+			String sql = "UPDATE sla_licensing SET license_status='" + license_status + "' WHERE correlation_id='" + correlation_id	+ "';";
+			stmt.executeUpdate(sql);
+			stmt.close();
+			c.commit();
+			result = true;
+
+		} catch (Exception e) {
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			String timestamps = timestamp.toString();
+			String type = "W";
+			String operation = "Deactivating SLA Licensing";
+			String message = "[*] Error de-activating License with correlation id='"+correlation_id+"' : " + e.getMessage().toString();
+			String status = "";
+			logger.warn(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
+		}
+		return result;
+
+	}
+
 
 	public static boolean UpdateLicenseCorrelationID(String sla_uuid, String ns_uuid, String cust_username,
 			String correlation_id) {
@@ -2067,6 +2097,35 @@ public class db_operations {
 			String type = "W";
 			String operation = "Updating SLA Licensing correlation id";
 			String message = "[*] Error updating SLA Licensing correlation id: " + e.getMessage();
+			String status = "";
+			logger.warn(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
+		}
+		return result;
+
+	}
+	
+	public static boolean UpdateLicenseCorrelationIDperNSI(String nsi_uuid, String correlation_id) {
+
+		boolean result = false;
+		try {
+			c.setAutoCommit(false);
+			stmt = c.createStatement();
+			String sql = "UPDATE sla_licensing SET correlation_id='" + correlation_id + "' WHERE nsi_uuid='" + nsi_uuid + "';";
+			stmt.executeUpdate(sql);
+
+			stmt.close();
+			c.commit();
+			result = true;
+
+		} catch (Exception e) {
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			String timestamps = timestamp.toString();
+			String type = "E";
+			String operation = "Updating SLA Licensing correlation id";
+			String message = "[*] Error updating SLA Licensing correlation id: " + e.getMessage().toString();
 			String status = "";
 			logger.warn(
 					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",

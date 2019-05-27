@@ -168,6 +168,7 @@ public class MqServiceTerminateConsumer implements ServletContextListener {
 							new db_operations();
 							db_operations.connectPostgreSQL();
 							db_operations.TerminateAgreement("TERMINATED", correlation_id.toString());
+							db_operations.deactivateLicense(correlation_id.toString(), "inactive");
 							db_operations.closePostgreSQL();
 
 							// logging
@@ -192,6 +193,7 @@ public class MqServiceTerminateConsumer implements ServletContextListener {
 						// make update record to change the correlation id - the correlation id of the
 						// termination messaging
 						db_operations.UpdateCorrelationID(nsi_uuid.toString(), correlation_id.toString());
+						db_operations.UpdateLicenseCorrelationIDperNSI(nsi_uuid.toString(), correlation_id.toString());
 						db_operations.closePostgreSQL();
 					}
 					
