@@ -173,17 +173,17 @@ public class MqServiceTerminateConsumer implements ServletContextListener {
 							// deactivate license
 							db_operations.deactivateLicense(correlation_id.toString(), "inactive");
 							
-							// reduce cuurent instances 
-							org.json.simple.JSONObject linfo = db_operations.getSpecificLicense(nsi_uuid.toString());
-							String sla_uuid = linfo.get("sla_uuid").toString();
-							String ns_uuid = linfo.get("ns_uuid").toString();
-							String cust_username = linfo.get("cust_username").toString();
-							String current_instances = linfo.get("current_instances").toString();
-							int ci_int = Integer.parseInt(current_instances);	
-							int ci_int_updated = (ci_int - 1);
-							String updated_current_instances = String.valueOf(ci_int_updated);
-							db_operations.UpdateLicenseCurrentInstances(sla_uuid, ns_uuid, cust_username, updated_current_instances);
-							
+//							// reduce cuurent instances 
+//							org.json.simple.JSONObject linfo = db_operations.getSpecificLicense(nsi_uuid.toString());
+//							String sla_uuid = linfo.get("sla_uuid").toString();
+//							String ns_uuid = linfo.get("ns_uuid").toString();
+//							String cust_username = linfo.get("cust_username").toString();
+//							String current_instances = linfo.get("current_instances").toString();
+//							int ci_int = Integer.parseInt(current_instances);	
+//							int ci_int_updated = (ci_int - 1);
+//							String updated_current_instances = String.valueOf(ci_int_updated);
+//							db_operations.UpdateLicenseCurrentInstances(sla_uuid, ns_uuid, cust_username, updated_current_instances);
+//							
 							db_operations.closePostgreSQL();
 
 							// logging
