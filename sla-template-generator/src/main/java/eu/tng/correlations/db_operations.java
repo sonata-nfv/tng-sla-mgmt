@@ -1913,7 +1913,7 @@ public class db_operations {
 		try {
 			c.setAutoCommit(false);
 			stmt = c.createStatement();
-			String sql = "UPDATE sla_licensing SET nsi_uuid='" + nsi_uuid + "' AND license_status='" + license_status
+			String sql = "UPDATE sla_licensing SET nsi_uuid='" + nsi_uuid + "', license_status='" + license_status
 					+ "' WHERE correlation_id='" + correlation_id + "';";
 			stmt.executeUpdate(sql);
 			result = true;
@@ -1936,7 +1936,7 @@ public class db_operations {
 			String timestamps = timestamp.toString();
 			String type = "E";
 			String operation = "UPDATE License instance. Class: " + class_name;
-			String message = ("[*] Set license status ACTIVE ?" + result);
+			String message = ("[*] Set license status ACTIVE ?" + e.getMessage().toString());
 			String status = "";
 			logger.error(
 					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
@@ -2154,13 +2154,13 @@ public class db_operations {
 					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 					type, timestamps, operation, message + message2, status);
 
-		} catch (Exception e) {
+		} catch (SQLException e) {
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 			String timestamps = timestamp.toString();
 			String type = "E";
 			String operation = "Updating SLA Licensing current instances";
-			String message = "[*] Error updating license current instances: " + e.getMessage();
+			String message = "[*] Error updating license current instances: " + e.getMessage().toString();
 			String status = "";
 			logger.error(
 					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
