@@ -209,8 +209,12 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 
                                 org.json.simple.JSONObject ns_name_obj = dbo.selectAgreementPerSLA(sla_id.toString());
 
+                                System.out.print("ns_name_obj ==> " + ns_name_obj );
+
                                 network_service_name = (String) ns_name_obj.get("ns_name");
                                 db_operations.closePostgreSQL();
+                                
+                                System.out.print("NETWORK SERVICE NAME 0" + network_service_name );
 
                                 // Get vnfrs
                                 JSONArray vnfrs = (JSONArray) jsonObjectMessage.getJSONArray("vnfrs");
@@ -228,7 +232,7 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
                                             String vdu_reference = (String) ((JSONObject) vdus.getJSONObject(j))
                                                     .get("vdu_reference");
 
-                                            if (vdu_reference.startsWith("default") == true) {
+                                            if (vdu_reference.startsWith("ms-vnf") == true) {
 
                                                 // get vnfr id
                                                 String vnfr_id = (String) ((JSONObject) vnfrs.get(i)).get("id");
