@@ -1936,7 +1936,7 @@ public class db_operations {
 			String timestamps = timestamp.toString();
 			String type = "E";
 			String operation = "UPDATE License instance. Class: " + class_name;
-			String message = ("[*] Set license status ACTIVE ?" + result);
+			String message = ("[*] Set license status ACTIVE ?" + e.getMessage());
 			String status = "";
 			logger.error(
 					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
