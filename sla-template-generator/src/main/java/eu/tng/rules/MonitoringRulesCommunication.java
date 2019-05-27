@@ -23,12 +23,6 @@ public class MonitoringRulesCommunication {
     public static JSONObject createMonitoringRules(String sla_uuid, ArrayList<String> vnfr_id_list,
             ArrayList<String> vnfr_name_list, ArrayList<String> deployment_unit_id_list, String nsi_id) {
 
-        
-        System.out.print("sla_uuid " +sla_uuid );
-        System.out.print("vnfr_id_list" + vnfr_id_list);
-        System.out.print("vnfr_name_list" + vnfr_name_list);
-        System.out.print("deployment_unit_id_list" + deployment_unit_id_list);
-        System.out.print("nsi_id" + nsi_id);
  
         
         /*
@@ -97,6 +91,8 @@ public class MonitoringRulesCommunication {
                         rules.add(rule_obj);
 
                         vdu_obj.put("rules", rules);
+                        vdu_obj.put("vdu_id", curr_vdu_id);
+
                         vdus.add(vdu_obj);
                         vnf_obj.put("vdus", vdus);
                         vnfs.add(vnf_obj);
@@ -145,6 +141,7 @@ public class MonitoringRulesCommunication {
                         rules.add(rule_obj);
 
                         vdu_obj.put("rules", rules);
+                        vdu_obj.put("vdu_id", curr_vdu_id);
                         vdus.add(vdu_obj);
                         vnf_obj.put("vdus", vdus);
                         vnfs.add(vnf_obj);
@@ -172,16 +169,6 @@ public class MonitoringRulesCommunication {
             PublishMonitoringRules mr = new PublishMonitoringRules();
             mr.publishMonitringRules(root, nsi_id);
 
-            // logging
-            timestamp = new Timestamp(System.currentTimeMillis());
-            timestamps = timestamp.toString();
-            type = "I";
-            operation = "Create monitoring rules for Communications Pilot service";
-            message = "Rule published succesfully!";
-            status = "";
-            logger.info(
-                    "{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
-                    type, timestamps, operation, message, status);
 
         return root;
 
