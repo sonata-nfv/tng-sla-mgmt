@@ -24,15 +24,21 @@ public class MonitoringRulesCommunication {
             ArrayList<String> vnfr_name_list, ArrayList<String> deployment_unit_id_list, String nsi_id) {
 
         
+        System.out.print("sla_uuid " +sla_uuid );
+        System.out.print("vnfr_id_list" + vnfr_id_list);
+        System.out.print("vnfr_name_list" + vnfr_name_list);
+        System.out.print("deployment_unit_id_list" + deployment_unit_id_list);
+        System.out.print("nsi_id" + nsi_id);
+ 
+        
         /*
             vnfr_id_list = new ArrayList<String>(new LinkedHashSet<String>(vnfr_id_list));
             vnfr_name_list = new ArrayList<String>(new LinkedHashSet<String>(vnfr_name_list));
             deployment_unit_id_list = new ArrayList<String>(new LinkedHashSet<String>(deployment_unit_id_list));
         */
 
-        JSONObject root = new JSONObject();
+            JSONObject root = new JSONObject();
 
-        if (sla_uuid != null && !sla_uuid.isEmpty()) {
 
             JSONObject slo_list = getSloDetails(sla_uuid);
             JSONArray slos = (JSONArray) slo_list.get("slos");
@@ -176,19 +182,6 @@ public class MonitoringRulesCommunication {
             logger.info(
                     "{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
                     type, timestamps, operation, message, status);
-
-        } else {
-            // logging
-            Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-            String timestamps = timestamp.toString();
-            String type = "W";
-            String operation = "Create monitoring rules for Communications Pilot service";
-            String message = "[*] ERROR: Unable to create rules. SLA ID is null";
-            String status = "";
-            logger.warn(
-                    "{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
-                    type, timestamps, operation, message, status);
-        }
 
         return root;
 
