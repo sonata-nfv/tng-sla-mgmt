@@ -2229,6 +2229,7 @@ public class db_operations {
 
 	}
 
+
 	/**
 	 * @return Number of utilized licenses
 	 */
