@@ -138,8 +138,8 @@ public class MgmtAPIs {
 	 */
 	@SuppressWarnings("unchecked")
 	@GET
-	@Path("/guaranteesList/{ns_name}")
-	@Produces(MediaType.APPLICATION_JSON)
+	@Path("/guaranteesList/{ns_name : (/ns_name)?}")
+	@Produces(MediaType.TEXT_PLAIN)
 	public Response getGuarantees(@PathParam("ns_name") String ns_name) {
 
 		JSONParser parser = new JSONParser();
@@ -152,8 +152,8 @@ public class MgmtAPIs {
 			// Optional parameter "ns_name" not specified
 			ns_name = "default";
 		} 
-
-		System.out.println("NS NAME FOR THE GUARANTEES ==> " + ns_name);
+		
+		System.out.println(" ns name for the guarantees ==> " + ns_name);
 
 		ResponseBuilder apiresponse = null;
 		try {
@@ -167,6 +167,8 @@ public class MgmtAPIs {
 			 * 
 			 */
 			if (ns_name.equals("communication-pilot")) {
+				
+				System.out.println(" name equals the comm");
 
 				for (int i = 0; i < guaranteeTerms.size(); i++) {
 					JSONObject curr_gurantee = (JSONObject) guaranteeTerms.get(i);
@@ -181,8 +183,10 @@ public class MgmtAPIs {
 
 			}
 
-			else if (ns_name.equals("mediapilot-service")) {
-
+			if (ns_name.equals("mediapilot-service")) {
+				
+				System.out.println(" name equals the media");
+				
 				for (int i = 0; i < guaranteeTerms.size(); i++) {
 					JSONObject curr_gurantee = (JSONObject) guaranteeTerms.get(i);
 					String guaranteeID = (String) curr_gurantee.get("guaranteeID");
@@ -197,13 +201,14 @@ public class MgmtAPIs {
 			}
 
 			else {
+				System.out.println("this is the genral name");
 				returnedSLOs = jsonObject;
 			}
 
 			System.out.println("returnedSLOs  ==> " + returnedSLOs);
 
-			apiresponse = Response.ok(returnedSLOs);
-			apiresponse.header("Content-Length", returnedSLOs.toJSONString().length());
+			apiresponse = Response.ok(returnedSLOs.toString());
+			apiresponse.header("Content-Length", returnedSLOs.toString().length());
 
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
