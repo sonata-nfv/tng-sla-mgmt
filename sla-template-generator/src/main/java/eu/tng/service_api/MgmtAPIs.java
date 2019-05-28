@@ -179,7 +179,8 @@ public class MgmtAPIs {
 						returned_guaranteeTerms.add(curr_gurantee);
 					}
 				}
-				returnedSLOs.put(guaranteeTerms, returned_guaranteeTerms);
+				returnedSLOs.put("guaranteeTerms", returned_guaranteeTerms);
+
 
 			}
 
@@ -196,7 +197,7 @@ public class MgmtAPIs {
 						returned_guaranteeTerms.add(curr_gurantee);
 					}
 				}
-				returnedSLOs.put(guaranteeTerms, returned_guaranteeTerms);
+				returnedSLOs.put("guaranteeTerms", returned_guaranteeTerms);
 
 			}
 
