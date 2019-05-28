@@ -183,8 +183,7 @@ public class MgmtAPIs {
 
 
 			}
-
-			if (ns_name.equals("mediapilot-service")) {
+			else if (ns_name.equals("mediapilot-service")) {
 				
 				System.out.println(" name equals the media");
 				
@@ -200,9 +199,8 @@ public class MgmtAPIs {
 				returnedSLOs.put("guaranteeTerms", returned_guaranteeTerms);
 
 			}
-
 			else {
-				System.out.println("this is the genral name");
+				System.out.println("this is the general name");
 				returnedSLOs = jsonObject;
 			}
 
