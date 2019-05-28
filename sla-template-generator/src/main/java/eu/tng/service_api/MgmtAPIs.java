@@ -138,13 +138,14 @@ public class MgmtAPIs {
 	 */
 	@SuppressWarnings("unchecked")
 	@GET
-	@Path("/guaranteesList/{ns_name:(ns_name)?}")
+	//@Path("/guaranteesList/{ns_name:(ns_name)?}")
+	@Path("/guaranteesList/{ns_name:(([a-zA-Z])?)}")
 	@Produces(MediaType.TEXT_PLAIN)
 	public Response getGuarantees(@PathParam("ns_name") String ns_name) {
 
 		JSONParser parser = new JSONParser();
 		JSONObject jsonObject = null;
-
+		
 		JSONObject returnedSLOs = new JSONObject();
 		JSONArray returned_guaranteeTerms = new JSONArray();
 
