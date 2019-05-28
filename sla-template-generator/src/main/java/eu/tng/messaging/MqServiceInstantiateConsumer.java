@@ -209,8 +209,10 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 
                                 org.json.simple.JSONObject ns_name_obj = dbo.selectAgreementPerSLA(sla_id.toString());
 
+
                                 network_service_name = (String) ns_name_obj.get("ns_name");
                                 db_operations.closePostgreSQL();
+                                
 
                                 // Get vnfrs
                                 JSONArray vnfrs = (JSONArray) jsonObjectMessage.getJSONArray("vnfrs");
@@ -228,7 +230,7 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
                                             String vdu_reference = (String) ((JSONObject) vdus.getJSONObject(j))
                                                     .get("vdu_reference");
 
-                                            if (vdu_reference.startsWith("default") == true) {
+                                            if (vdu_reference.startsWith("ms-vnf") == true) {
 
                                                 // get vnfr id
                                                 String vnfr_id = (String) ((JSONObject) vnfrs.get(i)).get("id");
@@ -304,6 +306,7 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
                                 db_operations.UpdateRecordAgreement("READY", correlation_id, nsi_id);
                                 db_operations.closePostgreSQL();
 
+                                
                                 // Monitoring rules for Immersive Media
                                 if (network_service_name.equals("mediapilot-service")) {
                                     new MonitoringRulesImmersiveMedia();
@@ -313,7 +316,6 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 
                                 // Monitoring rules for Communications Pilot
                                 if (network_service_name.equals("communication-pilot")) {
-
                                     new MonitoringRulesCommunication();
                                     MonitoringRulesCommunication.createMonitoringRules(String.valueOf(sla_id),
                                             vnfr_id_list, vnfr_name_list, vc_id_list, nsi_id);
