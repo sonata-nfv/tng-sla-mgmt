@@ -31,7 +31,7 @@ public class MonitoringRulesCommunication {
         JSONArray vdus = new JSONArray();
         JSONObject vdu_obj = new JSONObject();
         JSONArray rules = new JSONArray();
-        JSONObject rule_obj = new JSONObject();
+
         JSONObject notification_type = new JSONObject();
 
         root.put("sla_cnt", sla_uuid);
@@ -43,8 +43,7 @@ public class MonitoringRulesCommunication {
         vdu_obj.put("vdu_id", curr_vdu_id);
         vdus.add(vdu_obj);
         vnf_obj.put("vdus", vdus);
-        
-        
+
         for (int j = 0; j < slos.size(); j++) {
 
             JSONObject curr_slo = (JSONObject) slos.get(j);
@@ -53,33 +52,34 @@ public class MonitoringRulesCommunication {
             String target_value = (String) curr_slo.get("target_value");
 
             if (curr_slo_name.equals("videoPacketLost")) {
+                JSONObject rule_obj_pl = new JSONObject();
 
-                rule_obj.put("name", "sla_rule_" + curr_slo_name);
-                rule_obj.put("duration", "10s");
-                rule_obj.put("description", "");
+                rule_obj_pl.put("name", "sla_rule_" + curr_slo_name);
+                rule_obj_pl.put("duration", "10s");
+                rule_obj_pl.put("description", "");
 
                 String curr_vdu_id_quotes = "\"" + curr_vdu_id + "\"";
                 String condition = "videoPacketLost{resource_id=" + curr_vdu_id_quotes + "} > " + target_value;
-                rule_obj.put("condition", condition);
-                rule_obj.put("summary", "");
+                rule_obj_pl.put("condition", condition);
+                rule_obj_pl.put("summary", "");
 
                 notification_type.put("id", "2");
                 notification_type.put("type", "rabbitmq");
-                rule_obj.put("notification_type", notification_type);
+                rule_obj_pl.put("notification_type", notification_type);
 
-                rules.add(rule_obj);
-
-                vdu_obj.put("rules", rules);
+                rules.add(rule_obj_pl);
 
             }
 
             if (curr_slo_name.equals("Downtime")) {
 
-                rule_obj = new JSONObject();
+                JSONObject rule_obj_dt = new JSONObject();
 
-                rule_obj.put("name", "sla_rule_" + curr_slo_name);
-                rule_obj.put("duration", "10s");
-                rule_obj.put("description", "");
+                rule_obj_dt = new JSONObject();
+
+                rule_obj_dt.put("name", "sla_rule_" + curr_slo_name);
+                rule_obj_dt.put("duration", "10s");
+                rule_obj_dt.put("description", "");
 
                 String curr_vdu_id_quotes = "\"" + curr_vdu_id + "\"";
                 String trimed_target_value = target_value.substring(0, target_value.length() - 1);
@@ -87,19 +87,18 @@ public class MonitoringRulesCommunication {
                 String condition = "delta(status{resource_id=" + curr_vdu_id_quotes + "}[" + target_period + "]) > "
                         + trimed_target_value;
 
-                rule_obj.put("condition", condition);
-                rule_obj.put("summary", "");
+                rule_obj_dt.put("condition", condition);
+                rule_obj_dt.put("summary", "");
 
                 notification_type = new JSONObject();
                 notification_type.put("id", "2");
                 notification_type.put("type", "rabbitmq");
-                rule_obj.put("notification_type", notification_type);
+                rule_obj_dt.put("notification_type", notification_type);
 
-                rules.add(rule_obj);
-
-                vdu_obj.put("rules", rules);
+                rules.add(rule_obj_dt);
 
             }
+            vdu_obj.put("rules", rules);
         }
 
         vnfs.add(vnf_obj);
