@@ -306,9 +306,10 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
                                 db_operations.UpdateRecordAgreement("READY", correlation_id, nsi_id);
                                 db_operations.closePostgreSQL();
 
-                                
+                                System.out.println("NS NAME1: " + network_service_name);
                                 // Monitoring rules for Immersive Media
                                 if (network_service_name.equals("mediapilot-service")) {
+									System.out.println("NS NAME2: " + network_service_name);
                                     new MonitoringRulesImmersiveMedia();
                                     MonitoringRulesImmersiveMedia.createMonitoringRules(String.valueOf(sla_id),
                                             vnfr_id_list, vnfr_name_list, cdu_id_list, nsi_id);
