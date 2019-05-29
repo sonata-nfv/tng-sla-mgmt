@@ -84,7 +84,7 @@ public class MonitoringRulesCommunication {
                 String curr_vdu_id_quotes = "\"" + curr_vdu_id + "\"";
                 String trimed_target_value = target_value.substring(0, target_value.length() - 1);
 
-                String condition = "delta(status{resource_id=" + curr_vdu_id_quotes + "}[" + target_period + "]) > "
+                String condition = "delta(health{resource_id=" + curr_vdu_id_quotes + "}[" + target_period + "]) > "
                         + trimed_target_value;
 
                 rule_obj_dt.put("condition", condition);
