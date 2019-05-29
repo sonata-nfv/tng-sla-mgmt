@@ -272,7 +272,8 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 
                                             if ((cdu_reference.startsWith("vnf-mse") == true)
                                                     || (cdu_reference.startsWith("vnf-cms") == true)
-                                                    || (cdu_reference.startsWith("vnf-ma") == true)) {
+                                                    || (cdu_reference.startsWith("vnf-ma") == true)
+													|| (cdu_reference.startsWith("vnf-twitter") == true)) {
                                                 String vnfr_name = vnfrs.getJSONObject(i).getString("name");
                                                 vnfr_name_list.add(vnfr_name);
                                                 // get vnfr id
