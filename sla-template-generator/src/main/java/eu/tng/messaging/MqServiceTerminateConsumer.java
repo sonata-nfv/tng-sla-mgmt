@@ -70,7 +70,7 @@ public class MqServiceTerminateConsumer implements ServletContextListener {
 
 	@Override
 	public void contextDestroyed(ServletContextEvent arg0) {
-		
+
 		// logging
 		Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 		String timestamps = timestamp.toString();
@@ -136,8 +136,8 @@ public class MqServiceTerminateConsumer implements ServletContextListener {
 					type, timestamps, operation, message, status);
 
 			DeliverCallback deliverCallback = new DeliverCallback() {
-                @Override
-                public void handle(String consumerTag, Delivery delivery) throws IOException {
+				@Override
+				public void handle(String consumerTag, Delivery delivery) throws IOException {
 
 					JSONObject jsonObjectMessage = null;
 					Object correlation_id = null;
@@ -146,8 +146,8 @@ public class MqServiceTerminateConsumer implements ServletContextListener {
 
 					// Parse message payload
 					String message = new String(delivery.getBody(), "UTF-8");
-					
-					//Ack the message
+
+					// Ack the message
 					channel_service_terminate.basicAck(delivery.getEnvelope().getDeliveryTag(), false);
 
 					// parse the yaml and convert it to json
@@ -169,21 +169,29 @@ public class MqServiceTerminateConsumer implements ServletContextListener {
 							db_operations.connectPostgreSQL();
 							// termonate agreement
 							db_operations.TerminateAgreement("TERMINATED", correlation_id.toString());
-							
+
 							// deactivate license
 							db_operations.deactivateLicense(correlation_id.toString(), "inactive");
-							
-//							// reduce cuurent instances 
-//							org.json.simple.JSONObject linfo = db_operations.getSpecificLicense(nsi_uuid.toString());
-//							String sla_uuid = linfo.get("sla_uuid").toString();
-//							String ns_uuid = linfo.get("ns_uuid").toString();
-//							String cust_username = linfo.get("cust_username").toString();
-//							String current_instances = linfo.get("current_instances").toString();
-//							int ci_int = Integer.parseInt(current_instances);	
-//							int ci_int_updated = (ci_int - 1);
-//							String updated_current_instances = String.valueOf(ci_int_updated);
-//							db_operations.UpdateLicenseCurrentInstances(sla_uuid, ns_uuid, cust_username, updated_current_instances);
-//							
+
+							// reduce current instances
+							org.json.simple.JSONObject linfo = db_operations
+									.getLicensePerCorrID(correlation_id.toString());
+							String sla_uuid = linfo.get("sla_uuid").toString();
+							String ns_uuid = linfo.get("ns_uuid").toString();
+							String cust_username = linfo.get("cust_username").toString();
+							String current_instances = linfo.get("current_instances").toString();
+							String updated_current_instances = "";
+
+							if (current_instances.equals("0")) {
+								updated_current_instances = ("0");
+							} else {
+								int ci_int = Integer.parseInt(current_instances);
+								int ci_int_updated = (ci_int - 1);
+								updated_current_instances = String.valueOf(ci_int_updated);
+							}
+
+							db_operations.UpdateLicenseCurrentInstances(sla_uuid, ns_uuid, cust_username,updated_current_instances);
+
 							db_operations.closePostgreSQL();
 
 							// logging
@@ -211,15 +219,17 @@ public class MqServiceTerminateConsumer implements ServletContextListener {
 						db_operations.UpdateLicenseCorrelationIDperNSI(nsi_uuid.toString(), correlation_id.toString());
 						db_operations.closePostgreSQL();
 					}
-					
+
 				}
 
 			};
 
-			channel_service_terminate.basicConsume(queueName_service_terminate, false, deliverCallback, new CancelCallback() {
-                @Override
-                public void handle(String consumerTag) throws IOException { }
-            });
+			channel_service_terminate.basicConsume(queueName_service_terminate, false, deliverCallback,
+					new CancelCallback() {
+						@Override
+						public void handle(String consumerTag) throws IOException {
+						}
+					});
 
 		} catch (IOException e) {
 			// logging
@@ -228,7 +238,7 @@ public class MqServiceTerminateConsumer implements ServletContextListener {
 			type = "E";
 			operation = "RabbitMQ Listener";
 			message = "[*] ERROR Connecting to MQ!" + e.getMessage();
-			status= "";
+			status = "";
 			logger.error(
 					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 					type, timestamps, operation, message, status);

@@ -1906,6 +1906,70 @@ public class db_operations {
 
 		return license_info;
 	}
+	
+	@SuppressWarnings("unchecked")
+	public static JSONObject getLicensePerCorrID(String correlation_id) {
+
+		JSONObject license_info = new JSONObject();
+		String sla_uuid = "";
+		String ns_uuid = "";
+		String nsi_uuid = "";
+		String cust_username = "";
+		String cust_email = "";
+		String license_status = "";
+		String license_type = "";
+		String license_expiration_date = "";
+		String allowed_instances = "";
+		String current_instances = "";
+
+		try {
+			c.setAutoCommit(false);
+			stmt = c.createStatement();
+			ResultSet rs = stmt.executeQuery("SELECT * FROM sla_licensing WHERE correlation_id = '" + correlation_id + "';");
+
+			while (rs.next()) {
+				sla_uuid = rs.getString("sla_uuid");
+				ns_uuid = rs.getString("ns_uuid");
+				nsi_uuid = rs.getString("nsi_uuid");
+				cust_username = rs.getString("cust_username");
+				cust_email = rs.getString("cust_email");
+				license_status = rs.getString("license_status");
+				license_type = rs.getString("license_type");
+				license_expiration_date = rs.getString("license_exp_date");
+				allowed_instances = rs.getString("allowed_instances");
+				current_instances = rs.getString("current_instances");
+
+				license_info.put("sla_uuid", sla_uuid);
+				license_info.put("ns_uuid", ns_uuid);
+				license_info.put("nsi_uuid", nsi_uuid);
+				license_info.put("cust_username", cust_username);
+				license_info.put("cust_email", cust_email);
+				license_info.put("license_status", license_status);
+				license_info.put("license_type", license_type);
+				license_info.put("license_expiration_date", license_expiration_date);
+				license_info.put("allowed_instances", allowed_instances);
+				license_info.put("current_instances", current_instances);
+
+			}
+			rs.close();
+			stmt.close();
+			c.commit();
+
+		} catch (SQLException e) {
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			String timestamps = timestamp.toString();
+			String type = "E";
+			String operation = "Get specific license record";
+			String message = ("[*] Error Getting specific license  ==> " + e.getMessage());
+			String status = "";
+			logger.error(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
+		}
+
+		return license_info;
+	}
 
 	public static boolean CreateLicenseInstance(String correlation_id, String license_status, String nsi_uuid) {
 
