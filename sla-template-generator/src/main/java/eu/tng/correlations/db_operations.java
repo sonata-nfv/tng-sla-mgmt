@@ -2332,7 +2332,7 @@ public class db_operations {
 	 */
 	public int countAcquiredLicense() {
 
-		String SQL = "SELECT count(*) FROM sla_licensing WHERE (license_status='bought' OR license_status='active') AND license_type='private'";
+		String SQL = "SELECT count(*) FROM sla_licensing WHERE (license_status!='inactive')";
 		int count = 0;
 		try {
 			c.setAutoCommit(false);
