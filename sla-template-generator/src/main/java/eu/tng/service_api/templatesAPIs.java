@@ -225,6 +225,17 @@ public class templatesAPIs {
 	@POST
 	public Response createTemplate(final MultivaluedMap<String, String> formParams, @Context HttpHeaders headers) {
 
+		ResponseBuilder apiresponse = null;
+
+		// mendatory fields
+		List<String> nsd_uuid = formParams.get("nsd_uuid");
+		List<String> templateName = formParams.get("templateName");
+		List<String> expireDate = formParams.get("expireDate");
+		List<String> service_licence_type = formParams.get("service_licence_type");
+		List<String> allowed_service_instances = formParams.get("allowed_service_instances");
+		List<String> service_licence_expiration_date = formParams.get("service_licence_expiration_date");
+
+		// optional template_initiator and template_initiator_email
 		String template_initiator = "";
 		String template_initiator_email = "";
 		try {
@@ -234,18 +245,7 @@ public class templatesAPIs {
 		} catch (JSONException e) {
 			template_initiator = "admin";
 			template_initiator_email = "admin-email";
-
 		}
-
-		ResponseBuilder apiresponse = null;
-
-		List<String> nsd_uuid = formParams.get("nsd_uuid");
-		List<String> templateName = formParams.get("templateName");
-		List<String> expireDate = formParams.get("expireDate");
-
-		List<String> service_licence_type = formParams.get("service_licence_type");
-		List<String> allowed_service_instances = formParams.get("allowed_service_instances");
-		List<String> service_licence_expiration_date = formParams.get("service_licence_expiration_date");
 
 		// optional provider name
 		String provider_name = "";
@@ -255,6 +255,7 @@ public class templatesAPIs {
 		} catch (Exception e) {
 			provider_name = "default";
 		}
+
 		// optional flavour_name
 		String dflavour_name = "";
 		try {
@@ -264,8 +265,24 @@ public class templatesAPIs {
 			dflavour_name = "default";
 		}
 
+		// optional guarantees
 		ArrayList<String> guarantees = new ArrayList<String>();
-		guarantees.addAll(formParams.get("guaranteeId"));
+		try {
+			guarantees.addAll(formParams.get("guaranteeId"));
+		} catch (Exception e) {
+
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			String timestamps = timestamp.toString();
+			String type = "W";
+			String operation = "Create SLA Template API. Class:" + this.getClass().getName();
+			String message = "[*] No guarantees selected : " + e.getMessage();
+			String status = "";
+			logger.error(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
+
+		}
 
 		// format based on ISO date the license exoiration date
 		TimeZone tz = TimeZone.getTimeZone("UTC");

@@ -62,7 +62,10 @@ public class CreateTemplate {
 
 
 		GetGuarantee guarantee = new GetGuarantee();
-		ArrayList<JSONObject> guaranteeArr = guarantee.getGuarantee(guarantees);
+		ArrayList<JSONObject> guaranteeArr = new ArrayList<JSONObject>();
+		if (guarantees.isEmpty() == false) {
+			guaranteeArr = guarantee.getGuarantee(guarantees);
+		}
 
 		/** get network service descriptor for the given nsId */
 		GetNsd nsd = new GetNsd();
@@ -159,13 +162,18 @@ public class CreateTemplate {
 			service.put("ns_vendor", getNsd.getVendor());
 			service.put("ns_version", getNsd.getVersion());
 			sla_template.put("service", service);
-			/** guaranteeTerms array **/
-			JSONArray guaranteeTerms = new JSONArray();
-			for (int counter = 0; counter < guaranteeArr.size(); counter++) {
-				guaranteeTerms.add(guaranteeArr.get(counter));
-			}
-			service.put("guaranteeTerms", guaranteeTerms);
 			
+			// optional guaranteeTerms array
+			/** guaranteeTerms array **/
+			if (guaranteeArr.isEmpty() == false) {
+				JSONArray guaranteeTerms = new JSONArray();
+				for (int counter = 0; counter < guaranteeArr.size(); counter++) {
+					guaranteeTerms.add(guaranteeArr.get(counter));
+				}
+				service.put("guaranteeTerms", guaranteeTerms);
+			}
+
+	
 			/** licenses object **/
 			JSONObject licenses = new JSONObject();
 			JSONObject service_based = new JSONObject();
