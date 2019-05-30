@@ -35,7 +35,11 @@
 
 package eu.tng.messaging;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Map;
@@ -307,25 +311,101 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
                                 db_operations.UpdateRecordAgreement("READY", correlation_id, nsi_id);
                                 db_operations.closePostgreSQL();
 
-                                // Monitoring rules for Immersive Media
-                                if (network_service_name.equals("mediapilot-service")) {
-                                    new MonitoringRulesImmersiveMedia();
-                                    MonitoringRulesImmersiveMedia.createMonitoringRules(String.valueOf(sla_id),
-                                            vnfr_id_list, vnfr_name_list, cdu_id_list, nsi_id);
-                                }
-
-                                // Monitoring rules for Communications Pilot
-                                if (network_service_name.equals("communication-pilot")) {
-                                    new MonitoringRulesCommunication();
-                                    MonitoringRulesCommunication.createMonitoringRules(String.valueOf(sla_id),
-                                            vnfr_id_list, vnfr_name_list, vc_id_list, nsi_id);
-                                }
-
                                 // UPDATE LIcense record with NSI - to create license instance
                                 // check if there are already instances for this ns_uuid - cust_username
                                 db_operations.connectPostgreSQL();
                                 db_operations.CreateLicenseInstance(correlation_id, "active", nsi_id);
                                 db_operations.closePostgreSQL();
+                                
+                                
+                                /**
+                                 *  Check if this SLA has guarantees - if it doesn't do not create the mnitoring rules
+                                 */
+                                
+                        		try {
+                        			String url = System.getenv("CATALOGUES_URL") + "slas/template-descriptors/"+String.valueOf(sla_id);
+                        			// String url =
+                        			// "http://pre-int-sp-ath.5gtango.eu:4011/catalogues/api/v2/slas/template-descriptors";
+                        			URL object = new URL(url);
+
+                        			HttpURLConnection con = (HttpURLConnection) object.openConnection();
+                        			con.setDoOutput(true);
+                        			con.setDoInput(true);
+                        			con.setRequestProperty("Content-Type", "application/json");
+                        			con.setRequestProperty("Accept", "application/json");
+                        			con.setRequestMethod("GET");
+
+                        			con.getResponseCode();
+                        			BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
+                        			String inputLine;
+                        			StringBuffer response = new StringBuffer();
+                        			while ((inputLine = in.readLine()) != null) {
+                        				response.append(inputLine);
+                        			}
+                        			in.close();
+                        			String sresponse = response.toString();
+                        			JSONObject jsonObj = new JSONObject(sresponse);
+                        			
+                        			System.out.println("SLA TEMPLATE ==> " + jsonObj);
+                        			
+                        			try {
+                        				JSONObject slad = jsonObj.getJSONObject("slad");
+                            			JSONObject sla_template = slad.getJSONObject("sla_template");
+                            			JSONObject service = sla_template.getJSONObject("service");
+                            			
+										JSONArray guaranteeTerms = service.getJSONArray("guaranteeTerms"); 
+										
+										System.out.println("SLA guaranteeTerms ==> " + guaranteeTerms);
+										
+										// Monitoring rules for Immersive Media
+		                                if (network_service_name.equals("mediapilot-service")) {
+		                                    new MonitoringRulesImmersiveMedia();
+		                                    MonitoringRulesImmersiveMedia.createMonitoringRules(String.valueOf(sla_id),
+		                                            vnfr_id_list, vnfr_name_list, cdu_id_list, nsi_id);
+		                                }
+
+		                                // Monitoring rules for Communications Pilot
+		                                if (network_service_name.equals("communication-pilot")) {
+		                                    new MonitoringRulesCommunication();
+		                                    MonitoringRulesCommunication.createMonitoringRules(String.valueOf(sla_id),
+		                                            vnfr_id_list, vnfr_name_list, vc_id_list, nsi_id);
+		                                }
+		                                
+									} 
+                        			catch (Exception e2) {
+                        				// logging
+                            			timestamp = new Timestamp(System.currentTimeMillis());
+                            			timestamps = timestamp.toString();
+                            			type = "I";
+                            			operation = "Checking SLOs. Class: " + this.getClass().getSimpleName();
+                            			message = "[*] This SLA has not guarantees. Creation of rules aborted.";
+                            			status = String.valueOf(404);
+                            			logger.error(
+                            					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+                            					type, timestamps, operation, message, status);
+									}
+                        			
+                        			
+                        		} catch (Exception e) {
+                        			// logging
+                        			timestamp = new Timestamp(System.currentTimeMillis());
+                        			timestamps = timestamp.toString();
+                        			type = "E";
+                        			operation = "Getting SLA Template. Class: " + this.getClass().getSimpleName();
+                        			message = "[*] Error SLA Not Found";
+                        			status = String.valueOf(404);
+                        			logger.error(
+                        					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+                        					type, timestamps, operation, message, status);
+                        		}
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
 
                             } else {
                                 // logging
