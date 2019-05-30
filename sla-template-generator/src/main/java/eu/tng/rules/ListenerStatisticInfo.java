@@ -105,9 +105,6 @@ public class ListenerStatisticInfo implements ServletContextListener {
 		double violatedAgreements = dbo.countViolatedAgreements();
 		dbo.closePostgreSQL();
 
-		System.out.println("totalAgreements: " + totalAgreements);
-		System.out.println("violatedAgreements: " + violatedAgreements);
-		
 		
 		double percentage_violated = 0;
 		if (totalAgreements > 0) {
