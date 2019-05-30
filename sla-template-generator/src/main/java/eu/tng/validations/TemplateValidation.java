@@ -170,57 +170,31 @@ public class TemplateValidation {
 	 */
 	public static boolean checkGuaranteeTerms(ArrayList<String> guarantees) {
 
-		boolean valid_gt = false;
+		boolean valid_gt = true;
 
-		if (guarantees == null || guarantees.size() == 0) {
-			// logging
-			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-			String timestamps = timestamp.toString();
-			String type = "E";
-			String operation = "Validating SLA Template. Class: " + class_name;
-			String message = ("[*] Select at least one guarantee term!");
-			String status = "";
-			logger.error(
-					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
-					type, timestamps, operation, message, status);
+		/** check for duplicated guarantee id **/
+		Set<String> gt_ids = new HashSet<String>();
+		for (int i = 0; i < guarantees.size(); i++) {
+			String gt_uuid_temp = guarantees.get(i);
+			if (gt_ids.contains(gt_uuid_temp)) {
+				// logging
+				Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+				String timestamps = timestamp.toString();
+				String type = "E";
+				String operation = "Validating SLA Template. Class: "+ class_name;
+				String message = ("[*] Error: Duplicated guarantee id= " + gt_uuid_temp);
+				String status = "";
+				logger.error(
+						"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+						type, timestamps, operation, message, status);
 
-			valid_gt = false;
-		} else {
-			/** check for duplicated guarantee id **/
-			Set<String> gt_ids = new HashSet<String>();
-			for (int i = 0; i < guarantees.size(); i++) {
-				String gt_uuid_temp = guarantees.get(i);
-				if (gt_ids.contains(gt_uuid_temp)) {
-					// logging
-					Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-					String timestamps = timestamp.toString();
-					String type = "E";
-					String operation = "Validating SLA Template. Class: "+ class_name;
-					String message = ("[*] Error: Duplicated guarantee id= " + gt_uuid_temp);
-					String status = "";
-					logger.error(
-							"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
-							type, timestamps, operation, message, status);
-
-					valid_gt = false;
-					continue;
-				} else {
-					valid_gt = true;
-					gt_ids.add(gt_uuid_temp);
-				}
+				valid_gt = false;
+				continue;
+			} else {
+				valid_gt = true;
+				gt_ids.add(gt_uuid_temp);
 			}
 		}
-		
-		//logging
-		Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-		String timestamps = timestamp.toString();
-		String type = "I";
-		String operation = "Validating SLA Template. Class: " + class_name;
-		String message = ("[*] Are guarantee terms valid? " + valid_gt);
-		String status = "";
-		logger.info(
-				"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
-				type, timestamps, operation, message, status);
 
 		return valid_gt;
 
