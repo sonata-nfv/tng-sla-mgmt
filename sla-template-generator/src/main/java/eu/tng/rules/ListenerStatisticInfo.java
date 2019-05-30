@@ -48,7 +48,22 @@ public class ListenerStatisticInfo implements ServletContextListener {
 		final long timeInterval = 60 * 1000;
 		Runnable runnable = new Runnable() {
 			public void run() {
-				
+			    try {
+                    Thread.sleep(12000);
+                } catch (InterruptedException e) {
+                    // logging
+                    Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+                    String timestamps = timestamp.toString();
+                    String type = "E";
+                    String operation = "Statistic Info Listener";
+                    String message = ("[*] Thread Error ==> " + e.getMessage());
+                    String status = "";
+                    logger.debug(
+                            "{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+                            type, timestamps, operation, message, status);
+                }
+			    
+			    
 				while (true) {
 
 					try {
@@ -90,6 +105,7 @@ public class ListenerStatisticInfo implements ServletContextListener {
 		double violatedAgreements = dbo.countViolatedAgreements();
 		dbo.closePostgreSQL();
 
+		
 		double percentage_violated = 0;
 		if (totalAgreements > 0) {
 			percentage_violated = (violatedAgreements * 100) / totalAgreements;
