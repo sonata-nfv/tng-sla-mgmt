@@ -1057,7 +1057,7 @@ public class db_operations {
 	 */
 	public int countViolatedAgreements() {
 
-		String SQL = "SELECT count(*) FROM cust_sla where inst_status='VIOLATED'";
+		String SQL = "SELECT count(*) FROM cust_sla where sla_status='VIOLATED'";
 		int count = 0;
 		try {
 			c.setAutoCommit(false);
