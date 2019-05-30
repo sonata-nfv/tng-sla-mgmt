@@ -345,18 +345,14 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
                         			in.close();
                         			String sresponse = response.toString();
                         			JSONObject jsonObj = new JSONObject(sresponse);
-                        			
-                        			System.out.println("SLA TEMPLATE ==> " + jsonObj);
-                        			
+
                         			try {
                         				JSONObject slad = jsonObj.getJSONObject("slad");
                             			JSONObject sla_template = slad.getJSONObject("sla_template");
                             			JSONObject service = sla_template.getJSONObject("service");
                             			
 										JSONArray guaranteeTerms = service.getJSONArray("guaranteeTerms"); 
-										
-										System.out.println("SLA guaranteeTerms ==> " + guaranteeTerms);
-										
+																			
 										// Monitoring rules for Immersive Media
 		                                if (network_service_name.equals("mediapilot-service")) {
 		                                    new MonitoringRulesImmersiveMedia();
