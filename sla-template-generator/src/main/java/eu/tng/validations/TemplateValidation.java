@@ -170,8 +170,7 @@ public class TemplateValidation {
 	 */
 	public static boolean checkGuaranteeTerms(ArrayList<String> guarantees) {
 
-		boolean valid_gt = false;
-
+		boolean valid_gt = true;
 
 		/** check for duplicated guarantee id **/
 		Set<String> gt_ids = new HashSet<String>();
