@@ -97,7 +97,7 @@ public class db_operations {
 			connect = true;
 		}
 
-		catch (SQLException e) {
+		catch (SQLException | ClassNotFoundException e) {
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 			String timestamps = timestamp.toString();
