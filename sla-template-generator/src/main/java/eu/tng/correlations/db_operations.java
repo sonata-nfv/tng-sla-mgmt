@@ -97,7 +97,7 @@ public class db_operations {
 			connect = true;
 		}
 
-		catch (Exception e) {
+		catch (SQLException | ClassNotFoundException e) {
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 			String timestamps = timestamp.toString();
@@ -105,7 +105,7 @@ public class db_operations {
 			String operation = "Connecting to SLA Manager's internal database. Class: " + class_name;
 			String message = "Error connecting to SLA Manager's internal database. ==> " + e.getMessage();
 			String status = "";
-			logger.error(
+			logger.debug(
 					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 					type, timestamps, operation, message, status);
 
@@ -129,7 +129,7 @@ public class db_operations {
 			String operation = "Closing conection to SLA Manager's internal database. Class: " + class_name;
 			String message = "Error closing the connection to SLA Manager's internal database. == > " + e.getMessage();
 			String status = String.valueOf(e.getErrorCode());
-			logger.error(
+			logger.debug(
 					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 					type, timestamps, operation, message, status);
 		}
@@ -157,7 +157,7 @@ public class db_operations {
 			stmt.close();
 			c.commit();
 			result = true;
-		} catch (Exception e) {
+		} catch (SQLException e) {
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 			String timestamps = timestamp.toString();
@@ -165,7 +165,7 @@ public class db_operations {
 			String operation = "Creating table for NS - Template correlations. Class: " + class_name;
 			String message = "ns_template table Created? " + result;
 			String status = "";
-			logger.error(
+			logger.debug(
 					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 					type, timestamps, operation, message, status);
 		}
@@ -190,7 +190,7 @@ public class db_operations {
 			stmt.close();
 			c.commit();
 			result = true;
-		} catch (Exception e) {
+		} catch (SQLException e) {
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 			String timestamps = timestamp.toString();
@@ -198,7 +198,7 @@ public class db_operations {
 			String operation = "Insert record to table for NS - Template correlations. Class: " + class_name;
 			String message = "Records ns-template saved successfully? " + result;
 			String status = "";
-			logger.error(
+			logger.debug(
 					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 					type, timestamps, operation, message, status);
 
@@ -235,7 +235,7 @@ public class db_operations {
 			rs.close();
 			stmt.close();
 			c.commit();
-		} catch (Exception e) {
+		} catch (SQLException e) {
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 			String timestamps = timestamp.toString();
@@ -243,7 +243,7 @@ public class db_operations {
 			String operation = "Get license status. Class: " + class_name;
 			String message = ("Error Getting license status ==> " + e.getMessage());
 			String status = "";
-			logger.error(
+			logger.debug(
 					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 					type, timestamps, operation, message, status);
 		}
@@ -279,7 +279,7 @@ public class db_operations {
 			rs.close();
 			stmt.close();
 			c.commit();
-		} catch (Exception e) {
+		} catch (SQLException e) {
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 			String timestamps = timestamp.toString();
@@ -319,7 +319,7 @@ public class db_operations {
 
 			ThreadContext.clearAll();
 
-		} catch (Exception e) {
+		} catch (SQLException e) {
 
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
@@ -328,7 +328,7 @@ public class db_operations {
 			String operation = "Create table for Customer - SLA Agreement correlations Class: " + class_name;
 			String message = ("Error creating cust_sla table: " + e.getMessage());
 			String status = "";
-			logger.error(
+			logger.debug(
 					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 					type, timestamps, operation, message, status);
 		}
@@ -372,7 +372,7 @@ public class db_operations {
 					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 					type, timestamps, operation, message, status);
 
-		} catch (Exception e) {
+		} catch (SQLException e) {
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 			String timestamps = timestamp.toString();
@@ -380,7 +380,7 @@ public class db_operations {
 			String operation = "Inserting record for customer-sla correlation. Class: " + class_name;
 			String message = "[*] Error creating records for cust-sla ==> " + e.getMessage();
 			String status = "";
-			logger.error(
+			logger.debug(
 					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 					type, timestamps, operation, message, status);
 
@@ -465,7 +465,7 @@ public class db_operations {
 					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 					type, timestamps, operation, message, status);
 
-		} catch (Exception e) {
+		} catch (SQLException e) {
 
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
@@ -548,7 +548,7 @@ public class db_operations {
 					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 					type, timestamps, operation, message, status);
 
-		} catch (Exception e) {
+		} catch (SQLException e) {
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 			String timestamps = timestamp.toString();
 			String type = "W";
@@ -625,7 +625,7 @@ public class db_operations {
 			stmt.close();
 			c.commit();
 
-		} catch (Exception e) {
+		} catch (SQLException e) {
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 			String timestamps = timestamp.toString();
@@ -633,7 +633,7 @@ public class db_operations {
 			String operation = "Get all SLA Agreement record details. Class: " + class_name;
 			String message = ("[*] Error getting agreement details ==> " + e.getMessage());
 			String status = "";
-			logger.error(
+			logger.debug(
 					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 					type, timestamps, operation, message, status);
 		}
@@ -702,7 +702,7 @@ public class db_operations {
 			stmt.close();
 			c.commit();
 
-		} catch (Exception e) {
+		} catch (SQLException e) {
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 			String timestamps = timestamp.toString();
@@ -710,7 +710,7 @@ public class db_operations {
 			String operation = "Get active SLA Agreement record details. Class: " + class_name;
 			String message = ("[*] Error getting active sla agreements ==> " + e.getMessage());
 			String status = "";
-			logger.error(
+			logger.debug(
 					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 					type, timestamps, operation, message, status);
 		}
@@ -756,7 +756,7 @@ public class db_operations {
 			stmt.close();
 			c.commit();
 
-		} catch (Exception e) {
+		} catch (SQLException e) {
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 			String timestamps = timestamp.toString();
@@ -764,7 +764,7 @@ public class db_operations {
 			String operation = "Get  SLA Agreement per nsi. Class: " + class_name;
 			String message = ("[*] Error getting agreement per nsi ==> " + e.getMessage());
 			String status = "";
-			logger.error(
+			logger.debug(
 					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 					type, timestamps, operation, message, status);
 		}
@@ -809,7 +809,7 @@ public class db_operations {
 			stmt.close();
 			c.commit();
 
-		} catch (Exception e) {
+		} catch (SQLException e) {
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 			String timestamps = timestamp.toString();
@@ -817,7 +817,7 @@ public class db_operations {
 			String operation = "Get  SLA Agreement per customer. Class: " + class_name;
 			String message = ("[*] Error getting agreement per customer  ==> " + e.getMessage());
 			String status = "";
-			logger.error(
+			logger.debug(
 					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 					type, timestamps, operation, message, status);
 		}
@@ -847,7 +847,7 @@ public class db_operations {
 			stmt.close();
 			c.commit();
 
-		} catch (Exception e) {
+		} catch (SQLException e) {
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 			String timestamps = timestamp.toString();
@@ -855,7 +855,7 @@ public class db_operations {
 			String operation = "Get ns name from SLA Agreement per sla uuid. Class: " + class_name;
 			String message = ("[*] Error getting ns name  ==> " + e.getMessage());
 			String status = "";
-			logger.error(
+			logger.debug(
 					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 					type, timestamps, operation, message, status);
 		}
@@ -894,7 +894,7 @@ public class db_operations {
 			stmt.close();
 			c.commit();
 
-		} catch (Exception e) {
+		} catch (SQLException e) {
 
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
@@ -903,7 +903,7 @@ public class db_operations {
 			String operation = "Get specific agreement per nsi and sla. Class: " + class_name;
 			String message = ("[*] Error Getting specific agreement per nsi and sla ==> " + e.getMessage());
 			String status = "";
-			logger.error(
+			logger.debug(
 					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 					type, timestamps, operation, message, status);
 		}
@@ -929,7 +929,7 @@ public class db_operations {
 			c.commit();
 			result = true;
 
-		} catch (Exception e) {
+		} catch (SQLException e) {
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 			String timestamps = timestamp.toString();
@@ -937,7 +937,7 @@ public class db_operations {
 			String operation = "Delete Agreement correlation. Class: " + class_name;
 			String message = ("[*] Error deleting agreement ==> " + e.getMessage());
 			String status = "";
-			logger.error(
+			logger.debug(
 					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 					type, timestamps, operation, message, status);
 		}
@@ -974,7 +974,7 @@ public class db_operations {
 			String operation = "Count active agreements per sla template. Class: " + class_name;
 			String message = ("[*] Error counting agreements ==> " + e.getMessage());
 			String status = "";
-			logger.error(
+			logger.debug(
 					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 					type, timestamps, operation, message, status);
 		}
@@ -1008,7 +1008,7 @@ public class db_operations {
 			String operation = "Count active agreements. Class: " + class_name;
 			String message = ("[*] Error counting agreements ==> " + e.getMessage());
 			String status = "";
-			logger.error(
+			logger.debug(
 					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 					type, timestamps, operation, message, status);
 		}
@@ -1045,7 +1045,7 @@ public class db_operations {
 			String operation = "Count active agreements. Class: " + class_name;
 			String message = ("[*] Error counting agreements ==> " + e.getMessage());
 			String status = "";
-			logger.error(
+			logger.debug(
 					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 					type, timestamps, operation, message, status);
 		}
@@ -1077,7 +1077,7 @@ public class db_operations {
 			String operation = "Count violated agreements. Class: " + class_name;
 			String message = ("[*] Error counting violated agreements ==> " + e.getMessage());
 			String status = "";
-			logger.error(
+			logger.debug(
 					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 					type, timestamps, operation, message, status);
 		}
@@ -1113,7 +1113,7 @@ public class db_operations {
 			String operation = "Count violated agreements ";
 			String message = ("Error counting violated agreements ==> " + e.getMessage());
 			String status = "";
-			logger.error(
+			logger.debug(
 					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 					type, timestamps, operation, message, status);
 		}
@@ -1145,7 +1145,7 @@ public class db_operations {
 			String operation = "Count total agreements. Class: " + class_name;
 			String message = ("[*] Error counting total agreements ==> " + e.getMessage());
 			String status = "";
-			logger.error(
+			logger.debug(
 					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 					type, timestamps, operation, message, status);
 		}
@@ -1181,7 +1181,7 @@ public class db_operations {
 			String operation = "Count total agreements. Class: " + class_name;
 			String message = ("[*] Error counting total agreements ==> " + e.getMessage());
 			String status = "";
-			logger.error(
+			logger.debug(
 					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 					type, timestamps, operation, message, status);
 		}
@@ -1207,7 +1207,7 @@ public class db_operations {
 			stmt.close();
 			c.commit();
 
-		} catch (Exception e) {
+		} catch (SQLException e) {
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 			String timestamps = timestamp.toString();
@@ -1215,7 +1215,7 @@ public class db_operations {
 			String operation = "Create table for Violation records. Class: " + class_name;
 			String message = ("[*] Error creating table sla_violations created successfully");
 			String status = "";
-			logger.error(
+			logger.debug(
 					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 					type, timestamps, operation, message, status);
 		}
@@ -1238,7 +1238,7 @@ public class db_operations {
 			stmt.close();
 			c.commit();
 
-		} catch (Exception e) {
+		} catch (SQLException e) {
 
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
@@ -1281,7 +1281,7 @@ public class db_operations {
 			stmt.close();
 			c.commit();
 
-		} catch (Exception e) {
+		} catch (SQLException e) {
 
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
@@ -1290,7 +1290,7 @@ public class db_operations {
 			String operation = "Get violated SLA. Class: " + class_name;
 			String message = ("[*] Error getting the violated SLA ==> " + e.getMessage());
 			String status = "";
-			logger.error(
+			logger.debug(
 					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 					type, timestamps, operation, message, status);
 		}
@@ -1329,7 +1329,7 @@ public class db_operations {
 			rs.close();
 			stmt.close();
 
-		} catch (Exception e) {
+		} catch (SQLException e) {
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 			String timestamps = timestamp.toString();
@@ -1337,7 +1337,7 @@ public class db_operations {
 			String operation = "Get violated SLA. Class: " + class_name;
 			String message = ("[*] Error getting the violated SLA records ==> " + e.getMessage());
 			String status = "";
-			logger.error(
+			logger.debug(
 					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 					type, timestamps, operation, message, status);
 		}
@@ -1377,7 +1377,7 @@ public class db_operations {
 			stmt.close();
 			c.commit();
 
-		} catch (Exception e) {
+		} catch (SQLException e) {
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 			String timestamps = timestamp.toString();
@@ -1385,7 +1385,7 @@ public class db_operations {
 			String operation = "Get violated SLA data. Class: " + class_name;
 			String message = ("Error getting the violated SLA  data==> " + e.getMessage());
 			String status = "";
-			logger.error(
+			logger.debug(
 					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 					type, timestamps, operation, message, status);
 		}
@@ -1416,7 +1416,7 @@ public class db_operations {
 			String operation = "Counting violations. Class: " + class_name;
 			String message = ("[*] Error counting the violations ==> " + e.getMessage());
 			String status = "";
-			logger.error(
+			logger.debug(
 					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 					type, timestamps, operation, message, status);
 		}
@@ -1451,7 +1451,7 @@ public class db_operations {
 			String operation = "Deleting record. Class: " + class_name;
 			String message = ("[*] Error: " + e.getMessage());
 			String status = "";
-			logger.error(
+			logger.debug(
 					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 					type, timestamps, operation, message, status);
 		}
@@ -1466,7 +1466,7 @@ public class db_operations {
 				c.commit();
 				result = true;
 
-			} catch (Exception e) {
+			} catch (SQLException e) {
 				// logging
 				Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 				String timestamps = timestamp.toString();
@@ -1474,7 +1474,7 @@ public class db_operations {
 				String operation = "Delete violated SLA. Class: " + class_name;
 				String message = ("Error deleting violation for the sla_uuid= " + sla_uuid);
 				String status = "";
-				logger.error(
+				logger.debug(
 						"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 						type, timestamps, operation, message, status);
 
@@ -1487,7 +1487,7 @@ public class db_operations {
 			String operation = "Delete violated SLA. Class: " + class_name;
 			String message = ("[*] Error deleting violation for the sla_uuid= " + sla_uuid);
 			String status = "";
-			logger.error(
+			logger.debug(
 					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 					type, timestamps, operation, message, status);
 		}
@@ -1539,7 +1539,7 @@ public class db_operations {
 				stmt.close();
 				c.commit();
 
-			} catch (Exception e) {
+			} catch (SQLException e) {
 				// logging
 				Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 				String timestamps = timestamp.toString();
@@ -1547,7 +1547,7 @@ public class db_operations {
 				String operation = "Get al records";
 				String message = ("[*] Error feching data from table = " + tablename);
 				String status = "";
-				logger.error(
+				logger.debug(
 						"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 						type, timestamps, operation, message, status);
 			}
@@ -1577,7 +1577,7 @@ public class db_operations {
 				stmt.close();
 				c.commit();
 
-			} catch (Exception e) {
+			} catch (SQLException e) {
 				// logging
 				Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 				String timestamps = timestamp.toString();
@@ -1585,7 +1585,7 @@ public class db_operations {
 				String operation = "Get all records";
 				String message = ("[*] Error feching data from table = " + tablename);
 				String status = "";
-				logger.error(
+				logger.debug(
 						"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 						type, timestamps, operation, message, status);
 
@@ -1622,7 +1622,7 @@ public class db_operations {
 			String operation = "Create table for Licenses. Class: " + class_name;
 			String message = ("Error creating table sla_licensing ==> " + e.getMessage());
 			String status = "";
-			logger.error(
+			logger.debug(
 					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 					type, timestamps, operation, message, status);
 		}
@@ -1681,7 +1681,7 @@ public class db_operations {
 			String operation = "Get licensing information";
 			String message = ("[*] Error getting licensing information ==> " + e.getMessage());
 			String status = "";
-			logger.error(
+			logger.debug(
 					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 					type, timestamps, operation, message, status);
 		}
@@ -1726,7 +1726,7 @@ public class db_operations {
 			String operation = "Insert license record";
 			String message = ("[*] Error creating license record ==> " + e.getMessage());
 			String status = "";
-			logger.error(
+			logger.debug(
 					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 					type, timestamps, operation, message, status);
 		}
@@ -1754,7 +1754,7 @@ public class db_operations {
 			String operation = "Delete License record";
 			String message = ("[*] Error deleting licensing record ==> " + e.getMessage());
 			String status = "";
-			logger.error(
+			logger.debug(
 					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 					type, timestamps, operation, message, status);
 		}
@@ -1804,7 +1804,7 @@ public class db_operations {
 			String operation = "Get license status";
 			String message = ("[*] Error Getting license status ==> " + e.getMessage());
 			String status = "";
-			logger.error(
+			logger.debug(
 					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 					type, timestamps, operation, message, status);
 		}
@@ -1881,7 +1881,7 @@ public class db_operations {
 					String operation = "Get specific license record. Class: " + class_name;
 					String message = ("[*] Error Getting names from cust_sla  ==> " + e.getMessage());
 					String status = "";
-					logger.error(
+					logger.debug(
 							"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 							type, timestamps, operation, message, status);
 				}
@@ -1899,7 +1899,7 @@ public class db_operations {
 			String operation = "Get specific license record";
 			String message = ("[*] Error Getting specific license  ==> " + e.getMessage());
 			String status = "";
-			logger.error(
+			logger.debug(
 					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 					type, timestamps, operation, message, status);
 		}
@@ -1963,7 +1963,7 @@ public class db_operations {
 			String operation = "Get specific license record";
 			String message = ("[*] Error Getting specific license  ==> " + e.getMessage());
 			String status = "";
-			logger.error(
+			logger.debug(
 					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 					type, timestamps, operation, message, status);
 		}
@@ -2002,7 +2002,7 @@ public class db_operations {
 			String operation = "UPDATE License instance. Class: " + class_name;
 			String message = ("[*] Set license status ACTIVE ?" + e.getMessage().toString());
 			String status = "";
-			logger.error(
+			logger.debug(
 					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 					type, timestamps, operation, message, status);
 		}
@@ -2040,7 +2040,7 @@ public class db_operations {
 			String operation = "Counting Licenses";
 			String message = ("[*] Error counting the Licenses ==> " + e.getMessage());
 			String status = "";
-			logger.error(
+			logger.debug(
 					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 					type, timestamps, operation, message, status);
 		}
@@ -2070,7 +2070,7 @@ public class db_operations {
 			String operation = "Updating SLA Licensing status";
 			String message = " [*] Error updating license staus: " + e.getMessage();
 			String status = "";
-			logger.error(
+			logger.debug(
 					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 					type, timestamps, operation, message, status);
 		}
@@ -2093,7 +2093,7 @@ public class db_operations {
 			c.commit();
 			result = true;
 
-		} catch (Exception e) {
+		} catch (SQLException e) {
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 			String timestamps = timestamp.toString();
@@ -2122,7 +2122,7 @@ public class db_operations {
 			c.commit();
 			result = true;
 
-		} catch (Exception e) {
+		} catch (SQLException e) {
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 			String timestamps = timestamp.toString();
@@ -2154,7 +2154,7 @@ public class db_operations {
 			c.commit();
 			result = true;
 
-		} catch (Exception e) {
+		} catch (SQLException e) {
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 			String timestamps = timestamp.toString();
@@ -2183,7 +2183,7 @@ public class db_operations {
 			c.commit();
 			result = true;
 
-		} catch (Exception e) {
+		} catch (SQLException e) {
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 			String timestamps = timestamp.toString();
@@ -2285,7 +2285,7 @@ public class db_operations {
 			String operation = "Updating SLA Licensing current instances";
 			String message = "[*] Error updating license current instances: " + e.getMessage().toString();
 			String status = "";
-			logger.error(
+			logger.debug(
 					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 					type, timestamps, operation, message, status);
 		}
@@ -2320,7 +2320,7 @@ public class db_operations {
 			String operation = "Count utilized licenses";
 			String message = ("[*] Error counting utilized licenses ==> " + e.getMessage());
 			String status = "";
-			logger.error(
+			logger.debug(
 					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 					type, timestamps, operation, message, status);
 		}
@@ -2352,7 +2352,7 @@ public class db_operations {
 			String operation = "Count Acquired licenses";
 			String message = ("[*] Error counting Acquired licenses ==> " + e.getMessage());
 			String status = "";
-			logger.error(
+			logger.debug(
 					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 					type, timestamps, operation, message, status);
 		}
@@ -2383,7 +2383,7 @@ public class db_operations {
 			String operation = "Count expired licenses";
 			String message = ("[*] Error counting expired licenses ==> " + e.getMessage());
 			String status = "";
-			logger.error(
+			logger.debug(
 					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 					type, timestamps, operation, message, status);
 		}
