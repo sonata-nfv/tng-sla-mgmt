@@ -675,7 +675,7 @@ public class db_operations {
 				JSONObject license_info_record = getLicenseInfo(sla_uuid, cust_username, ns_uuid);
 				String license_type = (String) license_info_record.get("license_type");
 				String license_status = (String) license_info_record.get("license_status");
-				String license_allowed_instances = (String) license_info_record.get("allowed_instances");
+				int license_allowed_instances = (int) license_info_record.get("allowed_instances");
 				String license_current_instances = (String) license_info_record.get("current_instances");
 				String license_expiration_date = (String) license_info_record.get("license_expiration_date");
 
