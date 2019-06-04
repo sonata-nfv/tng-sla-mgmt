@@ -222,16 +222,6 @@ public class LicensingAPIs {
 
 			// if the customer does not have a license instance already - 1st instantiation
 			if (count_licenses == 0) {
-				// logging
-				timestamp = new Timestamp(System.currentTimeMillis());
-				timestamps = timestamp.toString();
-				type = "I";
-				operation = "Check if instantiation is allowed based on license status";
-				message = ("[*] First instantiation for this customer and this NS");
-				status = "";
-				logger.info(
-						"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
-						type, timestamps, operation, message, status);
 
 				JSONObject license_info_template = db_operations.getLicenseinfoTemplates(sla_uuid, ns_uuid);
 
@@ -280,6 +270,17 @@ public class LicensingAPIs {
 
 					// close db connection
 					db_operations.closePostgreSQL();
+					
+					// logging
+					timestamp = new Timestamp(System.currentTimeMillis());
+					timestamps = timestamp.toString();
+					type = "I";
+					operation = "Check if instantiation is allowed based on license status";
+					message = ("[*] Allowed to instantiate ? ==> " + allowed_to_instantiate);
+					status = "";
+					logger.info(
+							"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+							type, timestamps, operation, message, status);
 					
 					// API Response
 					apiresponse = Response.ok(license_info_response);
