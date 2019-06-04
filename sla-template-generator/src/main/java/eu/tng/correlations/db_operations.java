@@ -213,7 +213,8 @@ public class db_operations {
 		String license_status = "";
 		String license_type = "";
 		String license_exp_date = "";
-		String allowed_instances = "";
+		String allowed_instancesString = "";
+		int allowed_instances = 0;
 
 		try {
 			c.setAutoCommit(false);
@@ -225,8 +226,9 @@ public class db_operations {
 				license_status = rs.getString("license_status");
 				license_type = rs.getString("license_type");
 				license_exp_date = rs.getString("license_exp_date");
-				allowed_instances = rs.getString("allowed_instances");
-
+				allowed_instancesString = rs.getString("allowed_instances");
+				allowed_instances = Integer.parseInt(allowed_instancesString);
+				
 				license_info.put("license_status", license_status);
 				license_info.put("license_type", license_type);
 				license_info.put("license_exp_date", license_exp_date);
@@ -1769,8 +1771,10 @@ public class db_operations {
 		String license_status = "";
 		String license_type = "";
 		String license_expiration_date = "";
-		String allowed_instances = "";
-		String current_instances = "";
+		String allowed_instances_string = "";
+		String current_instances_string = "";
+		int allowed_instances = 0;
+		int current_instances = 0;
 
 		try {
 			c.setAutoCommit(false);
@@ -1782,9 +1786,12 @@ public class db_operations {
 				license_status = rs.getString("license_status");
 				license_type = rs.getString("license_type");
 				license_expiration_date = rs.getString("license_exp_date");
-				allowed_instances = rs.getString("allowed_instances");
-				current_instances = rs.getString("current_instances");
-
+				allowed_instances_string = rs.getString("allowed_instances");
+				current_instances_string = rs.getString("current_instances");
+				
+				allowed_instances = Integer.parseInt(allowed_instances_string);
+				current_instances = Integer.parseInt(current_instances_string);
+				
 				license_info.put("license_status", license_status);
 				license_info.put("license_type", license_type);
 				license_info.put("license_expiration_date", license_expiration_date);

@@ -222,16 +222,6 @@ public class LicensingAPIs {
 
 			// if the customer does not have a license instance already - 1st instantiation
 			if (count_licenses == 0) {
-				// logging
-				timestamp = new Timestamp(System.currentTimeMillis());
-				timestamps = timestamp.toString();
-				type = "I";
-				operation = "Check if instantiation is allowed based on license status";
-				message = ("[*] First instantiation for this customer and this NS");
-				status = "";
-				logger.info(
-						"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
-						type, timestamps, operation, message, status);
 
 				JSONObject license_info_template = db_operations.getLicenseinfoTemplates(sla_uuid, ns_uuid);
 
@@ -241,9 +231,9 @@ public class LicensingAPIs {
 					// logging
 					timestamp = new Timestamp(System.currentTimeMillis());
 					timestamps = timestamp.toString();
-					type = "E";
+					type = "W";
 					operation = "Check if instantiation is allowed based on license status";
-					message = "[*] Error: Invalid sla_uuid or ns_uuid";
+					message = "[*] Warning: Invalid sla_uuid or ns_uuid";
 					status = String.valueOf(400);
 					logger.error(
 							"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
@@ -255,21 +245,42 @@ public class LicensingAPIs {
 					apiresponse = Response.ok((Object) error);
 					apiresponse.header("Content-Length", error.toString().length());
 					return apiresponse.status(400).build();
-				} else {
+				} 
+				
+				else {
+					boolean allowed_to_instantiate = false;
 					String license_type = (String) license_info_template.get("license_type");
+					
 					if (license_type.equals("public")) {
-						license_info_template.put("allowed_to_instantiate", "true");
+						allowed_to_instantiate = true;
+						license_info_template.put("allowed_to_instantiate", allowed_to_instantiate);
+						license_info_template.put("current_instances", 0);
 					}
 					if (license_type.equals("trial")) {
-						license_info_template.put("allowed_to_instantiate", "true");
+						allowed_to_instantiate = true;
+						license_info_template.put("allowed_to_instantiate", allowed_to_instantiate);
+						license_info_template.put("current_instances", 0);
 					}
 					if (license_type.equals("private")) {
-						license_info_template.put("allowed_to_instantiate", "false");
+						allowed_to_instantiate = false;
+						license_info_template.put("allowed_to_instantiate", allowed_to_instantiate);
+						license_info_template.put("current_instances", 0);
 					}
 					license_info_response = license_info_template;
 
 					// close db connection
 					db_operations.closePostgreSQL();
+					
+					// logging
+					timestamp = new Timestamp(System.currentTimeMillis());
+					timestamps = timestamp.toString();
+					type = "I";
+					operation = "Check if instantiation is allowed based on license status";
+					message = ("[*] Allowed to instantiate ? ==> " + allowed_to_instantiate);
+					status = "";
+					logger.info(
+							"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+							type, timestamps, operation, message, status);
 					
 					// API Response
 					apiresponse = Response.ok(license_info_response);
@@ -288,9 +299,9 @@ public class LicensingAPIs {
 					// logging
 					timestamp = new Timestamp(System.currentTimeMillis());
 					timestamps = timestamp.toString();
-					type = "E";
+					type = "W";
 					operation = "Check if instantiation is allowed based on license status";
-					message = "[*] Error: Invalid sla_uuid or ns_uuid";
+					message = "[*] Warning: Invalid sla_uuid or ns_uuid";
 					status = String.valueOf(400);
 					logger.error(
 							"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
@@ -306,12 +317,12 @@ public class LicensingAPIs {
 				else {
 					String license_type = (String) license_info_record.get("license_type");
 					String license_status = (String) license_info_record.get("license_status");
-					String license_allowed_instances = (String) license_info_record.get("allowed_instances");
-					String license_current_instances = (String) license_info_record.get("current_instances");
+					int license_allowed_instances = (int) license_info_record.get("allowed_instances");
+					int license_current_instances = (int) license_info_record.get("current_instances");
 
 					boolean allowed_to_instantiate = allowedToInstantiate(license_status, license_type,
 							license_allowed_instances, license_current_instances);
-					license_info_record.put("allowed_to_instantiate", String.valueOf(allowed_to_instantiate));
+					license_info_record.put("allowed_to_instantiate", allowed_to_instantiate);
 					license_info_response = license_info_record;
 
 					// logging
@@ -360,8 +371,8 @@ public class LicensingAPIs {
 
 	}
 
-	private boolean allowedToInstantiate(String license_status, String license_type, String license_allowed_instances,
-			String license_current_instances) {
+	private boolean allowedToInstantiate(String license_status, String license_type, int license_allowed_instances,
+			int license_current_instances) {
 		boolean allowed_to_instantiate = false;
 
 		boolean statusOK = isStatusOK(license_status, license_type);
@@ -401,11 +412,10 @@ public class LicensingAPIs {
 		return statusOK;
 	}
 
-	private boolean isInstancesOK(String license_allowed_instances, String license_current_instances) {
+	private boolean isInstancesOK(int license_allowed_instances, int license_current_instances) {
 		boolean instancesOK = false;
-		int ai = Integer.parseInt(license_allowed_instances);
-		int ci = Integer.parseInt(license_current_instances);
-		if (ci < ai) {
+
+		if (license_current_instances < license_allowed_instances) {
 			instancesOK = true;
 		} else {
 			instancesOK = false;
