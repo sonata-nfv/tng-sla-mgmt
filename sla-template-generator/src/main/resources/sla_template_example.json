@@ -1,86 +1,57 @@
 {
-  "updated_at": "2018-07-02T11:35:10.776+00:00",
+  "created_at": "2019-06-04T08:43:09.670+00:00",
+  "md5": "951c3f366f47dca2761448895ceeab61",
+  "published": false,
   "signature": null,
-  "created_at": "2018-07-02T11:35:10.776+00:00",
   "slad": {
     "vendor": "tango-sla-mgmt",
-    "author": "Evgenia Kapassa, Marios Touloupou",
-    "name": "Gold",
-    "description": "",
+    "name": "example-sla",
     "descriptor_schema": "https://raw.githubusercontent.com/sonata-nfv/tng-schema/master/service-descriptor/nsd-schema.yml",
     "version": "0.1",
     "sla_template": {
-      "offered_date": "2018-07-02T11:35:10Z",
-      "template_name": "Gold",
-      "valid_until": "2020-12-20T00:00:00Z",
-      "ns": {
-        "ns_description": "Example NS with one VNF",
+      "template_name": "example-sla",
+      "service": {
         "guaranteeTerms": [
           {
-            "unit": "mins",
-            "serviceLevelObjetive": {
-              "duration": "86400s",
-              "period": "Daily",
-              "target_value": "60",
-              "parameter": "Resilience",
-              "serviceLevel": "1min/24h",
-              "serviceLevelDetail": [
-                {
-                  "unit": "mins",
-                  "value": "1",
-                  "operator": "greater"
-                },
-                {
-                  "unit": "hours",
-                  "value": "24",
-                  "operator": "equal"
-                }
-              ]
-            },
-            "name": "Resilience",
-            "definition": "Resilience is the persistence of dependability when facing changes",
-            "value": "1",
-            "operator": "greater",
+            "guarantee_unit": "%",
+            "guarantee_name": "Availability",
+            "guarantee_period": "Daily",
+            "guarantee_definition": "",
+            "guarantee_threshold": "99.95",
+            "guarantee_operator": "greater",
+            "target_slo": [
+              {
+                "target_kpi": "Downtime",
+                "target_duration": "10s",
+                "target_period": "24h",
+                "target_value": "43s",
+                "target_service_level": "Downtime less than 43 seconds",
+                "target_operator": "less"
+              }
+            ],
             "guaranteeID": "g1"
-          },
-          {
-            "unit": "mins",
-            "serviceLevelObjetive": {
-              "duration": "21600s",
-              "period": "Hours",
-              "target_value": "60",
-              "parameter": "Resilience",
-              "serviceLevel": "1min/6h",
-              "serviceLevelDetail": [
-                {
-                  "unit": "mins",
-                  "value": "1",
-                  "operator": "greater"
-                },
-                {
-                  "unit": "hours",
-                  "value": "6",
-                  "operator": "equal"
-                }
-              ]
-            },
-            "name": "Resilience",
-            "definition": "Resilience is the persistence of dependability when facing changes",
-            "value": "1",
-            "operator": "greater",
-            "guaranteeID": "g2"
           }
         ],
-        "ns_uuid": "072b618c-96e2-4d6b-bbfc-1ec5d0ce80f9",
-        "ns_name": "myns",
-        "ns_vendor": "eu.5gtango",
-        "ns_version": "0.1"
+        "ns_uuid": "2a773dcd-82e5-4918-a645-6e4f6cb37e53",
+        "ns_name": "mediapilot-service",
+        "ns_vendor": "eu.sonata-nfv",
+        "ns_version": "0.3"
+      },
+      "template_initiator": "",
+      "offer_date": "2019-06-04T08:43:09Z",
+      "expiration_date": "2020-01-31T00:00:00Z",
+      "provider_name": "UPRC"
+    },
+    "licences": {
+      "service_based": {
+        "service_licence_type": "public",
+        "service_licence_expiration_date": "2021-01-31T00:00:00Z",
+        "allowed_service_instances": "100"
       }
     }
   },
-  "published": false,
-  "uuid": "cecf65e8-ea49-47a2-965f-47d976547632",
-  "md5": "b38af0e118fe8685637b4faea404b625",
   "status": "active",
-  "username": null
+  "updated_at": "2019-06-04T08:43:09.670+00:00",
+  "username": null,
+  "uuid": "c0640f25-6e04-47f3-b860-4ed46c342bd2"
 }
