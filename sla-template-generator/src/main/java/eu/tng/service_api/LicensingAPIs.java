@@ -456,16 +456,13 @@ public class LicensingAPIs {
 		JSONObject LicenseinfoTemplate = db_operations.getLicenseinfoTemplates(sla_uuid.get(0), ns_uuid.get(0));
 		String license_type = (String) LicenseinfoTemplate.get("license_type");
 		String license_exp_date = (String) LicenseinfoTemplate.get("license_exp_date");
-		int allowed_instances = (int) LicenseinfoTemplate.get("allowed_instances");
+		int allowed_instances =  (int) LicenseinfoTemplate.get("allowed_instances");
 		String current_instances = "0";
 		
-		System.out.println(" LicenseinfoTemplate ==> " + LicenseinfoTemplate );
-
 		db_operations.createTableLicensing();
 		db_operations.insertLicenseRecord(sla_uuid.get(0), ns_uuid.get(0), null, cust_username, cust_email,
 				license_type, license_exp_date, String.valueOf(allowed_instances), current_instances, "", "");
 
-		System.out.println(" LicenseinfoTemplate ==> " + LicenseinfoTemplate );
 		
 		boolean update = db_operations.UpdateLicenseStatus(sla_uuid.get(0), ns_uuid.get(0), cust_username, "bought");
 		db_operations.closePostgreSQL();
