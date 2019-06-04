@@ -508,9 +508,10 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
                             System.out.println("ns uuid ==> " + ns_uuid);
                             org.json.simple.JSONObject LicenseinfoTemplate = db_operations.getLicenseinfoTemplates(sla_uuid, ns_uuid);
                             System.out.println("LicenseinfoTemplate ==> " + LicenseinfoTemplate);
+                            
                             String license_type = (String) LicenseinfoTemplate.get("license_type");
                             String license_exp_date = (String) LicenseinfoTemplate.get("license_exp_date");
-                            String allowed_instances = (String) LicenseinfoTemplate.get("allowed_instances");
+                            int allowed_instances = (int) LicenseinfoTemplate.get("allowed_instances");
 
                             System.out.println("cust_username ==> " + cust_username);
                             
@@ -546,7 +547,7 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
                                 // update me right current instances
                                 else {
                                     db_operations.insertLicenseRecord(sla_uuid, ns_uuid, "", cust_username, cust_email,
-                                            license_type, license_exp_date, allowed_instances, current_instances,
+                                            license_type, license_exp_date, String.valueOf(allowed_instances), current_instances,
                                             "bought", correlation_id);
                                     db_operations.UpdateLicenseCurrentInstances(sla_uuid, ns_uuid, cust_username,
                                             current_instances);
@@ -557,7 +558,7 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
                             	System.out.println("public and trial licenses IF");
                                 db_operations.createTableLicensing();
                                 db_operations.insertLicenseRecord(sla_uuid, ns_uuid, "", cust_username, cust_email,
-                                        license_type, license_exp_date, allowed_instances, current_instances,
+                                        license_type, license_exp_date, String.valueOf(allowed_instances), current_instances,
                                         "inactive", correlation_id);
                                 db_operations.UpdateLicenseCurrentInstances(sla_uuid, ns_uuid, cust_username,
                                         current_instances);
