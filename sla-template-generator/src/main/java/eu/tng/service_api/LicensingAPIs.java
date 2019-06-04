@@ -450,6 +450,8 @@ public class LicensingAPIs {
 		List<String> ns_uuid = formParams.get("ns_uuid");
 		List<String> sla_uuid = formParams.get("sla_uuid");
 
+		System.out.println("ns_uuid ==> " + ns_uuid);
+		System.out.println("sla_uuid ==> " + sla_uuid);
 		db_operations.connectPostgreSQL();
 		db_operations.createTableLicensing();
 
