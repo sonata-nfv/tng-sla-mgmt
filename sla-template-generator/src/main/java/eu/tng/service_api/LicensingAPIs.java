@@ -450,27 +450,21 @@ public class LicensingAPIs {
 		List<String> ns_uuid = formParams.get("ns_uuid");
 		List<String> sla_uuid = formParams.get("sla_uuid");
 
-		System.out.println("ns_uuid ==> " + ns_uuid.get(0));
-		System.out.println("sla_uuid ==> " + sla_uuid.get(0));
+
 		db_operations.connectPostgreSQL();
 		db_operations.createTableLicensing();
 
 		JSONObject LicenseinfoTemplate = db_operations.getLicenseinfoTemplates(sla_uuid.get(0), ns_uuid.get(0));
-		System.out.println("LicenseinfoTemplate ==> " + LicenseinfoTemplate);
 		String license_type = (String) LicenseinfoTemplate.get("license_type");
-		System.out.println("license_type ==> " + license_type);
 		String license_exp_date = (String) LicenseinfoTemplate.get("license_exp_date");
-		System.out.println("license_exp_date ==> " + license_exp_date);
 		int allowed_instances = (int) LicenseinfoTemplate.get("allowed_instances");
-		System.out.println("allowed_instances ==> " + allowed_instances);
 		String current_instances = "0";
-		System.out.println("current_instances ==> " + current_instances);
+
 		
 		db_operations.createTableLicensing();
 		db_operations.insertLicenseRecord(sla_uuid.get(0), ns_uuid.get(0), null, cust_username, cust_email,
 				license_type, license_exp_date, String.valueOf(allowed_instances), current_instances, "", "");
 
-		System.out.println("inserted");
 		
 		boolean update = db_operations.UpdateLicenseStatus(sla_uuid.get(0), ns_uuid.get(0), cust_username, "bought");
 		db_operations.closePostgreSQL();
