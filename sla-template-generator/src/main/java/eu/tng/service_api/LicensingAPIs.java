@@ -440,7 +440,7 @@ public class LicensingAPIs {
 		try {
 			cust_username = headers.getRequestHeader("X-User-Name").get(0);
 			cust_email = headers.getRequestHeader("X-User-Email").get(0);
-		} catch (JSONException e) {
+		} catch (JSONException | NullPointerException e) {
 			cust_username = "";
 			cust_email = "";
 		}
