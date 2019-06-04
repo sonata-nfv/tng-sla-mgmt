@@ -450,6 +450,7 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
                         // Parse customer data + sla uuid
                         JSONObject user_data = (JSONObject) jsonObjectMessage.getJSONObject("user_data");
                         JSONObject customer = (JSONObject) user_data.getJSONObject("customer");
+                        
 
                         try {
                             cust_username = (String) customer.get("name");
@@ -503,16 +504,22 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
                             // get licensing information
                             db_operations.connectPostgreSQL();
 
-                            org.json.simple.JSONObject LicenseinfoTemplate = db_operations
-                                    .getLicenseinfoTemplates(sla_uuid, ns_uuid);
+                            System.out.println("sla uuid ==> " + sla_uuid);
+                            System.out.println("ns uuid ==> " + ns_uuid);
+                            org.json.simple.JSONObject LicenseinfoTemplate = db_operations.getLicenseinfoTemplates(sla_uuid, ns_uuid);
+                            System.out.println("LicenseinfoTemplate ==> " + LicenseinfoTemplate);
+                            
                             String license_type = (String) LicenseinfoTemplate.get("license_type");
                             String license_exp_date = (String) LicenseinfoTemplate.get("license_exp_date");
-                            String allowed_instances = (String) LicenseinfoTemplate.get("allowed_instances");
+                            int allowed_instances = (int) LicenseinfoTemplate.get("allowed_instances");
 
+                            System.out.println("cust_username ==> " + cust_username);
+                            
                             // check if there are already instances for this ns_uuid - cust_username
-                            int active_licenses = db_operations.countActiveLicensePerCustSLA(cust_username, sla_uuid,
-                                    "active");
+                            int active_licenses = db_operations.countActiveLicensePerCustSLA(cust_username, sla_uuid,"active");
+                            System.out.println("active_licenses ==> " + active_licenses);
                             String current_instances = String.valueOf(active_licenses + 1);
+                            System.out.println("current_instances ==> " + current_instances);
 
                             // logging
                             Timestamp timestamp1 = new Timestamp(System.currentTimeMillis());
@@ -540,7 +547,7 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
                                 // update me right current instances
                                 else {
                                     db_operations.insertLicenseRecord(sla_uuid, ns_uuid, "", cust_username, cust_email,
-                                            license_type, license_exp_date, allowed_instances, current_instances,
+                                            license_type, license_exp_date, String.valueOf(allowed_instances), current_instances,
                                             "bought", correlation_id);
                                     db_operations.UpdateLicenseCurrentInstances(sla_uuid, ns_uuid, cust_username,
                                             current_instances);
@@ -548,9 +555,10 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
                             }
                             // public and trial licenses
                             else {
+                            	System.out.println("public and trial licenses IF");
                                 db_operations.createTableLicensing();
                                 db_operations.insertLicenseRecord(sla_uuid, ns_uuid, "", cust_username, cust_email,
-                                        license_type, license_exp_date, allowed_instances, current_instances,
+                                        license_type, license_exp_date, String.valueOf(allowed_instances), current_instances,
                                         "inactive", correlation_id);
                                 db_operations.UpdateLicenseCurrentInstances(sla_uuid, ns_uuid, cust_username,
                                         current_instances);
