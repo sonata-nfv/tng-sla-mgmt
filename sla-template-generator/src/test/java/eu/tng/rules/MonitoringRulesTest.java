@@ -58,31 +58,31 @@ public class MonitoringRulesTest {
 
         JSONObject slad = (JSONObject) jsonObj.get("slad");
         JSONObject sla_template = (JSONObject) slad.get("sla_template");
-        JSONObject ns = (JSONObject) sla_template.get("ns");
+        JSONObject ns = (JSONObject) sla_template.get("service");
         JSONArray guaranteeTerms = (JSONArray) ns.get("guaranteeTerms");
 
         JSONArray slos = new JSONArray();
         for (int i = 0; i < guaranteeTerms.length(); i++) {
             JSONObject slo = new JSONObject();
-            String name = (String) ((JSONObject) guaranteeTerms.get(i)).get("name");
-            JSONObject serviceLevelObjetive = (JSONObject) ((JSONObject) guaranteeTerms.get(i))
-                    .get("serviceLevelObjetive");
-            String duration = (String) serviceLevelObjetive.get("duration");
-            String target_value = (String) serviceLevelObjetive.get("target_value");
-            slo.put("name", name);
-            slo.put("duration", duration);
-            slo.put("target_value", target_value);
-
+            String name = (String) ((JSONObject) guaranteeTerms.get(i)).get("guarantee_name");
+            JSONArray target_slo = (JSONArray)((JSONObject) guaranteeTerms.get(i)).get("target_slo");
+            for (int j = 0; j < target_slo.length(); j++) {
+            	String target_kpi = (String)((JSONObject) target_slo.get(j)).get("target_kpi");
+            	String target_duration = (String)((JSONObject) target_slo.get(j)).get("target_duration");
+            	String target_value = (String)((JSONObject) target_slo.get(j)).get("target_value");
+    
+                slo.put("target_kpi", target_kpi);
+                slo.put("target_duration", target_duration);
+                slo.put("target_value", target_value);
+			}
             slos.put(slo);
-
         }
 
         slo_details.put("slos", slos);
 
         JSONArray slos_count = new JSONArray();
         slos_count = slo_details.getJSONArray("slos");
-
-        assertTrue(slos_count.length() == 2);
+        assertTrue(slos_count.length() == 1);
     }
 
     private String getFile(String fileName) {
