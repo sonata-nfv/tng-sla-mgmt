@@ -196,7 +196,7 @@ public class LicensingAPIs {
 			
 		} 
 		catch (JSONException | NullPointerException e) {
-			cust_username = "admin";
+			cust_username = "";
 		}
 		
 
@@ -441,8 +441,8 @@ public class LicensingAPIs {
 			cust_username = headers.getRequestHeader("X-User-Name").get(0);
 			cust_email = headers.getRequestHeader("X-User-Email").get(0);
 		} catch (JSONException e) {
-			cust_username = "admin";
-			cust_email = "admin-email";
+			cust_username = "";
+			cust_email = "";
 		}
 
 		ResponseBuilder apiresponse = null;
