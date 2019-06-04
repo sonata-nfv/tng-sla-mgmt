@@ -59,7 +59,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import eu.tng.correlations.db_operations;
-import eu.tng.correlations.ns_template_corr;
+
 
 @Path("/licenses")
 @Consumes(MediaType.APPLICATION_JSON)
