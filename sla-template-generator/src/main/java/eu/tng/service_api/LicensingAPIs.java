@@ -193,7 +193,7 @@ public class LicensingAPIs {
 		String cust_username = "";
 		try {
 			cust_username = headers.getRequestHeader("X-User-Name").get(0);
-			headers.getRequestHeader("X-User-Email").get(0);
+			
 		} catch (JSONException e) {
 			cust_username = "admin";
 		}
