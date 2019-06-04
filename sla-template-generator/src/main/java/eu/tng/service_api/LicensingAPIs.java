@@ -194,9 +194,11 @@ public class LicensingAPIs {
 		try {
 			cust_username = headers.getRequestHeader("X-User-Name").get(0);
 			
-		} catch (JSONException e) {
+		} 
+		catch (JSONException | NullPointerException e) {
 			cust_username = "admin";
 		}
+		
 
 		ResponseBuilder apiresponse = null;
 		new db_operations();
