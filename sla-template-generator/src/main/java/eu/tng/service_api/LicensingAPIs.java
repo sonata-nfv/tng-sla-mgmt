@@ -211,6 +211,7 @@ public class LicensingAPIs {
 			// check if this customer has already a license for this SLA
 			db_operations.createTableLicensing();
 			int count_licenses = db_operations.countLicensePerCustSLA(cust_username, sla_uuid);
+            
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 			String timestamps = timestamp.toString();
@@ -228,8 +229,7 @@ public class LicensingAPIs {
 				JSONObject license_info_template = db_operations.getLicenseinfoTemplates(sla_uuid, ns_uuid);
 
 				if (license_info_template == null || license_info_template.isEmpty()) {
-					// close db connection
-					db_operations.closePostgreSQL();
+
 					// logging
 					timestamp = new Timestamp(System.currentTimeMillis());
 					timestamps = timestamp.toString();
@@ -270,8 +270,6 @@ public class LicensingAPIs {
 					}
 					license_info_response = license_info_template;
 
-					// close db connection
-					db_operations.closePostgreSQL();
 					
 					// logging
 					timestamp = new Timestamp(System.currentTimeMillis());
@@ -296,8 +294,7 @@ public class LicensingAPIs {
 				JSONObject license_info_record = db_operations.getLicenseInfo(sla_uuid, cust_username, ns_uuid);
 				
 				if (license_info_record == null || license_info_record.isEmpty()) {
-					// close db connection
-					db_operations.closePostgreSQL();
+
 					// logging
 					timestamp = new Timestamp(System.currentTimeMillis());
 					timestamps = timestamp.toString();
@@ -341,17 +338,18 @@ public class LicensingAPIs {
 							"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 							type, timestamps, operation, message, status);
 
-					// close db connection
-					db_operations.closePostgreSQL();
+					
 					// API Response
 					apiresponse = Response.ok(license_info_response);
 					apiresponse.header("Content-Length", license_info_response.toString().length());
+					// close db connection
+		            db_operations.closePostgreSQL();
 					return apiresponse.status(200).build();
 				}
+				
 			}
 
 		} else {
-			db_operations.closePostgreSQL();
 
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
@@ -369,8 +367,10 @@ public class LicensingAPIs {
 			apiresponse = Response.ok((Object) error);
 			apiresponse.header("Content-Length", error.toJSONString().length());
 			return apiresponse.status(404).build();
+            
 		}
-
+		
+		
 	}
 
 	private boolean allowedToInstantiate(String license_status, String license_type, int license_allowed_instances,
