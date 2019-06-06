@@ -38,7 +38,7 @@ public class MonitoringRulesCommunication {
         root.put("sonata_service_id", nsi_id);
 
         String nvfid = vnfr_id_list.get(0);
-        vnf_obj.put("nvfid", nvfid);
+        vnf_obj.put("vnf_id", nvfid);
         String curr_vdu_id = deployment_unit_id_list.get(0);
         vdu_obj.put("vdu_id", curr_vdu_id);
         vdus.add(vdu_obj);

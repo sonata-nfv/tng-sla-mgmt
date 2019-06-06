@@ -65,7 +65,7 @@ public class MonitoringRulesImmersiveMedia {
                     if (curr_slo_name.equals("input_connections") && curr_vnf_name.equals("vnf-ma")) {
 
                         String nvfid = vnfr_id_list.get(i);
-                        vnf_obj.put("nvfid", nvfid);
+                        vnf_obj.put("vnf_id", nvfid);
 
                         // Define JSONArray vdus
 
@@ -105,7 +105,7 @@ public class MonitoringRulesImmersiveMedia {
 
                         vnf_obj = new JSONObject();
                         String nvfid = vnfr_id_list.get(i);
-                        vnf_obj.put("nvfid", nvfid);
+                        vnf_obj.put("vnf_id", nvfid);
 
                         // Define JSONArray vdus
                         vdus = new JSONArray();
