@@ -1508,7 +1508,9 @@ public class db_operations {
 		JSONArray ns_template = new JSONArray();
 		JSONArray cust_sla = new JSONArray();
 
-		if (tablename == "ns_template") {
+		System.out.println("tablename ==> " + tablename);
+		
+		if (tablename.equals("tablename")) {
 
 			try {
 				c.setAutoCommit(false);
@@ -1556,7 +1558,7 @@ public class db_operations {
 						type, timestamps, operation, message, status);
 			}
 
-		} else if (tablename == "cust_sla") {
+		} else if (tablename.equals("cust_sla")) {
 
 			try {
 				c.setAutoCommit(false);
