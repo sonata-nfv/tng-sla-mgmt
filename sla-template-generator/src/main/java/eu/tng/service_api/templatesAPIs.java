@@ -63,6 +63,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -497,7 +498,11 @@ public class templatesAPIs {
 		apiresponse = Response.ok(sla_obj.toJSONString());
 		apiresponse.header("Content-Length", sla_obj.toJSONString().length());
 
-		if (sla_obj.isEmpty()) {
+		JSONArray slas_array = new JSONArray();
+		slas_array = (JSONArray) sla_obj.get("slas");
+		
+		
+		if (slas_array.length() == 0) {
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 			String timestamps = timestamp.toString();

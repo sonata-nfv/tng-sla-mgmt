@@ -244,7 +244,8 @@ public class db_operations {
 
 			while (rs.next()) {
 
-				sla_uuid = rs.getString("sla_uuid");				
+				sla_uuid = rs.getString("sla_uuid");	
+				d_flavor = rs.getString("d_flavour_name");
 				license_type = rs.getString("license_type");
 				license_exp_date = rs.getString("license_exp_date");
 				allowed_instancesString = rs.getString("allowed_instances");
@@ -275,17 +276,13 @@ public class db_operations {
 					JSONParser parser = new JSONParser();
 					Object existingTemplates = parser.parse(response.toString());
 					JSONObject sla_template = (JSONObject) parser.parse(response.toString());
-
-					System.out.println("sla_template  ==>" + sla_template);
 					
 					JSONObject slad = (JSONObject) sla_template.get("slad");
 					
 					sla_name = (String) slad.get("name");
 					sla_vendor = (String) slad.get("vendor");
 					sla_version = (String) slad.get("version");
-					
-					System.out.println("name vendor version  ==>" + sla_name + sla_vendor + sla_version);
-					
+								
 				} 
 				catch (Exception e) {
 
@@ -310,16 +307,12 @@ public class db_operations {
 				sla_info.put("license_exp_date", license_exp_date);
 				sla_info.put("allowed_instances", allowed_instances);
 				sla_info.put("d_flavor", d_flavor);
-			
-				System.out.println("sla_info  ==>" + sla_info);
 
 				slas.add(sla_info);
 			}
 				
 			slas_obj.put("slas", slas);
-			
-			System.out.println("slas_obj  ==>" + slas_obj);
-			
+						
 			rs.close();
 			stmt.close();
 			c.commit();
