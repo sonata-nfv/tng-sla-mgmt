@@ -35,6 +35,10 @@
 
 package eu.tng.correlations;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -48,11 +52,14 @@ import java.time.LocalDate;
 import java.util.Date;
 import java.util.TimeZone;
 
+import javax.ws.rs.core.Response;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.ThreadContext;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 
 import java.sql.ResultSet;
 
@@ -212,10 +219,10 @@ public class db_operations {
 	 * @param nsd_uuid
 	 * @return
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "null" })
 	public static JSONObject selectSlasPerNS(String nsd_uuid) {
 
-		JSONObject slas_obj = new JSONObject();
+		JSONObject slas_obj = null;
 		JSONArray slas = new JSONArray();
 		
 		String sla_uuid = "";
@@ -242,6 +249,52 @@ public class db_operations {
 				license_exp_date = rs.getString("license_exp_date");
 				allowed_instancesString = rs.getString("allowed_instances");
 				allowed_instances = Integer.parseInt(allowed_instancesString);
+				
+				
+				try {
+					String url = System.getenv("CATALOGUES_URL") + "slas/template-descriptors/" + sla_uuid;
+					URL object = new URL(url);
+
+					HttpURLConnection con = (HttpURLConnection) object.openConnection();
+					con.setDoOutput(true);
+					con.setDoInput(true);
+					con.setRequestProperty("Content-Type", "application/json");
+					con.setRequestProperty("Accept", "application/json");
+					con.setRequestMethod("GET");
+
+					con.getResponseCode();
+					BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
+					String inputLine;
+					StringBuffer response = new StringBuffer();
+					while ((inputLine = in.readLine()) != null) {
+						response.append(inputLine);
+					}
+					in.close();
+
+					// get the core sla from the catalogue
+					JSONParser parser = new JSONParser();
+					Object existingTemplates = parser.parse(response.toString());
+					JSONObject sla_template = (JSONObject) parser.parse(response.toString());
+
+					JSONObject slad = (JSONObject) sla_template.get("slad");
+					
+					sla_name = (String) slad.get("name");
+					sla_vendor = (String) slad.get("vendor");
+					sla_version = (String) slad.get("version");
+				} 
+				catch (Exception e) {
+
+					// logging
+					Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+					String timestamps = timestamp.toString();
+					String operation = "Geting SLAD from catalogue. Class:"+ class_name;
+					String type = "E";
+					String message = "[*] Error: SLA with uuid=" + sla_uuid + " NOT Found!";
+					String status = String.valueOf(404);
+					logger.error(
+							"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+							type, timestamps, operation, message, status);
+				}
 				
 				JSONObject sla_info = new JSONObject();
 				sla_info.put("uuid", sla_uuid);
