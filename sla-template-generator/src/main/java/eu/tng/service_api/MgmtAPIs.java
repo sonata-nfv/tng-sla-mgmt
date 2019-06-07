@@ -70,7 +70,7 @@ public class MgmtAPIs {
 	final static Logger logger = LogManager.getLogger();
 
 	/**
-	 * Get all ns- templates correlations
+	 * Get all ns-templates correlations
 	 */
 	@Path("/services/templates/")
 	@GET
@@ -82,9 +82,10 @@ public class MgmtAPIs {
 		db_operations.connectPostgreSQL();
 		dbo.createTableNSTemplate();
 		JSONObject correlations = dbo.selectAllRecords("ns_template");
+		System.out.println("root correlations ==> " + correlations);
 		db_operations.closePostgreSQL();
-
-		apiresponse = Response.ok((Object) correlations);
+		
+		apiresponse = Response.ok(correlations.toString());
 		apiresponse.header("Content-Length", correlations.toString().length());
 
 		// logging

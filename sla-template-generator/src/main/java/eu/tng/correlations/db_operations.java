@@ -1537,6 +1537,8 @@ public class db_operations {
 
 				root.put("ns_template", ns_template);
 
+				System.out.println("root 1 ==> " + root);
+				
 				rs.close();
 				stmt.close();
 				c.commit();
@@ -1594,6 +1596,8 @@ public class db_operations {
 			}
 
 		}
+		
+		System.out.println("root 2 ==> " + root);
 		return root;
 	}
 
