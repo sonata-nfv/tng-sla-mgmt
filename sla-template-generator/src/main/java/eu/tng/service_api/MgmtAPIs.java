@@ -64,7 +64,7 @@ import eu.tng.correlations.db_operations;
 import eu.tng.correlations.ns_template_corr;
 
 @Path("/mgmt")
-@Consumes(MediaType.APPLICATION_JSON)
+@Consumes(MediaType.TEXT_PLAIN)
 public class MgmtAPIs {
 
 	final static Logger logger = LogManager.getLogger();
@@ -82,11 +82,11 @@ public class MgmtAPIs {
 		db_operations.connectPostgreSQL();
 		dbo.createTableNSTemplate();
 		JSONObject correlations = dbo.selectAllRecords("ns_template");
-		System.out.println("root correlations ==> " + correlations);
+
 		db_operations.closePostgreSQL();
 		
-		apiresponse = Response.ok(correlations.toString());
-		apiresponse.header("Content-Length", correlations.toString().length());
+		apiresponse = Response.ok(correlations.toJSONString());
+		apiresponse.header("Content-Length", correlations.toJSONString().length());
 
 		// logging
 		Timestamp timestamp = new Timestamp(System.currentTimeMillis());

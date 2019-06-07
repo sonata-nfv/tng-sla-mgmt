@@ -1508,17 +1508,15 @@ public class db_operations {
 		JSONArray ns_template = new JSONArray();
 		JSONArray cust_sla = new JSONArray();
 
-		System.out.println("tablename ==> " + tablename);
 		
 		if (tablename.equals("ns_template")) {
 
-			System.out.println("entered ns template if  ==> " + tablename);
 			
 			try {		
 				c.setAutoCommit(false);
 				stmt = c.createStatement();
 				ResultSet rs = stmt.executeQuery("SELECT * FROM ns_template;");
-				System.out.println("result set ==> " + rs);
+
 				while (rs.next()) {
 					String ns_uuid = rs.getString("ns_uuid");
 					String sla_uuid = rs.getString("sla_uuid");
@@ -1530,7 +1528,6 @@ public class db_operations {
 					ns_template.add(obj);
 				}
 				
-				System.out.println("root 1 ==> " + root);
 				
 				root.put("ns_template", ns_template);
 				
@@ -1593,7 +1590,6 @@ public class db_operations {
 
 		}
 		
-		System.out.println("root 2 ==> " + root);
 		return root;
 	}
 
