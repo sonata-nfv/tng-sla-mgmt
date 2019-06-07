@@ -1518,23 +1518,14 @@ public class db_operations {
 				c.setAutoCommit(false);
 				stmt = c.createStatement();
 				ResultSet rs = stmt.executeQuery("SELECT * FROM ns_template;");
+				System.out.println("result set ==> " + rs);
 				while (rs.next()) {
 					String ns_uuid = rs.getString("ns_uuid");
 					String sla_uuid = rs.getString("sla_uuid");
-					String license_type = rs.getString("license_type");
-					String license_exp_type = rs.getString("license_exp_type");
-					String allowed_instances = rs.getString("allowed_instances");
-					String license_status = rs.getString("license_status");
-					String dflavour_name = rs.getString("d_flavour_name");
 
 					JSONObject obj = new JSONObject();
 					obj.put("ns_uuid", ns_uuid);
 					obj.put("sla_uuid", sla_uuid);
-					obj.put("license_type", license_type);
-					obj.put("license_exp_type", license_exp_type);
-					obj.put("allowed_instances", allowed_instances);
-					obj.put("license_status", license_status);
-					obj.put("dflavour_name", dflavour_name);
 
 					ns_template.add(obj);
 				}
