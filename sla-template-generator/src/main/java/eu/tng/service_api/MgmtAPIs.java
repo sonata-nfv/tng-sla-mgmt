@@ -70,11 +70,11 @@ public class MgmtAPIs {
 	final static Logger logger = LogManager.getLogger();
 
 	/**
-	 * Get all ns- templates correlations
+	 * Get all ns-templates correlations
 	 */
 	@Path("/services/templates/")
 	@GET
-	@Produces(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.TEXT_PLAIN)
 	public Response getTemplateNsCorrelations() {
 
 		ResponseBuilder apiresponse = null;
@@ -82,10 +82,11 @@ public class MgmtAPIs {
 		db_operations.connectPostgreSQL();
 		dbo.createTableNSTemplate();
 		JSONObject correlations = dbo.selectAllRecords("ns_template");
-		db_operations.closePostgreSQL();
 
-		apiresponse = Response.ok((Object) correlations);
-		apiresponse.header("Content-Length", correlations.toString().length());
+		db_operations.closePostgreSQL();
+		
+		apiresponse = Response.ok(correlations.toJSONString());
+		apiresponse.header("Content-Length", correlations.toJSONString().length());
 
 		// logging
 		Timestamp timestamp = new Timestamp(System.currentTimeMillis());

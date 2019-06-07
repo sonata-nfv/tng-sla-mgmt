@@ -1508,45 +1508,40 @@ public class db_operations {
 		JSONArray ns_template = new JSONArray();
 		JSONArray cust_sla = new JSONArray();
 
-		if (tablename == "ns_template") {
+		
+		if (tablename.equals("ns_template")) {
 
-			try {
+			
+			try {		
 				c.setAutoCommit(false);
 				stmt = c.createStatement();
-				ResultSet rs = stmt.executeQuery("SELECT * FROM " + tablename + ";");
+				ResultSet rs = stmt.executeQuery("SELECT * FROM ns_template;");
+
 				while (rs.next()) {
 					String ns_uuid = rs.getString("ns_uuid");
 					String sla_uuid = rs.getString("sla_uuid");
-					String license_type = rs.getString("license_type");
-					String license_exp_type = rs.getString("license_exp_type");
-					String allowed_instances = rs.getString("allowed_instances");
-					String license_status = rs.getString("license_status");
-					String dflavour_name = rs.getString("dflavour_name");
 
 					JSONObject obj = new JSONObject();
 					obj.put("ns_uuid", ns_uuid);
 					obj.put("sla_uuid", sla_uuid);
-					obj.put("license_type", license_type);
-					obj.put("license_exp_type", license_exp_type);
-					obj.put("allowed_instances", allowed_instances);
-					obj.put("license_status", license_status);
-					obj.put("dflavour_name", dflavour_name);
 
 					ns_template.add(obj);
 				}
-
+				
+				
 				root.put("ns_template", ns_template);
-
+				
 				rs.close();
 				stmt.close();
 				c.commit();
-
+				
+			
 			} catch (SQLException e) {
 				// logging
 				Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 				String timestamps = timestamp.toString();
 				String type = "E";
-				String operation = "Get al records";
+				String operation = "Get all records";
 				String message = ("[*] Error feching data from table = " + tablename);
 				String status = "";
 				logger.debug(
@@ -1554,7 +1549,7 @@ public class db_operations {
 						type, timestamps, operation, message, status);
 			}
 
-		} else if (tablename == "cust_sla") {
+		} else if (tablename.equals("cust_sla")) {
 
 			try {
 				c.setAutoCommit(false);
@@ -1594,6 +1589,7 @@ public class db_operations {
 			}
 
 		}
+		
 		return root;
 	}
 
