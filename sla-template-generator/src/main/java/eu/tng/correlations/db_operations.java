@@ -205,6 +205,78 @@ public class db_operations {
 		}
 		return result;
 	}
+	
+
+	/**
+	 * 
+	 * @param nsd_uuid
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public static JSONObject selectSlasPerNS(String nsd_uuid) {
+
+		JSONObject slas_obj = new JSONObject();
+		JSONArray slas = new JSONArray();
+		
+		String sla_uuid = "";
+		String sla_name = "" ;
+		String sla_vendor = "";
+		String sla_version = "";
+		
+		String license_type = "";
+		String license_exp_date = "";
+		String allowed_instancesString = "";
+		int allowed_instances = 0;
+		
+		String d_flavor = "";
+
+		try {
+			c.setAutoCommit(false);
+			stmt = c.createStatement();
+			ResultSet rs = stmt.executeQuery("SELECT * FROM ns_template WHERE ns_uuid = '" + nsd_uuid + "';");
+
+			while (rs.next()) {
+
+				sla_uuid = rs.getString("sla_uuid");				
+				license_type = rs.getString("license_type");
+				license_exp_date = rs.getString("license_exp_date");
+				allowed_instancesString = rs.getString("allowed_instances");
+				allowed_instances = Integer.parseInt(allowed_instancesString);
+				
+				JSONObject sla_info = new JSONObject();
+				sla_info.put("uuid", sla_uuid);
+				sla_info.put("name", sla_name);
+				sla_info.put("vendor", sla_vendor);
+				sla_info.put("version", sla_version);
+				sla_info.put("license_type", license_type);
+				sla_info.put("license_exp_date", license_exp_date);
+				sla_info.put("allowed_instances", allowed_instances);
+				sla_info.put("d_flavor", d_flavor);
+			
+				slas.add(sla_info);
+			}
+				
+			slas_obj.put("slas", slas);
+			
+			rs.close();
+			stmt.close();
+			c.commit();
+			
+		} catch (SQLException e) {
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			String timestamps = timestamp.toString();
+			String type = "W";
+			String operation = "Get associated SLAs for NSD_UUID="+nsd_uuid +"  Class: " + class_name;
+			String message = ("Warning: Nor succesful parsing of sla records from database ==> " + e.getMessage());
+			String status = "";
+			logger.debug(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
+		}
+
+		return slas_obj;
+	}
 
 	@SuppressWarnings("unchecked")
 	public static JSONObject getLicenseinfoTemplates(String sla_uuid, String ns_uuid) {

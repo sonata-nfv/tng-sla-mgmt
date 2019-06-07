@@ -478,6 +478,56 @@ public class templatesAPIs {
 	}
 
 	/**
+	 * api call in order to get SLAs associated for a specific nsd uuid
+	 */
+	@SuppressWarnings("unchecked")
+	@Produces(MediaType.TEXT_PLAIN)
+	@GET
+	@Path("/services/{nsd_uuid}")
+	public Response getSLAsPerNS(@PathParam("nsd_uuid") String nsd_uuid) {
+
+		ResponseBuilder apiresponse = null;
+	
+		db_operations dbo = new db_operations();
+		db_operations.connectPostgreSQL();
+		dbo.createTableNSTemplate();
+		JSONObject sla_obj = db_operations.selectSlasPerNS(nsd_uuid);
+		db_operations.closePostgreSQL();
+		
+		apiresponse = Response.ok(sla_obj.toJSONString());
+		apiresponse.header("Content-Length", sla_obj.toJSONString().length());
+
+		if (sla_obj.isEmpty()) {
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			String timestamps = timestamp.toString();
+			String type = "W";
+			String operation = "Get SLAs associated for a specific nsd uuid";
+			String message = "[*] Warning: SLA Templates for nsd_uuid=" + nsd_uuid + " not found!";
+			String status = String.valueOf(404);
+			logger.error(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
+			
+			return apiresponse.status(404).build();
+		} 
+		else {
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			String timestamps = timestamp.toString();
+			String type = "I";
+			String operation = "Get SLAs associated for a specific nsd uuid";
+			String message = "[*] Success: SLA Templates for nsd_uuid=" + nsd_uuid + " found succesfully!";
+			String status = String.valueOf(200);
+			logger.error(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
+			
+			return apiresponse.status(200).build();
+		}
+	}
+
+	/**
 	 * api call in order to delete an sla template
 	 */
 	@SuppressWarnings({ "static-access", "unchecked" })
