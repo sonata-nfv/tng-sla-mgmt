@@ -222,7 +222,7 @@ public class db_operations {
 	@SuppressWarnings({ "unchecked", "null" })
 	public static JSONObject selectSlasPerNS(String nsd_uuid) {
 
-		JSONObject slas_obj = null;
+		JSONObject slas_obj = new JSONObject();
 		JSONArray slas = new JSONArray();
 		
 		String sla_uuid = "";
@@ -250,7 +250,7 @@ public class db_operations {
 				allowed_instancesString = rs.getString("allowed_instances");
 				allowed_instances = Integer.parseInt(allowed_instancesString);
 				
-				
+				System.out.println("sla uuid ==>" + sla_uuid);
 				try {
 					String url = System.getenv("CATALOGUES_URL") + "slas/template-descriptors/" + sla_uuid;
 					URL object = new URL(url);
@@ -276,11 +276,16 @@ public class db_operations {
 					Object existingTemplates = parser.parse(response.toString());
 					JSONObject sla_template = (JSONObject) parser.parse(response.toString());
 
+					System.out.println("sla_template  ==>" + sla_template);
+					
 					JSONObject slad = (JSONObject) sla_template.get("slad");
 					
 					sla_name = (String) slad.get("name");
 					sla_vendor = (String) slad.get("vendor");
 					sla_version = (String) slad.get("version");
+					
+					System.out.println("name vendor version  ==>" + sla_name + sla_vendor + sla_version);
+					
 				} 
 				catch (Exception e) {
 
@@ -306,10 +311,14 @@ public class db_operations {
 				sla_info.put("allowed_instances", allowed_instances);
 				sla_info.put("d_flavor", d_flavor);
 			
+				System.out.println("sla_info  ==>" + sla_info);
+
 				slas.add(sla_info);
 			}
 				
 			slas_obj.put("slas", slas);
+			
+			System.out.println("slas_obj  ==>" + slas_obj);
 			
 			rs.close();
 			stmt.close();
