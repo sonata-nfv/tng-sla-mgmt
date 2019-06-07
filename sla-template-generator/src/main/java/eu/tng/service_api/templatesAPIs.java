@@ -502,7 +502,7 @@ public class templatesAPIs {
 		slas_array = (JSONArray) sla_obj.get("slas");
 		
 	
-		if (slas_array.length() == 0) {
+		if (slas_array.size() == 0) {
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 			String timestamps = timestamp.toString();
