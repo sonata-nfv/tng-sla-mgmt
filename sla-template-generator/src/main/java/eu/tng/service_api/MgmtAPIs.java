@@ -64,7 +64,7 @@ import eu.tng.correlations.db_operations;
 import eu.tng.correlations.ns_template_corr;
 
 @Path("/mgmt")
-@Consumes(MediaType.TEXT_PLAIN)
+@Consumes(MediaType.APPLICATION_JSON)
 public class MgmtAPIs {
 
 	final static Logger logger = LogManager.getLogger();
@@ -74,7 +74,7 @@ public class MgmtAPIs {
 	 */
 	@Path("/services/templates/")
 	@GET
-	@Produces(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.TEXT_PLAIN)
 	public Response getTemplateNsCorrelations() {
 
 		ResponseBuilder apiresponse = null;
