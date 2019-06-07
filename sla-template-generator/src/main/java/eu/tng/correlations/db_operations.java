@@ -1514,7 +1514,7 @@ public class db_operations {
 
 			System.out.println("entered ns template if  ==> " + tablename);
 			
-			try {
+			try {		
 				c.setAutoCommit(false);
 				stmt = c.createStatement();
 				ResultSet rs = stmt.executeQuery("SELECT * FROM ns_template;");
@@ -1525,7 +1525,7 @@ public class db_operations {
 					String license_exp_type = rs.getString("license_exp_type");
 					String allowed_instances = rs.getString("allowed_instances");
 					String license_status = rs.getString("license_status");
-					String dflavour_name = rs.getString("dflavour_name");
+					String dflavour_name = rs.getString("d_flavour_name");
 
 					JSONObject obj = new JSONObject();
 					obj.put("ns_uuid", ns_uuid);
@@ -1538,15 +1538,16 @@ public class db_operations {
 
 					ns_template.add(obj);
 				}
-
-				root.put("ns_template", ns_template);
-
+				
 				System.out.println("root 1 ==> " + root);
+				
+				root.put("ns_template", ns_template);
 				
 				rs.close();
 				stmt.close();
 				c.commit();
-
+				
+			
 			} catch (SQLException e) {
 				// logging
 				Timestamp timestamp = new Timestamp(System.currentTimeMillis());
