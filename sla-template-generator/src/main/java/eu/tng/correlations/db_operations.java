@@ -1510,7 +1510,7 @@ public class db_operations {
 
 		System.out.println("tablename ==> " + tablename);
 		
-		if (tablename.equals("tablename")) {
+		if (tablename.equals("ns_template")) {
 
 			try {
 				c.setAutoCommit(false);
