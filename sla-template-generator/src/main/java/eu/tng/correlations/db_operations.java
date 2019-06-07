@@ -1512,10 +1512,12 @@ public class db_operations {
 		
 		if (tablename.equals("ns_template")) {
 
+			System.out.println("entered ns template if  ==> " + tablename);
+			
 			try {
 				c.setAutoCommit(false);
 				stmt = c.createStatement();
-				ResultSet rs = stmt.executeQuery("SELECT * FROM " + tablename + ";");
+				ResultSet rs = stmt.executeQuery("SELECT * FROM ns_template;");
 				while (rs.next()) {
 					String ns_uuid = rs.getString("ns_uuid");
 					String sla_uuid = rs.getString("sla_uuid");
@@ -1550,7 +1552,7 @@ public class db_operations {
 				Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 				String timestamps = timestamp.toString();
 				String type = "E";
-				String operation = "Get al records";
+				String operation = "Get all records";
 				String message = ("[*] Error feching data from table = " + tablename);
 				String status = "";
 				logger.debug(
