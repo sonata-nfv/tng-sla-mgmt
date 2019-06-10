@@ -82,7 +82,7 @@ public class templatesAPIs {
 	 * api call in order to get a list with all the existing sla templates
 	 */
 	@SuppressWarnings("unchecked")
-	@Produces(MediaType.TEXT_PLAIN)
+	@Produces(MediaType.APPLICATION_JSON)
 	@GET
 	public Response getTemplates(@Context HttpHeaders headers) {
 
