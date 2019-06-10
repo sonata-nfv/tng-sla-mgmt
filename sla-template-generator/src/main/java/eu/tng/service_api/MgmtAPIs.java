@@ -139,17 +139,17 @@ public class MgmtAPIs {
 	 */
 	@SuppressWarnings("unchecked")
 	@GET
-	@Path("/guaranteesList")
-	//@Path("/guaranteesList/{ns_name}")
+	//@Path("/guaranteesList")
+	@Path("/guaranteesList/{ns_name}")
 	@Produces(MediaType.TEXT_PLAIN)
-	//public Response getGuarantees(@PathParam("ns_name") String ns_name) {
-	public Response getGuarantees() {
+	public Response getGuarantees(@PathParam("ns_name") String ns_name) {
+	//public Response getGuarantees() {
 		
 		JSONParser parser = new JSONParser();
 		JSONObject jsonObject = null;
 		
-		//JSONObject returnedSLOs = new JSONObject();
-		//JSONArray returned_guaranteeTerms = new JSONArray();
+		JSONObject returnedSLOs = new JSONObject();
+		JSONArray returned_guaranteeTerms = new JSONArray();
 
 	
 		ResponseBuilder apiresponse = null;
@@ -157,50 +157,50 @@ public class MgmtAPIs {
 			File testf = new File(this.getClass().getResource("/slos_list_Y2.json").toURI());
 			jsonObject = (JSONObject) parser.parse(new FileReader(testf));
 
-//			JSONArray guaranteeTerms = (JSONArray) jsonObject.get("guaranteeTerms");
-//
-//			/**
-//			 * Select what slos to return basd on the NS that was selected
-//			 * 
-//			 */
-//			if (ns_name.equals("communication-pilot")) {
-//			
-//				for (int i = 0; i < guaranteeTerms.size(); i++) {
-//					JSONObject curr_gurantee = (JSONObject) guaranteeTerms.get(i);
-//					String guaranteeID = (String) curr_gurantee.get("guaranteeID");
-//
-//					if (guaranteeID.equals("g1") || guaranteeID.equals("g2") || guaranteeID.equals("g3")
-//							|| guaranteeID.equals("g4") || guaranteeID.equals("g5") || guaranteeID.equals("g6")) {
-//						returned_guaranteeTerms.add(curr_gurantee);
-//					}
-//				}
-//				returnedSLOs.put("guaranteeTerms", returned_guaranteeTerms);
-//
-//
-//			}
-//			else if (ns_name.equals("mediapilot-service")) {
-//						
-//				for (int i = 0; i < guaranteeTerms.size(); i++) {
-//					JSONObject curr_gurantee = (JSONObject) guaranteeTerms.get(i);
-//					String guaranteeID = (String) curr_gurantee.get("guaranteeID");
-//
-//					if (guaranteeID.equals("g1") || guaranteeID.equals("g2") || guaranteeID.equals("g3")
-//							|| guaranteeID.equals("g7") || guaranteeID.equals("g8") || guaranteeID.equals("g9")) {
-//						returned_guaranteeTerms.add(curr_gurantee);
-//					}
-//				}
-//				returnedSLOs.put("guaranteeTerms", returned_guaranteeTerms);
-//
-//			}
-//			else {
-//				returnedSLOs = jsonObject;
-//			}
-//			
-//			apiresponse = Response.ok(returnedSLOs.toString());
-//			apiresponse.header("Content-Length", returnedSLOs.toString().length());
+			JSONArray guaranteeTerms = (JSONArray) jsonObject.get("guaranteeTerms");
+
+			/**
+			 * Select what slos to return basd on the NS that was selected
+			 * 
+			 */
+			if (ns_name.equals("communication-pilot")) {
 			
-			apiresponse = Response.ok(jsonObject.toString());
-			apiresponse.header("Content-Length", jsonObject.toString().length());
+				for (int i = 0; i < guaranteeTerms.size(); i++) {
+					JSONObject curr_gurantee = (JSONObject) guaranteeTerms.get(i);
+					String guaranteeID = (String) curr_gurantee.get("guaranteeID");
+
+					if (guaranteeID.equals("g1") || guaranteeID.equals("g2") || guaranteeID.equals("g3")
+							|| guaranteeID.equals("g4") || guaranteeID.equals("g5") || guaranteeID.equals("g6")) {
+						returned_guaranteeTerms.add(curr_gurantee);
+					}
+				}
+				returnedSLOs.put("guaranteeTerms", returned_guaranteeTerms);
+
+
+			}
+			else if (ns_name.equals("mediapilot-service")) {
+						
+				for (int i = 0; i < guaranteeTerms.size(); i++) {
+					JSONObject curr_gurantee = (JSONObject) guaranteeTerms.get(i);
+					String guaranteeID = (String) curr_gurantee.get("guaranteeID");
+
+					if (guaranteeID.equals("g1") || guaranteeID.equals("g2") || guaranteeID.equals("g3")
+							|| guaranteeID.equals("g7") || guaranteeID.equals("g8") || guaranteeID.equals("g9")) {
+						returned_guaranteeTerms.add(curr_gurantee);
+					}
+				}
+				returnedSLOs.put("guaranteeTerms", returned_guaranteeTerms);
+
+			}
+			else {
+				returnedSLOs = jsonObject;
+			}
+			
+			apiresponse = Response.ok(returnedSLOs.toString());
+			apiresponse.header("Content-Length", returnedSLOs.toString().length());
+			
+//			apiresponse = Response.ok(jsonObject.toString());
+//			apiresponse.header("Content-Length", jsonObject.toString().length());
 
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
