@@ -800,6 +800,7 @@ public class db_operations {
 				String nsi_uuid = rs.getString("nsi_uuid");
 
 				JSONObject license_info_record = getLicenseInfo(sla_uuid, cust_username, ns_uuid);
+				System.out.print("license_info_record: " + license_info_record);
 				String license_type = (String) license_info_record.get("license_type");
 				String license_status = (String) license_info_record.get("license_status");
 				String license_allowed_instances = (String) license_info_record.get("allowed_instances");
