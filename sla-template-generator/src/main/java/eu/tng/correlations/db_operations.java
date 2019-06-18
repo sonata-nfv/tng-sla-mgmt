@@ -618,19 +618,16 @@ public class db_operations {
 	 */
 	public static void UpdateCorrelationID(String nsi_uuid, String correlation_id) {
 
-		String SQL = "UPDATE cust_sla " + "SET inst_id = ? " + "WHERE nsi_uuid = ?";
 		boolean result = false;
 		try {
-			c.setAutoCommit(false);
-			PreparedStatement pstmt = c.prepareStatement(SQL);
-			pstmt.setString(1, correlation_id);
-			pstmt.setString(2, nsi_uuid);
-			pstmt.executeUpdate();
-			result = true;
-
-			pstmt.close();
-			c.commit();
-
+		    c.setAutoCommit(false);
+            stmt = c.createStatement();
+            String sql = "UPDATE cust_sla SET inst_id = '"+correlation_id+"' WHERE nsi_uuid='" + nsi_uuid + "';";
+            stmt.executeUpdate(sql);
+            result = true;
+            stmt.close();
+            c.commit();
+            
 		} catch (SQLException e) {
 
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
