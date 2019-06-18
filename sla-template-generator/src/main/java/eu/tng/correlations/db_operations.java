@@ -820,8 +820,8 @@ public class db_operations {
 				obj.put("nsi_uuid", nsi_uuid);
 				obj.put("license_type", license_type);
 				obj.put("license_status", license_status);
-				obj.put("license_allowed_instances", Integer.parseInt(license_allowed_instances));
-				obj.put("license_current_instances", Integer.parseInt(license_current_instances));
+				obj.put("license_allowed_instances", license_allowed_instances);
+				obj.put("license_current_instances", license_current_instances);
 				obj.put("license_expiration_date", license_expiration_date);
 
 				agreements.add(obj);
