@@ -208,6 +208,18 @@ public class MqServiceTerminateConsumer implements ServletContextListener {
 					}
 					/** if message coming from the GK - does not contain status key **/
 					else {
+					    // logging
+                        timestamp = new Timestamp(System.currentTimeMillis());
+                        timestamps = timestamp.toString();
+                        type = "I";
+                        operation = "RabbitMQ Listener NS Termination";
+                        message = "[*] Message from GK received";
+                        status = "";
+                        logger.info(
+                                "{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+                                type, timestamps, operation, message, status);
+                        
+                        
 						nsi_uuid = map.get("service_instance_uuid");
 
 						new db_operations();
