@@ -802,8 +802,8 @@ public class db_operations {
 				JSONObject license_info_record = getLicenseInfo(sla_uuid, cust_username, ns_uuid);
 				String license_type = (String) license_info_record.get("license_type");
 				String license_status = (String) license_info_record.get("license_status");
-				int license_allowed_instances = (int) license_info_record.get("allowed_instances");
-				int license_current_instances = (int) license_info_record.get("current_instances");
+				String license_allowed_instances = (String) license_info_record.get("allowed_instances");
+				String license_current_instances = (String) license_info_record.get("current_instances");
 				String license_expiration_date = (String) license_info_record.get("license_expiration_date");
 
 				JSONObject obj = new JSONObject();
@@ -820,8 +820,8 @@ public class db_operations {
 				obj.put("nsi_uuid", nsi_uuid);
 				obj.put("license_type", license_type);
 				obj.put("license_status", license_status);
-				obj.put("license_allowed_instances", license_allowed_instances);
-				obj.put("license_current_instances", license_current_instances);
+				obj.put("license_allowed_instances", Integer.parseInt(license_allowed_instances));
+				obj.put("license_current_instances", Integer.parseInt(license_current_instances));
 				obj.put("license_expiration_date", license_expiration_date);
 
 				agreements.add(obj);
