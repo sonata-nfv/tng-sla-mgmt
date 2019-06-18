@@ -618,19 +618,16 @@ public class db_operations {
 	 */
 	public static void UpdateCorrelationID(String nsi_uuid, String correlation_id) {
 
-		String SQL = "UPDATE cust_sla " + "SET inst_id = ? " + "WHERE nsi_uuid = ?";
 		boolean result = false;
 		try {
-			c.setAutoCommit(false);
-			PreparedStatement pstmt = c.prepareStatement(SQL);
-			pstmt.setString(1, correlation_id);
-			pstmt.setString(2, nsi_uuid);
-			pstmt.executeUpdate();
-			result = true;
-
-			pstmt.close();
-			c.commit();
-
+		    c.setAutoCommit(false);
+            stmt = c.createStatement();
+            String sql = "UPDATE cust_sla SET inst_id = '"+correlation_id+"' WHERE nsi_uuid='" + nsi_uuid + "';";
+            stmt.executeUpdate(sql);
+            result = true;
+            stmt.close();
+            c.commit();
+            
 		} catch (SQLException e) {
 
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
@@ -800,10 +797,13 @@ public class db_operations {
 				String nsi_uuid = rs.getString("nsi_uuid");
 
 				JSONObject license_info_record = getLicenseInfo(sla_uuid, cust_username, ns_uuid);
+				System.out.print("license_info_record: " + license_info_record);
 				String license_type = (String) license_info_record.get("license_type");
 				String license_status = (String) license_info_record.get("license_status");
-				int license_allowed_instances = (int) license_info_record.get("allowed_instances");
-				int license_current_instances = (int) license_info_record.get("current_instances");
+				int license_allowed_instances = 0;
+				license_allowed_instances = (Integer) license_info_record.get("allowed_instances");
+				int license_current_instances = 0;
+				license_current_instances = (Integer) license_info_record.get("current_instances");
 				String license_expiration_date = (String) license_info_record.get("license_expiration_date");
 
 				JSONObject obj = new JSONObject();

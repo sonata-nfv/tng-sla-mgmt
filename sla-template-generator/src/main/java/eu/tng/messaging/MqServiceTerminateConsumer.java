@@ -54,10 +54,12 @@ import com.rabbitmq.client.DeliverCallback;
 import com.rabbitmq.client.Delivery;
 import eu.tng.correlations.db_operations;
 
+
 public class MqServiceTerminateConsumer implements ServletContextListener {
 
 	static Logger logger = LogManager.getLogger();
-
+	static db_operations dbo = new db_operations();
+	
 	Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 	String timestamps = "";
 	String type = "";
@@ -136,7 +138,8 @@ public class MqServiceTerminateConsumer implements ServletContextListener {
 					type, timestamps, operation, message, status);
 
 			DeliverCallback deliverCallback = new DeliverCallback() {
-				@Override
+				@SuppressWarnings("static-access")
+                @Override
 				public void handle(String consumerTag, Delivery delivery) throws IOException {
 
 					JSONObject jsonObjectMessage = null;
@@ -146,7 +149,7 @@ public class MqServiceTerminateConsumer implements ServletContextListener {
 
 					// Parse message payload
 					String message = new String(delivery.getBody(), "UTF-8");
-
+					
 					// Ack the message
 					channel_service_terminate.basicAck(delivery.getEnvelope().getDeliveryTag(), false);
 
@@ -158,6 +161,7 @@ public class MqServiceTerminateConsumer implements ServletContextListener {
 					jsonObjectMessage = new JSONObject(map);
 
 					correlation_id = (String) delivery.getProperties().getCorrelationId();
+					System.out.print("correlation id ==> " + correlation_id);
 
 					/** if message coming from the MANO - contain status key **/
 					if (jsonObjectMessage.has("status")) {
@@ -166,6 +170,7 @@ public class MqServiceTerminateConsumer implements ServletContextListener {
 
 						if (status.equals("READY")) {
 							new db_operations();
+							System.out.print("from READY message correlation_id: " + correlation_id);
 							db_operations.connectPostgreSQL();
 							// termonate agreement
 							db_operations.TerminateAgreement("TERMINATED", correlation_id.toString());
@@ -181,7 +186,8 @@ public class MqServiceTerminateConsumer implements ServletContextListener {
 							String cust_username = linfo.get("cust_username").toString();
 							String current_instances = linfo.get("current_instances").toString();
 							String updated_current_instances = "";
-
+							
+							System.out.println("linfo: " + linfo);
 							if (current_instances.equals("0")) {
 								updated_current_instances = ("0");
 							} else {
@@ -190,6 +196,8 @@ public class MqServiceTerminateConsumer implements ServletContextListener {
 								updated_current_instances = String.valueOf(ci_int_updated);
 							}
 
+							System.out.print("sla_uuid, ns_uuid, cust_username,updated_current_instances" + sla_uuid + ns_uuid + cust_username + updated_current_instances);
+							
 							db_operations.UpdateLicenseCurrentInstances(sla_uuid, ns_uuid, cust_username,updated_current_instances);
 
 							db_operations.closePostgreSQL();
@@ -208,16 +216,37 @@ public class MqServiceTerminateConsumer implements ServletContextListener {
 					}
 					/** if message coming from the GK - does not contain status key **/
 					else {
+					    // logging
+                        timestamp = new Timestamp(System.currentTimeMillis());
+                        timestamps = timestamp.toString();
+                        type = "I";
+                        operation = "RabbitMQ Listener NS Termination";
+                        message = "[*] Message from GK received";
+                        status = "";
+                        logger.info(
+                                "{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+                                type, timestamps, operation, message, status);
+                        
+                        
 						nsi_uuid = map.get("service_instance_uuid");
 
+						dbo.connectPostgreSQL();
+						dbo.createTableCustSla();
+                        dbo.UpdateCorrelationID(nsi_uuid.toString(), correlation_id.toString());
+                        dbo.UpdateLicenseCorrelationIDperNSI(nsi_uuid.toString(), correlation_id.toString());
+                        dbo.closePostgreSQL();
+                        
+						/*
 						new db_operations();
 						db_operations.connectPostgreSQL();
 						db_operations.createTableCustSla();
 						// make update record to change the correlation id - the correlation id of the
 						// termination messaging
+						System.out.print("nsi_uuid: " + nsi_uuid + " correlation_id: " + correlation_id);
 						db_operations.UpdateCorrelationID(nsi_uuid.toString(), correlation_id.toString());
 						db_operations.UpdateLicenseCorrelationIDperNSI(nsi_uuid.toString(), correlation_id.toString());
 						db_operations.closePostgreSQL();
+						*/
 					}
 
 				}
