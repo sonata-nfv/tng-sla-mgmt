@@ -166,6 +166,7 @@ public class MqServiceTerminateConsumer implements ServletContextListener {
 
 						if (status.equals("READY")) {
 							new db_operations();
+							System.out.print("from READY message correlation_id: " + correlation_id);
 							db_operations.connectPostgreSQL();
 							// termonate agreement
 							db_operations.TerminateAgreement("TERMINATED", correlation_id.toString());
@@ -181,7 +182,8 @@ public class MqServiceTerminateConsumer implements ServletContextListener {
 							String cust_username = linfo.get("cust_username").toString();
 							String current_instances = linfo.get("current_instances").toString();
 							String updated_current_instances = "";
-
+							
+							System.out.println("linfo: " + linfo);
 							if (current_instances.equals("0")) {
 								updated_current_instances = ("0");
 							} else {
@@ -190,6 +192,8 @@ public class MqServiceTerminateConsumer implements ServletContextListener {
 								updated_current_instances = String.valueOf(ci_int_updated);
 							}
 
+							System.out.print("sla_uuid, ns_uuid, cust_username,updated_current_instances" + sla_uuid + ns_uuid + cust_username + updated_current_instances);
+							
 							db_operations.UpdateLicenseCurrentInstances(sla_uuid, ns_uuid, cust_username,updated_current_instances);
 
 							db_operations.closePostgreSQL();
@@ -227,6 +231,7 @@ public class MqServiceTerminateConsumer implements ServletContextListener {
 						db_operations.createTableCustSla();
 						// make update record to change the correlation id - the correlation id of the
 						// termination messaging
+						System.out.print("nsi_uuid: " + nsi_uuid + " correlation_id: " + correlation_id);
 						db_operations.UpdateCorrelationID(nsi_uuid.toString(), correlation_id.toString());
 						db_operations.UpdateLicenseCorrelationIDperNSI(nsi_uuid.toString(), correlation_id.toString());
 						db_operations.closePostgreSQL();
