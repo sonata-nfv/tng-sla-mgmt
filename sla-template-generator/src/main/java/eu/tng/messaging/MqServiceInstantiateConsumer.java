@@ -256,11 +256,11 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
                                         // logging
                                         timestamp = new Timestamp(System.currentTimeMillis());
                                         timestamps = timestamp.toString();
-                                        type = "E";
+                                        type = "D";
                                         operation = "Network service instantiation";
-                                        message = "Error: " + e.getMessage();
+                                        message = "DEBUG: " + e.getMessage().toString();
                                         status = "";
-                                        logger.error(
+                                        logger.debug(
                                                 "{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
                                                 type, timestamps, operation, message, status);
                                     }
@@ -427,7 +427,7 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
                         String timestamps4 = timestamp4.toString();
                         String type4 = "I";
                         String operation4 = "RabbitMQ Listener";
-                        String message4 = "[*] Message coming from Gatekeeper: " + jsonObjectMessage.toString();
+                        String message4 = "[*] Message coming from Gatekeeper: " + jsonObjectMessage;
                         String status4 = "";
                         logger.info(
                                 "{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
@@ -500,7 +500,6 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
                             cust_sla_corr.createCustSlaCorr(sla_uuid, sla_name, sla_status, ns_uuid, ns_name,
                                     cust_username, cust_email, inst_status, correlation_id);
 
-                            // CREATE LICENSE RECORD IN THE SLA_LICENSING TABLE
                             // get licensing information
                             db_operations.connectPostgreSQL();
 
@@ -532,17 +531,12 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 
                             // private licenses
                             if (license_type.equals("private")) {
-                                // in this stage the license status should be "bought"
-                                // an einai to prwto instantiation enos prwtou private license
                                 if (active_licenses == 0) {
                                     db_operations.UpdateLicenseCorrelationID(sla_uuid, ns_uuid, cust_username,
                                             correlation_id);
                                     db_operations.UpdateLicenseCurrentInstances(sla_uuid, ns_uuid, cust_username,
                                             current_instances);
                                 }
-                                // an den einai to prwto instantiation enos prwtou private license - prepei n
-                                // prostethei epipleon instance mesa sto pinaka kai na ginoun ola t arecords
-                                // update me right current instances
                                 else {
                                     db_operations.insertLicenseRecord(sla_uuid, ns_uuid, "", cust_username, cust_email,
                                             license_type, license_exp_date, String.valueOf(allowed_instances), current_instances,

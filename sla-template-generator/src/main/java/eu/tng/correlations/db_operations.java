@@ -251,7 +251,6 @@ public class db_operations {
 				allowed_instancesString = rs.getString("allowed_instances");
 				allowed_instances = Integer.parseInt(allowed_instancesString);
 				
-				System.out.println("sla uuid ==>" + sla_uuid);
 				try {
 					String url = System.getenv("CATALOGUES_URL") + "slas/template-descriptors/" + sla_uuid;
 					URL object = new URL(url);
@@ -797,7 +796,6 @@ public class db_operations {
 				String nsi_uuid = rs.getString("nsi_uuid");
 
 				JSONObject license_info_record = getLicenseInfo(sla_uuid, cust_username, ns_uuid);
-				System.out.print("license_info_record: " + license_info_record);
 				String license_type = (String) license_info_record.get("license_type");
 				String license_status = (String) license_info_record.get("license_status");
 				int license_allowed_instances = 0;
@@ -2130,7 +2128,7 @@ public class db_operations {
 			String timestamps = timestamp.toString();
 			String type = "E";
 			String operation = "UPDATE License instance. Class: " + class_name;
-			String message = ("[*] Set license status ACTIVE ?" + e.getMessage().toString());
+			String message = ("[*] Set license status ACTIVE ?" + e.getMessage());
 			String status = "";
 			logger.debug(
 					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
@@ -2258,7 +2256,7 @@ public class db_operations {
 			String timestamps = timestamp.toString();
 			String type = "W";
 			String operation = "Deactivating SLA Licensing";
-			String message = "[*] Error de-activating License with correlation id='"+correlation_id+"' : " + e.getMessage().toString();
+			String message = "[*] Error de-activating License with correlation id='"+correlation_id+"' : " + e.getMessage();
 			String status = "";
 			logger.warn(
 					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
@@ -2319,7 +2317,7 @@ public class db_operations {
 			String timestamps = timestamp.toString();
 			String type = "E";
 			String operation = "Updating SLA Licensing correlation id";
-			String message = "[*] Error updating SLA Licensing correlation id: " + e.getMessage().toString();
+			String message = "[*] Error updating SLA Licensing correlation id: " + e.getMessage();
 			String status = "";
 			logger.warn(
 					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
@@ -2413,7 +2411,7 @@ public class db_operations {
 			String timestamps = timestamp.toString();
 			String type = "E";
 			String operation = "Updating SLA Licensing current instances";
-			String message = "[*] Error updating license current instances: " + e.getMessage().toString();
+			String message = "[*] Error updating license current instances: " + e.getMessage();
 			String status = "";
 			logger.debug(
 					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
@@ -2518,6 +2516,34 @@ public class db_operations {
 					type, timestamps, operation, message, status);
 		}
 		return count;
+	}
+	
+	public boolean delete_license(String sla_uuid) {
+	    
+	    String SQL = "DELETE FROM sla_licensing WHERE sla_uuid = '"+sla_uuid+"'";
+        try {
+            c.setAutoCommit(false);
+            stmt = c.createStatement();
+            stmt.executeUpdate(SQL);
+
+            stmt.close();
+            c.commit();
+            return true;
+        } catch (SQLException e) {
+            // logging
+            Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+            String timestamps = timestamp.toString();
+            String type = "E";
+            String operation = "Delete Licensing Info";
+            String message = ("[*] Error deleting license with error: " + e.getMessage());
+            String status = "";
+            logger.debug(
+                    "{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+                    type, timestamps, operation, message, status);
+            return false;
+        }
+	    
+	    
 	}
 
 }

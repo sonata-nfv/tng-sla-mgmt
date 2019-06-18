@@ -575,6 +575,37 @@ public class templatesAPIs {
 					return Response.status(404).entity("SLA uuid Not Found").build();
 
 				} else {
+				    //Delete License Info
+				    dbo.connectPostgreSQL();
+				    boolean result = dbo.delete_license(sla_uuid);
+				    dbo.closePostgreSQL();
+				    
+				    if (result == true) {
+				        // logging
+		                Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+		                String timestamps = timestamp.toString();
+		                String type = "W";
+		                String operation = "Delete sla license assosiation";
+		                String message = "License for the corresponding sla deleted succefsully";
+		                String status = String.valueOf(200);
+		                logger.warn(
+		                        "{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+		                        type, timestamps, operation, message, status);
+				    }
+				    else
+				    {
+				        // logging
+		                Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+		                String timestamps = timestamp.toString();
+		                String type = "W";
+		                String operation = "Delete sla license assosiation";
+		                String message = "Error deleting sla-licesing assosiation";
+		                String status = String.valueOf(404);
+		                logger.warn(
+		                        "{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+		                        type, timestamps, operation, message, status);
+				    }
+				    
 					// delete all correlations with the deleted sla template from postgreSQL table
 					ns_template_corr nstemplcorr = new ns_template_corr();
 					nstemplcorr.deleteNsTempCorr(sla_uuid);
