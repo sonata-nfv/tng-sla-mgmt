@@ -146,7 +146,7 @@ public class MqServiceTerminateConsumer implements ServletContextListener {
 
 					// Parse message payload
 					String message = new String(delivery.getBody(), "UTF-8");
-
+					System.out.println("Message as received: " + message);
 					// Ack the message
 					channel_service_terminate.basicAck(delivery.getEnvelope().getDeliveryTag(), false);
 
@@ -158,6 +158,7 @@ public class MqServiceTerminateConsumer implements ServletContextListener {
 					jsonObjectMessage = new JSONObject(map);
 
 					correlation_id = (String) delivery.getProperties().getCorrelationId();
+					System.out.print("correlation id ==> " + correlation_id);
 
 					/** if message coming from the MANO - contain status key **/
 					if (jsonObjectMessage.has("status")) {
