@@ -54,10 +54,12 @@ import com.rabbitmq.client.DeliverCallback;
 import com.rabbitmq.client.Delivery;
 import eu.tng.correlations.db_operations;
 
+
 public class MqServiceTerminateConsumer implements ServletContextListener {
 
 	static Logger logger = LogManager.getLogger();
-
+	static db_operations dbo = new db_operations();
+	
 	Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 	String timestamps = "";
 	String type = "";
@@ -136,7 +138,8 @@ public class MqServiceTerminateConsumer implements ServletContextListener {
 					type, timestamps, operation, message, status);
 
 			DeliverCallback deliverCallback = new DeliverCallback() {
-				@Override
+				@SuppressWarnings("static-access")
+                @Override
 				public void handle(String consumerTag, Delivery delivery) throws IOException {
 
 					JSONObject jsonObjectMessage = null;
@@ -146,7 +149,7 @@ public class MqServiceTerminateConsumer implements ServletContextListener {
 
 					// Parse message payload
 					String message = new String(delivery.getBody(), "UTF-8");
-					System.out.println("Message as received: " + message);
+					
 					// Ack the message
 					channel_service_terminate.basicAck(delivery.getEnvelope().getDeliveryTag(), false);
 
@@ -227,6 +230,13 @@ public class MqServiceTerminateConsumer implements ServletContextListener {
                         
 						nsi_uuid = map.get("service_instance_uuid");
 
+						dbo.connectPostgreSQL();
+						dbo.createTableCustSla();
+                        dbo.UpdateCorrelationID(nsi_uuid.toString(), correlation_id.toString());
+                        dbo.UpdateLicenseCorrelationIDperNSI(nsi_uuid.toString(), correlation_id.toString());
+                        dbo.closePostgreSQL();
+                        
+						/*
 						new db_operations();
 						db_operations.connectPostgreSQL();
 						db_operations.createTableCustSla();
@@ -236,6 +246,7 @@ public class MqServiceTerminateConsumer implements ServletContextListener {
 						db_operations.UpdateCorrelationID(nsi_uuid.toString(), correlation_id.toString());
 						db_operations.UpdateLicenseCorrelationIDperNSI(nsi_uuid.toString(), correlation_id.toString());
 						db_operations.closePostgreSQL();
+						*/
 					}
 
 				}
