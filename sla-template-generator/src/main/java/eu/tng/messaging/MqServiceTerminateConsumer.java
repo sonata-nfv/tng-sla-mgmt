@@ -170,7 +170,7 @@ public class MqServiceTerminateConsumer implements ServletContextListener {
 
 						if (status.equals("READY")) {
 						    try {
-						        nsr = (JSONObject) map.get("nsr");
+						        nsr = (JSONObject) jsonObjectMessage.get("nsr");
 						        System.out.println("NSR: " + nsr);
 						    }catch (JSONException e) {
 						        System.out.println("ERROR ON PARSING NSR: " + nsr);
