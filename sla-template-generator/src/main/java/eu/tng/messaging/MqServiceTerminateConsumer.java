@@ -143,6 +143,7 @@ public class MqServiceTerminateConsumer implements ServletContextListener {
 				public void handle(String consumerTag, Delivery delivery) throws IOException {
 
 					JSONObject jsonObjectMessage = null;
+					JSONObject nsr = null;
 					Object correlation_id = null;
 					Object status = null;
 					Object nsi_uuid = null;
@@ -158,58 +159,74 @@ public class MqServiceTerminateConsumer implements ServletContextListener {
 					@SuppressWarnings("unchecked")
 					Map<String, Object> map = (Map<String, Object>) yaml.load(message);
 					jsonObjectMessage = new JSONObject(map);
-
 					correlation_id = (String) delivery.getProperties().getCorrelationId();
 
-
+					
+					
 					/** if message coming from the MANO - contain status key **/
 					if (jsonObjectMessage.has("status")) {
 
 						status = map.get("status");
 
 						if (status.equals("READY")) {
-							new db_operations();
-
-							db_operations.connectPostgreSQL();
-							// termonate agreement
-							db_operations.TerminateAgreement("TERMINATED", correlation_id.toString());
-
-							// deactivate license
-							db_operations.deactivateLicense(correlation_id.toString(), "inactive");
-
-							// reduce current instances
-							org.json.simple.JSONObject linfo = db_operations
-									.getLicensePerCorrID(correlation_id.toString());
-							String sla_uuid = linfo.get("sla_uuid").toString();
-							String ns_uuid = linfo.get("ns_uuid").toString();
-							String cust_username = linfo.get("cust_username").toString();
-							String current_instances = linfo.get("current_instances").toString();
-							String updated_current_instances = "";
-							
-
-							if (current_instances.equals("0")) {
-								updated_current_instances = ("0");
-							} else {
-								int ci_int = Integer.parseInt(current_instances);
-								int ci_int_updated = (ci_int - 1);
-								updated_current_instances = String.valueOf(ci_int_updated);
-							}
-
-							
-							db_operations.UpdateLicenseCurrentInstances(sla_uuid, ns_uuid, cust_username,updated_current_instances);
-
-							db_operations.closePostgreSQL();
-
-							// logging
-							timestamp = new Timestamp(System.currentTimeMillis());
-							timestamps = timestamp.toString();
-							type = "I";
-							operation = "RabbitMQ Listener NS Termination";
-							message = "[*] Service TERMINATED, DB Updated";
-							status = "";
-							logger.info(
-									"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
-									type, timestamps, operation, message, status);
+						    nsr = (JSONObject) map.get("nsr");
+						    
+						    if (nsr.has("sla_id")) {
+    							new db_operations();
+    
+    							db_operations.connectPostgreSQL();
+    							// Terminate agreement
+    							db_operations.TerminateAgreement("TERMINATED", correlation_id.toString());
+    
+    							// deactivate license
+    							db_operations.deactivateLicense(correlation_id.toString(), "inactive");
+    
+    							// reduce current instances
+    							org.json.simple.JSONObject linfo = db_operations
+    									.getLicensePerCorrID(correlation_id.toString());
+    							String sla_uuid = linfo.get("sla_uuid").toString();
+    							String ns_uuid = linfo.get("ns_uuid").toString();
+    							String cust_username = linfo.get("cust_username").toString();
+    							String current_instances = linfo.get("current_instances").toString();
+    							String updated_current_instances = "";
+    							
+    							if (current_instances.equals("0")) {
+    								updated_current_instances = ("0");
+    							} else {
+    								int ci_int = Integer.parseInt(current_instances);
+    								int ci_int_updated = (ci_int - 1);
+    								updated_current_instances = String.valueOf(ci_int_updated);
+    							}
+    
+    							
+    							db_operations.UpdateLicenseCurrentInstances(sla_uuid, ns_uuid, cust_username,updated_current_instances);
+    
+    							db_operations.closePostgreSQL();
+    
+    							// logging
+    							timestamp = new Timestamp(System.currentTimeMillis());
+    							timestamps = timestamp.toString();
+    							type = "I";
+    							operation = "RabbitMQ Listener NS Termination";
+    							message = "[*] Service TERMINATED, DB Updated";
+    							status = "";
+    							logger.info(
+    									"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+    									type, timestamps, operation, message, status);
+    						}
+						    else
+						    {
+						        // logging
+                                timestamp = new Timestamp(System.currentTimeMillis());
+                                timestamps = timestamp.toString();
+                                type = "I";
+                                operation = "RabbitMQ Listener NS Termination";
+                                message = "[*] Terminated Service with no SLA - Message Aborted";
+                                status = "";
+                                logger.info(
+                                        "{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+                                        type, timestamps, operation, message, status);
+						    }
 						}
 					}
 					/** if message coming from the GK - does not contain status key **/
