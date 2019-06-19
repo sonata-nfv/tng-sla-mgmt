@@ -182,7 +182,6 @@ public class MqServiceTerminateConsumer implements ServletContextListener {
                             }
 
                             if (nsr.has("sla_id")) {
-                                System.out.println("SLA UUID " + nsr.get("sla_id"));
                                 new db_operations();
 
                                 db_operations.connectPostgreSQL();
