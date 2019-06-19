@@ -169,9 +169,15 @@ public class MqServiceTerminateConsumer implements ServletContextListener {
 						status = map.get("status");
 
 						if (status.equals("READY")) {
-						    nsr = (JSONObject) map.get("nsr");
+						    try {
+						        nsr = (JSONObject) map.get("nsr");
+						        System.out.println("NSR: " + nsr);
+						    }catch (JSONException e) {
+						        System.out.println("ERROR ON PARSING NSR: " + nsr);
+						    }
 						    
 						    if (nsr.has("sla_id")) {
+						        System.out.println("SLA UUID " + nsr.get("sla_id"));
     							new db_operations();
     
     							db_operations.connectPostgreSQL();
