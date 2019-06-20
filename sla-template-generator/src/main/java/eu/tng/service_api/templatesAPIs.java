@@ -285,13 +285,9 @@ public class templatesAPIs {
 
 		}
 
-		// Create the template 
-		CreateTemplate ct = new CreateTemplate();
-		JSONObject template = ct.createTemplate(nsd_uuid.get(0), templateName.get(0), expireDate.get(0), guarantees,
-				service_licence_type.get(0), allowed_service_instances.get(0), service_licence_expiration_date.get(0),
-				provider_name, template_initiator);
-
-		if (template == null) {
+		/** get network service descriptor for the given nsId */
+		GetNsd nsd = new GetNsd();
+		if (nsd.getNSD(nsd_uuid.get(0)) == false) {
 			JSONObject error = new JSONObject();
 			error.put("ERROR:", "NSD don't found");
 			apiresponse = Response.ok(error.toString());
@@ -309,7 +305,8 @@ public class templatesAPIs {
 					type, timestamps, operation, message, status);
 
 			return apiresponse.status(404).build();
-		} else {
+		} 
+		else {
 
 			// Make the validations
 			TemplateValidation validation = new TemplateValidation();
@@ -368,6 +365,13 @@ public class templatesAPIs {
 				/**
 				 * If all the parameters are valid - continue to the creation of the template
 				 **/
+				// cretae the template descriptor
+				CreateTemplate ct = new CreateTemplate();
+				JSONObject template = ct.createTemplate(nsd_uuid.get(0), templateName.get(0), expireDate.get(0), guarantees,
+						service_licence_type.get(0), allowed_service_instances.get(0), service_licence_expiration_date.get(0),
+						provider_name, template_initiator);
+				
+				// upload the template descriptor
 				Object createdTemplate = null;
 				try {
 					// String url =
