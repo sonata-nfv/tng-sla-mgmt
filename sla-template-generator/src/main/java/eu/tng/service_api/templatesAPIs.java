@@ -292,9 +292,10 @@ public class templatesAPIs {
 		SimpleDateFormat formatter_lic = new SimpleDateFormat("dd/MM/yyyy");
 		String dateInString_lic = service_licence_expiration_date.get(0);
 		Date date_lic = null;
+		String service_licence_expiration_date_formatted = "";
 		try {
 			date_lic = formatter_lic.parse(dateInString_lic);
-			String service_licence_expiration_date_formatted = df.format(date_lic);
+			service_licence_expiration_date_formatted = df.format(date_lic);
 		} catch (Exception e) {
 		    
 			// logging
