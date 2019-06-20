@@ -294,7 +294,9 @@ public class templatesAPIs {
 		Date date_lic = null;
 		try {
 			date_lic = formatter_lic.parse(dateInString_lic);
+			String service_licence_expiration_date_formatted = df.format(date_lic);
 		} catch (Exception e) {
+		    
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 			String timestamps = timestamp.toString();
@@ -306,7 +308,7 @@ public class templatesAPIs {
 					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 					type, timestamps, operation, message, status);
 		}
-		String service_licence_expiration_date_formatted = df.format(date_lic);
+		
 
 		CreateTemplate ct = new CreateTemplate();
 		JSONObject template = ct.createTemplate(nsd_uuid.get(0), templateName.get(0), expireDate.get(0), guarantees,
