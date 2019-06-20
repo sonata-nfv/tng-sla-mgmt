@@ -161,6 +161,117 @@ public class TemplateValidation {
 		return valid_date;
 
 	}
+	
+	/**
+	 * Validate if LicenseExpireDate is a future date
+	 * 
+	 * @param expireDate
+	 * @return valid_expire_date
+	 */
+	public static boolean checkLicenseExpireDate(String licenseExpireDate) {
+
+		boolean valid_license_expire_date = false;
+
+		/** current date */
+		Date today = new Date();
+
+		/** valid until date */
+		Date valid_until = null;
+		SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+		try {
+			valid_until = formatter.parse(licenseExpireDate);
+
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+
+		/** check if expire date is after today **/
+		if (today.compareTo(valid_until) > 0) {
+
+			valid_license_expire_date = false;
+
+		} else if (today.compareTo(valid_until) < 0) {
+
+			valid_license_expire_date = true;
+
+		} else if (today.compareTo(valid_until) == 0) {
+
+			valid_license_expire_date = false;
+
+		} else {
+
+			valid_license_expire_date = false;
+
+		}
+
+		// logging
+		Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+		String timestamps = timestamp.toString();
+		String type = "I";
+		String operation = "Validating SLA Template. Class: " + class_name;
+		String message = ("[*] Valid license expiration date? " + valid_license_expire_date);
+		String status = "";
+		logger.info(
+				"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+				type, timestamps, operation, message, status);
+		
+		return valid_license_expire_date;
+
+	}
+
+	/**
+	 * Check if the date is valid
+	 * 
+	 * @param expireDate
+	 * @return valid_date
+	 */
+	public static boolean checkValidLicenseDate(String LicenseExpireDate) {
+
+		boolean valid_date = false;
+
+		if (LicenseExpireDate == null) {
+			valid_date = false;
+		}
+
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+		sdf.setLenient(false);
+
+		try {
+			/** if not valid, it will throw ParseException **/
+			Date date = sdf.parse(LicenseExpireDate);
+			valid_date = true;
+
+		} catch (ParseException e) {
+
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			String timestamps = timestamp.toString();
+			String type = "E";
+			String operation = "Validating SLA Template. Class: " + class_name;
+			String message = ("[*] ERROR validating license expiration date! " + e.getMessage());
+			String status = "";
+			logger.error(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
+
+			valid_date = false;
+		}
+		
+		//logging
+		Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+		String timestamps = timestamp.toString();
+		String type = "I";
+		String operation = "Validating SLA Template. Class: " + class_name;
+		String message = ("[*] SLA license date format ? " + valid_date);
+		String status = "";
+		logger.info(
+				"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+				type, timestamps, operation, message, status);
+		
+		return valid_date;
+
+	}
+
 
 	/**
 	 * Check if Guarantee Terms are valid
@@ -251,11 +362,15 @@ public class TemplateValidation {
 	 * @return valid_create_template
 	 */
 	public ArrayList<Boolean> validateCreateTemplate(String templateName, String expireDate,
-			ArrayList<String> guarantees) {
+			ArrayList<String> guarantees, String licenseExpireDate) {
 		ArrayList<Boolean> valid_create_template = new ArrayList<>();
 
 		boolean checkValidDate = checkValidDate(expireDate);
 		boolean checkExpireDate = checkExpireDate(expireDate);
+		
+		boolean checkValidLicenseDate = checkValidDate(licenseExpireDate);
+		boolean checkLicenseExpireDate = checkExpireDate(licenseExpireDate);
+		
 		boolean checkGuaranteeTerms = checkGuaranteeTerms(guarantees);
 		boolean checkName = checkName(templateName);
 
@@ -263,6 +378,8 @@ public class TemplateValidation {
 		valid_create_template.add(checkExpireDate);
 		valid_create_template.add(checkGuaranteeTerms);
 		valid_create_template.add(checkName);
+		valid_create_template.add(checkValidLicenseDate);		
+		valid_create_template.add(checkLicenseExpireDate);
 
 		// logging
 		Timestamp timestamp = new Timestamp(System.currentTimeMillis());

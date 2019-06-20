@@ -336,7 +336,7 @@ public class templatesAPIs {
 			// Make the validations
 			TemplateValidation validation = new TemplateValidation();
 			ArrayList<Boolean> valid_create_template = validation.validateCreateTemplate(templateName.get(0),
-					expireDate.get(0), guarantees);
+					expireDate.get(0), guarantees, service_licence_expiration_date.get(0));
 
 			if (valid_create_template.get(0) == false) {
 				JSONObject error = new JSONObject();
@@ -370,7 +370,23 @@ public class templatesAPIs {
 				apiresponse.header("Content-Length", error.toString().length());
 
 				return apiresponse.status(400).build();
-			} else {
+			} 
+			else if (valid_create_template.get(4) == false) {
+				JSONObject error = new JSONObject();
+				error.put("ERROR", "Invalid license expire date format. The format should be dd/mm/YYY");
+				apiresponse = Response.ok(error.toString());
+				apiresponse.header("Content-Length", error.toString().length());
+
+				return apiresponse.status(400).build();
+			} else if (valid_create_template.get(5) == false) {
+				JSONObject error = new JSONObject();
+				error.put("ERROR", "The license expire date is not a future date.");
+				apiresponse = Response.ok(error.toString());
+				apiresponse.header("Content-Length", error.toString().length());
+				return apiresponse.status(400).build();
+
+			}			
+			else {
 				/**
 				 * If all the parameters are valid - continue to the creation of the template
 				 **/
