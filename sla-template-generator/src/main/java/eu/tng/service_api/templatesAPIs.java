@@ -290,10 +290,11 @@ public class templatesAPIs {
 		DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'"); // iso date format yyyy-MM-dd'T'HH:mm'Z'
 		df.setTimeZone(tz);
 		SimpleDateFormat formatter_lic = new SimpleDateFormat("dd/MM/yyyy");
-		String dateInString_lic = service_licence_expiration_date.get(0);
+		
 		Date date_lic = null;
 		String service_licence_expiration_date_formatted = "";
 		try {
+		    String dateInString_lic = service_licence_expiration_date.get(0);
 			date_lic = formatter_lic.parse(dateInString_lic);
 			service_licence_expiration_date_formatted = df.format(date_lic);
 		} catch (Exception e) {
