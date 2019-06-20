@@ -64,34 +64,30 @@ public class TemplateValidation {
 
 		/** current date */
 		Date today = new Date();
+		
+		if (expireDate != null && !expireDate.isEmpty()) {
 
-		/** valid until date */
-		Date valid_until = null;
-		SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-		try {
-			valid_until = formatter.parse(expireDate);
-
-		} catch (ParseException e) {
-			e.printStackTrace();
-		}
-
-		/** check if expire date is after today **/
-		if (today.compareTo(valid_until) > 0) {
-
+			/** valid until date */
+			Date valid_until = null;
+			SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+			try {
+				valid_until = formatter.parse(expireDate);
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+			/** check if expire date is after today **/
+			if (today.compareTo(valid_until) > 0) {
+				valid_expire_date = false;
+			} else if (today.compareTo(valid_until) < 0) {
+				valid_expire_date = true;
+			} else if (today.compareTo(valid_until) == 0) {
+				valid_expire_date = false;
+			} else {
+				valid_expire_date = false;
+			}
+		} 
+		else {
 			valid_expire_date = false;
-
-		} else if (today.compareTo(valid_until) < 0) {
-
-			valid_expire_date = true;
-
-		} else if (today.compareTo(valid_until) == 0) {
-
-			valid_expire_date = false;
-
-		} else {
-
-			valid_expire_date = false;
-
 		}
 
 		// logging
@@ -172,37 +168,43 @@ public class TemplateValidation {
 
 		boolean valid_license_expire_date = false;
 
-		/** current date */
-		Date today = new Date();
+		if (licenseExpireDate != null && !licenseExpireDate.isEmpty()) {
+			/** current date */
+			Date today = new Date();
 
-		/** valid until date */
-		Date valid_until = null;
-		SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-		try {
-			valid_until = formatter.parse(licenseExpireDate);
+			/** valid until date */
+			Date valid_until = null;
+			SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+			try {
+				valid_until = formatter.parse(licenseExpireDate);
 
-		} catch (ParseException e) {
-			e.printStackTrace();
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+
+			/** check if expire date is after today **/
+			if (today.compareTo(valid_until) > 0) {
+
+				valid_license_expire_date = false;
+
+			} else if (today.compareTo(valid_until) < 0) {
+
+				valid_license_expire_date = true;
+
+			} else if (today.compareTo(valid_until) == 0) {
+
+				valid_license_expire_date = false;
+
+			} else {
+
+				valid_license_expire_date = false;
+
+			}
 		}
-
-		/** check if expire date is after today **/
-		if (today.compareTo(valid_until) > 0) {
-
+		else{
 			valid_license_expire_date = false;
-
-		} else if (today.compareTo(valid_until) < 0) {
-
-			valid_license_expire_date = true;
-
-		} else if (today.compareTo(valid_until) == 0) {
-
-			valid_license_expire_date = false;
-
-		} else {
-
-			valid_license_expire_date = false;
-
 		}
+		
 
 		// logging
 		Timestamp timestamp = new Timestamp(System.currentTimeMillis());
@@ -220,7 +222,7 @@ public class TemplateValidation {
 	}
 
 	/**
-	 * Check if the date is valid
+	 * Check if the license expiration date is valid
 	 * 
 	 * @param expireDate
 	 * @return valid_date
@@ -229,31 +231,32 @@ public class TemplateValidation {
 
 		boolean valid_date = false;
 
-		if (LicenseExpireDate == null) {
-			valid_date = false;
+		if (LicenseExpireDate != null && !LicenseExpireDate.isEmpty()) {
+
+			SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+			sdf.setLenient(false);
+			try {
+				/** if not valid, it will throw ParseException **/
+				Date date = sdf.parse(LicenseExpireDate);
+				valid_date = true;
+
+			} catch (ParseException e) {
+
+				// logging
+				Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+				String timestamps = timestamp.toString();
+				String type = "E";
+				String operation = "Validating SLA Template. Class: " + class_name;
+				String message = ("[*] ERROR validating license expiration date! " + e.getMessage());
+				String status = "";
+				logger.error(
+						"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+						type, timestamps, operation, message, status);
+
+				valid_date = false;
+			}
 		}
-
-		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-		sdf.setLenient(false);
-
-		try {
-			/** if not valid, it will throw ParseException **/
-			Date date = sdf.parse(LicenseExpireDate);
-			valid_date = true;
-
-		} catch (ParseException e) {
-
-			// logging
-			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-			String timestamps = timestamp.toString();
-			String type = "E";
-			String operation = "Validating SLA Template. Class: " + class_name;
-			String message = ("[*] ERROR validating license expiration date! " + e.getMessage());
-			String status = "";
-			logger.error(
-					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
-					type, timestamps, operation, message, status);
-
+		else {
 			valid_date = false;
 		}
 		
