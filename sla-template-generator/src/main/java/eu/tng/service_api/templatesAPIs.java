@@ -285,29 +285,7 @@ public class templatesAPIs {
 
 		}
 
-		// format based on ISO date the license exoiration date
-		TimeZone tz = TimeZone.getTimeZone("UTC");
-		DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'"); // iso date format yyyy-MM-dd'T'HH:mm'Z'
-		df.setTimeZone(tz);
-		SimpleDateFormat formatter_lic = new SimpleDateFormat("dd/MM/yyyy");
-		String dateInString_lic = service_licence_expiration_date.get(0);
-		Date date_lic = null;
-		try {
-			date_lic = formatter_lic.parse(dateInString_lic);
-		} catch (Exception e) {
-			// logging
-			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-			String timestamps = timestamp.toString();
-			String type = "E";
-			String operation = "Formatting licensing date: Class:" + this.getClass().getName();
-			String message = "[*} Error formatting the licensing date: " + e.getMessage();
-			String status = String.valueOf(200);
-			logger.error(
-					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
-					type, timestamps, operation, message, status);
-		}
-		String service_licence_expiration_date_formatted = df.format(date_lic);
-
+		// Create the template 
 		CreateTemplate ct = new CreateTemplate();
 		JSONObject template = ct.createTemplate(nsd_uuid.get(0), templateName.get(0), expireDate.get(0), guarantees,
 				service_licence_type.get(0), allowed_service_instances.get(0), service_licence_expiration_date.get(0),
@@ -426,7 +404,32 @@ public class templatesAPIs {
 						JSONObject responseSLA = (JSONObject) createdTemplate;
 						String sla_uuid = (String) responseSLA.get("uuid");
 						ns_template_corr nstemplcorr = new ns_template_corr();
-
+						
+						// transform the license exp date in the right format for the correlation
+						// format based on ISO date the license exoiration date
+						TimeZone tz = TimeZone.getTimeZone("UTC");
+						DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'"); // iso date format yyyy-MM-dd'T'HH:mm'Z'
+						df.setTimeZone(tz);
+						SimpleDateFormat formatter_lic = new SimpleDateFormat("dd/MM/yyyy");
+						String dateInString_lic = service_licence_expiration_date.get(0);
+						Date date_lic = null;
+						String service_licence_expiration_date_formatted = "";
+						try {
+							date_lic = formatter_lic.parse(dateInString_lic);
+							service_licence_expiration_date_formatted = df.format(date_lic);
+						} catch (Exception e) {
+							// logging
+							Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+							String timestamps = timestamp.toString();
+							String type = "E";
+							String operation = "Formatting licensing date: Class:" + this.getClass().getName();
+							String message = "[*} Error formatting the licensing date: " + e.getMessage();
+							String status = String.valueOf(200);
+							logger.error(
+									"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+									type, timestamps, operation, message, status);
+						}
+						
 						nstemplcorr.createNsTempCorr(nsd_uuid.get(0), sla_uuid, service_licence_type.get(0),
 								service_licence_expiration_date_formatted, allowed_service_instances.get(0), "inactive",
 								dflavour_name);
