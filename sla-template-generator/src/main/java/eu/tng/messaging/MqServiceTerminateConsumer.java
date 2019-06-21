@@ -36,6 +36,7 @@
 package eu.tng.messaging;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Map;
 
@@ -254,8 +255,18 @@ public class MqServiceTerminateConsumer implements ServletContextListener {
 
                         dbo.connectPostgreSQL();
                         dbo.createTableCustSla();
-                        dbo.UpdateCorrelationID(nsi_uuid.toString(), correlation_id.toString());
-                        dbo.UpdateLicenseCorrelationIDperNSI(nsi_uuid.toString(), correlation_id.toString());
+                        try {
+                            dbo.UpdateCorrelationID(nsi_uuid.toString(), correlation_id.toString());
+                        } catch (SQLException e) {
+                            // TODO Auto-generated catch block
+                            e.printStackTrace();
+                        }
+                        try {
+                            dbo.UpdateLicenseCorrelationIDperNSI(nsi_uuid.toString(), correlation_id.toString());
+                        } catch (SQLException e) {
+                            // TODO Auto-generated catch block
+                            e.printStackTrace();
+                        }
                         dbo.closePostgreSQL();
 
                     }

@@ -57,6 +57,7 @@ import org.apache.logging.log4j.ThreadContext;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
+import org.postgresql.util.PSQLException;
 
 import java.sql.ResultSet;
 
@@ -611,8 +612,9 @@ public class db_operations {
 	 * 
 	 * @param nsi_uuid
 	 * @param correlation_id
+	 * @throws SQLException 
 	 */
-	public static void UpdateCorrelationID(String nsi_uuid, String correlation_id) {
+	public static void UpdateCorrelationID(String nsi_uuid, String correlation_id) throws SQLException {
 
 		boolean result = false;
 		try {
@@ -624,7 +626,7 @@ public class db_operations {
 			stmt.close();
 			c.commit();
 
-		} catch (SQLException e) {
+		} catch (PSQLException e) {
 
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 			String timestamps = timestamp.toString();
@@ -2306,7 +2308,7 @@ public class db_operations {
 
 	}
 
-	public static boolean UpdateLicenseCorrelationIDperNSI(String nsi_uuid, String correlation_id) {
+	public static boolean UpdateLicenseCorrelationIDperNSI(String nsi_uuid, String correlation_id) throws SQLException {
 
 		boolean result = false;
 		try {
@@ -2320,7 +2322,7 @@ public class db_operations {
 			c.commit();
 			result = true;
 
-		} catch (SQLException e) {
+		} catch (PSQLException e) {
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 			String timestamps = timestamp.toString();
