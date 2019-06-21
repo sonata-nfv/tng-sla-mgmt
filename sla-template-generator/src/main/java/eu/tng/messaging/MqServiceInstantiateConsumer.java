@@ -40,6 +40,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Map;
@@ -529,15 +530,25 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
                                 if (active_licenses == 0) {
                                     db_operations.UpdateLicenseCorrelationID(sla_uuid, ns_uuid, cust_username,
                                             correlation_id);
-                                    db_operations.UpdateLicenseCurrentInstances(sla_uuid, ns_uuid, cust_username,
-                                            current_instances);
+                                    try {
+                                        db_operations.UpdateLicenseCurrentInstances(sla_uuid, ns_uuid, cust_username,
+                                                current_instances);
+                                    } catch (SQLException e) {
+                                        // TODO Auto-generated catch block
+                                        e.printStackTrace();
+                                    }
                                 }
                                 else {
                                     db_operations.insertLicenseRecord(sla_uuid, ns_uuid, "", cust_username, cust_email,
                                             license_type, license_exp_date, String.valueOf(allowed_instances), current_instances,
                                             "bought", correlation_id);
-                                    db_operations.UpdateLicenseCurrentInstances(sla_uuid, ns_uuid, cust_username,
-                                            current_instances);
+                                    try {
+                                        db_operations.UpdateLicenseCurrentInstances(sla_uuid, ns_uuid, cust_username,
+                                                current_instances);
+                                    } catch (SQLException e) {
+                                        // TODO Auto-generated catch block
+                                        e.printStackTrace();
+                                    }
                                 }
                             }
                             // public and trial licenses
@@ -547,8 +558,13 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
                                 db_operations.insertLicenseRecord(sla_uuid, ns_uuid, "", cust_username, cust_email,
                                         license_type, license_exp_date, String.valueOf(allowed_instances), current_instances,
                                         "inactive", correlation_id);
-                                db_operations.UpdateLicenseCurrentInstances(sla_uuid, ns_uuid, cust_username,
-                                        current_instances);
+                                try {
+                                    db_operations.UpdateLicenseCurrentInstances(sla_uuid, ns_uuid, cust_username,
+                                            current_instances);
+                                } catch (SQLException e) {
+                                    // TODO Auto-generated catch block
+                                    e.printStackTrace();
+                                }
 
                             }
                             db_operations.closePostgreSQL();
