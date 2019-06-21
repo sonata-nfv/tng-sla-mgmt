@@ -109,17 +109,6 @@ public class templatesAPIs {
 			}
 			in.close();
 
-			// logging
-			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-			String timestamps = timestamp.toString();
-			String type = "I";
-			String operation = "Getting SLA Templates";
-			String message = "SLA Templates feched succesfully";
-			String status = String.valueOf(200);
-			logger.info(
-					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
-					type, timestamps, operation, message, status);
-
 			String sresponse = response.toString();
 
 			apiresponse = Response.ok(sresponse);
