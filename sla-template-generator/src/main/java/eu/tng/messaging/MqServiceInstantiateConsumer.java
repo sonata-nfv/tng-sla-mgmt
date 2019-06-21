@@ -192,9 +192,9 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
                             timestamp = new Timestamp(System.currentTimeMillis());
                             timestamps = timestamp.toString();
                             type = "I";
+                            String mano_msg = jsonObjectMessage.toMap().toString();
                             operation = "Netork service instantiation";
-                            message = "MANO Message when instantiation status=READY ==> "
-                                    + jsonObjectMessage.toString();
+                            message = "MANO Message when instantiation status:READY ==> " + mano_msg;
                             status = "";
                             logger.info(
                                     "{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
@@ -257,8 +257,8 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
                                         timestamp = new Timestamp(System.currentTimeMillis());
                                         timestamps = timestamp.toString();
                                         type = "D";
-                                        operation = "Network service instantiation";
-                                        message = "DEBUG: " + e.getMessage().toString();
+                                        String error_msg = e.getMessage().toString();
+                                        message = "Debug: " + error_msg;
                                         status = "";
                                         logger.debug(
                                                 "{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
@@ -295,11 +295,12 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
                                         // logging
                                         timestamp = new Timestamp(System.currentTimeMillis());
                                         timestamps = timestamp.toString();
-                                        type = "E";
+                                        type = "D";
                                         operation = "Netork service instantiation";
-                                        message = "Error: " + e.getMessage();
+                                        String error_msg = e.getMessage().toString();
+                                        message = "Debug: " + error_msg;
                                         status = "";
-                                        logger.error(
+                                        logger.debug(
                                                 "{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
                                                 type, timestamps, operation, message, status);
                                     }
@@ -376,7 +377,7 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
                             			operation = "Checking SLOs. Class: " + this.getClass().getSimpleName();
                             			message = "[*] This SLA has not guarantees. Creation of rules aborted.";
                             			status = String.valueOf(404);
-                            			logger.error(
+                            			logger.info(
                             					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
                             					type, timestamps, operation, message, status);
 									}
@@ -394,13 +395,6 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
                         					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
                         					type, timestamps, operation, message, status);
                         		}
-                                
-                                
-                                
-                                
-                                
-                                
-                                
                                 
 
                             } else {
@@ -425,11 +419,12 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
                         // logging
                         Timestamp timestamp4 = new Timestamp(System.currentTimeMillis());
                         String timestamps4 = timestamp4.toString();
-                        String type4 = "I";
+                        String type4 = "D";
                         String operation4 = "RabbitMQ Listener";
-                        String message4 = "[*] Message coming from Gatekeeper: " + jsonObjectMessage.toString();
+                        String gk_msg = jsonObjectMessage.toString();
+                        String message4 = "[*] Message coming from Gatekeeper ==> " + gk_msg;
                         String status4 = "";
-                        logger.info(
+                        logger.debug(
                                 "{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
                                 type4, timestamps4, operation4, message4, status4);
 
