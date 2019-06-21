@@ -646,8 +646,9 @@ public class db_operations {
 	 * @param agreement_status
 	 * @param correlation_id
 	 * @return
+	 * @throws SQLException 
 	 */
-	public static boolean TerminateAgreement(String agreement_status, String correlation_id) {
+	public static boolean TerminateAgreement(String agreement_status, String correlation_id) throws SQLException {
 
 		boolean result = false;
 		try {
@@ -672,7 +673,7 @@ public class db_operations {
 					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 					type, timestamps, operation, message, status);
 
-		} catch (SQLException e) {
+		} catch (PSQLException e) {
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 			String timestamps = timestamp.toString();
 			String type = "W";
@@ -2044,7 +2045,7 @@ public class db_operations {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static JSONObject getLicensePerCorrID(String correlation_id) {
+	public static JSONObject getLicensePerCorrID(String correlation_id) throws SQLException {
 
 		JSONObject license_info = new JSONObject();
 		String sla_uuid = "";
@@ -2092,7 +2093,7 @@ public class db_operations {
 			stmt.close();
 			c.commit();
 
-		} catch (SQLException e) {
+		} catch (PSQLException e) {
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 			String timestamps = timestamp.toString();
@@ -2246,7 +2247,7 @@ public class db_operations {
 
 	}
 
-	public static boolean deactivateLicense(String correlation_id, String license_status) {
+	public static boolean deactivateLicense(String correlation_id, String license_status) throws SQLException {
 
 		Statement stmt = null;
 		boolean result = false;
@@ -2260,7 +2261,7 @@ public class db_operations {
 			c.commit();
 			result = true;
 
-		} catch (SQLException e) {
+		} catch (PSQLException e) {
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 			String timestamps = timestamp.toString();
@@ -2386,9 +2387,10 @@ public class db_operations {
 	 * @param cust_username
 	 * @param current_instances
 	 * @return
+	 * @throws SQLException 
 	 */
 	public static boolean UpdateLicenseCurrentInstances(String sla_uuid, String ns_uuid, String cust_username,
-			String current_instances) {
+			String current_instances) throws SQLException {
 
 		boolean result = false;
 		try {
@@ -2415,7 +2417,7 @@ public class db_operations {
 					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 					type, timestamps, operation, message + message2, status);
 
-		} catch (SQLException e) {
+		} catch (PSQLException e) {
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 			String timestamps = timestamp.toString();
