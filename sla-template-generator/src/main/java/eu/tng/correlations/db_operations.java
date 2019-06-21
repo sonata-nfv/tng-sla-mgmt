@@ -78,7 +78,7 @@ public class db_operations {
 	public static boolean connectPostgreSQL() {
 		boolean connect = false;
 		try {
-			
+
 			/*
 			 * c =
 			 * DriverManager.getConnection("jdbc:postgresql://localhost:5432/sla-manager",
@@ -86,9 +86,12 @@ public class db_operations {
 			 */
 
 			Class.forName("org.postgresql.Driver");
-			c = DriverManager.getConnection("jdbc:postgresql://" + System.getenv("DATABASE_HOST") + ":" + System.getenv("DATABASE_PORT")+ "/" + System.getenv("GTK_DB_NAME"),System.getenv("GTK_DB_USER"),System.getenv("GTK_DB_PASS"));
-						
-			
+			c = DriverManager
+					.getConnection(
+							"jdbc:postgresql://" + System.getenv("DATABASE_HOST") + ":" + System.getenv("DATABASE_PORT")
+									+ "/" + System.getenv("GTK_DB_NAME"),
+							System.getenv("GTK_DB_USER"), System.getenv("GTK_DB_PASS"));
+
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 			String timestamps = timestamp.toString();
@@ -99,8 +102,7 @@ public class db_operations {
 			logger.debug(
 					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 					type, timestamps, operation, message, status);
-			
-			
+
 			connect = true;
 		}
 
@@ -212,7 +214,6 @@ public class db_operations {
 		}
 		return result;
 	}
-	
 
 	/**
 	 * 
@@ -224,17 +225,17 @@ public class db_operations {
 
 		JSONObject slas_obj = new JSONObject();
 		JSONArray slas = new JSONArray();
-		
+
 		String sla_uuid = "";
-		String sla_name = "" ;
+		String sla_name = "";
 		String sla_vendor = "";
 		String sla_version = "";
-		
+
 		String license_type = "";
 		String license_exp_date = "";
 		String allowed_instancesString = "";
 		int allowed_instances = 0;
-		
+
 		String d_flavor = "";
 
 		try {
@@ -244,13 +245,13 @@ public class db_operations {
 
 			while (rs.next()) {
 
-				sla_uuid = rs.getString("sla_uuid");	
+				sla_uuid = rs.getString("sla_uuid");
 				d_flavor = rs.getString("d_flavour_name");
 				license_type = rs.getString("license_type");
 				license_exp_date = rs.getString("license_exp_date");
 				allowed_instancesString = rs.getString("allowed_instances");
 				allowed_instances = Integer.parseInt(allowed_instancesString);
-				
+
 				try {
 					String url = System.getenv("CATALOGUES_URL") + "slas/template-descriptors/" + sla_uuid;
 					URL object = new URL(url);
@@ -275,20 +276,19 @@ public class db_operations {
 					JSONParser parser = new JSONParser();
 					Object existingTemplates = parser.parse(response.toString());
 					JSONObject sla_template = (JSONObject) parser.parse(response.toString());
-					
+
 					JSONObject slad = (JSONObject) sla_template.get("slad");
-					
+
 					sla_name = (String) slad.get("name");
 					sla_vendor = (String) slad.get("vendor");
 					sla_version = (String) slad.get("version");
-								
-				} 
-				catch (Exception e) {
+
+				} catch (Exception e) {
 
 					// logging
 					Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 					String timestamps = timestamp.toString();
-					String operation = "Geting SLAD from catalogue. Class:"+ class_name;
+					String operation = "Geting SLAD from catalogue. Class:" + class_name;
 					String type = "E";
 					String message = "[*] Error: SLA with uuid=" + sla_uuid + " NOT Found!";
 					String status = String.valueOf(404);
@@ -296,7 +296,7 @@ public class db_operations {
 							"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 							type, timestamps, operation, message, status);
 				}
-				
+
 				JSONObject sla_info = new JSONObject();
 				sla_info.put("uuid", sla_uuid);
 				sla_info.put("name", sla_name);
@@ -309,19 +309,19 @@ public class db_operations {
 
 				slas.add(sla_info);
 			}
-				
+
 			slas_obj.put("slas", slas);
-						
+
 			rs.close();
 			stmt.close();
 			c.commit();
-			
+
 		} catch (SQLException e) {
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 			String timestamps = timestamp.toString();
 			String type = "W";
-			String operation = "Get associated SLAs for NSD_UUID="+nsd_uuid +"  Class: " + class_name;
+			String operation = "Get associated SLAs for NSD_UUID=" + nsd_uuid + "  Class: " + class_name;
 			String message = ("Warning: Nor succesful parsing of sla records from database ==> " + e.getMessage());
 			String status = "";
 			logger.debug(
@@ -354,7 +354,7 @@ public class db_operations {
 				license_exp_date = rs.getString("license_exp_date");
 				allowed_instancesString = rs.getString("allowed_instances");
 				allowed_instances = Integer.parseInt(allowed_instancesString);
-				
+
 				license_info.put("license_status", license_status);
 				license_info.put("license_type", license_type);
 				license_info.put("license_exp_date", license_exp_date);
@@ -619,14 +619,14 @@ public class db_operations {
 
 		boolean result = false;
 		try {
-		    c.setAutoCommit(false);
-            stmt = c.createStatement();
-            String sql = "UPDATE cust_sla SET inst_id = '"+correlation_id+"' WHERE nsi_uuid='" + nsi_uuid + "';";
-            stmt.executeUpdate(sql);
-            result = true;
-            stmt.close();
-            c.commit();
-            
+			c.setAutoCommit(false);
+			stmt = c.createStatement();
+			String sql = "UPDATE cust_sla SET inst_id = '" + correlation_id + "' WHERE nsi_uuid='" + nsi_uuid + "';";
+			stmt.executeUpdate(sql);
+			result = true;
+			stmt.close();
+			c.commit();
+
 		} catch (SQLException e) {
 
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
@@ -1633,11 +1633,9 @@ public class db_operations {
 		JSONArray ns_template = new JSONArray();
 		JSONArray cust_sla = new JSONArray();
 
-		
 		if (tablename.equals("ns_template")) {
 
-			
-			try {		
+			try {
 				c.setAutoCommit(false);
 				stmt = c.createStatement();
 				ResultSet rs = stmt.executeQuery("SELECT * FROM ns_template;");
@@ -1652,15 +1650,13 @@ public class db_operations {
 
 					ns_template.add(obj);
 				}
-				
-				
+
 				root.put("ns_template", ns_template);
-				
+
 				rs.close();
 				stmt.close();
 				c.commit();
-				
-			
+
 			} catch (SQLException e) {
 				// logging
 				Timestamp timestamp = new Timestamp(System.currentTimeMillis());
@@ -1714,7 +1710,7 @@ public class db_operations {
 			}
 
 		}
-		
+
 		return root;
 	}
 
@@ -1909,10 +1905,10 @@ public class db_operations {
 				license_expiration_date = rs.getString("license_exp_date");
 				allowed_instances_string = rs.getString("allowed_instances");
 				current_instances_string = rs.getString("current_instances");
-				
+
 				allowed_instances = Integer.parseInt(allowed_instances_string);
 				current_instances = Integer.parseInt(current_instances_string);
-				
+
 				license_info.put("license_status", license_status);
 				license_info.put("license_type", license_type);
 				license_info.put("license_expiration_date", license_expiration_date);
@@ -2032,9 +2028,22 @@ public class db_operations {
 					type, timestamps, operation, message, status);
 		}
 
+		if (license_info.size() == 0) {
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			String timestamps = timestamp.toString();
+			String type = "D";
+			String operation = "Get specific license record";
+			String message = ("[*] This license record does not exist. Invalid NSI");
+			String status = "";
+			logger.debug(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
+		}
+
 		return license_info;
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public static JSONObject getLicensePerCorrID(String correlation_id) {
 
@@ -2053,7 +2062,8 @@ public class db_operations {
 		try {
 			c.setAutoCommit(false);
 			stmt = c.createStatement();
-			ResultSet rs = stmt.executeQuery("SELECT * FROM sla_licensing WHERE correlation_id = '" + correlation_id + "';");
+			ResultSet rs = stmt
+					.executeQuery("SELECT * FROM sla_licensing WHERE correlation_id = '" + correlation_id + "';");
 
 			while (rs.next()) {
 				sla_uuid = rs.getString("sla_uuid");
@@ -2236,7 +2246,7 @@ public class db_operations {
 		return result;
 
 	}
-	
+
 	public static boolean deactivateLicense(String correlation_id, String license_status) {
 
 		Statement stmt = null;
@@ -2244,7 +2254,8 @@ public class db_operations {
 		try {
 			c.setAutoCommit(false);
 			stmt = c.createStatement();
-			String sql = "UPDATE sla_licensing SET license_status='" + license_status + "' WHERE correlation_id='" + correlation_id	+ "';";
+			String sql = "UPDATE sla_licensing SET license_status='" + license_status + "' WHERE correlation_id='"
+					+ correlation_id + "';";
 			stmt.executeUpdate(sql);
 			stmt.close();
 			c.commit();
@@ -2256,7 +2267,8 @@ public class db_operations {
 			String timestamps = timestamp.toString();
 			String type = "W";
 			String operation = "Deactivating SLA Licensing";
-			String message = "[*] Error de-activating License with correlation id='"+correlation_id+"' : " + e.getMessage();
+			String message = "[*] Error de-activating License with correlation id='" + correlation_id + "' : "
+					+ e.getMessage();
 			String status = "";
 			logger.warn(
 					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
@@ -2265,7 +2277,6 @@ public class db_operations {
 		return result;
 
 	}
-
 
 	public static boolean UpdateLicenseCorrelationID(String sla_uuid, String ns_uuid, String cust_username,
 			String correlation_id) {
@@ -2297,14 +2308,15 @@ public class db_operations {
 		return result;
 
 	}
-	
+
 	public static boolean UpdateLicenseCorrelationIDperNSI(String nsi_uuid, String correlation_id) {
 
 		boolean result = false;
 		try {
 			c.setAutoCommit(false);
 			stmt = c.createStatement();
-			String sql = "UPDATE sla_licensing SET correlation_id='" + correlation_id + "' WHERE nsi_uuid='" + nsi_uuid + "';";
+			String sql = "UPDATE sla_licensing SET correlation_id='" + correlation_id + "' WHERE nsi_uuid='" + nsi_uuid
+					+ "';";
 			stmt.executeUpdate(sql);
 
 			stmt.close();
@@ -2328,7 +2340,6 @@ public class db_operations {
 	}
 
 	public static int countActiveLicensePerCustSLA(String cust_username, String sla_uuid, String license_status) {
-
 
 		String SQL = "SELECT count(*) FROM sla_licensing WHERE cust_username='" + cust_username + "' AND sla_uuid='"
 				+ sla_uuid + "' AND license_status='active'";
@@ -2420,7 +2431,6 @@ public class db_operations {
 		return result;
 
 	}
-
 
 	/**
 	 * @return Number of utilized licenses
@@ -2517,33 +2527,32 @@ public class db_operations {
 		}
 		return count;
 	}
-	
-	public boolean delete_license(String sla_uuid) {
-	    
-	    String SQL = "DELETE FROM sla_licensing WHERE sla_uuid = '"+sla_uuid+"'";
-        try {
-            c.setAutoCommit(false);
-            stmt = c.createStatement();
-            stmt.executeUpdate(SQL);
 
-            stmt.close();
-            c.commit();
-            return true;
-        } catch (SQLException e) {
-            // logging
-            Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-            String timestamps = timestamp.toString();
-            String type = "E";
-            String operation = "Delete Licensing Info";
-            String message = ("[*] Error deleting license with error: " + e.getMessage());
-            String status = "";
-            logger.debug(
-                    "{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
-                    type, timestamps, operation, message, status);
-            return false;
-        }
-	    
-	    
+	public boolean delete_license(String sla_uuid) {
+
+		String SQL = "DELETE FROM sla_licensing WHERE sla_uuid = '" + sla_uuid + "'";
+		try {
+			c.setAutoCommit(false);
+			stmt = c.createStatement();
+			stmt.executeUpdate(SQL);
+
+			stmt.close();
+			c.commit();
+			return true;
+		} catch (SQLException e) {
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			String timestamps = timestamp.toString();
+			String type = "E";
+			String operation = "Delete Licensing Info";
+			String message = ("[*] Error deleting license with error: " + e.getMessage());
+			String status = "";
+			logger.debug(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
+			return false;
+		}
+
 	}
 
 }

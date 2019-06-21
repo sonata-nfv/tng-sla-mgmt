@@ -81,17 +81,6 @@ public class LicensingAPIs {
 		apiresponse = Response.ok((Object) all_licenses);
 		apiresponse.header("Content-Length", all_licenses.toJSONString().length());
 
-		// logging
-		Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-		String timestamps = timestamp.toString();
-		String type = "I";
-		String operation = "Getting all licensing information";
-		String message = ("[*] Success! all licensing information received");
-		String status = "200";
-		logger.info(
-				"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
-				type, timestamps, operation, message, status);
-
 		return apiresponse.status(200).build();
 	}
 
@@ -109,17 +98,6 @@ public class LicensingAPIs {
 
 		apiresponse = Response.ok((Object) specific_license);
 		apiresponse.header("Content-Length", specific_license.toJSONString().length());
-
-		// logging
-		Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-		String timestamps = timestamp.toString();
-		String type = "I";
-		String operation = "Getting all licensing information";
-		String message = ("[*] Success! all licensing information received");
-		String status = "200";
-		logger.info(
-				"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
-				type, timestamps, operation, message, status);
 
 		return apiresponse.status(200).build();
 	}

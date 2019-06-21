@@ -183,27 +183,6 @@ public class CreateTemplate {
 			licenses.put("service_based", service_based);
 			root.put("licences", licenses);
 
-			// logging
-			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-			String timestamps = timestamp.toString();
-			String type = "D";
-			String operation = "Create SLA Template";
-			String message = "Licenses Object ==> " + licenses.toString();
-			String status = "";
-			logger.debug(
-					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
-					type, timestamps, operation, message, status);
-
-			// logging
-			timestamp = new Timestamp(System.currentTimeMillis());
-			timestamps = timestamp.toString();
-			type = "I";
-			operation = "Create SLA Template";
-			message = "Succesfully created the template";
-			status = "";
-			logger.info(
-					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
-					type, timestamps, operation, message, status);
 
 			return root;
 
