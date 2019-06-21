@@ -427,7 +427,7 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
                         String timestamps4 = timestamp4.toString();
                         String type4 = "I";
                         String operation4 = "RabbitMQ Listener";
-                        String message4 = "[*] Message coming from Gatekeeper: " + jsonObjectMessage;
+                        String message4 = "[*] Message coming from Gatekeeper: " + jsonObjectMessage.toString();
                         String status4 = "";
                         logger.info(
                                 "{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
