@@ -213,7 +213,7 @@ public class HealthAPI {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response rabbitMqHealthCheck() throws IOException {
 		ResponseBuilder apiresponse = null;
-		String url = "http://pre-int-sp-ath.5gtango.eu:15672/api/consumers";
+		String url = "http://son-broker:15672/api/consumers";
 		URL object = new URL(url);
 		HttpURLConnection con = (HttpURLConnection) object.openConnection();
 
@@ -250,16 +250,16 @@ public class HealthAPI {
 			String queueName = queue.getString("name");
 
 			if (queueName.equals("slas.service.instances.create") || queueName.equals("slas.service.instance.terminate")
-					|| queueName.equals("slas.tng.sla.violation") || queueName.equals("slas.son.monitoring.SLA")) {
+					|| queueName.equals("slas.son.monitoring.SLA")) {
 				counter++;
 			}
 		}
 		org.json.simple.JSONObject returnResult = new org.json.simple.JSONObject();
 		if (counter == 3) {
-			returnResult.put("Alive", "true");
+			returnResult.put("Status", "Ok");
 		} else {
 
-			returnResult.put("Alive", "false");
+			returnResult.put("Status", "NotOk");
 		}
 
 
