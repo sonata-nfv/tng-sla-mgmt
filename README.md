@@ -3,30 +3,34 @@
 # tng-sla-mgmt [![Build Status](https://jenkins.sonata-nfv.eu/buildStatus/icon?job=tng-sla-mgmt/master)](https://jenkins.sonata-nfv.eu/job/tng-sla-mgmt/job/master/)   [![Join the chat at https://gitter.im/sonata-nfv/Lobby](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/sonata-nfv/Lobby)
 
 ## Overview
-5GTANGO's SLA management framework is part of the SONATA powered by 5GTANGO Service Platform. The SLA Management repository includes the SLAs descriptors
-examples and schemas, as well as all mechanisms that are implemented. The schema files are written in JSON-Schema and they are available [here](https://github.com/sonata-nfv/tng-schema/tree/master/sla-template-descriptor)
+5GTANGO's SLA management framework is part of the SONATA powered by 5GTANGO Service Platform.     
+
+The SLA Management repository includes the SLAs descriptors examples and schemas, as well as all mechanisms that are implemented. The schema files are written in JSON-Schema and they are available [here](https://github.com/sonata-nfv/tng-schema/tree/master/sla-template-descriptor). The description of the SLA Descriptors can be found also in the relevant [WiKi page](https://github.com/sonata-nfv/tng-sla-mgmt/wiki/SLA-Descriptors).
+
+The following figure depicts the overall SLA Management Framework architecture. For more details you can see the relevant [WiKi page](https://github.com/sonata-nfv/tng-sla-mgmt/wiki/Architecture).    
+
+
+![SLA Manager Internal Architecture](https://github.com/sonata-nfv/tng-sla-mgmt/wiki/images/Y2-Architecture.jpg)
+
+Some initial information for the supported features are given below: 
 
 **SLA Templates:**    
-Initial SLA Templates are defined. An SLA template refers to an initial advertisement of the provider regarding the attached NS, while it also 
-describes what type of QoS commitments the provider is willing to take. Each template includes a set of speciﬁc Service Level Objectives (SLOs), which deﬁnes the maximum values 
-and thresholds allowed for a set of network and service-speciﬁc parameters, that ar ealso available and re-confgurable [here](https://github.com/sonata-nfv/tng-sla-mgmt/blob/master/sla-template-generator/src/main/resources/slos_list_Y2.json).     
+Initial SLA Templates are defined. An SLA template refers to an initial advertisement of the provider regarding the attached NS, while it also describes what type of QoS commitments the provider is willing to take. Each template includes a set of speciﬁc Service Level Objectives (SLOs), which deﬁnes the maximum values and thresholds allowed for a set of network and service-speciﬁc parameters, that ar ealso available and re-confgurable [here](https://github.com/sonata-nfv/tng-sla-mgmt/blob/master/sla-template-generator/src/main/resources/slos_list_Y2.json).     
 
 **SLA Agreements:**    
-As long as a service is successfully instantiated in the 5GTANGO Service Platform, the Agreement is automatically created. Speciﬁcally, once the deployment of the service is 
-completed, the corresponding SLA template is promoted to an actual agreement that is being enforced (i.e. instance of the SLA template). Once the agreement is established the 
-guaranteed requirements of the service start being monitored and checked for breaches of contract.    
+As long as a service is successfully instantiated in the 5GTANGO Service Platform, the Agreement is automatically created. Speciﬁcally, once the deployment of the service is completed, the corresponding SLA template is promoted to an actual agreement that is being enforced (i.e. instance of the SLA template). Once the agreement is established the guaranteed requirements of the service start being monitored and checked for breaches of contract.    
 
 **SLA Violations:**    
 The violation of a SLA agreement is important to the customer. For this reason, while monitoring data are gathered by the monitoring manager, are then published
 to the SLA manager in case of a SLA violation. An example of an SLA violation can be the following. In this release, availability among others,
 is a supported metric by the monitoring manager. Different values of service's availability can be signed in the SLA agreement. If 98% is chosen by the customer, 
-this is translated into maximum downtime of his/her service 1.5 seconds in a windows of 60 secs. IF this limit is reached, an alert from the monitoring manager is produced.    
+this is translated into maximum downtime of his/her service 1.5 seconds in a windows of 60 secs. IF this limit is reached, an alert from the monitoring manager is produced. [here](https://github.com/sonata-nfv/tng-sla-mgmt/wiki/SLA-Violations).    
 
 **License-based SLAs:**    
 An important addition to the SLA Manager is the introduction of licenses in the SLAs. 5GTANGO SLA Manager proposes a service-based licensing model, which links a license to a specific customer 
 and an instantiated NS, by specifying also the number of allowed NS instances. The model provides three types of licenses: a) trial, which supports limited time of trying the desired
 NS before license purchasing, b) public, which comes with no instantiation restrictions, and c) private, which specifies as mandatory the purchase of a license before instantiating a 
-NS. It is worth mentioning that licensing is provided "as a service” and it is included into the provided SLAs.
+NS. It is worth mentioning that licensing is provided "as a service” and it is included into the provided SLAs. More details can be found [here](https://github.com/sonata-nfv/tng-sla-mgmt/wiki/License-based-SLAs).
  
 ## Documentation
 Besides this README file, more documentation is available in the [WiKi](https://github.com/sonata-nfv/tng-sla-mgmt/wiki) belonging to this repository. Additional information are available in the 5GTANGO project's deliverables:
@@ -89,16 +93,20 @@ The following shows how to use SLA Manager:
 * The SLA Manager is checking the license, based on its type (Public, Trial, Private)
 * At a next stage monitoring manager is gathering data for your service, and if a violation is accured, you will receive a message in the RabbitMQ.
 * This information will be stored in sla manager's database and your SLA agreement status will marked as violated.
-* You can then terminate the service and see your SLA agreement marked as TERMINATED
+* You can then terminate the service and see your SLA agreement marked as TERMINATED    
+
+For more information you can see the relevant [WiKi page](https://github.com/sonata-nfv/tng-sla-mgmt/wiki/SLA-Workflow) related to the SLA workflow.
 
 ### API References
 
-We have specified this micro-service's API in a swagger-formated file. Please check it [here](https://github.com/sonata-nfv/tng-sla-mgmt/blob/master/doc/sla_rest_api_model.json) 
-or on the [SLA Manager WIKI page](https://github.com/sonata-nfv/tng-sla-mgmt/wiki/API-Specification).
+For all the available endpoints you can visit the  relevant [SLAM Swagger API documentation](https://github.com/sonata-nfv/tng-sla-mgmt/blob/master/doc/sla_rest_api_model.json) 
+or on the Wiki API specification [here](https://github.com/sonata-nfv/tng-sla-mgmt/wiki/API-Specification).  
+
+
 
 ### Database
 
-The SLA Manager is using PosgtreSQL, for storing SLA records and correlations.  
+The SLA Manager is using PosgtreSQL, for storing SLA records and correlations. The detailed description of all the correlations can be found [here](https://github.com/sonata-nfv/tng-sla-mgmt/wiki/SLA-Correlations).  
 The database includes the following tables:     
 *  `ns_template` - stores and manages correlations between sla templates and network services.
 *  `cust_sla` - stores and manages correlations between slas, instatiated network services and the customers. it is also used to manage the Agreements's informations.
