@@ -103,7 +103,6 @@ For all the available endpoints you can visit the  relevant [SLAM Swagger API do
 or on the Wiki API specification [here](https://github.com/sonata-nfv/tng-sla-mgmt/wiki/API-Specification).  
 
 
-
 ### Database
 
 The SLA Manager is using PosgtreSQL, for storing SLA records and correlations. The detailed description of all the correlations can be found [here](https://github.com/sonata-nfv/tng-sla-mgmt/wiki/SLA-Correlations).  
@@ -164,6 +163,15 @@ All pull requests are automatically tested by Jenkins and will only be accepted 
 
 ## License
 All tng-sla-mgmt components are published under Apache 2.0 license. Please see the LICENSE file [here](https://github.com/ekapassa/tng-sla-mgmt/blob/master/LICENSE) for more details.
+
+## Relevant Publications
+
+* E. Kapassa et al., “Introducing Licensing throughout SLAs in NFV Environment”, 16th International Conference on the Economics of Grids, Clouds, Systems, and Services, Leeds, UK, 2019 - not published yet
+* E. Kapassa, M. Touloupou, P. Stavrianos, G. Xilouris, D. Kyriazis "Managing and Optimizing Quality of Service in 5G Environments Across the Complete SLA Lifecycle", Advances in Science, Technology and Engineering Systems Journal, vol. 4, no. 1, pp. 329-342, 2019. 
+* M. Touloupou, E. Kapassa et al., “An Integrated SLA Management Framework in a 5G Environment”, 22nd Conference on Innovation in Clouds, Internet and Networks and Workshops (ICIN), Paris, France, 2019.
+* E. Kapassa, M. Touloupou, D. Kyriazis, "SLAs in 5G: A Complete Framework Facilitating VNF- and NS- Tailored SLAs Management," 32nd International Conference on Advanced Information Networking and Applications Workshops (WAINA), Krakow, Poland, 2018.
+* E. Kapassa, M. Touloupou, A. Mavrogiorgou, D. Kyriazis, "5G & SLAs: Automated proposition and management of agreements towards QoS enforcement," 21st Conference on Innovation in Clouds, Internet and Networks and Workshops (ICIN), Paris, France, 2018.
+
 
 ## Lead Developers
 
