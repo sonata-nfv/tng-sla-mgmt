@@ -10,7 +10,7 @@ The SLA Management repository includes the SLAs descriptors examples and schemas
 The following figure depicts the overall SLA Management Framework architecture. For more details you can see the relevant [WiKi page](https://github.com/sonata-nfv/tng-sla-mgmt/wiki/Architecture).    
 
 
-![SLA Manager Internal Architecture](https://github.com/sonata-nfv/tng-sla-mgmt/wiki/images/Y2-Architecture.jpg)
+<p align="center"><img src="https://github.com/sonata-nfv/tng-sla-mgmt/wiki/images/Y2-Architecture.jpg" width="70%" height="70%"/></p>
 
 Some initial information for the supported features are given below: 
 
