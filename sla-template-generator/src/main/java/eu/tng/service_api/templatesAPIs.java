@@ -229,10 +229,14 @@ public class templatesAPIs {
 		String template_initiator = "";
 		String template_initiator_email = "";
 		try {
+			System.out.println("[*] Getting user headers...");
 			template_initiator = headers.getRequestHeader("X-User-Name").get(0);
+			System.out.println("[*] template_initiator ==> " + template_initiator);
 			template_initiator_email = headers.getRequestHeader("X-User-Email").get(0);
+			System.out.println("[*] template_initiator_email ==> " + template_initiator_email);
 
 		} catch (JSONException e) {
+			System.out.println("[*] catching user headers... :( ");
 			template_initiator = "admin";
 			template_initiator_email = "admin-email";
 		}
