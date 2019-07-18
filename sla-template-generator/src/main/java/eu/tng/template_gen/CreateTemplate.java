@@ -59,9 +59,6 @@ public class CreateTemplate {
 	public JSONObject createTemplate(String nsd_uuid, String templateName, String expireDate,
 			ArrayList<String> guarantees, String service_licence_type, String allowed_service_instances,
 			String service_licence_expiration_date, String provider_name, String template_initiator) {
-
-
-		System.out.println("[*] template_initiator 3 ==> " + template_initiator);
 		
 		GetGuarantee guarantee = new GetGuarantee();
 		ArrayList<JSONObject> guaranteeArr = new ArrayList<JSONObject>();
@@ -154,7 +151,6 @@ public class CreateTemplate {
 			sla_template.put("offer_date", offered_date);
 			sla_template.put("expiration_date", validUntil_new);
 			sla_template.put("provider_name", provider_name);
-			System.out.println("[*] template_initiator 4 ==> " + template_initiator);
 			sla_template.put("template_initiator", template_initiator);			
 			root.put("sla_template", sla_template);
 			

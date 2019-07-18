@@ -229,14 +229,10 @@ public class templatesAPIs {
 		String template_initiator = "";
 		String template_initiator_email = "";
 		try {
-			System.out.println("[*] Getting user headers...");
 			template_initiator = headers.getRequestHeader("X-User-Name").get(0);
-			System.out.println("[*] template_initiator ==> " + template_initiator);
 			template_initiator_email = headers.getRequestHeader("X-User-Email").get(0);
-			System.out.println("[*] template_initiator_email ==> " + template_initiator_email);
 
 		} catch (JSONException e) {
-			System.out.println("[*] catching user headers... :( ");
 			template_initiator = "admin";
 			template_initiator_email = "admin-email";
 		}
@@ -360,7 +356,6 @@ public class templatesAPIs {
 				 **/
 				// cretae the template descriptor
 				CreateTemplate ct = new CreateTemplate();
-				System.out.println("[*] template_initiator 2 ==> " + template_initiator);
 				JSONObject template = ct.createTemplate(nsd_uuid.get(0), templateName.get(0), expireDate.get(0), guarantees,
 						service_licence_type.get(0), allowed_service_instances.get(0), service_licence_expiration_date.get(0),
 						provider_name, template_initiator);
