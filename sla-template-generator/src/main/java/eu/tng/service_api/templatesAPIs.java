@@ -360,6 +360,7 @@ public class templatesAPIs {
 				 **/
 				// cretae the template descriptor
 				CreateTemplate ct = new CreateTemplate();
+				System.out.println("[*] template_initiator 2 ==> " + template_initiator);
 				JSONObject template = ct.createTemplate(nsd_uuid.get(0), templateName.get(0), expireDate.get(0), guarantees,
 						service_licence_type.get(0), allowed_service_instances.get(0), service_licence_expiration_date.get(0),
 						provider_name, template_initiator);
