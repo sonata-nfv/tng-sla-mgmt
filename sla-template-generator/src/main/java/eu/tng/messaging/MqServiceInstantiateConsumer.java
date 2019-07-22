@@ -427,8 +427,6 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
                         logger.debug(
                                 "{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
                                 type4, timestamps4, operation4, message4, status4);
-
-                        System.out.println("[*] GK MESSAGE ==> "+ jsonObjectMessage);
                         
                         // Initialize valiables
                         String sla_uuid = null;
