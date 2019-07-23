@@ -428,6 +428,8 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
                                 "{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
                                 type4, timestamps4, operation4, message4, status4);
                         
+                        System.out.println("[*] GK MESSAGE ==> " + jsonObjectMessage);
+                        
                         // Initialize valiables
                         String sla_uuid = null;
                         String ns_uuid = null;
@@ -446,10 +448,13 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
                         JSONObject user_data = (JSONObject) jsonObjectMessage.getJSONObject("user_data");
                         JSONObject customer = (JSONObject) user_data.getJSONObject("customer");
                         
+                        System.out.println("[*] USER DATA  ==> " + user_data);
+                        System.out.println("[*] customer DATA  ==> " + customer);
 
                         try {
                             cust_username = (String) customer.get("name");
                             cust_email = (String) customer.get("email");
+                            System.out.println("[*] customer INFO INSIDE TRY  ==> " + cust_username);
                         } catch (JSONException e) {
                             cust_username = "";
                             cust_email = "";
