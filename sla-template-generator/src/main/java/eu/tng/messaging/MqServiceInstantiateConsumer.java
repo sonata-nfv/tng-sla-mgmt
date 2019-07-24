@@ -526,12 +526,14 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 
 							// if there is a name in the gtk msg put the correct user credentials
 							if (customer.has("name")) {
+								System.out.println("[*] gtk msg has the username inside");
 								active_licenses = db_operations.countActiveLicensePerCustSLA(cust_username, sla_uuid,
 										"active");
 
 							}
 							// if there is not a name in the gtk msg put the default tango user credentials
 							else {
+								System.out.println("[*] gtk msg has NOT the username inside");
 								active_licenses = db_operations.countActiveLicensePerCustSLA("tango", sla_uuid,
 										"active");
 							}
@@ -553,6 +555,7 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 							if (license_type.equals("private")) {
 								// if there is a name in the gtk msg put the correct user credentials
 								if (customer.has("name")) {
+									System.out.println("[*] gtk msg has the username inside");
 									if (active_licenses == 0) {
 										db_operations.UpdateLicenseCorrelationID(sla_uuid, ns_uuid, cust_username,
 												correlation_id);
@@ -569,6 +572,7 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 								}
 								// if there is not a name in the gtk msg put the default tango user credentials
 								else {
+									System.out.println("[*] gtk msg has  NOT the username inside");
 									if (active_licenses == 0) {
 										db_operations.UpdateLicenseCorrelationID(sla_uuid, ns_uuid, "tango",
 												correlation_id);
