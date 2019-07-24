@@ -2305,6 +2305,37 @@ public class db_operations {
 		return result;
 
 	}
+	
+	public static boolean UpdateLicenseUserInfo(String sla_uuid, String ns_uuid) {
+
+		boolean result = false;
+		try {
+			c.setAutoCommit(false);
+			stmt = c.createStatement();
+			String sql = "UPDATE sla_licensing SET cust_username='', cust_email='' WHERE sla_uuid='" + sla_uuid
+					+ "' AND ns_uuid='" + ns_uuid + "' AND license_status='bought';";
+			stmt.executeUpdate(sql);
+
+			stmt.close();
+			c.commit();
+			result = true;
+
+		} catch (SQLException e) {
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			String timestamps = timestamp.toString();
+			String type = "W";
+			String operation = "Updating SLA Licensing correlation id";
+			String message = "[*] Error updating SLA Licensing correlation id: " + e.getMessage();
+			String status = "";
+			logger.warn(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
+		}
+		return result;
+
+	}
+
 
 	public static boolean UpdateLicenseCorrelationIDperNSI(String nsi_uuid, String correlation_id) {
 

@@ -574,6 +574,7 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 								else {
 									System.out.println("[*] gtk msg has  NOT the username inside");
 									if (active_licenses == 0) {
+										db_operations.UpdateLicenseUserInfo(sla_uuid, ns_uuid);
 										db_operations.UpdateLicenseCorrelationID(sla_uuid, ns_uuid, "tango",
 												correlation_id);
 										db_operations.UpdateLicenseCurrentInstances(sla_uuid, ns_uuid, "tango",
