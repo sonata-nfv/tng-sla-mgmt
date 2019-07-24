@@ -2312,7 +2312,7 @@ public class db_operations {
 		try {
 			c.setAutoCommit(false);
 			stmt = c.createStatement();
-			String sql = "UPDATE sla_licensing SET cust_username='', cust_email='' WHERE sla_uuid='" + sla_uuid
+			String sql = "UPDATE sla_licensing SET cust_username='tango', cust_email='tango@tango.admin' WHERE sla_uuid='" + sla_uuid
 					+ "' AND ns_uuid='" + ns_uuid + "' AND license_status='bought';";
 			stmt.executeUpdate(sql);
 
