@@ -454,16 +454,28 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
                         try {
                             cust_username = (String) customer.get("name");
                             cust_email = (String) customer.get("email");
-                            System.out.println("[*] customer INFO INSIDE TRY  ==> " + cust_username);
+
                         } catch (JSONException e) {
-                            cust_username = "";
-                            cust_email = "";
+                            cust_username = "tango";
+                            cust_email = "tango@tango.admin";
+
                             // logging
                             Timestamp timestamp = new Timestamp(System.currentTimeMillis());
                             String timestamps = timestamp.toString();
-                            String type = "E";
+                            String type = "W";
                             String operation = "Netork service instantiation";
-                            message = "Error: " + e.getMessage();
+                            message = "[*] Warning: " + e.getMessage().toString();
+                            status = "";
+                            logger.error(
+                                    "{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+                                    type, timestamps, operation, message, status);
+                            
+                            // logging
+                            timestamp = new Timestamp(System.currentTimeMillis());
+                            timestamps = timestamp.toString();
+                            type = "W";
+                            operation = "Netork service instantiation";
+                            message = "[*] Warning: The default user credentials were inserted";
                             status = "";
                             logger.error(
                                     "{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
@@ -480,7 +492,7 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
                             String timestamps = timestamp.toString();
                             String type = "E";
                             String operation = "Netork service instantiation";
-                            message = "Error: " + e.getMessage();
+                            message = "Error: " + e.getMessage().toString();
                             status = "";
                             logger.error(
                                     "{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
@@ -490,6 +502,9 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 
                         // if sla exists create record in database
                         if (sla_uuid != null && !sla_uuid.isEmpty()) {
+                        	
+                            System.out.println("[*] Creating the initial agreement record....");
+                            System.out.println("[*] customer username  ==> " + cust_username);
 
                             // CREATE AGREEMENT RECORD IN THE CUST_SLA TABLE
                             cust_sla_corr cust_sla = new cust_sla_corr();
@@ -503,10 +518,8 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
                             // get licensing information
                             db_operations.connectPostgreSQL();
 
-
                             org.json.simple.JSONObject LicenseinfoTemplate = db_operations.getLicenseinfoTemplates(sla_uuid, ns_uuid);
 
-                            
                             String license_type = (String) LicenseinfoTemplate.get("license_type");
                             String license_exp_date = (String) LicenseinfoTemplate.get("license_exp_date");
                             int allowed_instances = (int) LicenseinfoTemplate.get("allowed_instances");
