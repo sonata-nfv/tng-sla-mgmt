@@ -424,8 +424,6 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 								"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 								type4, timestamps4, operation4, message4, status4);
 
-						System.out.println("[*] GK MESSAGE ==> " + jsonObjectMessage);
-
 						// Initialize valiables
 						String sla_uuid = null;
 						String ns_uuid = null;
@@ -443,9 +441,6 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 						// Parse customer data + sla uuid
 						JSONObject user_data = (JSONObject) jsonObjectMessage.getJSONObject("user_data");
 						JSONObject customer = (JSONObject) user_data.getJSONObject("customer");
-
-						System.out.println("[*] USER DATA  ==> " + user_data);
-						System.out.println("[*] customer DATA  ==> " + customer);
 
 						try {
 							cust_username = (String) customer.get("name");
@@ -499,9 +494,6 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 						// if sla exists create record in database
 						if (sla_uuid != null && !sla_uuid.isEmpty()) {
 
-							System.out.println("[*] Creating the initial agreement record....");
-							System.out.println("[*] customer username  ==> " + cust_username);
-
 							// CREATE AGREEMENT RECORD IN THE CUST_SLA TABLE
 							cust_sla_corr cust_sla = new cust_sla_corr();
 							ArrayList<String> SLADetails = cust_sla.getSLAdetails(sla_uuid);
@@ -526,14 +518,12 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 
 							// if there is a name in the gtk msg put the correct user credentials
 							if (customer.has("name")) {
-								System.out.println("[*] gtk msg has the username inside");
 								active_licenses = db_operations.countActiveLicensePerCustSLA(cust_username, sla_uuid,
 										"active");
 
 							}
 							// if there is not a name in the gtk msg put the default tango user credentials
 							else {
-								System.out.println("[*] gtk msg has NOT the username inside");
 								active_licenses = db_operations.countActiveLicensePerCustSLA("tango", sla_uuid,
 										"active");
 							}
@@ -555,7 +545,6 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 							if (license_type.equals("private")) {
 								// if there is a name in the gtk msg put the correct user credentials
 								if (customer.has("name")) {
-									System.out.println("[*] gtk msg has the username inside");
 									if (active_licenses == 0) {
 										db_operations.UpdateLicenseCorrelationID(sla_uuid, ns_uuid, cust_username,
 												correlation_id);
@@ -572,7 +561,6 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 								}
 								// if there is not a name in the gtk msg put the default tango user credentials
 								else {
-									System.out.println("[*] gtk msg has  NOT the username inside");
 									if (active_licenses == 0) {
 										db_operations.UpdateLicenseUserInfo(sla_uuid, ns_uuid);
 										db_operations.UpdateLicenseCorrelationID(sla_uuid, ns_uuid, "tango",

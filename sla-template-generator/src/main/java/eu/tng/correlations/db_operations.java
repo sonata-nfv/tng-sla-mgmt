@@ -2306,6 +2306,12 @@ public class db_operations {
 
 	}
 	
+	/**
+	 * Updating customer username in the default one, in case the correct ones are not passed from the gtk
+	 * @param sla_uuid
+	 * @param ns_uuid
+	 * @return
+	 */
 	public static boolean UpdateLicenseUserInfo(String sla_uuid, String ns_uuid) {
 
 		boolean result = false;
@@ -2325,8 +2331,8 @@ public class db_operations {
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 			String timestamps = timestamp.toString();
 			String type = "W";
-			String operation = "Updating SLA Licensing correlation id";
-			String message = "[*] Error updating SLA Licensing correlation id: " + e.getMessage();
+			String operation = "Updating SLA Licensing customer usernmae";
+			String message = "[*] Error updating SLA Licensing customer username " + e.getMessage();
 			String status = "";
 			logger.warn(
 					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
