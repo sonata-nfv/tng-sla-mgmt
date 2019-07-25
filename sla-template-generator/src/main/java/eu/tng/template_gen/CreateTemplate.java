@@ -59,8 +59,7 @@ public class CreateTemplate {
 	public JSONObject createTemplate(String nsd_uuid, String templateName, String expireDate,
 			ArrayList<String> guarantees, String service_licence_type, String allowed_service_instances,
 			String service_licence_expiration_date, String provider_name, String template_initiator) {
-
-
+		
 		GetGuarantee guarantee = new GetGuarantee();
 		ArrayList<JSONObject> guaranteeArr = new ArrayList<JSONObject>();
 		if (guarantees.isEmpty() == false) {
