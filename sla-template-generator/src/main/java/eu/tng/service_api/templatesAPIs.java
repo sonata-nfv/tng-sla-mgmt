@@ -91,12 +91,13 @@ public class templatesAPIs {
 		
 		ResponseBuilder apiresponse = null;
 		try {
+			String url = "";
 			if (count != 0) {
-				String url = System.getenv("CATALOGUES_URL") + "slas/template-descriptors?count="+count;
+				url = System.getenv("CATALOGUES_URL") + "slas/template-descriptors?count="+count;
 				System.out.println("[*] Templates count url ==> " + url);
 			} 
 			else {
-				String url = System.getenv("CATALOGUES_URL") + "slas/template-descriptors";
+				url = System.getenv("CATALOGUES_URL") + "slas/template-descriptors";
 			}
 			
 			// String url =
