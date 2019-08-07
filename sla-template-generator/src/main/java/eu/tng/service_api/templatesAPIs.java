@@ -86,7 +86,7 @@ public class templatesAPIs {
 	@SuppressWarnings("unchecked")
 	@Produces(MediaType.TEXT_PLAIN)
 	@GET
-	public Response getTemplates(@Context HttpHeaders headers, @DefaultValue("1") @QueryParam("count") int count) {
+	public Response getTemplates(@Context HttpHeaders headers, @QueryParam("count") String count) {
 
 		System.out.println("[*] Templates count ==> " + count);
 		
@@ -95,12 +95,13 @@ public class templatesAPIs {
 			
 			String url = "";
 			
-			if (count != 1) {
-				url = System.getenv("CATALOGUES_URL") + "slas/template-descriptors?count="+count;
-				System.out.println("[*] Templates count url ==> " + url);
+			if (count.equals(null) || count == null) {	
+				url = System.getenv("CATALOGUES_URL") + "slas/template-descriptors";
 			} 
 			else {
-				url = System.getenv("CATALOGUES_URL") + "slas/template-descriptors";
+				url = System.getenv("CATALOGUES_URL") + "slas/template-descriptors?count="+count;
+				System.out.println("[*] Templates count url ==> " + url);
+				
 			}
 			
 			// String url =
