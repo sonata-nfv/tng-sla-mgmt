@@ -55,6 +55,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
@@ -84,11 +85,20 @@ public class templatesAPIs {
 	@SuppressWarnings("unchecked")
 	@Produces(MediaType.TEXT_PLAIN)
 	@GET
-	public Response getTemplates(@Context HttpHeaders headers) {
+	public Response getTemplates(@Context HttpHeaders headers, @QueryParam("count") int count) {
 
+		System.out.println("[*] Templates count ==> " + count);
+		
 		ResponseBuilder apiresponse = null;
 		try {
-			String url = System.getenv("CATALOGUES_URL") + "slas/template-descriptors";
+			if (count != 0) {
+				String url = System.getenv("CATALOGUES_URL") + "slas/template-descriptors?count="+count;
+				System.out.println("[*] Templates count url ==> " + url);
+			} 
+			else {
+				String url = System.getenv("CATALOGUES_URL") + "slas/template-descriptors";
+			}
+			
 			// String url =
 			// "http://pre-int-sp-ath.5gtango.eu:4011/catalogues/api/v2/slas/template-descriptors";
 			URL object = new URL(url);
