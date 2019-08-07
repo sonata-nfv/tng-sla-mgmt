@@ -95,15 +95,14 @@ public class templatesAPIs {
 			
 			String url = "";
 			
-			if (!count.equals(null)) {
+			if (count != null && !count.isEmpty()) {
 				System.out.println("[*] count is null ");
-				url = System.getenv("CATALOGUES_URL") + "slas/template-descriptors";
+				url = System.getenv("CATALOGUES_URL") + "slas/template-descriptors?count";
+				System.out.println("[*] Templates count url ==> " + url);
 			}			
 			else {
 				System.out.println("[*] count is not null ");
-
-				url = System.getenv("CATALOGUES_URL") + "slas/template-descriptors?count";
-				System.out.println("[*] Templates count url ==> " + url);
+				url = System.getenv("CATALOGUES_URL") + "slas/template-descriptors";
 				
 			}
 			
