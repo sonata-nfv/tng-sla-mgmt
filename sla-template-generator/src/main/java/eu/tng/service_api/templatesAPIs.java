@@ -50,6 +50,7 @@ import java.util.TimeZone;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -85,14 +86,16 @@ public class templatesAPIs {
 	@SuppressWarnings("unchecked")
 	@Produces(MediaType.TEXT_PLAIN)
 	@GET
-	public Response getTemplates(@Context HttpHeaders headers, @QueryParam("count") int count) {
+	public Response getTemplates(@Context HttpHeaders headers, @DefaultValue("1") @QueryParam("count") int count) {
 
 		System.out.println("[*] Templates count ==> " + count);
 		
 		ResponseBuilder apiresponse = null;
 		try {
+			
 			String url = "";
-			if (count != 0) {
+			
+			if (count != 1) {
 				url = System.getenv("CATALOGUES_URL") + "slas/template-descriptors?count="+count;
 				System.out.println("[*] Templates count url ==> " + url);
 			} 
