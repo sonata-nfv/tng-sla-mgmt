@@ -50,23 +50,29 @@ import java.util.TimeZone;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
+import javax.ws.rs.core.UriInfo;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.simple.JSONArray;
 import org.json.JSONException;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
+
+import com.sun.jersey.api.ParamException.QueryParamException;
 
 import eu.tng.template_gen.*;
 import eu.tng.validations.TemplateValidation;
@@ -78,6 +84,9 @@ public class templatesAPIs {
 
 	final static Logger logger = LogManager.getLogger();
 
+	@Context
+    protected UriInfo info;
+	
 	/**
 	 * api call in order to get a list with all the existing sla templates
 	 */
@@ -85,10 +94,23 @@ public class templatesAPIs {
 	@Produces(MediaType.TEXT_PLAIN)
 	@GET
 	public Response getTemplates(@Context HttpHeaders headers) {
-
+		 		
 		ResponseBuilder apiresponse = null;
+		
 		try {
-			String url = System.getenv("CATALOGUES_URL") + "slas/template-descriptors";
+			
+			String url = "";
+			
+			if (info.getQueryParameters().containsKey("count")) {
+				System.out.println("[*] Templates count exist");
+				url = System.getenv("CATALOGUES_URL") + "slas/template-descriptors?count";
+				System.out.println("[*] Templates count url ==> " + url);
+			}	
+	        else {
+	        	System.out.println("[*] Templates count doesnt exist");
+	        	url = System.getenv("CATALOGUES_URL") + "slas/template-descriptors";
+	        }
+			
 			// String url =
 			// "http://pre-int-sp-ath.5gtango.eu:4011/catalogues/api/v2/slas/template-descriptors";
 			URL object = new URL(url);
