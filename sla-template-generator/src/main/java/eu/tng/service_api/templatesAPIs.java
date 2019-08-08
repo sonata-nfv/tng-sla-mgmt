@@ -96,13 +96,11 @@ public class templatesAPIs {
 			
 			String url = "";
 			
-			if (count != null && count != 0) {
-				System.out.println("[*] count is not null ");
+			if (count == null) {
 				url = System.getenv("CATALOGUES_URL") + "slas/template-descriptors?count";
 				System.out.println("[*] Templates count url ==> " + url);
 			}			
 			else {
-				System.out.println("[*] count is null ");
 				url = System.getenv("CATALOGUES_URL") + "slas/template-descriptors";
 				
 			}
