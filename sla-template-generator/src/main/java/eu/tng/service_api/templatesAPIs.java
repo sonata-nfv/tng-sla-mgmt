@@ -70,6 +70,8 @@ import org.json.JSONException;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
+import com.sun.jersey.api.ParamException.QueryParamException;
+
 import eu.tng.template_gen.*;
 import eu.tng.validations.TemplateValidation;
 import eu.tng.correlations.*;
@@ -86,7 +88,7 @@ public class templatesAPIs {
 	@SuppressWarnings("unchecked")
 	@Produces(MediaType.TEXT_PLAIN)
 	@GET
-	public Response getTemplates(@Context HttpHeaders headers, @DefaultValue("0") @QueryParam("count") Integer count) {
+	public Response getTemplates(@Context HttpHeaders headers, @QueryParam("count") Object count) {
 
 		System.out.println("[*] Templates count ==> " + count);
 		
@@ -96,13 +98,12 @@ public class templatesAPIs {
 			
 			String url = "";
 			
-			if (count == null) {
+			if (count != null) {
 				url = System.getenv("CATALOGUES_URL") + "slas/template-descriptors?count";
 				System.out.println("[*] Templates count url ==> " + url);
 			}			
 			else {
 				url = System.getenv("CATALOGUES_URL") + "slas/template-descriptors";
-				
 			}
 			
 			// String url =
