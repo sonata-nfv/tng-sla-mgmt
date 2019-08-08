@@ -86,7 +86,7 @@ public class templatesAPIs {
 	@SuppressWarnings("unchecked")
 	@Produces(MediaType.TEXT_PLAIN)
 	@GET
-	public Response getTemplates(@Context HttpHeaders headers, @QueryParam("count") Integer count) {
+	public Response getTemplates(@Context HttpHeaders headers, @DefaultValue("0") @QueryParam("count") Integer count) {
 
 		System.out.println("[*] Templates count ==> " + count);
 		
