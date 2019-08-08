@@ -63,6 +63,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
+import javax.ws.rs.core.UriInfo;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.simple.JSONArray;
@@ -82,29 +84,32 @@ public class templatesAPIs {
 
 	final static Logger logger = LogManager.getLogger();
 
+	@Context
+    protected UriInfo info;
+	
 	/**
 	 * api call in order to get a list with all the existing sla templates
 	 */
 	@SuppressWarnings("unchecked")
 	@Produces(MediaType.TEXT_PLAIN)
 	@GET
-	public Response getTemplates(@Context HttpHeaders headers, @QueryParam("count") Object count) {
-
-		System.out.println("[*] Templates count ==> " + count);
-		
+	public Response getTemplates(@Context HttpHeaders headers) {
+		 		
 		ResponseBuilder apiresponse = null;
 		
 		try {
 			
 			String url = "";
 			
-			if (count != null) {
+			if (info.getQueryParameters().containsKey("count")) {
+				System.out.println("[*] Templates count exist");
 				url = System.getenv("CATALOGUES_URL") + "slas/template-descriptors?count";
 				System.out.println("[*] Templates count url ==> " + url);
-			}			
-			else {
-				url = System.getenv("CATALOGUES_URL") + "slas/template-descriptors";
-			}
+			}	
+	        else {
+	        	System.out.println("[*] Templates count doesnt exist");
+	        	url = System.getenv("CATALOGUES_URL") + "slas/template-descriptors";
+	        }
 			
 			// String url =
 			// "http://pre-int-sp-ath.5gtango.eu:4011/catalogues/api/v2/slas/template-descriptors";
