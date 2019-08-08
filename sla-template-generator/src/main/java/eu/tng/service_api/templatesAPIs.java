@@ -86,22 +86,23 @@ public class templatesAPIs {
 	@SuppressWarnings("unchecked")
 	@Produces(MediaType.TEXT_PLAIN)
 	@GET
-	public Response getTemplates(@Context HttpHeaders headers, @QueryParam("count") String count) {
+	public Response getTemplates(@Context HttpHeaders headers, @QueryParam("count") Integer count) {
 
 		System.out.println("[*] Templates count ==> " + count);
 		
 		ResponseBuilder apiresponse = null;
+		
 		try {
 			
 			String url = "";
 			
-			if (count != null && !count.isEmpty()) {
-				System.out.println("[*] count is null ");
+			if (count != null && count != 0) {
+				System.out.println("[*] count is not null ");
 				url = System.getenv("CATALOGUES_URL") + "slas/template-descriptors?count";
 				System.out.println("[*] Templates count url ==> " + url);
 			}			
 			else {
-				System.out.println("[*] count is not null ");
+				System.out.println("[*] count is null ");
 				url = System.getenv("CATALOGUES_URL") + "slas/template-descriptors";
 				
 			}
