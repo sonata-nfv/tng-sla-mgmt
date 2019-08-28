@@ -37,15 +37,22 @@ Besides this README file, more documentation is available in the [WiKi](https://
 * [5GTANGO D2.2 Architecture Design](https://5gtango.eu/project-outcomes/deliverables/2-uncategorised/31-d2-2-architecture-design.html)
 * [5GTANGO D5.1 Service platform operational first prototype](https://5gtango.eu/project-outcomes/deliverables/43-d5-1-service-platform-operational-first-prototype.html)
 
-## Dependencies
+## Installation
+You can follow the installation guide [here](https://github.com/sonata-nfv/tng-sla-mgmt/wiki/Installation), for installing the 5GTANGO SLA Manager.     
+Enjoy!
 
-`tng-sla-mgmt` expects the following environment:
+
+## Developing
+
+### Built With
+`tng-sla-mgmt` is built with the following environment:
 *   JAVA JDK8
 *   Docker >= 1.10 (Apache 2.0)    
 *   RabbitMQ >= 3.5 (Mozilla Public License)
 *   PostgreSQL >= 3.0 (PostgreSQL Licence)
 *   A Catalogue (MongoDB) to where the descriptors can be requested from (https://github.com/sonata-nfv/tng-cat)
 
+### Dependencies
 `tng-sla-mgmt` has the following dependencies:
 *  Jersey - RESTful Web Services in Java - Version 1.19 
     *  jersey-servlet : 1.19
@@ -64,13 +71,8 @@ Besides this README file, more documentation is available in the [WiKi](https://
 	*  postgresql : 9.1-901.jdbc4 (PostgreSQL Licence)
 	*  amqp-client :  5.2.0 (Apache 2.0, GPL 2.0, Mozilla Public License)
 
-## Installation
-You can follow the installation guide [here](https://github.com/sonata-nfv/tng-sla-mgmt/wiki/Installation), for installing the 5GTANGO SLA Manager.     
-Enjoy!
-
 ## Configuration
-
-The following configurations are definied into the Dockerfile [here](https://github.com/sonata-nfv/tng-sla-mgmt/blob/master/sla-template-generator/Dockerfile)
+`tng-sla-mgmt` needs the following configurations, definied into the Dockerfile [here](https://github.com/sonata-nfv/tng-sla-mgmt/blob/master/sla-template-generator/Dockerfile)
 *  PostgreSQL 
     *  Specify database host
 	*  Specify databse name
@@ -101,7 +103,6 @@ For more information you can see the relevant [WiKi page](https://github.com/son
 
 For all the available endpoints you can visit the  relevant [SLAM Swagger API documentation](https://github.com/sonata-nfv/tng-sla-mgmt/blob/master/doc/sla_rest_api_model.json) 
 or on the Wiki API specification [here](https://github.com/sonata-nfv/tng-sla-mgmt/wiki/API-Specification).  
-
 
 ### Database
 
@@ -143,12 +144,8 @@ Our style guide is really simple:
 *  The SLA Manager does not support versioning reagrding the code. In the future we can maybe use [SemVer](http://semver.org/) for this kind of versioning.
 *  The most up-to-date container version is v4.0 For the container versions available, see the [link to tags on this repository](https://github.com/sonata-nfv/tng-sla-mgmt/releases).
 	
-## Development
-
+## Contributing
 To contribute to the development of the 5GTANGO SLA Manager, you may use the very same development workflow as for any other 5GTANGO Github project. That is, you have to fork the repository and create pull requests. Moreover, all discussions regarding the 5GTANGO SLAs take place on GitHub, and NOT on the wiki.
-
-### Contributing
-
 You may contribute to the SLA Manager you should:
 
 1. Fork [this repository](https://github.com/sonata-nfv/tng-sla-mgmt);
@@ -157,11 +154,9 @@ You may contribute to the SLA Manager you should:
 3. Submit a Pull Request;
 4. Follow/answer related [issues](https://github.com/sonata-nfv/tng-sla-mgmt/issues) (see Feedback-Chanel, below).
 
-### CI Integration
-
 All pull requests are automatically tested by Jenkins and will only be accepted if no test is broken.
 
-## License
+## Licensing
 All tng-sla-mgmt components are published under Apache 2.0 license. Please see the LICENSE file [here](https://github.com/ekapassa/tng-sla-mgmt/blob/master/LICENSE) for more details.
 
 ## Relevant Publications
@@ -180,5 +175,6 @@ The following lead developers are responsible for this repository and have admin
 *  Marios Touloupou (@mtouloup)
 
 ## Feedback-Chanel
-* GitHub issues
+* 5GTANGO Mailing List: [tango-5g-wp2@lists.atosresearch.eu](tango-5g-wp2@lists.atosresearch.eu)
+* 5GTANGO Gitter Channel: [https://gitter.im/sonata-nfv/Lobby](https://gitter.im/sonata-nfv/Lobby) 
 
