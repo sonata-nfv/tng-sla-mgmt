@@ -134,16 +134,16 @@ public class SlaPeriodCheck implements ServletContextListener {
 					db_operations db = new db_operations();
 					db_operations.connectPostgreSQL();
 					db.createTableNSTemplate();
-					org.json.simple.JSONArray templates = db_operations.getAllTemplates();
+					org.json.JSONArray templates = db_operations.getAllTemplates();
 					db_operations.closePostgreSQL();
 
 					System.out.println("Available templates  ==>" + templates);
 					
-					if (templates.size() == 0) {
+					if (templates.length() == 0) {
 						System.out.println("[*] No templates yet.");
 					} 
 					else {
-						for (int i = 0; i < templates.size(); i++) {
+						for (int i = 0; i < templates.length(); i++) {
 							JSONObject template_item = (JSONObject) templates.get(i);
 							String sla_uuid = (String) ((JSONObject) template_item).get("sla_uuid");
 							String sla_exp_date = getSlaExpiration(sla_uuid);
