@@ -42,10 +42,10 @@
   <listener>
     <listener-class>eu.tng.messaging.MqMonitoringConsumer</listener-class>
   </listener>
-  <!-- <listener>
-    <listener-class>eu.tng.rules.LicensePeriodCheck</listener-class>
-  </listener> -->
   <listener>
     <listener-class>eu.tng.rules.ListenerStatisticInfo</listener-class>
+  </listener>
+  <listener>
+    <listener-class>eu.tng.rules.SlaPeriodCheck</listener-class>
   </listener>
 </web-app>
