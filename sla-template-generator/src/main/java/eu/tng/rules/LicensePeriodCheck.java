@@ -135,7 +135,17 @@ public class LicensePeriodCheck implements ServletContextListener {
 					db_operations.closePostgreSQL();
 
 					if (licenses.size() == 0) {
-						System.out.println("[*] No licenses yet.");
+						// logging
+						timestamp = new Timestamp(System.currentTimeMillis());
+						timestamps = timestamp.toString();
+						type = "I";
+						operation = "License Check Listener";
+						message = ("[*] No licenses yet.");
+						status = "";
+						logger.info(
+								"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+								type, timestamps, operation, message, status);
+						
 					} else {
 						for (int i = 0; i < licenses.size(); i++) {
 							JSONObject license_item = (JSONObject) licenses.get(i);
