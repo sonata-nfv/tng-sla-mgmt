@@ -137,27 +137,30 @@ public class SlaPeriodCheck implements ServletContextListener {
 					db.createTableNSTemplate();
 					JSONArray templates = db_operations.getAllTemplates();
 					db_operations.closePostgreSQL();
-
-					System.out.println("Available templates  ==>" + templates);
 					
 					if (templates.size() == 0) {
-						System.out.println("[*] No templates yet.");
+						// logging
+						timestamp = new Timestamp(System.currentTimeMillis());
+						timestamps = timestamp.toString();
+						type = "I";
+						operation = "SLA Period Check Listener";
+						message = ("[*] No templates yet.");
+						status = "";
+						logger.info(
+								"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+								type, timestamps, operation, message, status);
 					} 
 					else {
 						for (int i = 0; i < templates.size(); i++) {
 							JSONObject template_item = (JSONObject) templates.get(i);
 							String sla_uuid = (String) ((JSONObject) template_item).get("sla_uuid");
 							String sla_exp_date = getSlaExpiration(sla_uuid);
-
-							System.out.println("template item ==>" + template_item);
-							System.out.println("sla uuid ==>" + sla_uuid);
 							
 							if (sla_exp_date != null || sla_exp_date != "") {
 								SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
 								String dateInString = sla_exp_date;
 								try {
 									exp_date = formatter.parse(dateInString.replaceAll("Z$", "+0000"));
-									System.out.println("formatted sla exp date ==>" + exp_date);
 								} catch (ParseException e) {
 
 									// logging
@@ -171,9 +174,6 @@ public class SlaPeriodCheck implements ServletContextListener {
 											"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 											type, timestamps, operation, message, status);
 								}
-
-								System.out.println("currentDate ==>" + currentDate);
-								System.out.println("exp_date ==>" + exp_date);
 								
 								if (currentDate.after(exp_date)) {
 									
@@ -260,7 +260,6 @@ public class SlaPeriodCheck implements ServletContextListener {
 				org.json.JSONObject slad = jsonObj.getJSONObject("slad");
 				org.json.JSONObject sla_template = slad.getJSONObject("sla_template");
 				expiration_date = sla_template.getString("expiration_date");
-				System.out.println("SLA EXPIRATION DATE ==>" + expiration_date);
 
 			} catch (Exception e2) {
 				// logging
