@@ -50,7 +50,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.Date;
-import java.util.List;
 import java.util.TimeZone;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -219,9 +218,9 @@ public class db_operations {
 	 * @return licenses
 	 */
 	@SuppressWarnings("unchecked")
-	public static org.json.JSONArray getAllTemplates() {
+	public static JSONArray getAllTemplates() {
 
-		org.json.JSONArray templates = null;
+		JSONArray templates = new JSONArray();
 		Statement stmt = null;
 		try {
 			c.setAutoCommit(false);
@@ -243,7 +242,7 @@ public class db_operations {
 				template_data.put("allowed_instances", allowed_instances);
 				template_data.put("current_instances", d_flavour_name);
 
-				((org.json.JSONArray) templates).put(template_data);
+				templates.add(template_data);
 
 			}
 			rs.close();

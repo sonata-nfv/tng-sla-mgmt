@@ -49,7 +49,8 @@ import javax.servlet.ServletContextListener;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.json.JSONObject;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 
 import eu.tng.correlations.db_operations;
 
@@ -134,16 +135,16 @@ public class SlaPeriodCheck implements ServletContextListener {
 					db_operations db = new db_operations();
 					db_operations.connectPostgreSQL();
 					db.createTableNSTemplate();
-					org.json.JSONArray templates = db_operations.getAllTemplates();
+					JSONArray templates = db_operations.getAllTemplates();
 					db_operations.closePostgreSQL();
 
 					System.out.println("Available templates  ==>" + templates);
 					
-					if (templates.length() == 0) {
+					if (templates.size() == 0) {
 						System.out.println("[*] No templates yet.");
 					} 
 					else {
-						for (int i = 0; i < templates.length(); i++) {
+						for (int i = 0; i < templates.size(); i++) {
 							JSONObject template_item = (JSONObject) templates.get(i);
 							String sla_uuid = (String) ((JSONObject) template_item).get("sla_uuid");
 							String sla_exp_date = getSlaExpiration(sla_uuid);
@@ -253,11 +254,11 @@ public class SlaPeriodCheck implements ServletContextListener {
 			}
 			in.close();
 			String sresponse = response.toString();
-			JSONObject jsonObj = new JSONObject(sresponse);
+			org.json.JSONObject jsonObj = new org.json.JSONObject(sresponse);
 
 			try {
-				JSONObject slad = jsonObj.getJSONObject("slad");
-				JSONObject sla_template = slad.getJSONObject("sla_template");
+				org.json.JSONObject slad = jsonObj.getJSONObject("slad");
+				org.json.JSONObject sla_template = slad.getJSONObject("sla_template");
 				expiration_date = sla_template.getString("expiration_date");
 				System.out.println("SLA EXPIRATION DATE ==>" + expiration_date);
 
