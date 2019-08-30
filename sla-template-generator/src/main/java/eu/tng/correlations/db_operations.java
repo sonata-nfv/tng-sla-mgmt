@@ -211,6 +211,58 @@ public class db_operations {
 		}
 		return result;
 	}
+	
+	/**
+	 * Get a list with templates
+	 * 
+	 * @return licenses
+	 */
+	@SuppressWarnings("unchecked")
+	public static JSONArray getAllTemplates() {
+
+		JSONArray templates = new JSONArray();
+		Statement stmt = null;
+		try {
+			c.setAutoCommit(false);
+			stmt = c.createStatement();
+			ResultSet rs = stmt.executeQuery("SELECT * FROM ns_template;");
+			while (rs.next()) {
+				String sla_uuid = rs.getString("sla_uuid");
+				String ns_uuid = rs.getString("ns_uuid");
+				String license_type = rs.getString("license_type");
+				String license_exp_date = rs.getString("license_exp_date");
+				String allowed_instances = rs.getString("allowed_instances");
+				String d_flavour_name = rs.getString("d_flavour_name");
+
+				JSONObject template_data = new JSONObject();
+				template_data.put("sla_uuid", sla_uuid);
+				template_data.put("ns_uuid", ns_uuid);
+				template_data.put("license_type", license_type);
+				template_data.put("license_exp_date", license_exp_date);
+				template_data.put("allowed_instances", allowed_instances);
+				template_data.put("current_instances", d_flavour_name);
+
+				templates.add(template_data);
+
+			}
+			rs.close();
+			stmt.close();
+			c.commit();
+
+		} catch (SQLException e) {
+			// logging
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			String timestamps = timestamp.toString();
+			String type = "E";
+			String operation = "Get templates information";
+			String message = ("[*] Error getting sla templates information ==> " + e.getMessage());
+			String status = "";
+			logger.debug(
+					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+					type, timestamps, operation, message, status);
+		}
+		return templates;
+	}
 
 	/**
 	 * 
