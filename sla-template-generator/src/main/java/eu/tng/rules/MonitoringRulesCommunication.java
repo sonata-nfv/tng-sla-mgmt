@@ -22,6 +22,7 @@ public class MonitoringRulesCommunication {
     public static JSONObject createMonitoringRules(String sla_uuid, ArrayList<String> vnfr_id_list,
             ArrayList<String> vnfr_name_list, ArrayList<String> deployment_unit_id_list, String nsi_id) {
 
+        System.out.println("VNFR LIST ==> " +vnfr_name_list);
         JSONObject root = new JSONObject();
         JSONObject slo_list = getSloDetails(sla_uuid);
         JSONArray slos = (JSONArray) slo_list.get("slos");
@@ -53,6 +54,9 @@ public class MonitoringRulesCommunication {
                 String target_value = (String) curr_slo.get("target_value");
                 String curr_vnf_name = (String) vnfr_name_list.get(i);
 
+                System.out.println("VNFR item name " + i + " ==> " + curr_vnf_name);
+                System.out.println("curr slo item name " + j + " ==> " + curr_slo_name);
+
                 /**
                  * check if it is the ms-vnf because the packet loss metric is supported
                  * only by this vnf
@@ -81,7 +85,9 @@ public class MonitoringRulesCommunication {
                  * check if it is the rp-vnf because the health (availability) metric is supported
                  * only by this vnf
                  */
-                if (curr_slo_name.equals("Downtime") && curr_vnf_name.equals("rp-vnf")) {
+                else if(curr_slo_name.equals("Downtime") && curr_vnf_name.equals("rp-vnf")) {
+
+                    System.out.println("mpike sto if gia to downtime");
 
                     JSONObject rule_obj_dt = new JSONObject();
 
