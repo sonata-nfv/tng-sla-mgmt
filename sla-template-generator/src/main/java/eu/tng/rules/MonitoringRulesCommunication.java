@@ -43,61 +43,73 @@ public class MonitoringRulesCommunication {
         vdus.add(vdu_obj);
         vnf_obj.put("vdus", vdus);
 
-        for (int j = 0; j < slos.size(); j++) {
+        // for every slo_name in the array slos, check if the current slo is supported
+        for (int i = 0; i < vnfr_name_list.size(); i++) {
+            for (int j = 0; j < slos.size(); j++) {
 
-            JSONObject curr_slo = (JSONObject) slos.get(j);
-            String curr_slo_name = (String) curr_slo.get("name");
-            String target_period = (String) curr_slo.get("target_period");
-            String target_value = (String) curr_slo.get("target_value");
+                JSONObject curr_slo = (JSONObject) slos.get(j);
+                String curr_slo_name = (String) curr_slo.get("name");
+                String target_period = (String) curr_slo.get("target_period");
+                String target_value = (String) curr_slo.get("target_value");
+                String curr_vnf_name = (String) vnfr_name_list.get(i);
 
-            if (curr_slo_name.equals("videoPacketLost")) {
-                JSONObject rule_obj_pl = new JSONObject();
+                /**
+                 * check if it is the ms-vnf because the packet loss metric is supported
+                 * only by this vnf
+                 */
+                if (curr_slo_name.equals("videoPacketLost") && curr_vnf_name.equals("ms-vnf")) {
+                    JSONObject rule_obj_pl = new JSONObject();
 
-                rule_obj_pl.put("name", "sla_rule_" + curr_slo_name);
-                rule_obj_pl.put("duration", "10s");
-                rule_obj_pl.put("description", "");
+                    rule_obj_pl.put("name", "sla_rule_" + curr_slo_name);
+                    rule_obj_pl.put("duration", "10s");
+                    rule_obj_pl.put("description", "");
 
-                String curr_vdu_id_quotes = "\"" + curr_vdu_id + "\"";
-                String condition = "videoPacketLost{resource_id=" + curr_vdu_id_quotes + "} > " + target_value;
-                rule_obj_pl.put("condition", condition);
-                rule_obj_pl.put("summary", "");
+                    String curr_vdu_id_quotes = "\"" + curr_vdu_id + "\"";
+                    String condition = "videoPacketLost{resource_id=" + curr_vdu_id_quotes + "} > " + target_value;
+                    rule_obj_pl.put("condition", condition);
+                    rule_obj_pl.put("summary", "");
 
-                notification_type.put("id", "2");
-                notification_type.put("type", "rabbitmq");
-                rule_obj_pl.put("notification_type", notification_type);
+                    notification_type.put("id", "2");
+                    notification_type.put("type", "rabbitmq");
+                    rule_obj_pl.put("notification_type", notification_type);
 
-                rules.add(rule_obj_pl);
+                    rules.add(rule_obj_pl);
 
+                }
+                
+                /**
+                 * check if it is the rp-vnf because the health (availability) metric is supported
+                 * only by this vnf
+                 */
+                if (curr_slo_name.equals("Downtime") && curr_vnf_name.equals("rp-vnf")) {
+
+                    JSONObject rule_obj_dt = new JSONObject();
+
+                    rule_obj_dt = new JSONObject();
+
+                    rule_obj_dt.put("name", "sla_rule_" + curr_slo_name);
+                    rule_obj_dt.put("duration", "10s");
+                    rule_obj_dt.put("description", "");
+
+                    String curr_vdu_id_quotes = "\"" + curr_vdu_id + "\"";
+                    String trimed_target_value = target_value.substring(0, target_value.length() - 1);
+
+                    String condition = "delta(health{resource_id=" + curr_vdu_id_quotes + "}[" + target_period + "]) > "
+                            + trimed_target_value;
+
+                    rule_obj_dt.put("condition", condition);
+                    rule_obj_dt.put("summary", "");
+
+                    notification_type = new JSONObject();
+                    notification_type.put("id", "2");
+                    notification_type.put("type", "rabbitmq");
+                    rule_obj_dt.put("notification_type", notification_type);
+
+                    rules.add(rule_obj_dt);
+
+                }
+                vdu_obj.put("rules", rules);
             }
-
-            if (curr_slo_name.equals("Downtime")) {
-
-                JSONObject rule_obj_dt = new JSONObject();
-
-                rule_obj_dt = new JSONObject();
-
-                rule_obj_dt.put("name", "sla_rule_" + curr_slo_name);
-                rule_obj_dt.put("duration", "10s");
-                rule_obj_dt.put("description", "");
-
-                String curr_vdu_id_quotes = "\"" + curr_vdu_id + "\"";
-                String trimed_target_value = target_value.substring(0, target_value.length() - 1);
-
-                String condition = "delta(health{resource_id=" + curr_vdu_id_quotes + "}[" + target_period + "]) > "
-                        + trimed_target_value;
-
-                rule_obj_dt.put("condition", condition);
-                rule_obj_dt.put("summary", "");
-
-                notification_type = new JSONObject();
-                notification_type.put("id", "2");
-                notification_type.put("type", "rabbitmq");
-                rule_obj_dt.put("notification_type", notification_type);
-
-                rules.add(rule_obj_dt);
-
-            }
-            vdu_obj.put("rules", rules);
         }
 
         vnfs.add(vnf_obj);
