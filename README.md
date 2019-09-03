@@ -175,6 +175,5 @@ The following lead developers are responsible for this repository and have admin
 *  Marios Touloupou (@mtouloup)
 
 ## Feedback-Chanel
-* 5GTANGO Mailing List: [tango-5g-wp2@lists.atosresearch.eu](tango-5g-wp2@lists.atosresearch.eu)
-* 5GTANGO Gitter Channel: [https://gitter.im/sonata-nfv/Lobby](https://gitter.im/sonata-nfv/Lobby) 
-
+* You may use the mailing list [sonata-dev-list](mailto:sonata-dev@lists.atosresearch.eu)
+* Gitter room [![Gitter](https://badges.gitter.im/sonata-nfv/Lobby.svg)](https://gitter.im/sonata-nfv/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
