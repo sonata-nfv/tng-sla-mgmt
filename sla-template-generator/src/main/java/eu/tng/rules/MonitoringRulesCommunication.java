@@ -7,6 +7,8 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.simple.JSONArray;
@@ -22,101 +24,171 @@ public class MonitoringRulesCommunication {
     public static JSONObject createMonitoringRules(String sla_uuid, ArrayList<String> vnfr_id_list,
             ArrayList<String> vnfr_name_list, ArrayList<String> deployment_unit_id_list, String nsi_id) {
 
+        vnfr_id_list = new ArrayList<String>(new LinkedHashSet<String>(vnfr_id_list));
+        vnfr_name_list = new ArrayList<String>(new LinkedHashSet<String>(vnfr_name_list));
+        deployment_unit_id_list = new ArrayList<String>(new LinkedHashSet<String>(deployment_unit_id_list));
+
         JSONObject root = new JSONObject();
-        JSONObject slo_list = getSloDetails(sla_uuid);
-        JSONArray slos = (JSONArray) slo_list.get("slos");
-        JSONArray vnfs = new JSONArray();
-        JSONObject vnf_obj = new JSONObject();
-        JSONArray vdus = new JSONArray();
-        JSONObject vdu_obj = new JSONObject();
-        JSONArray rules = new JSONArray();
 
-        JSONObject notification_type = new JSONObject();
+        if (sla_uuid != null && !sla_uuid.isEmpty()) {
 
-        root.put("sla_cnt", sla_uuid);
-        root.put("sonata_service_id", nsi_id);
+            JSONObject slo_list = getSloDetails(sla_uuid);
+            JSONArray slos = (JSONArray) slo_list.get("slos");
+            JSONArray vnfs = new JSONArray();
+            JSONObject vnf_obj = new JSONObject();
+            JSONArray vdus = new JSONArray();
+            JSONObject vdu_obj = new JSONObject();
+            JSONArray rules = new JSONArray();
+            JSONObject rule_obj = new JSONObject();
+            JSONObject notification_type = new JSONObject();
 
-        String nvfid = vnfr_id_list.get(0);
-        vnf_obj.put("vnf_id", nvfid);
-        String curr_vdu_id = deployment_unit_id_list.get(0);
-        vdu_obj.put("vdu_id", curr_vdu_id);
-        vdus.add(vdu_obj);
-        vnf_obj.put("vdus", vdus);
+            root.put("sla_cnt", sla_uuid);
+            root.put("sonata_service_id", nsi_id);
 
-        for (int j = 0; j < slos.size(); j++) {
+            // for every slo_name in the array slos, check if the current slo is supported
+            for (int i = 0; i < vnfr_name_list.size(); i++) {
 
-            JSONObject curr_slo = (JSONObject) slos.get(j);
-            String curr_slo_name = (String) curr_slo.get("name");
-            String target_period = (String) curr_slo.get("target_period");
-            String target_value = (String) curr_slo.get("target_value");
+                for (int j = 0; j < slos.size(); j++) {
 
-            if (curr_slo_name.equals("videoPacketLost")) {
-                JSONObject rule_obj_pl = new JSONObject();
+                    JSONObject curr_slo = (JSONObject) slos.get(j);
+                    String curr_slo_name = (String) curr_slo.get("name");
+                    // get information for the slo
+                    String target_period = (String) curr_slo.get("target_period");
+                    String target_value = (String) curr_slo.get("target_value");
 
-                rule_obj_pl.put("name", "sla_rule_" + curr_slo_name);
-                rule_obj_pl.put("duration", "10s");
-                rule_obj_pl.put("description", "");
+                    String curr_vnf_name = (String) vnfr_name_list.get(i);
 
-                String curr_vdu_id_quotes = "\"" + curr_vdu_id + "\"";
-                String condition = "videoPacketLost{resource_id=" + curr_vdu_id_quotes + "} > " + target_value;
-                rule_obj_pl.put("condition", condition);
-                rule_obj_pl.put("summary", "");
+                    /**
+                     * check if it is the ms-vnf because the Packet Loss metric is supported
+                     * only by this vnf
+                     */
+                    if (curr_slo_name.equals("videoPacketLost") && curr_vnf_name.equals("ms-vnf")) {
 
-                notification_type.put("id", "2");
-                notification_type.put("type", "rabbitmq");
-                rule_obj_pl.put("notification_type", notification_type);
+                        String nvfid = vnfr_id_list.get(i);
+                        vnf_obj.put("vnf_id", nvfid);
 
-                rules.add(rule_obj_pl);
+                        // Define JSONArray vdus
 
-            }
+                        String curr_vdu_id = deployment_unit_id_list.get(i);
+                        vdu_obj.put("vdu_id", curr_vdu_id);
 
-            if (curr_slo_name.equals("Downtime")) {
+                        // Define JSONArray rules
 
-                JSONObject rule_obj_dt = new JSONObject();
+                        rule_obj.put("name", "sla_rule_" + curr_slo_name);
+                        rule_obj.put("duration", "10s");
+                        rule_obj.put("description", "");
 
-                rule_obj_dt = new JSONObject();
+                        String curr_vdu_id_quotes = "\"" + curr_vdu_id + "\"";
+                        String condition = "videoPacketLost{resource_id=" + curr_vdu_id_quotes + "} > " + target_value;
+                        
+                        rule_obj.put("condition", condition);
+                        rule_obj.put("summary", "");
 
-                rule_obj_dt.put("name", "sla_rule_" + curr_slo_name);
-                rule_obj_dt.put("duration", "10s");
-                rule_obj_dt.put("description", "");
+                        notification_type.put("id", "2");
+                        notification_type.put("type", "rabbitmq");
+                        rule_obj.put("notification_type", notification_type);
 
-                String curr_vdu_id_quotes = "\"" + curr_vdu_id + "\"";
-                String trimed_target_value = target_value.substring(0, target_value.length() - 1);
+                        rules.add(rule_obj);
 
-                String condition = "delta(health{resource_id=" + curr_vdu_id_quotes + "}[" + target_period + "]) > "
-                        + trimed_target_value;
+                        vdu_obj.put("rules", rules);
+                        vdus.add(vdu_obj);
+                        vnf_obj.put("vdus", vdus);
+                        vnfs.add(vnf_obj);
 
-                rule_obj_dt.put("condition", condition);
-                rule_obj_dt.put("summary", "");
+                        root.put("vnfs", vnfs);
+                    }
 
-                notification_type = new JSONObject();
-                notification_type.put("id", "2");
-                notification_type.put("type", "rabbitmq");
-                rule_obj_dt.put("notification_type", notification_type);
+                    /**
+                     * check if it is the rp-vnf because the availability metric is supported only
+                     * by this vnf
+                     */
+                    if (curr_slo_name.equals("Downtime") && curr_vnf_name.equals("rp-vnf")) {
 
-                rules.add(rule_obj_dt);
+                        vnf_obj = new JSONObject();
+                        String nvfid = vnfr_id_list.get(i);
+                        vnf_obj.put("vnf_id", nvfid);
 
-            }
-            vdu_obj.put("rules", rules);
+                        // Define JSONArray vdus
+                        vdus = new JSONArray();
+                        vdu_obj = new JSONObject();
+                        String curr_vdu_id = deployment_unit_id_list.get(i);
+                        vdu_obj.put("vdu_id", curr_vdu_id);
+
+                        // Define JSONArray rules
+                        rules = new JSONArray();
+                        rule_obj = new JSONObject();
+
+                        rule_obj.put("name", "sla_rule_" + curr_slo_name);
+                        rule_obj.put("duration", "10s");
+                        rule_obj.put("description", "");
+
+                        String curr_vdu_id_quotes = "\"" + curr_vdu_id + "\"";
+                        String trimed_target_value = target_value.substring(0, target_value.length() - 1);
+
+                        String condition = "delta(health{resource_id=" + curr_vdu_id_quotes + "}[" + target_period + "]) > "
+                                + trimed_target_value;
+
+                        rule_obj.put("condition", condition);
+                        rule_obj.put("summary", "");
+
+                        notification_type = new JSONObject();
+                        notification_type.put("id", "2");
+                        notification_type.put("type", "rabbitmq");
+                        rule_obj.put("notification_type", notification_type);
+
+                        rules.add(rule_obj);
+
+                        vdu_obj.put("rules", rules);
+                        vdus.add(vdu_obj);
+                        vnf_obj.put("vdus", vdus);
+                        vnfs.add(vnf_obj);
+
+                        root.put("vnfs", vnfs);
+                    }
+                } // end for loop vnfr names array
+
+            } // end for loop slos array
+
+ 
+            // logging
+            Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+            String timestamps = timestamp.toString();
+            String type = "I";
+            String operation = "Create monitoring rules for immersive media service";
+            String message = "[*] Monitoring rule to be sent for immersive media service ==> " + root.toString();
+            String status = "";
+            logger.info(
+                    "{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+                    type, timestamps, operation, message, status);
+            
+            
+            // Publish monitoring rule
+            PublishMonitoringRules mr = new PublishMonitoringRules();
+            mr.publishMonitringRules(root, nsi_id);
+
+            // logging
+            timestamp = new Timestamp(System.currentTimeMillis());
+            timestamps = timestamp.toString();
+            type = "I";
+            operation = "Create monitoring rules for immersive media service";
+            message = "Rule published succesfully!";
+            status = "";
+            logger.info(
+                    "{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+                    type, timestamps, operation, message, status);
+
+        } else {
+            // logging
+            Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+            String timestamps = timestamp.toString();
+            String type = "W";
+            String operation = "Create monitoring rules for immersive media service";
+            String message = "[*] ERROR: Unable to create rules. SLA ID is null";
+            String status = "";
+            logger.warn(
+                    "{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+                    type, timestamps, operation, message, status);
         }
-
-        vnfs.add(vnf_obj);
-        root.put("vnfs", vnfs);
-
-        // logging
-        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-        String timestamps = timestamp.toString();
-        String type = "I";
-        String operation = "Create monitoring rules for Communications Pilot service";
-        String message = "[*] Monitoring rule to be sent for Communications Pilot service ==> " + root.toString();
-        String status = "";
-        logger.info(
-                "{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
-                type, timestamps, operation, message, status);
-
-        // Publish monitoring rule
-        PublishMonitoringRules mr = new PublishMonitoringRules();
-        mr.publishMonitringRules(root, nsi_id);
 
         return root;
 
@@ -140,7 +212,7 @@ public class MonitoringRulesCommunication {
                 Timestamp timestamp = new Timestamp(System.currentTimeMillis());
                 String timestamps = timestamp.toString();
                 String type = "E";
-                String operation = "Create monitoring rules for Communications Pilot service";
+                String operation = "Create monitoring rules for immersive media service";
                 String message = "[*] Error: Unable to get sla details. SLA NOT FOUND";
                 String status = String.valueOf(conn.getResponseCode());
                 logger.error(
@@ -189,7 +261,7 @@ public class MonitoringRulesCommunication {
                         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
                         String timestamps = timestamp.toString();
                         String type = "E";
-                        String operation = "Create monitoring rules for Communications Pilot service";
+                        String operation = "Create monitoring rules for immersive media service";
                         String message = "[*] Error: " + e.getMessage();
                         String status = String.valueOf(conn.getResponseCode());
                         logger.error(
@@ -206,7 +278,7 @@ public class MonitoringRulesCommunication {
             Timestamp timestamp = new Timestamp(System.currentTimeMillis());
             String timestamps = timestamp.toString();
             String type = "E";
-            String operation = "Create monitoring rules for Communications Pilot service";
+            String operation = "Create monitoring rules for immersive media service";
             String message = "[*] Error: " + e.getMessage();
             String status = "";
             logger.error(
