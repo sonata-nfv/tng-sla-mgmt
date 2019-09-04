@@ -232,7 +232,11 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 											String vdu_reference = (String) ((JSONObject) vdus.getJSONObject(j))
 													.get("vdu_reference");
 
-											if (vdu_reference.startsWith("ms-vnf") == true) {
+											if ((vdu_reference.startsWith("bs-vnf") == true)
+											    || (vdu_reference.startsWith("ds-vnf") == true)
+                                                || (vdu_reference.startsWith("ms-vnf") == true)
+                                                || (vdu_reference.startsWith("rp-vnf") == true)
+                                                || (vdu_reference.startsWith("wac-vnf") == true)) {
 
 												// get vnfr id
 												String vnfr_id = (String) ((JSONObject) vnfrs.get(i)).get("id");
