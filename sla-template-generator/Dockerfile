@@ -42,8 +42,8 @@ ENV BROKER_EXCHANGE son-kernel
 ENV BROKER_HOST broker
 
 # Set MONITORING URL Environment Variables
-ENV MONITORING_URL http://son-monitor-manager:8000/api/v1/
 
+#ENV MONITORING_URL http://son-monitor-manager:8000/api/v1/
 ENV MONITORING_URL_V2 http://son-monitor-manager:8000/api/v2/
 
 ENV MONITORING_PUSH_GATEWAY son-monitor-pushgateway:9091
