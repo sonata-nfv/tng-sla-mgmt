@@ -53,7 +53,6 @@ import java.util.Date;
 import java.util.TimeZone;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.ThreadContext;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -493,8 +492,6 @@ public class db_operations {
 			stmt.executeUpdate(sql);
 			stmt.close();
 			c.commit();
-
-			ThreadContext.clearAll();
 
 		} catch (SQLException e) {
 
