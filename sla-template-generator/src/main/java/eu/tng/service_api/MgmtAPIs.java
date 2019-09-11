@@ -163,7 +163,7 @@ public class MgmtAPIs {
 			 * Select what slos to return basd on the NS that was selected
 			 * 
 			 */
-			if (ns_name.equals("communication-pilot")) {
+			if (ns_name.matches("(.*)communication(.*)")) {
 			
 				for (int i = 0; i < guaranteeTerms.size(); i++) {
 					JSONObject curr_gurantee = (JSONObject) guaranteeTerms.get(i);
@@ -178,7 +178,7 @@ public class MgmtAPIs {
 
 
 			}
-			else if (ns_name.equals("mediapilot-service")) {
+			else if (ns_name.matches("(.*)mediapilot(.*)")) {
 						
 				for (int i = 0; i < guaranteeTerms.size(); i++) {
 					JSONObject curr_gurantee = (JSONObject) guaranteeTerms.get(i);
