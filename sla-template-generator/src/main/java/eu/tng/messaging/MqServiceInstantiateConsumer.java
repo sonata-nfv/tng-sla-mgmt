@@ -358,14 +358,14 @@ public class MqServiceInstantiateConsumer implements ServletContextListener {
 										JSONArray guaranteeTerms = service.getJSONArray("guaranteeTerms");
 
 										// Monitoring rules for Immersive Media
-										if (network_service_name.equals("mediapilot-service")) {
+										if (network_service_name.matches("(.*)mediapilot(.*)")) {									    
 											new MonitoringRulesImmersiveMedia();
 											MonitoringRulesImmersiveMedia.createMonitoringRules(String.valueOf(sla_id),
 													vnfr_id_list, vnfr_name_list, cdu_id_list, nsi_id);
 										}
 
 										// Monitoring rules for Communications Pilot
-										if (network_service_name.equals("communication-pilot")) {
+										if (network_service_name.matches("(.*)communication(.*)")) {    
 											new MonitoringRulesCommunication();
 											MonitoringRulesCommunication.createMonitoringRules(String.valueOf(sla_id),
 													vnfr_id_list, vnfr_name_list, vc_id_list, nsi_id);
