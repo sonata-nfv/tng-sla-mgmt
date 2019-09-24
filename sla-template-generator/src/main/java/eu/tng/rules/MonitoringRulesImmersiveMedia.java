@@ -62,44 +62,44 @@ public class MonitoringRulesImmersiveMedia {
                      */
                     if (curr_slo_name.equals("input_connections") && curr_vnf_name.equals("vnf-ma")) {
 
-                        JSONObject vnf_obj = new JSONObject();
-                        JSONArray vdus = new JSONArray();
-                        JSONObject vdu_obj = new JSONObject();
-                        JSONArray rules = new JSONArray();
-                        JSONObject rule_obj = new JSONObject();
-                        JSONObject notification_type = new JSONObject();
+                        JSONObject vnf_obj_ic = new JSONObject();
+                        JSONArray vdus_ic = new JSONArray();
+                        JSONObject vdu_obj_ic = new JSONObject();
+                        JSONArray rules_ic = new JSONArray();
+                        JSONObject rule_obj_ic = new JSONObject();
+                        JSONObject notification_type_ic = new JSONObject();
                         
                         System.out.println("Entered in 1st IF");
                         
                         String nvfid = vnfr_id_list.get(i);
-                        vnf_obj.put("vnf_id", nvfid);
+                        vnf_obj_ic.put("vnf_id", nvfid);
                         
                         // Define JSONArray vdus
 
                         String curr_vdu_id = deployment_unit_id_list.get(i);
-                        vdu_obj.put("vdu_id", curr_vdu_id);
+                        vdu_obj_ic.put("vdu_id", curr_vdu_id);
 
                         // Define JSONArray rules
 
-                        rule_obj.put("name", "sla_rule_" + curr_slo_name);
-                        rule_obj.put("duration", "10s");
-                        rule_obj.put("description", "");
+                        rule_obj_ic.put("name", "sla_rule_" + curr_slo_name);
+                        rule_obj_ic.put("duration", "10s");
+                        rule_obj_ic.put("description", "");
 
                         String curr_vdu_id_quotes = "\"cdu01-" + curr_vdu_id + "\"";
                         String condition = "input_conn{container_name=" + curr_vdu_id_quotes + "} > " + target_value;
-                        rule_obj.put("condition", condition);
-                        rule_obj.put("summary", "");
+                        rule_obj_ic.put("condition", condition);
+                        rule_obj_ic.put("summary", "");
 
-                        notification_type.put("id", "2");
-                        notification_type.put("type", "rabbitmq");
-                        rule_obj.put("notification_type", notification_type);
+                        notification_type_ic.put("id", "2");
+                        notification_type_ic.put("type", "rabbitmq");
+                        rule_obj_ic.put("notification_type", notification_type_ic);
 
-                        rules.add(rule_obj);
+                        rules_ic.add(rule_obj_ic);
 
-                        vdu_obj.put("rules", rules);
-                        vdus.add(vdu_obj);
-                        vnf_obj.put("vdus", vdus);
-                        vnfs.add(vnf_obj);
+                        vdu_obj_ic.put("rules", rules_ic);
+                        vdus_ic.add(vdu_obj_ic);
+                        vnf_obj_ic.put("vdus", vdus_ic);
+                        vnfs.add(vnf_obj_ic);
 
                         root.put("vnfs", vnfs);
                         
@@ -112,33 +112,33 @@ public class MonitoringRulesImmersiveMedia {
                      */
                     if (curr_slo_name.equals("Downtime") && curr_vnf_name.equals("vnf-cms")) {
 
-                        JSONObject vnf_obj1 = new JSONObject();
-                        JSONArray vdus1 = new JSONArray();
-                        JSONObject vdu_obj1 = new JSONObject();
-                        JSONArray rules1 = new JSONArray();
-                        JSONObject rule_obj1 = new JSONObject();
-                        JSONObject notification_type1 = new JSONObject();
+                        JSONObject vnf_obj_dt = new JSONObject();
+                        JSONArray vdus_dt = new JSONArray();
+                        JSONObject vdu_obj_dt = new JSONObject();
+                        JSONArray rules_dt = new JSONArray();
+                        JSONObject rule_obj_dt = new JSONObject();
+                        JSONObject notification_type_dt = new JSONObject();
                         
                         
                         System.out.println("Entered in 2nd IF");
                         
-                        vnf_obj1 = new JSONObject();
+                        vnf_obj_dt = new JSONObject();
                         String nvfid = vnfr_id_list.get(i);
-                        vnf_obj1.put("vnf_id", nvfid);
+                        vnf_obj_dt.put("vnf_id", nvfid);
 
                         // Define JSONArray vdus
-                        vdus1 = new JSONArray();
-                        vdu_obj1 = new JSONObject();
+                        vdus_dt = new JSONArray();
+                        vdu_obj_dt = new JSONObject();
                         String curr_vdu_id = deployment_unit_id_list.get(i);
-                        vdu_obj1.put("vdu_id", curr_vdu_id);
+                        vdu_obj_dt.put("vdu_id", curr_vdu_id);
 
                         // Define JSONArray rules
-                        rules1 = new JSONArray();
-                        rule_obj1 = new JSONObject();
+                        rules_dt = new JSONArray();
+                        rule_obj_dt = new JSONObject();
 
-                        rule_obj1.put("name", "sla_rule_" + curr_slo_name);
-                        rule_obj1.put("duration", "10s");
-                        rule_obj1.put("description", "");
+                        rule_obj_dt.put("name", "sla_rule_" + curr_slo_name);
+                        rule_obj_dt.put("duration", "10s");
+                        rule_obj_dt.put("description", "");
 
                         String curr_vdu_id_quotes = "\"cdu01-" + curr_vdu_id + "\"";
                         String trimed_target_value = target_value.substring(0, target_value.length() - 1);
@@ -146,20 +146,20 @@ public class MonitoringRulesImmersiveMedia {
                         String condition = "delta(status{container_name=" + curr_vdu_id_quotes + "}[" + target_period
                                 + "]) > " + trimed_target_value;
 
-                        rule_obj1.put("condition", condition);
-                        rule_obj1.put("summary", "");
+                        rule_obj_dt.put("condition", condition);
+                        rule_obj_dt.put("summary", "");
 
-                        notification_type1 = new JSONObject();
-                        notification_type1.put("id", "2");
-                        notification_type1.put("type", "rabbitmq");
-                        rule_obj1.put("notification_type", notification_type1);
+                        notification_type_dt = new JSONObject();
+                        notification_type_dt.put("id", "2");
+                        notification_type_dt.put("type", "rabbitmq");
+                        rule_obj_dt.put("notification_type", notification_type_dt);
 
-                        rules1.add(rule_obj1);
+                        rules_dt.add(rule_obj_dt);
 
-                        vdu_obj1.put("rules", rules1);
-                        vdus1.add(vdu_obj1);
-                        vnf_obj1.put("vdus", vdus1);
-                        vnfs.add(vnf_obj1);
+                        vdu_obj_dt.put("rules", rules_dt);
+                        vdus_dt.add(vdu_obj_dt);
+                        vnf_obj_dt.put("vdus", vdus_dt);
+                        vnfs.add(vnf_obj_dt);
 
                         root.put("vnfs", vnfs);
                         
