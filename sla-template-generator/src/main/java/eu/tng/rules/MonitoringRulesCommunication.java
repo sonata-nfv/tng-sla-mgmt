@@ -104,19 +104,19 @@ public class MonitoringRulesCommunication {
                      */
                     if (curr_slo_name.equals("Downtime") && curr_vnf_name.equals("rp-vnf")) {
 
-                        //vnf_obj = new JSONObject();
+                        vnf_obj = new JSONObject();
                         String nvfid = vnfr_id_list.get(i);
                         vnf_obj.put("vnf_id", nvfid);
 
                         // Define JSONArray vdus
-                        //vdus = new JSONArray();
-                        //vdu_obj = new JSONObject();
+                        vdus = new JSONArray();
+                        vdu_obj = new JSONObject();
                         String curr_vdu_id = deployment_unit_id_list.get(i);
                         vdu_obj.put("vdu_id", curr_vdu_id);
 
                         // Define JSONArray rules
-                        //rules = new JSONArray();
-                        //rule_obj = new JSONObject();
+                        rules = new JSONArray();
+                        rule_obj = new JSONObject();
 
                         rule_obj.put("name", "sla_rule_" + curr_slo_name);
                         rule_obj.put("duration", "10s");
