@@ -44,7 +44,10 @@ public class MonitoringRulesImmersiveMedia {
 
             root.put("sla_cnt", sla_uuid);
             root.put("sonata_service_id", nsi_id);
-
+            
+            System.out.print("[*] vnfr_name_list ==> " + vnfr_name_list.toString());
+            System.out.print("[*] slos ==> " + slos.toString());
+            
             // for every slo_name in the array slos, check if the current slo is supported
             for (int i = 0; i < vnfr_name_list.size(); i++) {
 
@@ -62,8 +65,14 @@ public class MonitoringRulesImmersiveMedia {
                      * check if it is the vnf-ma because the input_connections metric is supported
                      * only by this vnf
                      */
-                    if (curr_slo_name.equals("input_connections") && curr_vnf_name.equals("vnf-ma")) {
+                    
+                    System.out.print("[*] VNFR Number:" + i + "="+curr_vnf_name+" and SLO Number:"+j+" ="+curr_slo_name);
 
+                    
+                    if (curr_slo_name.equals("input_connections") && curr_vnf_name.equals("vnf-ma")) {
+                    	
+                    	System.out.print("mpike -------- input_connections + vnf-ma");
+                    	
                         String nvfid = vnfr_id_list.get(i);
                         vnf_obj.put("vnf_id", nvfid);
 
@@ -97,6 +106,8 @@ public class MonitoringRulesImmersiveMedia {
 
                         root.put("vnfs", vnfs);
                     }
+                    
+                    System.out.print("root ===> " + root);
 
                     /**
                      * check if it is the vnf-cms because the availability metric is supported only
@@ -104,6 +115,8 @@ public class MonitoringRulesImmersiveMedia {
                      */
                     if (curr_slo_name.equals("Downtime") && curr_vnf_name.equals("vnf-cms")) {
 
+                    	System.out.print("mpike -------- Downtime + vnf-cms");
+                    	
                         vnf_obj = new JSONObject();
                         String nvfid = vnfr_id_list.get(i);
                         vnf_obj.put("vnf_id", nvfid);
@@ -145,6 +158,9 @@ public class MonitoringRulesImmersiveMedia {
 
                         root.put("vnfs", vnfs);
                     }
+                    
+                    System.out.print("root ===> " + root);
+                    
                 } // end for loop vnfr names array
 
             } // end for loop slos array
