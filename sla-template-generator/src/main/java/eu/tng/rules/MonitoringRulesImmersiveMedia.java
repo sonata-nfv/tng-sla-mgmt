@@ -28,6 +28,10 @@ public class MonitoringRulesImmersiveMedia {
         vnfr_name_list = new ArrayList<String>(new LinkedHashSet<String>(vnfr_name_list));
         deployment_unit_id_list = new ArrayList<String>(new LinkedHashSet<String>(deployment_unit_id_list));
 
+        System.out.println("vnfr_id_list == " + vnfr_id_list);
+        System.out.println("vnfr_name_list == " + vnfr_name_list);
+        System.out.println("deployment_unit_id_list == " + deployment_unit_id_list);
+        
         JSONObject root = new JSONObject();
 
         if (sla_uuid != null && !sla_uuid.isEmpty()) {
@@ -64,9 +68,11 @@ public class MonitoringRulesImmersiveMedia {
                      */
                     if (curr_slo_name.equals("input_connections") && curr_vnf_name.equals("vnf-ma")) {
 
+                        System.out.println("Entered in 1st IF");
+                        
                         String nvfid = vnfr_id_list.get(i);
                         vnf_obj.put("vnf_id", nvfid);
-
+                        
                         // Define JSONArray vdus
 
                         String curr_vdu_id = deployment_unit_id_list.get(i);
@@ -95,6 +101,13 @@ public class MonitoringRulesImmersiveMedia {
                         vnfs.add(vnf_obj);
 
                         root.put("vnfs", vnfs);
+                        
+                        
+                        rule_obj.clear();
+                        vdu_obj.clear();
+                        vnf_obj.clear();
+                        vnfs.clear();
+                        
                     }
 
                     /**
@@ -103,6 +116,8 @@ public class MonitoringRulesImmersiveMedia {
                      */
                     if (curr_slo_name.equals("Downtime") && curr_vnf_name.equals("vnf-cms")) {
 
+                        System.out.println("Entered in 2nd IF");
+                        
                         vnf_obj = new JSONObject();
                         String nvfid = vnfr_id_list.get(i);
                         vnf_obj.put("vnf_id", nvfid);
@@ -143,6 +158,12 @@ public class MonitoringRulesImmersiveMedia {
                         vnfs.add(vnf_obj);
 
                         root.put("vnfs", vnfs);
+
+                        rule_obj.clear();
+                        vdu_obj.clear();
+                        vnf_obj.clear();
+                        vnfs.clear();
+                        
                     }
                 } // end for loop vnfr names array
 
