@@ -27,7 +27,7 @@ public class MonitoringRulesImmersiveMedia {
         vnfr_id_list = new ArrayList<String>(new LinkedHashSet<String>(vnfr_id_list));
         vnfr_name_list = new ArrayList<String>(new LinkedHashSet<String>(vnfr_name_list));
         deployment_unit_id_list = new ArrayList<String>(new LinkedHashSet<String>(deployment_unit_id_list));
-
+        
         JSONObject root = new JSONObject();
 
         if (sla_uuid != null && !sla_uuid.isEmpty()) {
@@ -42,10 +42,6 @@ public class MonitoringRulesImmersiveMedia {
             JSONObject rule_obj = new JSONObject();
             JSONObject notification_type = new JSONObject();
 
-            //DEBUGGING LOGS
-            System.out.println("[*] VNF NAME ==> " + vnfr_name_list.toString());
-            System.out.println("[*] SLOS NAME ==> " + slos.toString());
-            
             root.put("sla_cnt", sla_uuid);
             root.put("sonata_service_id", nsi_id);
 
@@ -53,7 +49,7 @@ public class MonitoringRulesImmersiveMedia {
             for (int i = 0; i < vnfr_name_list.size(); i++) {
 
                 for (int j = 0; j < slos.size(); j++) {
-                    
+
                     JSONObject curr_slo = (JSONObject) slos.get(j);
                     String curr_slo_name = (String) curr_slo.get("name");
                     // get information for the slo
@@ -62,12 +58,9 @@ public class MonitoringRulesImmersiveMedia {
 
                     String curr_vnf_name = (String) vnfr_name_list.get(i);
 
-                    
-                    System.out.println("[*] current slo = "+ curr_slo_name + " AND current vnf name = "+curr_vnf_name);
-                    
                     /**
-                     * check if it is the vnf-ma because the input connections metric is supported
-                     * only by this vnfr
+                     * check if it is the vnf-ma because the input_connections metric is supported
+                     * only by this vnf
                      */
                     if (curr_slo_name.equals("input_connections") && curr_vnf_name.equals("vnf-ma")) {
 
@@ -87,6 +80,7 @@ public class MonitoringRulesImmersiveMedia {
 
                         String curr_vdu_id_quotes = "\"cdu01-" + curr_vdu_id + "\"";
                         String condition = "input_conn{container_name=" + curr_vdu_id_quotes + "} > " + target_value;
+                        
                         rule_obj.put("condition", condition);
                         rule_obj.put("summary", "");
 
@@ -106,7 +100,7 @@ public class MonitoringRulesImmersiveMedia {
 
                     /**
                      * check if it is the vnf-cms because the availability metric is supported only
-                     * by this vnfr
+                     * by this vnf
                      */
                     if (curr_slo_name.equals("Downtime") && curr_vnf_name.equals("vnf-cms")) {
 
@@ -133,7 +127,7 @@ public class MonitoringRulesImmersiveMedia {
 
                         String condition = "delta(status{container_name=" + curr_vdu_id_quotes + "}[" + target_period
                                 + "]) > " + trimed_target_value;
-
+                        
                         rule_obj.put("condition", condition);
                         rule_obj.put("summary", "");
 
@@ -156,18 +150,18 @@ public class MonitoringRulesImmersiveMedia {
             } // end for loop slos array
 
  
-    		// logging
-    		Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-    		String timestamps = timestamp.toString();
-    		String type = "I";
-    		String operation = "Create monitoring rules for immersive media service";
-    		String message = "[*] Monitoring rule to be sent for immersive media service ==> " + root.toString();
-    		String status = "";
-    		logger.info(
-    				"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
-    				type, timestamps, operation, message, status);
-    		
-    		
+            // logging
+            Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+            String timestamps = timestamp.toString();
+            String type = "I";
+            String operation = "Create monitoring rules for immersive media service";
+            String message = "[*] Monitoring rule to be sent for immersive media service ==> " + root.toString();
+            String status = "";
+            logger.info(
+                    "{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
+                    type, timestamps, operation, message, status);
+            
+            
             // Publish monitoring rule
             PublishMonitoringRules mr = new PublishMonitoringRules();
             mr.publishMonitringRules(root, nsi_id);
@@ -176,7 +170,7 @@ public class MonitoringRulesImmersiveMedia {
             timestamp = new Timestamp(System.currentTimeMillis());
             timestamps = timestamp.toString();
             type = "I";
-    		operation = "Create monitoring rules for immersive media service";
+            operation = "Create monitoring rules for immersive media service";
             message = "Rule published succesfully!";
             status = "";
             logger.info(
@@ -188,7 +182,7 @@ public class MonitoringRulesImmersiveMedia {
             Timestamp timestamp = new Timestamp(System.currentTimeMillis());
             String timestamps = timestamp.toString();
             String type = "W";
-    		String operation = "Create monitoring rules for immersive media service";
+            String operation = "Create monitoring rules for immersive media service";
             String message = "[*] ERROR: Unable to create rules. SLA ID is null";
             String status = "";
             logger.warn(
@@ -197,6 +191,7 @@ public class MonitoringRulesImmersiveMedia {
         }
 
         return root;
+
 
     }
 
