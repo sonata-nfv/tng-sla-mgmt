@@ -42,6 +42,10 @@ public class MonitoringRulesImmersiveMedia {
             JSONObject rule_obj = new JSONObject();
             JSONObject notification_type = new JSONObject();
 
+            //DEBUGGING LOGS
+            System.out.println("[*] VNF NAME ==> " + vnfr_name_list.toString());
+            System.out.println("[*] SLOS NAME ==> " + slos.toString());
+            
             root.put("sla_cnt", sla_uuid);
             root.put("sonata_service_id", nsi_id);
 
@@ -49,7 +53,7 @@ public class MonitoringRulesImmersiveMedia {
             for (int i = 0; i < vnfr_name_list.size(); i++) {
 
                 for (int j = 0; j < slos.size(); j++) {
-
+                    
                     JSONObject curr_slo = (JSONObject) slos.get(j);
                     String curr_slo_name = (String) curr_slo.get("name");
                     // get information for the slo
@@ -58,6 +62,9 @@ public class MonitoringRulesImmersiveMedia {
 
                     String curr_vnf_name = (String) vnfr_name_list.get(i);
 
+                    
+                    System.out.println("[*] current slo = "+ curr_slo_name + " AND current vnf name = "+curr_vnf_name);
+                    
                     /**
                      * check if it is the vnf-ma because the input connections metric is supported
                      * only by this vnfr
