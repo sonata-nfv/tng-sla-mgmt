@@ -27,10 +27,6 @@ public class MonitoringRulesImmersiveMedia {
         vnfr_id_list = new ArrayList<String>(new LinkedHashSet<String>(vnfr_id_list));
         vnfr_name_list = new ArrayList<String>(new LinkedHashSet<String>(vnfr_name_list));
         deployment_unit_id_list = new ArrayList<String>(new LinkedHashSet<String>(deployment_unit_id_list));
-
-        System.out.println("vnfr_id_list == " + vnfr_id_list);
-        System.out.println("vnfr_name_list == " + vnfr_name_list);
-        System.out.println("deployment_unit_id_list == " + deployment_unit_id_list);
         
         JSONObject root = new JSONObject();
 
