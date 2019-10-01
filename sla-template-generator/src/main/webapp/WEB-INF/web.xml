@@ -48,4 +48,7 @@
   <listener>
     <listener-class>eu.tng.rules.SlaPeriodCheck</listener-class>
   </listener>
+    <listener>
+    <listener-class>eu.tng.rules.LicensePeriodCheck</listener-class>
+  </listener>
 </web-app>
