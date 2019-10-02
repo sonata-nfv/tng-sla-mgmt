@@ -206,6 +206,8 @@ public class LicensingAPIs {
 
 				JSONObject license_info_template = db_operations.getLicenseinfoTemplates(sla_uuid, ns_uuid);
 
+				int license_allowed_instances = (int) license_info_template.get("allowed_instances");
+
 				if (license_info_template == null || license_info_template.isEmpty()) {
 
 					// logging
@@ -231,21 +233,27 @@ public class LicensingAPIs {
 					boolean allowed_to_instantiate = false;
 					String license_type = (String) license_info_template.get("license_type");
 					
-					if (license_type.equals("public")) {
+					if (license_type.equals("public") && license_allowed_instances>0) {
 						allowed_to_instantiate = true;
 						license_info_template.put("allowed_to_instantiate", allowed_to_instantiate);
 						license_info_template.put("current_instances", 0);
 					}
-					if (license_type.equals("trial")) {
+					if (license_type.equals("trial") && license_allowed_instances>0) {
 						allowed_to_instantiate = true;
 						license_info_template.put("allowed_to_instantiate", allowed_to_instantiate);
 						license_info_template.put("current_instances", 0);
 					}
-					if (license_type.equals("private")) {
+					if (license_type.equals("private") && license_allowed_instances>0) {
 						allowed_to_instantiate = false;
 						license_info_template.put("allowed_to_instantiate", allowed_to_instantiate);
 						license_info_template.put("current_instances", 0);
 					}
+					else {
+						allowed_to_instantiate = false;
+						license_info_template.put("allowed_to_instantiate", allowed_to_instantiate);
+						license_info_template.put("current_instances", 0);
+					}
+					
 					license_info_response = license_info_template;
 
 					
@@ -397,7 +405,11 @@ public class LicensingAPIs {
 
 		if (license_current_instances < license_allowed_instances) {
 			instancesOK = true;
-		} else {
+		} 
+		else if (license_allowed_instances == 0) {
+			instancesOK = false;
+		}
+		else {
 			instancesOK = false;
 		}
 		return instancesOK;
