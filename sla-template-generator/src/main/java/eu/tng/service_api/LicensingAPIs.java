@@ -238,12 +238,12 @@ public class LicensingAPIs {
 						license_info_template.put("allowed_to_instantiate", allowed_to_instantiate);
 						license_info_template.put("current_instances", 0);
 					}
-					if (license_type.equals("trial") && license_allowed_instances>0) {
+					else if (license_type.equals("trial") && license_allowed_instances>0) {
 						allowed_to_instantiate = true;
 						license_info_template.put("allowed_to_instantiate", allowed_to_instantiate);
 						license_info_template.put("current_instances", 0);
 					}
-					if (license_type.equals("private") && license_allowed_instances>0) {
+					else if (license_type.equals("private") && license_allowed_instances>0) {
 						allowed_to_instantiate = false;
 						license_info_template.put("allowed_to_instantiate", allowed_to_instantiate);
 						license_info_template.put("current_instances", 0);
