@@ -64,9 +64,7 @@ public class MonitoringRulesImmersiveMedia {
                         JSONArray rules_ic = new JSONArray();
                         JSONObject rule_obj_ic = new JSONObject();
                         JSONObject notification_type_ic = new JSONObject();
-                        
-                        System.out.println("Entered in 1st IF");
-                        
+                                               
                         String nvfid = vnfr_id_list.get(i);
                         vnf_obj_ic.put("vnf_id", nvfid);
                         
@@ -114,10 +112,7 @@ public class MonitoringRulesImmersiveMedia {
                         JSONArray rules_dt = new JSONArray();
                         JSONObject rule_obj_dt = new JSONObject();
                         JSONObject notification_type_dt = new JSONObject();
-                        
-                        
-                        System.out.println("Entered in 2nd IF");
-                        
+                                                
                         vnf_obj_dt = new JSONObject();
                         String nvfid = vnfr_id_list.get(i);
                         vnf_obj_dt.put("vnf_id", nvfid);
