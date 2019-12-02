@@ -529,9 +529,7 @@ public class templatesAPIs {
 		JSONObject sla_obj = db_operations.selectSlasPerNS(nsd_uuid);
 		db_operations.closePostgreSQL();
 		
-		apiresponse = Response.ok(sla_obj.toJSONString());
-		apiresponse.header("Content-Length", sla_obj.toJSONString().length());
-
+		
 		JSONArray slas_array = new JSONArray();
 		slas_array = (JSONArray) sla_obj.get("slas");
 		
@@ -542,11 +540,15 @@ public class templatesAPIs {
 			String timestamps = timestamp.toString();
 			String type = "W";
 			String operation = "Get SLAs associated for a specific nsd uuid";
-			String message = "[*] Warning: SLA Templates for nsd_uuid=" + nsd_uuid + " not found!";
-			String status = String.valueOf(404);
+			String message = "[*] Warning: There are no SLA Templates for nsd_uuid=" + nsd_uuid + "!";
+			String status = String.valueOf(200);
 			logger.error(
 					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 					type, timestamps, operation, message, status);
+			
+			String invalid_ns_uuid = "Error: NS uuid not found. Please try again";
+			apiresponse = Response.ok();
+			apiresponse.header("Content-Length", invalid_ns_uuid.length());
 			
 			return apiresponse.status(404).build();
 		} 
@@ -562,6 +564,9 @@ public class templatesAPIs {
 					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 					type, timestamps, operation, message, status);
 			
+			apiresponse = Response.ok(sla_obj.toJSONString());
+			apiresponse.header("Content-Length", sla_obj.toJSONString().length());
+
 			return apiresponse.status(200).build();
 		}
 	}
