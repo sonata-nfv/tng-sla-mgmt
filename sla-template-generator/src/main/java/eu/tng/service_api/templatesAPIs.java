@@ -535,22 +535,25 @@ public class templatesAPIs {
 		
 	
 		if (slas_array.size() == 0) {
+
+			JSONObject error = new JSONObject();
+			error.put("ERROR", "NS uuid not found");
+			apiresponse = Response.ok(error.toString());
+			apiresponse.header("Content-Length", error.toString().length());
+
 			// logging
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 			String timestamps = timestamp.toString();
 			String type = "W";
 			String operation = "Get SLAs associated for a specific nsd uuid";
 			String message = "[*] Warning: There are no SLA Templates for nsd_uuid=" + nsd_uuid + "!";
-			String status = String.valueOf(200);
+			String status = String.valueOf(404);
 			logger.error(
 					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 					type, timestamps, operation, message, status);
+
+			return apiresponse.status(404).build();		
 			
-			String invalid_ns_uuid = "Error: NS uuid not found";
-			apiresponse = Response.ok();
-			apiresponse.header("Content-Length", invalid_ns_uuid.length());
-			
-			return apiresponse.status(404).build();
 		} 
 		else {
 			// logging
