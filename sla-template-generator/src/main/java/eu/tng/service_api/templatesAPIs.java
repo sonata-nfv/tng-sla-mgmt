@@ -546,11 +546,10 @@ public class templatesAPIs {
 					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 					type, timestamps, operation, message, status);
 			
-			String invalid_ns_uuid = "Error: NS uuid not found";
-			apiresponse = Response.ok();
-			apiresponse.header("Content-Length", invalid_ns_uuid.length());
-			
-			return apiresponse.status(404).build();
+			String no_slas = "Warning: No SLAs found for this NS uuid!";
+			apiresponse = Response.ok(no_slas);
+			apiresponse.header("Content-Length", (no_slas.length()));
+			return apiresponse.status(200).build();
 		} 
 		else {
 			// logging
