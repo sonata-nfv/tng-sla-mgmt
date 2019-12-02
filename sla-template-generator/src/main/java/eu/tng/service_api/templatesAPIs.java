@@ -546,7 +546,7 @@ public class templatesAPIs {
 					"{\"type\":\"{}\",\"timestamp\":\"{}\",\"start_stop\":\"\",\"component\":\"tng-sla-mgmt\",\"operation\":\"{}\",\"message\":\"{}\",\"status\":\"{}\",\"time_elapsed\":\"\"}",
 					type, timestamps, operation, message, status);
 			
-			String invalid_ns_uuid = "Error: NS uuid not found. Please try again";
+			String invalid_ns_uuid = "Error: NS uuid not found";
 			apiresponse = Response.ok();
 			apiresponse.header("Content-Length", invalid_ns_uuid.length());
 			
