@@ -547,7 +547,7 @@ public class templatesAPIs {
 					type, timestamps, operation, message, status);
 			
 			String no_slas = "Warning: No SLAs found for this NS uuid!";
-			apiresponse = Response.ok();
+			apiresponse = Response.ok(no_slas);
 			apiresponse.header("Content-Length", (no_slas.length()));
 			return apiresponse.status(200).build();
 		} 
