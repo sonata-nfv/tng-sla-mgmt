@@ -161,7 +161,7 @@ All tng-sla-mgmt components are published under Apache 2.0 license. Please see t
 
 ## Relevant Publications
 
-* E. Kapassa et al., “Introducing Licensing throughout SLAs in NFV Environment”, 16th International Conference on the Economics of Grids, Clouds, Systems, and Services, Leeds, UK, 2019 - not published yet
+* Kapassa E. et al."Introducing Licensing Throughout SLAs in NFV Environment", in Djemame K., Altmann J., Bañares J., Agmon Ben-Yehuda O., Naldi M. (eds) Economics of Grids, Clouds, Systems, and Services. GECON 2019. Lecture Notes in Computer Science, vol 11819. Springer, Cham, 2019.
 * E. Kapassa, M. Touloupou, P. Stavrianos, G. Xilouris, D. Kyriazis "Managing and Optimizing Quality of Service in 5G Environments Across the Complete SLA Lifecycle", Advances in Science, Technology and Engineering Systems Journal, vol. 4, no. 1, pp. 329-342, 2019. 
 * M. Touloupou, E. Kapassa et al., “An Integrated SLA Management Framework in a 5G Environment”, 22nd Conference on Innovation in Clouds, Internet and Networks and Workshops (ICIN), Paris, France, 2019.
 * E. Kapassa, M. Touloupou, D. Kyriazis, "SLAs in 5G: A Complete Framework Facilitating VNF- and NS- Tailored SLAs Management," 32nd International Conference on Advanced Information Networking and Applications Workshops (WAINA), Krakow, Poland, 2018.
